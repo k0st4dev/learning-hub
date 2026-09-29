@@ -5,9 +5,9 @@ export const en = {
   heading: 'A clear path from study to independent practice.',
   description:
     'Follow the original 26-week programming curriculum, work in your local IDE, and return to the next step at your own pace.',
-  preview: 'Development preview · Foundation milestone',
+  preview: 'Development preview · Day 1 milestone',
   previewDescription:
-    'This first increment verifies local startup. Accounts and interactive course pages are being added in the next milestones.',
+    'This isolated preview contains one real curriculum day. The complete 182-day course is planned for the next curriculum milestone.',
   courseLabel: 'Software Engineer Training Manual',
   localTitle: 'A workspace on your computer',
   localDescription:
@@ -21,4 +21,77 @@ export const en = {
   retry: 'Try again',
   notFound: 'Page not found',
   notFoundDescription: 'Check the address or return to the home page.',
+  register: 'Create account',
+  login: 'Sign in',
+  logout: 'Sign out',
+  dashboard: 'Dashboard',
+  auth: {
+    email: 'Email',
+    password: 'Password',
+    confirmation: 'Confirm password',
+    displayName: 'Display name (optional)',
+    showPassword: 'Show password',
+    passwordHelp:
+      'Use 15–128 characters. Spaces and password managers are welcome.',
+    localHelp:
+      'This account belongs to this local installation. Email is an account name; no verification email is sent.',
+    existing: 'Already have an account?',
+    newAccount: 'New to this installation?',
+    working: 'Please wait…',
+    registered: 'Account created. Sign in to begin.',
+    errorTitle: 'Please check your entry',
+    networkError:
+      'The application could not confirm your request. Check that it is running and try again.',
+    recovery:
+      'Local password recovery is being added in the operations milestone. Do not delete the database to reset an account.',
+  },
+  learning: {
+    start: 'Start course',
+    continue: 'Continue learning',
+    preparation: 'Preparation',
+    acknowledge: 'I have reviewed preparation; continue',
+    defer: 'Defer preparation checks and continue',
+    prepHelp:
+      'These seven checks are advisory and do not change your course percentage. You can return to them later.',
+    fixture:
+      'Day 1 preview · Progress below covers only this isolated two-unit fixture.',
+    empty:
+      'Start the course to create your private learning record and review preparation.',
+    source: 'Original curriculum',
+    added: 'Application guidance',
+    study: 'Study',
+    practice: 'Exercise',
+    completeLesson: 'Mark lesson complete',
+    reopenLesson: 'Reopen lesson',
+    toExercise: 'Continue to exercise',
+    completeExercise: 'Confirm exercise complete',
+    reopenExercise: 'Reopen exercise',
+    evidence: 'Evidence of your work',
+    evidenceHelp:
+      'Describe your result or paste a repository/commit reference (maximum 2,000 characters). This is a self-assessment; code runs in your local IDE.',
+    attest: 'I confirm my work meets the original completion criterion.',
+    passed: 'My work passes the criterion',
+    needsReview: 'My work needs review',
+    result: 'Self-assessment',
+    criterion: 'Completion criterion',
+    ai: 'AI policy',
+    tasks: 'Exercise checklist',
+    saveEvidence: 'Save evidence',
+    saved: 'Saved on this computer.',
+    saving: 'Saving…',
+    error:
+      'The change was not confirmed. Your last saved state is still shown.',
+    refresh: 'Reload confirmed state',
+    retry: 'Retry the same save',
+    progress: 'Progress',
+    completed: 'Completed',
+    incomplete: 'Incomplete',
+    previewComplete: 'Day 1 preview completed',
+    nextRelease:
+      'The remaining curriculum will be available after the full importer milestone.',
+    studyThis: 'Study this day',
+    reference: 'View Day 1',
+    sourceDate: 'Original schedule date',
+    minutes: 'Estimated minutes',
+  },
 } as const;

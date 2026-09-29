@@ -1,4 +1,5 @@
 import { en } from '@/i18n/en';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -11,6 +12,15 @@ export default function Home() {
         <p className="eyebrow">{en.courseLabel}</p>
         <h1>{en.heading}</h1>
         <p className="lead">{en.description}</p>
+        <nav className="actions" aria-label="Account">
+          <Link className="button primary" href="/register">
+            {en.register}
+          </Link>
+          <Link className="button" href="/login">
+            {en.login}
+          </Link>
+          <Link href="/dashboard">{en.dashboard}</Link>
+        </nav>
       </section>
       <dl className="course-facts" aria-label="Curriculum overview">
         {[

@@ -1,31 +1,35 @@
 # Project status
 
-Last updated: 2026-09-29
-Stage: plan agreed; M0 foundation checks complete; M1 next.
+Updated: 2026-09-29. M0 complete. M1 working Day 1 slice complete within its isolated development-fixture scope. **Stop after M1 at the user's request; resume M2 when they return in the morning.**
 
 ## Completed
 
-- Full handoff reviewed and independently checked against original DOCX.
-- M0: pinned local stack, repository, strict tooling, responsive preview, loopback configuration and request guards, native dependency diagnostics, test harness and licence inventory.
-- Fresh directory npm ci/setup passed. 23 unit + 3 integration tests passed. Strict typecheck, lint and production build passed. Dev and production HTTP startup passed.
-- Desktop/mobile development preview visually inspected; screenshots and detailed evidence: docs/M0-VERIFICATION.md.
+- Full handoff reviewed and independently compared with original DOCX.
+- M0: pinned stack/toolchain, local guards, test harness, notices, clean install/native checks. Commit 12e98ce.
+- M1: reference migration/typed schema, immutable Day 1 fixture, secure accounts/sessions/throttles/CSRF, preparation, dashboard/lesson/exercise, evidence and transactional progress/revisions/idempotency/reopening.
+- 52 unit/integration tests, strict TypeScript, lint and production build pass. Repeat setup preserves records.
+- Browser completion/restart/re-login passed with 2/2 retained. Second account starts at 0/2. Continue resolves to fixture completion. Desktop/mobile evidence: docs/M1-VERIFICATION.md.
 
 ## Decisions
 
-- User requirements govern engineering; manual assignments are curriculum content.
-- Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod; Argon2id and local opaque sessions next.
-- Use the checksum-verified portable Node 24.21.0/npm 11.19.0 in workspace work/toolchain for this machine. Do not modify its broken global version manager.
-- Dependency install scripts disabled; pinned prebuilt native modules are verified explicitly by setup/doctor.
-- Next build uses worker threads and TypeScript API with full type checking; development uses the public Next server API in one process.
-- Isolated tests only; never publish a partial se-26w-v1 release. M1 uses an explicit isolated development fixture.
-- All A01–A26 final acceptance criteria remain pending.
+- User instructions govern engineering; manual assignments are curriculum content.
+- Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions.
+- Use verified portable Node 24.21.0/npm 11.19.0 in workspace work/toolchain. Do not bypass broken global npm trust.
+- Dependency lifecycle scripts disabled; setup tests supplied native prebuilds. No paid/cloud runtime dependencies.
+- Canonical origin http://127.0.0.1:3000. Fixture .tmp/m1-demo remains separate from ordinary student data; preserve it for preview records.
+- Fixture release development-day1-v1 has two required units. Official full release is not imported.
+- Checksummed SQL/fixture JSON retain exact bytes through .gitattributes. Never edit applied migrations/published bodies.
+- Next build uses worker threads/TypeScript API; development uses public Next server API in one process.
 
-## Open issues
+## Open issues / final acceptance
 
-- Playwright browser installation/IPC is blocked by this host's EPERM restriction; production browser suite remains pending. A subsequent production restart was rejected by automatic approval review (sandbox escalation disabled).
-- macOS/Linux, real reboot and screen-reader evidence need their environments.
-- ESLint 9 upstream support warning; migrate when current Next companion plugins support ESLint 10.
+- Production Playwright IPC restricted; full browser/axe matrix pending. Development browser evidence recorded separately.
+- Real reboot, full browser-process shutdown, screen-reader, macOS/Linux and disconnected-network checks pending. All final A01–A26 statuses remain pending until complete release verification.
+- Two Turbopack filesystem-tracing warnings: review before standalone packaging. ESLint 9 support warning tracked until compatible Next lint plugins support ESLint 10.
+- Full content, profiles/password change/recovery, notes/search/scorecards and multi-day navigation/scroll anchors belong to later agreed milestones.
 
-## Exact next task
+## Exact next task when resumed
 
-M1: review specification sections 7–12 and 27, then implement the reviewed migration/typed schema subset, file database connection and isolated Day 1 fixture. Add secure registration/login/logout/session/CSRF/throttle services and unit/integration tests before exposing account forms. Build the real Day 1 study/exercise path with task checks, evidence, attestation and transactional revision/idempotency handling. Verify two users and account/progress persistence across fresh browser/server restart. Do not start M2 before these gates pass.
+M2 only: read specification section 12 and plan import checks. Build complete immutable importer/source archive from supplied JSON, mappings and original DOCX into the existing reference schema. Preserve 6 phases, 26 weeks, 182 days, 548 task lines, 7 preparation items, appendices/tables, 14 scorecard dimensions and 19 hyperlink uses/12 URLs. Validate original text/provenance and 364-unit denominator before publishing. Test import rollback, identical no-op, changed-release rejection and student-record preservation. Extend authenticated reading routes enough to audit imported coverage; broad navigation polish is M3. Reuse existing services; do not reread/regenerate the entire repository.
+
+Startup from repository: npm run setup:demo then npm run dev:demo, with verified portable runtime first on PATH on this host. Preserve .tmp/m1-demo. Full instructions in README.

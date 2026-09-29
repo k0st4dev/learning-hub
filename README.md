@@ -1,13 +1,13 @@
 # Programming Learning Platform
 
-A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M0 foundation preview.** Accounts, curriculum seeding and student progress are not implemented yet. Do not use this increment to record study progress. See `PROJECT_STATUS.md` for the exact next task and `IMPLEMENTATION_PLAN.md` for the agreed milestones.
+A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M1, a working Day 1 preview.** Registration, login/logout, preparation, the original first lesson and four exercise tasks, evidence, completion and restart persistence are implemented. This is an isolated development fixture, not the complete course or final MVP. See `PROJECT_STATUS.md` for the exact next task and `IMPLEMENTATION_PLAN.md` for the agreed milestones.
 
 ## Requirements and cost
 
 - Node.js **24.21.0** with npm **11.19.0**; patch-compatible versions in those lines are accepted. The exact tested runtime is in `.node-version` and `.nvmrc`.
 - Git for obtaining the source. No separate database server, SQLite CLI, Docker, cloud keys or paid software is required.
 - Windows x64 native modules have been checked. macOS/Linux clean-install evidence remains pending.
-- Installation needs internet access. The app shell and future bundled account/content/progress features run locally. External course resources need internet access.
+- Installation needs internet access. Accounts, bundled Day 1 content and progress run locally. External course resources need internet access.
 
 Use the official [Node.js distribution](https://nodejs.org/dist/v24.21.0/). If an existing version manager reports a changed/untrusted npm script, do not blindly re-trust it. Repair that installation from its official source, or use a fresh official portable runtime after matching its SHA-256 against the official `SHASUMS256.txt`. This project does not modify system-wide Node settings.
 
@@ -17,20 +17,22 @@ From this repository directory:
 
 ```sh
 npm ci
-npm run setup
-npm run dev
+npm run setup:demo
+npm run dev:demo
 ```
 
 Open **http://127.0.0.1:3000**. Keep that terminal running; Ctrl+C stops the application. Always use the printed canonical address, not `localhost` or a LAN address.
 
-For regular local use after the complete app is delivered:
+For a production build of this preview:
 
 ```sh
 npm run build
-npm start
+npm run start:demo
 ```
 
-At M0, `setup` verifies the runtime, native SQLite/Drizzle write-and-reopen operation, Argon2id, and data-directory writability. It does **not** create student accounts, migrate a student database or import a curriculum. Those operations are added by their milestones.
+`setup:demo` verifies native dependencies, applies the checksummed reference migration and seeds a clearly named `development-day1-v1` release in `.tmp/m1-demo/learning.sqlite`. Repeat setup preserves accounts, tasks, evidence and completion. Keep this directory to retain your preview records; it is ignored by Git and is not an official student release. Do not delete it while the app is running. Ordinary `setup` creates the reference schema in `APP_DATA_DIR` but does not yet import the full curriculum; the M2 importer will provide that operation.
+
+Register your own local test account, sign in, select Start course, and complete or explicitly defer preparation. Study Day 1, mark the lesson complete, then check the four original task lines, enter evidence, select a passing self-assessment and attest the original criterion. Confirm completion. Sign out, stop the server, restart with `npm run dev:demo`, and sign in again: confirmed progress remains. This fixture has exactly two required units; its 100% means Day 1 only. The full course will have 364 units.
 
 Dependency lifecycle scripts are disabled in `.npmrc`. The pinned native packages ship prebuilt modules; `setup`/`doctor` explicitly load and exercise them. This avoids implicit install scripts and allows deterministic installation on this restricted Windows host. Do not remove this policy or silently enable arbitrary installation scripts. A supported platform without a matching prebuilt module must fail clearly and receive a reviewed dependency/build-tool decision.
 
@@ -46,7 +48,7 @@ Copy `.env.example` to `.env.local` only if changing defaults. Shell environment
 | `APP_DATA_DIR` | `<repository>/data`     | Optional absolute path outside public/build/source/dependency directories. |
 | `LOG_LEVEL`    | `info`                  | `error`, `warn`, or `info`; reserved for structured service logs.          |
 
-Startup binds only to `127.0.0.1` in development and production. Wrong Host/Origin requests are rejected. CSP, frame restrictions, no-store responses and basic security headers are in place. Authentication and CSRF tokens belong to M1 and must be implemented before private writes exist. Next.js telemetry is disabled by the launch scripts. System fonts and local styles have no CDN dependency.
+Startup binds only to `127.0.0.1` in development and production. Wrong Host/Origin requests are rejected. Every write checks a signed, session-bound CSRF token. Argon2id uses 64 MiB, three iterations and parallelism one; at most two password operations run concurrently. Only session-token digests are stored. Persistent HttpOnly, SameSite=Lax cookies enforce seven-day idle and 30-day absolute limits. Login and registration throttles live in SQLite. CSP, frame restrictions and no-store responses are enabled. Next.js telemetry is disabled. System fonts and local styles have no CDN dependency.
 
 The development launcher uses the public Next.js server API in a single process because this execution host restricts subprocess pipes. Production uses the standard Next.js CLI. Next builds use worker threads and the TypeScript API, retaining full type checks. TypeScript 6 and ESLint 9 are pinned for compatibility with the Next ESLint configuration; ESLint 9 reports an upstream support warning, so track migration when its React/accessibility plugins support ESLint 10. The dependency audit currently reports zero advisories.
 
@@ -70,7 +72,7 @@ npm run test:install-browser
 npm run test:e2e
 ```
 
-The automated browser suite is written but has not passed on the current restricted host: Playwright's child-process IPC fails with `EPERM`. This is recorded as pending, not a pass. The already-running development preview has been inspected in the in-app browser. Automated accessibility checks do not replace later manual keyboard/screen-reader review.
+The production foundation browser suite has not passed on the current restricted host: Playwright's child-process IPC fails with `EPERM`. This is recorded as pending, not a pass. M1's registration/completion/restart journey was exercised in the in-app development browser, alongside automated service and request-boundary tests. See `docs/M1-VERIFICATION.md`. Automated checks do not replace later screen-reader and real-computer-reboot review.
 
 ## Troubleshooting
 
@@ -85,6 +87,8 @@ The automated browser suite is written but has not passed on the current restric
 
 `src/app` contains App Router pages; `src/server` contains configuration/request-boundary code; `scripts` contains cross-platform Node commands; `tests` contains unit, integration and browser checks. `src/i18n/en.ts` holds interface copy. Native database/auth imports stay out of browser components.
 
-`data`, backups, secrets and temporary files are ignored by Git. Future authoritative records will live at `APP_DATA_DIR/learning.sqlite`; confirmed progress must survive browser/server/computer restart. Backup, restore, local password recovery, complete curriculum import and enrollment upgrade commands are not available at M0; their documented implementation gates remain open. No destructive placeholder commands are provided.
+`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and seeded fixture releases cannot change silently. Backup/restore, local password recovery, complete curriculum import and enrollment upgrades remain later milestones. Preserve the database, WAL/SHM files and secret; do not copy an open database as an improvised backup. No destructive placeholder recovery commands are provided.
+
+The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
 
 Dependency licences and supplied notices are recorded in `docs/DEPENDENCIES.md`, `docs/dependency-licenses.json` and `docs/THIRD_PARTY_NOTICES.txt`. The supplied curriculum's authorship and text remain separate from third-party software licences.
