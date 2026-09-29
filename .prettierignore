@@ -10,3 +10,4 @@ docs/dependency-licenses.json
 docs/THIRD_PARTY_NOTICES.txt
 content/**/source
 next-env.d.ts
+tests/fixtures/*.json

@@ -1,0 +1,267 @@
+{
+  "fixtureOnly": true,
+  "releaseId": "development-day1-v1",
+  "source": {
+    "filename": "software_engineer_training_manual_26_weeks.docx",
+    "sha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+    "language": "sr-Latn",
+    "paragraph_count": 2365,
+    "nonempty_paragraph_count": 2327,
+    "table_count": 197,
+    "embedded_drawings": 0,
+    "original_period": "2026-08-31/2027-02-28",
+    "source_claimed_verified_date": "2026-08-25"
+  },
+  "module": {
+    "id": "f1",
+    "title": "JavaScript reset i logika",
+    "weeks": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "week": {
+    "id": "w01",
+    "number": 1,
+    "module_id": "f1",
+    "title": "Reset: ponovo nauči da misliš u koracima",
+    "source_id": "p0265",
+    "source_blocks": [
+      "p0265",
+      "p0266",
+      "p0267",
+      "p0268",
+      "p0269",
+      "p0270"
+    ],
+    "days": [
+      "d001",
+      "d002",
+      "d003",
+      "d004",
+      "d005",
+      "d006",
+      "d007"
+    ],
+    "source_dates_and_phase": "31.08.2026 – 06.09.2026  |  FAZA 1 — JavaScript reset i logika",
+    "objective": "Vratiti osnovnu sintaksu bez pasivnog gledanja i uspostaviti problem-solving ritual.",
+    "resources_instruction": "TOP Foundations, javascript.info, MDN, Exercism",
+    "phase_signal": "Faza signal\nNe ubrzavaj kroz osnove zato što ti deluju poznato. Test je da ih napišeš, ne da ih prepoznaš.",
+    "main_evidence": "Program radi iz terminala, ima najmanje 10 ručnih testova i čist commit history.",
+    "main_evidence_source_id": "p0138",
+    "roadmap_source_ids": [
+      "p0134",
+      "p0135",
+      "p0136",
+      "p0137",
+      "p0138"
+    ]
+  },
+  "day": {
+    "id": "d001",
+    "number": 1,
+    "week_id": "w01",
+    "module_id": "f1",
+    "source_id": "p0271",
+    "lesson_id": "d001-learn",
+    "exercise_id": "d001-practice",
+    "title": "Okruženje + baseline bez pomoći",
+    "estimated_minutes": 120,
+    "source_date": "31.08.2026",
+    "study_instruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+    "ai_policy": "AI je danas zabranjen dok ne završiš baseline. Posle toga: “Proceni moj baseline; ne prepisuj kod, navedi 3 najveće rupe.”",
+    "completion_criterion": "Repo postoji, ima prvi commit i baseline radi.",
+    "tasks": [
+      {
+        "id": "d001-task-01",
+        "source_id": "p0276",
+        "text": "Napravi folder/repo programming-gym sa problems/, projects/, notes/.",
+        "order": 1,
+        "requirement_mode": "required",
+        "optional_override": false,
+        "completion_rule": "Complete or comply with the entire original task line.",
+        "rule_origin": "product_interpretation"
+      },
+      {
+        "id": "d001-task-02",
+        "source_id": "p0277",
+        "text": "Napiši iz glave program koji ispisuje brojeve 1–100; za deljive sa 3 “Fizz”, sa 5 “Buzz”, sa oba “FizzBuzz”.",
+        "order": 2,
+        "requirement_mode": "required",
+        "optional_override": false,
+        "completion_rule": "Complete or comply with the entire original task line.",
+        "rule_origin": "product_interpretation"
+      },
+      {
+        "id": "d001-task-03",
+        "source_id": "p0278",
+        "text": "Napiši funkciju sumTo(n) bez pretrage.",
+        "order": 3,
+        "requirement_mode": "required",
+        "optional_override": false,
+        "completion_rule": "Complete or comply with the entire original task line.",
+        "rule_origin": "product_interpretation"
+      },
+      {
+        "id": "d001-task-04",
+        "source_id": "p0279",
+        "text": "Zapiši 5 stvari kojih se sećaš o JS i 5 koje su ti nejasne.",
+        "order": 4,
+        "requirement_mode": "required",
+        "optional_override": false,
+        "completion_rule": "Complete or comply with the entire original task line.",
+        "rule_origin": "product_interpretation"
+      }
+    ],
+    "source_blocks": [
+      "p0271",
+      "p0272",
+      "p0273",
+      "p0274",
+      "p0275",
+      "p0276",
+      "p0277",
+      "p0278",
+      "p0279",
+      "p0280",
+      "p0281"
+    ],
+    "assessment_kind": "practice",
+    "study_source_id": "p0274",
+    "criterion_source_id": "p0281",
+    "product_metadata": {
+      "difficulty": null,
+      "exercise_minutes": null,
+      "hints": [],
+      "solution": null,
+      "lesson_requirement": "required",
+      "exercise_requirement": "required",
+      "evidence_required": true,
+      "completion": "manual_attestation_of_original_criterion"
+    }
+  },
+  "preparation": [
+    {
+      "id": "prep-01",
+      "source_id": "p0119",
+      "text": "[ ] Instaliraj Git i proveri: git --version."
+    },
+    {
+      "id": "prep-02",
+      "source_id": "p0120",
+      "text": "[ ] Instaliraj nvm/nvm-windows i zatim Node LTS; proveri node --version i npm --version. Koristi “LTS”, ne vezuj plan za jednu verziju."
+    },
+    {
+      "id": "prep-03",
+      "source_id": "p0121",
+      "text": "[ ] VS Code: uključi format on save samo ako razumeš šta menja; instaliraj minimalno ESLint kasnije kada dođe vreme."
+    },
+    {
+      "id": "prep-04",
+      "source_id": "p0122",
+      "text": "[ ] Napravi Git repo programming-gym i foldere: problems, projects, notes, checkpoints."
+    },
+    {
+      "id": "prep-05",
+      "source_id": "p0123",
+      "text": "[ ] Otvori naloge/bookmarkuj: Odin, CS50x, Exercism, Full Stack Open, MDN, javascript.info."
+    },
+    {
+      "id": "prep-06",
+      "source_id": "p0124",
+      "text": "[ ] Napravi LEARNING-RULES.md: “Nema solutiona pre pokušaja; svaki dan commit; svake nedelje AI-off checkpoint.”"
+    },
+    {
+      "id": "prep-07",
+      "source_id": "p0125",
+      "text": "[ ] Ne nastavljaj stari JS video-kurs. Ovaj program postaje primarni curriculum. Ako ti neka sintaksa nedostaje, koristi MDN/javascript.info ciljano."
+    }
+  ],
+  "sourceBlocks": [
+    {
+      "source_id": "p0271",
+      "style": "Normal",
+      "text": "DAN 1",
+      "links": [],
+      "in_table": true,
+      "table": 9,
+      "row": 1,
+      "cell": 1
+    },
+    {
+      "source_id": "p0272",
+      "style": "Normal",
+      "text": "31.08.2026 — Okruženje + baseline bez pomoći",
+      "links": [],
+      "in_table": true,
+      "table": 9,
+      "row": 1,
+      "cell": 2
+    },
+    {
+      "source_id": "p0273",
+      "style": "Normal",
+      "text": "Vreme: 120 min",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0274",
+      "style": "Normal",
+      "text": "Uči / pročitaj: Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0275",
+      "style": "Normal",
+      "text": "Uradi:",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0276",
+      "style": "ListBullet2",
+      "text": "Napravi folder/repo programming-gym sa problems/, projects/, notes/.",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0277",
+      "style": "ListBullet2",
+      "text": "Napiši iz glave program koji ispisuje brojeve 1–100; za deljive sa 3 “Fizz”, sa 5 “Buzz”, sa oba “FizzBuzz”.",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0278",
+      "style": "ListBullet2",
+      "text": "Napiši funkciju sumTo(n) bez pretrage.",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0279",
+      "style": "ListBullet2",
+      "text": "Zapiši 5 stvari kojih se sećaš o JS i 5 koje su ti nejasne.",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0280",
+      "style": "Normal",
+      "text": "AI režim: AI je danas zabranjen dok ne završiš baseline. Posle toga: “Proceni moj baseline; ne prepisuj kod, navedi 3 najveće rupe.”",
+      "links": [],
+      "in_table": false
+    },
+    {
+      "source_id": "p0281",
+      "style": "Normal",
+      "text": "Gotovo kada: Repo postoji, ima prvi commit i baseline radi.",
+      "links": [],
+      "in_table": false
+    }
+  ]
+}

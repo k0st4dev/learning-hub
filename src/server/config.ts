@@ -1,8 +1,7 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
-export const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
+export const repositoryRoot = process.cwd();
 const schema = z.object({
   APP_MODE: z.literal('local').default('local'),
   APP_ORIGIN: z.string().default('http://127.0.0.1:3000'),

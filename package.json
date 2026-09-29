@@ -10,6 +10,9 @@
   "packageManager": "npm@11.19.0",
   "scripts": {
     "setup": "node scripts/setup.mjs",
+    "setup:demo": "node scripts/demo.mjs setup",
+    "dev:demo": "node scripts/demo.mjs dev",
+    "start:demo": "node scripts/demo.mjs start",
     "dev": "node scripts/run-next.mjs dev",
     "build": "node scripts/run-next.mjs build",
     "start": "node scripts/run-next.mjs start",
