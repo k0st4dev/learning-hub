@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "releaseId": "se-26w-v1",
+  "archivedAt": "2026-09-29",
+  "origin": "User-supplied programming-platform-handoff package",
+  "files": [
+    {
+      "name": "README.md",
+      "bytes": 2625,
+      "sha256": "9a1c06544e69f36f6c790e9c02f018513c4ae532832b7816bc70ea2e270c6de5"
+    },
+    {
+      "name": "verification-report.json",
+      "bytes": 7792,
+      "sha256": "33c1aa46682263fd27a12330397119717248abda583cee067deeb3766023f637"
+    },
+    {
+      "name": "product-specification.md",
+      "bytes": 106019,
+      "sha256": "b84c6b5e222a36a9630b6cf1639ac595f986626aedc8e00765050292a10a3134"
+    },
+    {
+      "name": "product-specification.html",
+      "bytes": 126379,
+      "sha256": "dbe02f18cf5aeff22e5b897dc15fe8d7d0e31b48d55a977cf7cbf6eca767a8db"
+    },
+    {
+      "name": "curriculum-audit.html",
+      "bytes": 1162840,
+      "sha256": "bec0b7ff3d0a4ed0fd0e807c038aa2a48da65d75aff2fcdb213975edc8b63c5c"
+    },
+    {
+      "name": "curriculum-source.json",
+      "bytes": 2069682,
+      "sha256": "ca1e0f15e6a2354b34b9f11d209be0b01d7a4abd66e6d0c12f9c025b0b76f0b1"
+    },
+    {
+      "name": "source-to-website.csv",
+      "bytes": 421649,
+      "sha256": "8ddb8e5bec584bdd5db68ef679455c81ae387e10ea753011c153eb74bf5c21fd"
+    },
+    {
+      "name": "curriculum-days.csv",
+      "bytes": 67237,
+      "sha256": "17476ca4d2827294579c7c535a4cbdc366e3738c0e22db88b0d7e28aaa939c3f"
+    },
+    {
+      "name": "schema.sql",
+      "bytes": 14056,
+      "sha256": "6e422ca889b395a2e45dc7f5f6f07984212ebc96584859ae7e013bd4f8bb86cb"
+    },
+    {
+      "name": "software_engineer_training_manual_26_weeks.docx",
+      "bytes": 85285,
+      "sha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513"
+    }
+  ]
+}

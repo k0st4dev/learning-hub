@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-09-29. M0 complete. M1 working Day 1 slice complete within its isolated development-fixture scope. **Stop after M1 at the user's request; resume M2 when they return in the morning.**
+Updated: 2026-09-29. M0 complete. M1 working Day 1 slice complete within its isolated development-fixture scope. The user authorized one minimal M2 preparation step tonight; it is complete. **Stop here and resume the M2 importer when the user returns.**
 
 ## Completed
 
@@ -9,6 +9,7 @@ Updated: 2026-09-29. M0 complete. M1 working Day 1 slice complete within its iso
 - M1: reference migration/typed schema, immutable Day 1 fixture, secure accounts/sessions/throttles/CSRF, preparation, dashboard/lesson/exercise, evidence and transactional progress/revisions/idempotency/reopening.
 - 52 unit/integration tests, strict TypeScript, lint and production build pass. Repeat setup preserves records.
 - Browser completion/restart/re-login passed with 2/2 retained. Second account starts at 0/2. Continue resolves to fixture completion. Desktop/mobile evidence: docs/M1-VERIFICATION.md.
+- M2 preparation: all ten handoff files archived byte-for-byte in `content/se-26w-v1/source`, with original SHA-256/byte manifest. `npm run curriculum:verify-source` passes integrity and inventory checks (6 phases, 26 weeks, 182 days, 548 tasks, 7 preparation items, 12 resources, 2365 source blocks, 2329 mappings). Script formatting/lint pass. No database or application behavior changed; importer and rendered coverage are still pending.
 
 ## Decisions
 
@@ -30,6 +31,6 @@ Updated: 2026-09-29. M0 complete. M1 working Day 1 slice complete within its iso
 
 ## Exact next task when resumed
 
-M2 only: read specification section 12 and plan import checks. Build complete immutable importer/source archive from supplied JSON, mappings and original DOCX into the existing reference schema. Preserve 6 phases, 26 weeks, 182 days, 548 task lines, 7 preparation items, appendices/tables, 14 scorecard dimensions and 19 hyperlink uses/12 URLs. Validate original text/provenance and 364-unit denominator before publishing. Test import rollback, identical no-op, changed-release rejection and student-record preservation. Extend authenticated reading routes enough to audit imported coverage; broad navigation polish is M3. Reuse existing services; do not reread/regenerate the entire repository.
+M2 only: first run `npm run curriculum:verify-source`; use the committed archive, not an assumed Downloads path. Read archived specification section 12 and plan import checks. Build complete immutable importer from archived JSON, mappings and original DOCX into the existing reference schema. Preserve 6 phases, 26 weeks, 182 days, 548 task lines, 7 preparation items, appendices/tables, 14 scorecard dimensions and 19 hyperlink uses/12 URLs. Validate original text/provenance and 364-unit denominator before publishing. Test import rollback, identical no-op, changed-release rejection and student-record preservation. Extend authenticated reading routes enough to audit imported coverage; broad navigation polish is M3. Reuse existing services; do not reread/regenerate the entire repository. Do not rebuild the archive or edit its hashes to bypass a mismatch.
 
 Startup from repository: npm run setup:demo then npm run dev:demo, with verified portable runtime first on PATH on this host. Preserve .tmp/m1-demo. Full instructions in README.

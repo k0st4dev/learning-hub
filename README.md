@@ -63,6 +63,7 @@ npm test
 npm run test:integration
 npm run build
 npm run licenses:check
+npm run curriculum:verify-source
 ```
 
 Browser tests use a production build, isolated test browser, port 3100, both themes and five viewport sizes:

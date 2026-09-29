@@ -9,6 +9,7 @@
   },
   "packageManager": "npm@11.19.0",
   "scripts": {
+    "curriculum:verify-source": "node scripts/verify-source.mjs",
     "setup": "node scripts/setup.mjs",
     "setup:demo": "node scripts/demo.mjs setup",
     "dev:demo": "node scripts/demo.mjs dev",

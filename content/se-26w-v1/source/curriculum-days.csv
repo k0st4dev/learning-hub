@@ -1,0 +1,549 @@
+﻿id,number,module_id,week_id,title,source_date,estimated_minutes,study_instruction,tasks,ai_policy,completion_criterion,website_location
+d001,1,f1,w01,Okruženje + baseline bez pomoći,31.08.2026,120,"Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).","1. Napravi folder/repo programming-gym sa problems/, projects/, notes/.
+2. Napiši iz glave program koji ispisuje brojeve 1–100; za deljive sa 3 “Fizz”, sa 5 “Buzz”, sa oba “FizzBuzz”.
+3. Napiši funkciju sumTo(n) bez pretrage.
+4. Zapiši 5 stvari kojih se sećaš o JS i 5 koje su ti nejasne.","AI je danas zabranjen dok ne završiš baseline. Posle toga: “Proceni moj baseline; ne prepisuj kod, navedi 3 najveće rupe.”","Repo postoji, ima prvi commit i baseline radi.",/course/software-engineer/days/d001
+d002,2,f1,w01,"Variables, types, operators",01.09.2026,120,"javascript.info Fundamentals: variables, data types, operators; MDN: Grammar and types.","1. Napiši 12 malih izraza i pre pokretanja predvidi rezultat i tip.
+2. Implementiraj convertMinutesToSeconds, calculateBMI, calculateDiscount.
+3. 3 zadatka bez ternary operatora; zatim 1 prepiši sa ternary.",Traži 5 “predict the output” pitanja. AI ne sme dati odgovor dok prvo ne odgovoriš ti.,"Možeš objasniti let/const, primitive vs reference na osnovnom nivou i rešiti 3 funkcije bez pomoći.",/course/software-engineer/days/d002
+d003,3,f1,w01,Conditionals i boolean logika,02.09.2026,120,"javascript.info: comparisons, conditional branching, logical operators, ??; TOP Data Types and Conditionals.","1. Napravi classifyAge(age), grade(score), shippingPrice(country,total).
+2. Napravi leapYear(year).
+3. Napiši truth table za && i ||; zatim 6 predikata poput isEligible(user).",Socratic mode: AI samo postavlja pitanje kada logika nije dobra.,"Svi test primeri, uključujući granice, prolaze.",/course/software-engineer/days/d003
+d004,4,f1,w01,Loops,03.09.2026,120,javascript.info: while/for/switch; MDN Loops and iteration.,"1. Napiši sumRange(a,b), factorial(n), countDigits(n).
+2. Ispiši tablicu množenja 1–10.
+3. Nađi najmanji i najveći broj u nizu bez Math.min/max i bez sort.","Ako zapneš, Level 1 hint = jedno pitanje; Level 2 = mali hint; rešenje nije dozvoljeno.",Možeš ručno da trasiraš petlju i objasniš svaku promenu promenljive.,/course/software-engineer/days/d004
+d005,5,f1,w01,Functions i decomposition,04.09.2026,120,"javascript.info: functions, function expressions, arrow functions; MDN Functions.","1. Razbij “cena narudžbine” na 4 male funkcije: subtotal, discount, tax, total.
+2. Napravi isPrime(n) i countPrimes(limit).
+3. Prepiši jednu veliku funkciju od 25+ linija u 4–6 malih funkcija.","AI reviewer: samo SRP, naming, edge cases; bez rewritten solution.",Svaka funkcija ima jednu jasnu odgovornost i možeš objasniti input/output.,/course/software-engineer/days/d005
+d006,6,f1,w01,Mini-projekat: Number Toolkit,05.09.2026,180,Bez nove teorije. Koristi samo ono iz dana 1–5.,"1. CLI/Node program: korisnik dobije statistiku za niz brojeva: min, max, suma, prosek, broj parnih/neparnih.
+2. Dodaj validaciju praznog niza i nebrojčanih vrednosti.
+3. Napravi README: problem, plan, pseudocode, edge cases.",AI sme samo da generiše test slučajeve i review posle tvoje verzije.,"Program radi iz terminala, ima najmanje 10 ručnih testova i čist commit history.",/course/software-engineer/days/d006
+d007,7,f1,w01,Nedeljni checkpoint 1 — AI OFF,06.09.2026,75,"Ponovi svoje notes, bez novih resursa.","1. 45 min bez AI: isPrime, reverseNumber i findMax od nule.
+2. Objasni naglas: variable, condition, loop, function, return.
+3. Pregledaj git diff i napiši WEEK-01-RETRO.md: šta znaš / gde grešiš / šta ponavljaš.",AI tek na kraju: napravi kviz od 10 pitanja iz mojih grešaka.,Najmanje 7/10 na sopstvenom kvizu i sva 3 zadatka rešena. Ako ne: ponovi dane 3–5 pre nedelje 2.,/course/software-engineer/days/d007
+d008,8,f1,w02,"Scope, call stack intuicija",07.09.2026,120,"javascript.info: variable scope/closure (prvi deo), TOP Function Basics.","1. Napravi global/local scope eksperimente i predvidi output pre run-a.
+2. Napiši makeCounter bez klase; objasni zašto stanje ostaje dostupno.
+3. Nacrtaj call stack za factorial(4).","AI profesor: proverava tvoje objašnjenje call stack-a, ne daje svoje dok ti ne pokušaš.",Možeš objasniti scope i nacrtati stack za 3 ugnježdene funkcije.,/course/software-engineer/days/d008
+d009,9,f1,w02,Strings,08.09.2026,120,MDN Numbers and strings; javascript.info Strings.,"1. reverseString bez reverse(); countVowels; isPalindrome ignorisanjem razmaka i case-a.
+2. wordFrequency(sentence) vraća object/map.
+3. Najduža reč u rečenici bez sort.","AI može generisati edge caseove: prazno, punctuation, Unicode; ti odlučuješ šta podržavaš.",5 funkcija prolaze sopstvene testove.,/course/software-engineer/days/d009
+d010,10,f1,w02,Debugging kao skill,09.09.2026,120,TOP Understanding Errors; javascript.info Debugging in the browser.,"1. Uzmi 3 jučerašnje funkcije i namerno ubaci 5 bugova.
+2. Nađi bugove pomoću debugger/breakpoint, ne console.log samo.
+3. Napiši bug report: expected, actual, minimal reproduction, root cause, fix.",AI “rubber duck”: postavlja pitanja o stanju promenljivih. Ne sme direktno locirati bug.,Imaš 3 kratka bug reporta i možeš koristiti breakpoint/step over/step into.,/course/software-engineer/days/d010
+d011,11,f1,w02,Error handling i defensive programming,10.09.2026,120,MDN Control flow and error handling; javascript.info Error handling basics.,"1. Napravi parseAge(input) sa validacijom.
+2. safeDivide(a,b) sa jasnom greškom za b=0.
+3. Program koji parsira JSON string i vraća kontrolisanu grešku.",AI generiše “hostile inputs”; ti popravljaš program.,Program ne pada nekontrolisano na 10 loših inputa.,/course/software-engineer/days/d011
+d012,12,f1,w02,Problem decomposition drill,11.09.2026,120,TOP Problem Solving. Ne čitaj solutione.,"1. Problem: parking garaža — izračunaj cenu prema satima, vikendu i izgubljenoj karti.
+2. Pre koda napiši input/output/examples/edge cases/pseudocode.
+3. Implementiraj tek kada plan stane na jednu stranu.",AI arhitekta samo kritikuje plan pre implementacije.,Plan i implementacija se podudaraju; nema “kodiranja napamet”.,/course/software-engineer/days/d012
+d013,13,f1,w02,Mini-projekat: Text Analyzer,12.09.2026,180,"Kombinuj strings, loops, functions, objects, error handling.","1. CLI prima tekst i vraća: broj karaktera, reči, rečenica, najdužu reč, top 5 reči.
+2. Ignoriši case; dokumentuj pravilo za punctuation.
+3. Dodaj 15 test inputa u tests-manual.md.",AI test engineer: generiše test matricu; AI code reviewer tek posle finalne verzije.,"Program radi, README objašnjava algoritam i edge cases.",/course/software-engineer/days/d013
+d014,14,f1,w02,Checkpoint 2 — nepoznat problem,13.09.2026,75,Bez novih resursa.,"1. AI OFF 45 min: “Given a string, return first non-repeating character”.
+2. Napiši brute force O(n²), pa bolju verziju sa frequency map.
+3. Objasni zašto je druga brža bez formalne matematike.",Na kraju AI proverava complexity objašnjenje.,Možeš dati dve strategije i objasniti trade-off.,/course/software-engineer/days/d014
+d015,15,f1,w03,Arrays fundamentalno,14.09.2026,120,javascript.info Arrays; MDN Indexed collections.,"1. sum, average, unique, removeDuplicates bez Set pa sa Set.
+2. rotateLeft(array,k).
+3. chunk(array,size).",AI samo test cases; za svaki bug prvo ti napiši hipotezu.,Možeš samostalno iterirati i transformisati array bez tutorijala.,/course/software-engineer/days/d015
+d016,16,f1,w03,Array methods,15.09.2026,120,javascript.info Array methods; MDN Array reference za map/filter/reduce/find/some/every.,"1. Reši 6 malih zadataka prvo for-loopom, zatim map/filter/reduce gde ima smisla.
+2. Iz liste proizvoda izračunaj ukupnu vrednost samo aktivnih proizvoda.
+3. Grupiši korisnike po gradu.","AI pita “zašto baš ovaj method?”, ne dozvoli mu da bira metod unapred.","Možeš opravdati kada koristiš map, filter, reduce i kada običan loop.",/course/software-engineer/days/d016
+d017,17,f1,w03,Objects i references,16.09.2026,120,javascript.info Objects + object references/copying; MDN Working with objects.,"1. Napravi user object sa nested address i permissions.
+2. Demonstriraj shallow copy problem; popravi structuredClone-om ili ručno.
+3. normalizeUser(raw) vraća standardizovan object.",AI proverava tvoje predikcije reference equality.,Razumeš zašto dve promenljive mogu pokazivati na isti object.,/course/software-engineer/days/d017
+d018,18,f1,w03,"Map, Set, destructuring",17.09.2026,120,javascript.info Map and Set; destructuring; Object.keys/values/entries.,"1. frequencyCounter sa Map.
+2. Intersection dve liste sa Set.
+3. Destructure API-like object i napravi safe defaults.",AI generiše 5 input/output primera; ti implementiraš.,Znaš da izabereš Object vs Map vs Set za jednostavne slučajeve.,/course/software-engineer/days/d018
+d019,19,f1,w03,Data modeling drill,18.09.2026,120,Bez nove teorije. Fokus na modelovanju.,"1. Modeluj biblioteku: Book, Member, Loan kao plain objects.
+2. Napiši funkcije borrowBook, returnBook, overdueLoans.
+3. Definiši invariants: knjiga ne može biti istovremeno izdata dvaput.",AI senior: postavlja pitanja o stanju i invariantima; ne piše kod.,Model sprečava nedozvoljena stanja osnovnim proverama.,/course/software-engineer/days/d019
+d020,20,f1,w03,Mini-projekat: Expense Tracker Core,19.09.2026,180,"Node, bez UI. Arrays/objects/functions.","1. Dodavanje expense {id,amount,category,date,note}.
+2. List/filter po category/date; monthly summary; top category.
+3. Podaci privremeno u memoriji; export/import JSON fajla kao stretch.",AI: review API funkcija i test matrix. Ne piše implementaciju pre tebe.,"CLI ili funkcijski modul ima 5+ operacija, validation i README.",/course/software-engineer/days/d020
+d021,21,f1,w03,Checkpoint 3 — transformacija podataka,20.09.2026,75,Bez novih resursa.,"1. AI OFF: iz liste narudžbina izračunaj revenue po kupcu i sortiraj top 3.
+2. Napiši verziju sa loops, zatim idiomatsku verziju.
+3. Zapiši time/space intuiciju.",AI tek na kraju poredi čitljivost dve verzije.,"Rešenje radi na praznim, jednom i višestrukim podacima.",/course/software-engineer/days/d021
+d022,22,f1,w04,Callbacks i higher-order functions,21.09.2026,120,javascript.info Advanced functions; MDN Functions.,"1. Napiši customMap(array, fn), customFilter, customReduce bez built-in metoda.
+2. Napravi applyDiscount(items, strategyFn).
+3. Objasni callback bez fraze “funkcija u funkciji” — opiši tok izvršavanja.",AI proverava tvoje objašnjenje; traži kontra-primer kada pogrešiš.,customMap/filter/reduce rade na 5 testova svaki.,/course/software-engineer/days/d022
+d023,23,f1,w04,Closures stvarno,22.09.2026,120,"javascript.info Variable scope, closure.","1. makeCounter(start), createMultiplier(x), once(fn).
+2. Napravi private balance kroz closure (deposit/withdraw/getBalance).
+3. Nacrtaj šta ostaje “živo” posle završetka outer funkcije.",AI daje samo memory-model pitanja.,Možeš objasniti closure na svom primeru bez definicije napamet.,/course/software-engineer/days/d023
+d024,24,f1,w04,Modules,23.09.2026,120,MDN JavaScript Modules; javascript.info Modules.,"1. Podeli Expense Tracker Core na storage.js, validation.js, analytics.js, index.js.
+2. Koristi named exports/imports.
+3. Napravi jedan circular-dependency primer na papiru i objasni zašto ga izbegavati.",AI reviewer: cohesion/coupling review.,Program radi posle podele i moduli imaju jasne odgovornosti.,/course/software-engineer/days/d024
+d025,25,f1,w04,Testing mindset,24.09.2026,120,TOP Testing Basics (uvod) ili Jest Getting Started; prvo koncept testova.,"1. Za 5 funkcija napiši Arrange/Act/Assert test slučajeve.
+2. Testiraj normal, boundary, invalid input.
+3. Ako koristiš Jest, napiši najmanje 12 automatizovanih testova.","AI test engineer sme da predloži propuštene klase testova, ne implementaciju.",Test suite pada kada namerno pokvariš funkciju i prolazi nakon popravke.,/course/software-engineer/days/d025
+d026,26,f1,w04,Refactoring,25.09.2026,120,TOP Clean Code; javascript.info Coding Style.,"1. Izaberi najgori fajl iz prve 3 nedelje.
+2. Preimenuj, skrati funkcije, ukloni duplication, uvedi constants.
+3. Testovi moraju ostati zeleni posle svakog malog koraka.","AI reviewer daje komentare u stilu pull requesta, bez final code-a.",Refactor ima isti behavior i merljivo čitljiviji kod.,/course/software-engineer/days/d026
+d027,27,f1,w04,Mini-projekat: Bank Account Engine,26.09.2026,180,"Funkcije, closures/modules, tests.","1. Account: deposit, withdraw, transfer, statement.
+2. Zabrani negativne iznose i overdraft.
+3. Transakcije čuvaj kao immutable-like records; 20 testova.",AI može da bude QA i security reviewer za business logic.,"20 testova, nema nelogičnih stanja, README sa invariantima.",/course/software-engineer/days/d027
+d028,28,f1,w04,Checkpoint 4 — mesec 1,27.09.2026,90,Ponovi sve iz nedelja 1–4.,"1. 60 min AI OFF: napravi od nule “inventory core” sa add/remove/search/totalValue.
+2. Napiši 5 testova.
+3. Snimi sebi 5-min objašnjenje: kako ide problem → model → algoritam → kod → test.","AI na kraju ocenjuje samo na rubrici 1–5: decomposition, correctness, naming, tests, explanation.","Prosek ≥4/5. Ako nije, ponovi slabosti 2 dana pre faze 2.",/course/software-engineer/days/d028
+d029,29,f2,w05,DOM mental model,28.09.2026,120,TOP DOM Manipulation and Events; javascript.info Document/DOM intro.,"1. Ručno napravi HTML sa listom i dugmetom.
+2. JS-om createElement/append/remove 10 elemenata.
+3. Napiši renderList(items) koja ne menja source data.",AI objašnjava DOM samo kroz pitanja o tree strukturi.,Možeš objasniti DOM kao strukturu i menjati ga bez innerHTML za glavne zadatke.,/course/software-engineer/days/d029
+d030,30,f2,w05,Events,29.09.2026,120,TOP DOM events; javascript.info Introduction to browser events.,"1. Click counter, input live preview, keydown shortcuts.
+2. Event delegation: lista sa 20 dugmadi koristi jedan listener.
+3. Objasni event.target vs currentTarget na primeru.",AI generiše scenario “zašto moj event ne radi”; ti debuguj.,Event delegation radi i možeš objasniti bubbling.,/course/software-engineer/days/d030
+d031,31,f2,w05,Odin Rock Paper Scissors — logika,30.09.2026,120,TOP Project: Rock Paper Scissors.,"1. Ne gledaj gotove implementacije. Napiši plan.
+2. Implementiraj 5 rundi u konzoli sa score-om.
+3. Commit posle: game logic / scoring / validation.",AI samo requirements clarification i test cases.,Igra radi u konzoli bez globalnog haosa.,/course/software-engineer/days/d031
+d032,32,f2,w05,RPS — UI,01.10.2026,120,TOP Revisiting Rock Paper Scissors.,"1. Dodaj DOM buttons i prikaz score-a.
+2. Game logic ostaje odvojena od DOM-a.
+3. Dodaj reset bez reload-a.",AI reviewer ocenjuje separation of concerns.,"UI radi, a core logika može da se testira bez DOM-a.",/course/software-engineer/days/d032
+d033,33,f2,w05,Etch-a-Sketch plan + grid,02.10.2026,120,TOP Project: Etch-a-Sketch.,"1. Napiši requirements i pseudocode.
+2. Generiši NxN grid.
+3. Hover crta; reset i resize sa validacijom.",AI ne sme davati CSS/JS solution; može objasniti jedan DOM API ako ga pitaš.,16x16 i 32x32 grid rade bez copy-paste blokova.,/course/software-engineer/days/d033
+d034,34,f2,w05,Etch-a-Sketch polish,03.10.2026,180,Bez nove teorije.,"1. Dodaj 2 modes: black/random ili erase.
+2. Refactor render/reset logic.
+3. README sa screenshot placeholderom i arhitekturom.",AI accessibility/code review.,Projekat je deploy-ready kao statički sajt.,/course/software-engineer/days/d034
+d035,35,f2,w05,Checkpoint 5,04.10.2026,75,Ponovi DOM/events.,"1. AI OFF: napravi mini “shopping list” UI: add/delete/mark purchased.
+2. Bez localStorage.
+3. Posle 45 min napiši šta bi promenio da ima 10k stavki.",AI tek na kraju review.,Aplikacija radi i kod je podeljen na data/render/event deo.,/course/software-engineer/days/d035
+d036,36,f2,w06,Object basics refresh,05.10.2026,120,TOP Object Basics; javascript.info Objects.,"1. Napravi calculator object sa add/subtract/multiply/divide.
+2. Napravi player object i scoreBoard.
+3. Prepoznaj 3 mesta gde object bolje modeluje stanje od više nepovezanih promenljivih.",AI samo model review.,"Objekti predstavljaju domenske entitete, ne služe samo kao “kutije”.",/course/software-engineer/days/d036
+d037,37,f2,w06,Calculator specifikacija,06.10.2026,120,"TOP Project: Calculator — pročitaj requirements, ne solution.","1. Nacrtaj state machine: firstOperand/operator/secondOperand/display.
+2. Definiši behavior za decimal, clear, equals twice, divide by zero.
+3. Napiši operate(a,op,b) i testiraj odvojeno.","AI product manager: proverava nejasne requirements, bez koda.",Imaš spec i test matrix pre UI implementacije.,/course/software-engineer/days/d037
+d038,38,f2,w06,Calculator implementacija 1,07.10.2026,120,Bez nove teorije.,"1. UI buttons + display.
+2. Broj/operator input radi.
+3. Ne koristi eval().",AI debugger samo ako si proveo 20 min sa breakpointom.,Osnovne 4 operacije rade.,/course/software-engineer/days/d038
+d039,39,f2,w06,Calculator implementacija 2,08.10.2026,120,Bez nove teorije.,"1. Decimals, backspace, keyboard, error state.
+2. Refactor state transitions.
+3. Dodaj 15 test slučajeva u dokument ili automated za core.",AI test engineer i code reviewer.,Edge cases su dokumentovani i rade.,/course/software-engineer/days/d039
+d040,40,f2,w06,Odin Foundations audit,09.10.2026,120,TOP Foundations Conclusion / Choose Your Path Forward.,"1. Pregledaj Foundations listu i označi: znam / klimavo / ne znam.
+2. Ne vraćaj se na HTML/CSS detalje osim ako blokiraju JS.
+3. Napravi “JS foundations cheat sheet” na 2 strane iz glave.",AI dopunjava samo rupe posle tvoje verzije.,"Cheat sheet pokriva types, control flow, functions, arrays, objects, DOM, events, errors.",/course/software-engineer/days/d040
+d041,41,f2,w06,Samostalni projekat: Quiz App,10.10.2026,180,Bez tutoriala. DOM + state + arrays/objects.,"1. 10 pitanja iz JS-a; jedno po jedno; score; restart.
+2. Shuffle pitanja; spreči dvostruki odgovor.
+3. Odvoji question data, game state, render.",AI generiše pitanja i QA cases; ti praviš sistem.,Aplikacija radi i možeš dodati pitanje bez menjanja game logike.,/course/software-engineer/days/d041
+d042,42,f2,w06,Checkpoint 6 — Odin Foundations gate,11.10.2026,75,Bez novih resursa.,"1. AI OFF: objasni i napiši mini app “counter with history” za 45 min.
+2. Odgovori na 20 sopstvenih flash pitanja.
+3. Oceni sebe 0–2 po temi; sve ključne teme moraju ≥1.",AI proverava samo nakon predaje.,"Spreman si za Odin JavaScript course, ne vraćaš se na stari video-kurs.",/course/software-engineer/days/d042
+d043,43,f3,w07,Constructors i prototype intuicija,12.10.2026,120,TOP JS: Organizing Code with Objects + Object Constructors; javascript.info Constructor/new.,"1. Napravi Book constructor i 5 instances.
+2. Dodaj method na prototype i objasni razliku od method per instance.
+3. Proveri prototype chain u devtools.",AI proverava objašnjenje prototype chain-a.,Možeš objasniti new u 4 koraka.,/course/software-engineer/days/d043
+d044,44,f3,w07,Project Library — model,13.10.2026,120,TOP Project: Library.,"1. Definiši Book fields i Library collection API.
+2. addBook/removeBook/toggleRead/findById pre UI-a.
+3. ID generiši crypto.randomUUID gde je dostupno.",AI arhitekta kritikuje data model.,Core API radi u konzoli.,/course/software-engineer/days/d044
+d045,45,f3,w07,Library — render,14.10.2026,120,DOM + odvajanje logike.,"1. renderBooks() čita state i pravi cards/table.
+2. Form submit dodaje knjigu.
+3. Delete i toggle read preko data-id.",AI review samo separation of concerns.,Sve funkcije rade bez duplicated state-a.,/course/software-engineer/days/d045
+d046,46,f3,w07,Factories i module pattern,15.10.2026,120,TOP Factory Functions and Module Pattern; javascript.info closures recap.,"1. Prepiši mali constructor primer kao factory.
+2. Napravi counter module sa privatnim state-om.
+3. Uporedi constructor/prototype vs factory/closure u notes.","AI debatni partner: traži trade-offs, bez “jedan je bolji”.",Razumeš oba modela i možeš izabrati jedan.,/course/software-engineer/days/d046
+d047,47,f3,w07,Library refactor + persistence,16.10.2026,120,Bez tutoriala; localStorage/JSON po potrebi MDN.,"1. Dodaj save/load localStorage.
+2. Validacija form-a.
+3. Razdvoji storage i UI module.",AI QA za persistence edge cases.,Refresh ne gubi podatke i invalid input ne pravi book.,/course/software-engineer/days/d047
+d048,48,f3,w07,Library polish + README,17.10.2026,180,Bez nove teorije.,"1. Refactor naming i file structure.
+2. Dodaj empty state i simple filter.
+3. README: architecture, trade-offs, known limitations.",AI PR reviewer sa severity: blocker/major/minor/nit.,Nema blocker/major komentara nakon tvoje popravke.,/course/software-engineer/days/d048
+d049,49,f3,w07,Checkpoint 7,18.10.2026,75,Bez novih resursa.,"1. AI OFF: modeluj “Movie Watchlist” core za 45 min.
+2. Mora imati add/remove/rate/filter.
+3. Objasni gde bi stavio persistence i DOM.",AI oceni architecture 1–5.,≥4 architecture i working core.,/course/software-engineer/days/d049
+d050,50,f3,w08,Tic-Tac-Toe: domenski model,19.10.2026,120,TOP Project: Tic Tac Toe.,"1. Bez DOM-a: Gameboard, Player, GameController.
+2. Definiši win combinations i game-over invariant.
+3. Napiši checkWinner čistom funkcijom.",AI samo pita o state transitions.,Game core radi u konzoli.,/course/software-engineer/days/d050
+d051,51,f3,w08,Tic-Tac-Toe: UI,20.10.2026,120,DOM/events.,"1. Render board iz state-a.
+2. Klik radi samo na praznoj ćeliji.
+3. Prikaži current player/winner/draw/restart.",AI bug coach ako treba.,UI ne sadrži duplu kopiju board state-a.,/course/software-engineer/days/d051
+d052,52,f3,w08,Classes,21.10.2026,120,TOP Classes; MDN Classes; javascript.info Classes basics.,"1. Napravi class User sa constructor/method/getter.
+2. Inheritance primer samo da razumeš mehanizam; zatim kompozicioni primer.
+3. Zapiši kada klasa pomaže, a kada je nepotrebna.",AI traži da braniš design choice.,Razumeš class kao syntax nad prototype mehanizmom na praktičnom nivou.,/course/software-engineer/days/d052
+d053,53,f3,w08,ES Modules,22.10.2026,120,TOP ES6 Modules; MDN Modules.,"1. Podeli Tic-Tac-Toe na 4 modula.
+2. Izbegni global variables.
+3. Napravi dependency diagram na papiru.",AI proverava dependency direction.,App radi preko modules i ima jasan dependency flow.,/course/software-engineer/days/d053
+d054,54,f3,w08,npm i package.json,23.10.2026,120,TOP npm.,"1. npm init; scripts start/test/lint placeholder.
+2. Instaliraj jednu dev dependency i ukloni je.
+3. Objasni package.json vs package-lock.json.",AI kviz 10 pitanja o npm-u.,Možeš napraviti projekat i objasniti dependency/devDependency.,/course/software-engineer/days/d054
+d055,55,f3,w08,Mini-projekat: Memory Game core,24.10.2026,180,Moduli/classes/factories po izboru.,"1. Deck generation/shuffle/flip/match logic.
+2. DOM basic UI.
+3. Commit po funkcionalnosti.","AI reviewer, bez generisanja game logic-a.",Igra ima stabilan state i nema illegal double-click ponašanje.,/course/software-engineer/days/d055
+d056,56,f3,w08,Checkpoint 8,25.10.2026,75,Bez nove teorije.,"1. AI OFF: napiši isWinner(board) za Tic-Tac-Toe od nule.
+2. Napiši shuffle bez copy-paste.
+3. Objasni module boundary u svom projektu.",AI tek na kraju.,Sve 3 stavke rešene i objašnjene.,/course/software-engineer/days/d056
+d057,57,f3,w09,Bundler mental model,26.10.2026,120,TOP Webpack + Revisiting Webpack (ili trenutni alat koji lekcija zahteva).,"1. Nacrtaj entry → dependency graph → bundle.
+2. Pokreni minimal config iz dokumentacije, ali prekucaj ga i objasni svaku stavku.
+3. Napravi dev/build npm scripts.","AI sme objasniti config liniju, ali ne generiše ceo config pre tvog pokušaja.",Možeš objasniti šta bundler rešava.,/course/software-engineer/days/d057
+d058,58,f3,w09,Restaurant Page — skeleton,27.10.2026,120,TOP Project: Restaurant Page.,"1. Jedan HTML skeleton; content preko JS modules.
+2. home/menu/contact moduli.
+3. Navigation menja content bez reload-a.",AI UI review samo posle funkcionalnosti.,3 views rade kroz module functions.,/course/software-engineer/days/d058
+d059,59,f3,w09,Restaurant — separation,28.10.2026,120,Bez nove teorije.,"1. Izvuci DOM helpers po potrebi.
+2. Nema ogromne 100-line render funkcije.
+3. Asset handling kroz bundler.",AI PR review na cohesion/coupling.,Kod se lako menja bez ripple efekta.,/course/software-engineer/days/d059
+d060,60,f3,w09,JSON,29.10.2026,120,TOP JSON; javascript.info JSON methods.,"1. Parse/stringify nested objekat.
+2. Objasni šta se gubi pri JSON serializaciji (npr. functions).
+3. Mock API response → normalize → render.",AI daje 5 malformed/edge JSON scenarija.,Sigurno parsiraš i validiraš expected shape.,/course/software-engineer/days/d060
+d061,61,f3,w09,Linting i code quality,30.10.2026,120,TOP Linting; current ESLint getting started po potrebi.,"1. Dodaj ESLint u jedan projekat.
+2. Ispravi errors; ne slepo sve warnings.
+3. Napiši 5 svojih style pravila.",AI objašnjava samo lint rule koji ne razumeš.,npm script lint radi.,/course/software-engineer/days/d061
+d062,62,f3,w09,Restaurant final,31.10.2026,180,Bez nove teorije.,"1. Responsive enough za desktop/mobile basic.
+2. README i deployment.
+3. Tag release v1.0.0 lokalno u Git-u.",AI final reviewer.,"Projekat je završen, ne beskonačno poliran.",/course/software-engineer/days/d062
+d063,63,f3,w09,Checkpoint 9,01.11.2026,75,Bez novih resursa.,"1. AI OFF: napravi mini tabbed interface iz praznog foldera.
+2. Koristi modules i npm script.
+3. Objasni build pipeline.",AI proverava samo na kraju.,Working mini app za 60 min.,/course/software-engineer/days/d063
+d064,64,f3,w10,Todo model/spec,02.11.2026,120,TOP OOP Principles + Project: Todo List requirements.,"1. Model: Project, Todo; fields: id,title,description,dueDate,priority,completed.
+2. Definiši operations i invariants pre koda.
+3. Nacrtaj data flow: storage → state → render → events.",AI arhitekta traži rupe u modelu.,"Spec pokriva CRUD, filtering i persistence.",/course/software-engineer/days/d064
+d065,65,f3,w10,Todo core,03.11.2026,120,Bez UI-a.,"1. createProject/deleteProject; createTodo/update/delete/toggle.
+2. Filter po project/status/priority.
+3. Testiraj core ručno ili Jestom.",AI test cases.,Core radi nezavisno od DOM-a.,/course/software-engineer/days/d065
+d066,66,f3,w10,Todo UI,04.11.2026,120,DOM/forms.,"1. Project sidebar + todo list.
+2. Form create/edit.
+3. Event handlers zovu core API, ne menjaju state ad hoc.",AI reviewer separation.,CRUD radi u UI-u.,/course/software-engineer/days/d066
+d067,67,f3,w10,Persistence + dates,05.11.2026,120,localStorage + JSON; date handling po MDN.,"1. Save posle mutation; load pri startu.
+2. Due date prikaz i overdue indikator.
+3. Migracioni default ako stari data nema novo polje.",AI QA za corrupt storage i missing fields.,Refresh čuva data; app se ne ruši na praznom/corrupt storage-u.,/course/software-engineer/days/d067
+d068,68,f3,w10,Form validation,06.11.2026,120,TOP Form Validation with JavaScript.,"1. Required/length/date rules.
+2. Inline error messages.
+3. Validacija i u core-u za business rules, ne samo HTML form.",AI generiše invalid input matrix.,Invalid todo ne ulazi u state.,/course/software-engineer/days/d068
+d069,69,f3,w10,Todo final + refactor,07.11.2026,180,TOP OOP Principles recap.,"1. Prođi kroz svaki modul: jedan razlog za promenu?
+2. Ukloni duplication.
+3. README sa diagramom modules/data flow.",AI architecture review; ti primenjuješ samo komentare koje razumeš.,Projekat ima jasan folder structure i nema major bugova.,/course/software-engineer/days/d069
+d070,70,f3,w10,Checkpoint 10,08.11.2026,90,Bez nove teorije.,"1. AI OFF 60 min: napravi core “habit tracker” sa create/log/streak.
+2. Nema DOM-a; samo model i funkcije.
+3. Napiši 8 tests/manual assertions.",AI final review.,Model radi i možeš objasniti zašto si izabrao structure.,/course/software-engineer/days/d070
+d071,71,f3,w11,Event loop intuicija,09.11.2026,120,TOP Asynchronous Code; javascript.info Event loop.,"1. Predvidi output za 6 setTimeout/Promise snippets.
+2. Nacrtaj call stack/task/microtask redosled.
+3. Napiši sleep(ms) kao Promise.",AI daje predict-output pitanja jedno po jedno.,≥5/6 tačnih predikcija uz objašnjenje.,/course/software-engineer/days/d071
+d072,72,f3,w11,Promises,10.11.2026,120,javascript.info Promises basics; MDN Promises.,"1. Napravi promise koji resolve/reject na uslov.
+2. Chain 3 transformacije.
+3. Uhvati grešku na pravom nivou.",AI proverava tok state pending/fulfilled/rejected.,Možeš čitati Promise chain bez nagađanja.,/course/software-engineer/days/d072
+d073,73,f3,w11,HTTP + fetch,11.11.2026,120,TOP Working with APIs; MDN Fetch API overview.,"1. GET javni JSON API.
+2. Proveri response.ok; parse JSON; render minimal data.
+3. Namerno koristi pogrešan URL i obradi grešku.",AI objašnjava HTTP status samo ako pitaš konkretno.,Razlikuješ network failure od HTTP error statusa.,/course/software-engineer/days/d073
+d074,74,f3,w11,async/await,12.11.2026,120,TOP Async and Await; javascript.info Async/await.,"1. Prepiši Promise chain u async/await.
+2. try/catch/finally loading state.
+3. Promise.all za 3 nezavisna requesta.",AI reviewer concurrency vs sequential.,Znaš kada requesti mogu paralelno.,/course/software-engineer/days/d074
+d075,75,f3,w11,Weather App — spec + data layer,13.11.2026,120,TOP Project: Weather App.,"1. Izaberi API prema Odin uputstvu.
+2. Napravi fetchWeather(location) koji vraća normalized object.
+3. Loading/error/not-found states.","AI sme pomoći oko čitanja API dokumentacije, ne sme napisati celu app.",Data layer radi iz console-a.,/course/software-engineer/days/d075
+d076,76,f3,w11,Weather App — UI + finish,14.11.2026,180,Bez nove teorije.,"1. Search location, display temperature/conditions/details.
+2. Unit toggle ako requirements podržavaju.
+3. Debounce input kao stretch; README.",AI UX + code review.,App radi na valid/invalid lokaciji i nema unhandled promise rejection.,/course/software-engineer/days/d076
+d077,77,f3,w11,Checkpoint 11 — async,15.11.2026,90,Bez novih resursa.,"1. AI OFF: napiši async funkciju koja fetchuje 2 resursa i kombinuje podatke.
+2. Dodaj loading/error behavior pseudocode.
+3. Objasni event loop svojim rečima.",AI tek na kraju proverava.,Working code + jasno objašnjenje.,/course/software-engineer/days/d077
+d078,78,f3,w12,Automated testing,16.11.2026,120,TOP Testing Basics / Testing Practice.,"1. Setup Jest prema Odin lekciji.
+2. Testiraj capitalize, reverseString, calculator, caesarCipher po projektu ako je aktuelan.
+3. Pre svakog testa napiši šta tačno dokazuje.",AI može dati missing test cases posle tvojih.,Test suite pokriva normal/boundary/invalid scenarije.,/course/software-engineer/days/d078
+d079,79,f3,w12,TDD mini drill,17.11.2026,120,TOP More Testing; princip red-green-refactor.,"1. Implementiraj stringCalculator kroz 5 inkremenata: prvo test, onda minimal code.
+2. Commit svaki green state.
+3. Refactor tek kada je zeleno.",AI ne piše test ni code; samo proverava da li test ima smisla.,Imaš 5 TDD commit koraka.,/course/software-engineer/days/d079
+d080,80,f3,w12,Recursion,18.11.2026,120,TOP Recursive Methods / Project: Recursion; javascript.info Recursion and stack.,"1. factorial, fibonacci (naivni), sumArray recursively.
+2. mergeSort prema Odin projektu tek nakon što nacrtaš split/merge.
+3. Objasni base case i recursive case.","AI može dati trace pitanje, ne solution.",Možeš ručno trasirati recursion za mali input.,/course/software-engineer/days/d080
+d081,81,f3,w12,Big O time,19.11.2026,120,TOP Time Complexity.,"1. Klasifikuj 10 snippets: O(1), O(n), O(n²), O(log n), O(n log n).
+2. Za prethodne funkcije napiši time complexity.
+3. Napravi merenje runtime za linear vs quadratic na rastućim inputima.","AI proverava reasoning, ne samo odgovor.",≥8/10 klasifikacija tačno uz razlog.,/course/software-engineer/days/d081
+d082,82,f3,w12,Space complexity + DS preview,20.11.2026,120,TOP Space Complexity + A Very Brief Intro to CS.,"1. Proceni auxiliary space 6 funkcija.
+2. Objasni stack vs heap konceptualno bez detalja C-a.
+3. Napravi stack i queue u JS preko array-a, pa zapiši ograničenja.",AI kviz.,Razlikuješ time vs space i znaš osnovni stack/queue API.,/course/software-engineer/days/d082
+d083,83,f3,w12,Algorithm gym,21.11.2026,180,Exercism practice ili custom problemi.,"1. Reši 4 problema: two-sum, valid parentheses, binary search, merge intervals simplified.
+2. Za svaki: brute force → better → complexity.
+3. Ne čitaj solution prvih 30 min po problemu.",Hint ladder samo po pravilu Level 1–4.,"4 problem files sa planom, kodom, testovima, complexity.",/course/software-engineer/days/d083
+d084,84,f3,w12,Checkpoint 12 — Faza 3 gate,22.11.2026,90,Bez novih resursa.,"1. AI OFF 75 min: problem “najkraći prozor u listi koji dostiže sum ≥ target” ili sličan medium-lite.
+2. Ako ne znaš optimalno, prvo napiši brute force koji radi.
+3. Objasni šta bi tražio u dokumentaciji.",AI na kraju radi interview feedback.,Imaš korektno makar brute-force rešenje i disciplinovan proces.,/course/software-engineer/days/d084
+d085,85,f4,w13,CS50 Week 0: computational thinking,23.11.2026,120,"CS50x Week 0 lecture/notes: representation, algorithms, pseudocode, Scratch.","1. Gledaj/čitaj aktivno: pauziraj i predvidi.
+2. Uradi Problem Set 0 Scratch u razumnom obimu.
+3. Posle Scratch logike napiši pseudocode i JS ekvivalent za jednu komponentu.",AI samo objašnjava koncept nakon tvog pokušaja; poštuj CS50 academic honesty pravila.,Pset0 ili ekvivalentna vežba završena; razumeš abstraction/input/output.,/course/software-engineer/days/d085
+d086,86,f4,w13,"C: compile, types, variables",24.11.2026,120,CS50x Week 1 lecture/notes prvi deo.,"1. Hello C; compile/run.
+2. Napiši male programe za int/float/char/string input/output.
+3. Uporedi JS dynamic typing sa C types u notes.",AI ne rešava pset; može objasniti compiler error van konkretne solution logike.,Možeš objasniti source→compiler→machine code konceptualno.,/course/software-engineer/days/d086
+d087,87,f4,w13,C conditionals/loops,25.11.2026,120,CS50 Week 1 nastavak.,"1. Prepiši FizzBuzz u C.
+2. Napravi sum 1..n i multiplication table.
+3. Reši 2 CS50 practice zadatka posle Week1 ako su dostupni, bez solutiona.",AI hint samo na sintaksu C ako je blokada.,Logika prelazi iz JS u C bez nove “lekcije programiranja”.,/course/software-engineer/days/d087
+d088,88,f4,w13,C functions + pseudocode,26.11.2026,120,CS50 Week 1 functions/style.,"1. isPrime u C i JS side-by-side.
+2. Napiši clean function signatures.
+3. Pokreni style/correctness alate koje CS50 predviđa ako radiš u njihovom okruženju.","AI poredi koncept, ne piše answer.",Možeš prepoznati isti algoritam u dva jezika.,/course/software-engineer/days/d088
+d089,89,f4,w13,CS50 Problem Set 1 — pokušaj,27.11.2026,120,CS50x Pset1. Izaberi problems prema svojim pravilima/kursu.,"1. Prvo requirements → examples → pseudocode.
+2. Radi minimum 90 min bez AI/full solution.
+3. Zapiši gde si zapao kao precizno pitanje.",AI samo dozvoljena konceptualna pomoć u skladu sa trenutnom CS50 politikom; nikada gotov pset solution.,Imaš značajan samostalni pokušaj i precizne beleške.,/course/software-engineer/days/d089
+d090,90,f4,w13,Pset1 završetak + JS transfer,28.11.2026,180,CS50x Pset1.,"1. Završi svoj pset u skladu s pravilima.
+2. Jedan algoritam iz pseta implementiraj ponovo u JS bez gledanja C koda.
+3. Uporedi syntax vs reasoning.",AI review samo tvog JS transfera.,"Možeš objasniti šta je jezik-specifično, a šta algoritamsko.",/course/software-engineer/days/d090
+d091,91,f4,w13,Checkpoint 13,29.11.2026,90,CS50 Week0–1 recap.,"1. AI OFF: napiši u C prime checker i u JS isti algoritam.
+2. Objasni integer overflow i floating-point imprecision na nivou primera.
+3. Retro: šta te C naučio o JS-u.",AI kviz na kraju.,2 implementacije rade i objašnjenje je tvoje.,/course/software-engineer/days/d091
+d092,92,f4,w14,Compilation pipeline + arrays,30.11.2026,120,CS50x Week 2 lecture/notes prvi deo.,"1. Nacrtaj preprocess→compile→assemble→link.
+2. C array: sum/average/min/max.
+3. Uporedi fixed-size C array sa JS dynamic array konceptualno.",AI proverava diagram.,Možeš objasniti pipeline i osnovni array memory layout.,/course/software-engineer/days/d092
+d093,93,f4,w14,Strings kao niz karaktera,01.12.2026,120,CS50 Week 2 strings.,"1. Napiši strlen-like loop.
+2. Count letters/digits/spaces.
+3. JS verzija istih algoritama bez built-in shortcut-a.","AI test cases, bez solution.","Vidiš string traversal kao algoritam, ne method memorisanje.",/course/software-engineer/days/d093
+d094,94,f4,w14,Command-line arguments + crypto thinking,02.12.2026,120,CS50 Week 2 relevant sections.,"1. Mali CLI koji čita argument i transformiše tekst.
+2. Implementiraj jednostavan Caesar shift kao vežbu, bez kopiranja CS50 solutiona.
+3. Test wrap-around i non-letter characters.",AI sme generisati testove.,Algoritam radi u najmanje jednom jeziku i možeš ga prebaciti u drugi.,/course/software-engineer/days/d094
+d095,95,f4,w14,Debugging u C,03.12.2026,120,CS50 Week2 debugging tools/notes.,"1. Namerno napravi off-by-one, uninitialized/incorrect index bug.
+2. Koristi debugger korak-po-korak.
+3. Napiši root cause, ne samo fix.",AI rubber duck.,"3 bugova dijagnostikovana metodom, ne pogađanjem.",/course/software-engineer/days/d095
+d096,96,f4,w14,Pset2 pokušaj,04.12.2026,120,CS50x Problem Set 2.,"1. Prvo pset samostalno.
+2. Radi barem 90 min.
+3. Svaki put kada zapneš napiši konkretno: expected/actual/state.",Samo policy-compliant help.,Značajan pokušaj i jedan deo završen.,/course/software-engineer/days/d096
+d097,97,f4,w14,Pset2 završetak + JS transfer,05.12.2026,180,CS50x Pset2.,"1. Završi u skladu sa pravilima.
+2. Izaberi jednu string logiku i napiši od nule u JS.
+3. Dodaj automated JS tests.",AI review JS transfera.,Pset + JS transfer demonstriraju isti model razmišljanja.,/course/software-engineer/days/d097
+d098,98,f4,w14,Checkpoint 14,06.12.2026,90,Bez nove teorije.,"1. AI OFF: implementiraj run-length encoding basic za string.
+2. Napiši complexity.
+3. Pronađi 3 edge case-a pre pokretanja.",AI tek posle.,Rešenje radi i edge cases su namerni.,/course/software-engineer/days/d098
+d099,99,f4,w15,Linear vs binary search,07.12.2026,120,CS50x Week 3 search.,"1. Implementiraj oba u C ili JS.
+2. Ručni trace za 16 elemenata.
+3. Napiši precondition binary search-a.",AI daje samo trace pitanja.,Možeš objasniti O(n) vs O(log n) intuitivno.,/course/software-engineer/days/d099
+d100,100,f4,w15,Selection/bubble sort,08.12.2026,120,CS50 Week3 sorting.,"1. Implementiraj selection i bubble u JS.
+2. Broj comparisons/swaps na malom inputu.
+3. Napiši kada je svaki loš izbor.",AI proverava complexity.,Možeš ručno odigrati oba algoritma.,/course/software-engineer/days/d100
+d101,101,f4,w15,Merge sort + recursion,09.12.2026,120,CS50 Week3 merge sort + Odin recursion recap.,"1. Implementiraj merge + mergeSort u JS od nule.
+2. Trace [5,2,4,1].
+3. Napiši O(n log n) intuiciju.",AI ne daje code; samo proverava trace.,Merge sort radi i umeš da objasniš split/merge.,/course/software-engineer/days/d101
+d102,102,f4,w15,Custom comparator i trade-offs,10.12.2026,120,MDN Array.sort reference samo za comparator behavior.,"1. Sort objects po 2 kriterijuma.
+2. Uporedi built-in sort sa sopstvenim algoritmom: zašto u produkciji ne pišeš sort iz hobija.
+3. Napiši 5 pitanja koja postavljaš pre izbora algoritma.",AI senior discussion.,Razlikuješ učenje algoritma od produkcionog izbora.,/course/software-engineer/days/d102
+d103,103,f4,w15,Pset3 pokušaj,11.12.2026,120,CS50x Problem Set 3.,"1. Radi samostalno.
+2. Nacrtaj data flow/problem structure pre koda.
+3. Ako postoji plurality/runoff/tideman izbor, prati zvanične instrukcije i policy.",Samo dozvoljena pomoć.,Najmanje 90 min kvalitetnog pokušaja.,/course/software-engineer/days/d103
+d104,104,f4,w15,Pset3 završetak + algorithm notebook,12.12.2026,180,CS50x Pset3.,"1. Završi koliko je realno.
+2. Napravi algorithms.md: search/sort + complexity + invariant.
+3. Reimplement one algorithm iz memorije.",AI proverava notebook na tačnost.,Algorithm notebook ima 5 osnovnih algoritama.,/course/software-engineer/days/d104
+d105,105,f4,w15,Checkpoint 15 — algorithm interview,13.12.2026,90,Bez novih resursa.,"1. AI OFF: “Given sorted array, find first occurrence of target”.
+2. Brute/optimal, pseudocode, code, tests, complexity.
+3. Objasni loop invariant ili bar zašto ne preskačeš odgovor.",AI interviewer posle 60 min.,Kompletan problem-solving proces bez pomoći.,/course/software-engineer/days/d105
+d106,106,f4,w16,"Hex, addresses, pointers",14.12.2026,120,CS50x Week 4 lecture/notes prvi deo.,"1. Nacrtaj memory boxes i pointer arrows.
+2. Mali C program sa & i *.
+3. Objasni razliku value vs address.",AI proverava crtež verbalno.,Možeš objasniti pointer bez “strašna magija”.,/course/software-engineer/days/d106
+d107,107,f4,w16,Strings/pointers,15.12.2026,120,CS50 Week4 strings/pointers.,"1. Uporedi char* i char array konceptualno.
+2. Objasni zašto assignment reference tipova u JS deli objekat.
+3. Napravi 5 JS reference/copy predikcija.",AI daje predict-output pitanja.,≥4/5 reference pitanja tačno.,/course/software-engineer/days/d107
+d108,108,f4,w16,malloc/free i memory leaks,16.12.2026,120,CS50 Week4 dynamic memory.,"1. Napiši mali malloc/free primer prema kursu.
+2. Pokreni memory checker ako je dostupan.
+3. Napiši analogiju sa GC u JS: šta JS rešava, šta ne rešava (logical leaks).",AI objašnjava samo konceptualno.,Razumeš ownership ideju i GC ograničenje na visokom nivou.,/course/software-engineer/days/d108
+d109,109,f4,w16,Buffer/array bounds + security intuition,17.12.2026,120,CS50 Week4 relevant memory safety section.,"1. Demonstriraj zašto out-of-bounds u C može biti opasan u kontrolisanom course primeru.
+2. Napiši JS validaciju index-a za sopstveni API.
+3. Notes: memory safety vs type/runtime protections.",AI bez exploit detalja; fokus na defensive programming.,Možeš objasniti zašto granice i validacija postoje.,/course/software-engineer/days/d109
+d110,110,f4,w16,Pset4 pokušaj,18.12.2026,120,CS50x Problem Set 4.,"1. Pset samostalno u skladu sa course policy.
+2. Prvo prouči file/data format u zvaničnom walkthrough-u ako je dozvoljeno.
+3. Vodi debugging log.",Policy-compliant conceptual help only.,90+ min samostalnog rada i debugging log.,/course/software-engineer/days/d110
+d111,111,f4,w16,Memory model transfer to JS,19.12.2026,180,javascript.info object references + garbage collection recap.,"1. Nacrtaj object graph za nested JS objects.
+2. Demonstriraj shallow copy bug i deep-copy strategiju.
+3. Napravi memory-leak-like scenario sa event listenerom/timerom i objasni cleanup konceptualno.",AI code reviewer.,Povezao si C memory sa JS references/GC bez mešanja modela.,/course/software-engineer/days/d111
+d112,112,f4,w16,Checkpoint 16,20.12.2026,90,Bez novih resursa.,"1. AI OFF: 10 pointer/reference prediction pitanja iz svojih notes.
+2. Napiši objašnjenje “šta se dešava kada const b = a za object”.
+3. Jedan C pointer mini program od nule.",AI tek na kraju.,≥8/10 + working mini program.,/course/software-engineer/days/d112
+d113,113,f4,w17,Linked lists,21.12.2026,120,CS50x Week 5 linked lists + TOP Linked Lists optional.,"1. Nacrtaj node chain.
+2. Implementiraj JS LinkedList: append, prepend, at, pop, contains, find.
+3. Napiši complexity po operaciji.",AI reviewer complexity.,Linked list radi i znaš zašto random access nije O(1).,/course/software-engineer/days/d113
+d114,114,f4,w17,Stacks/queues,22.12.2026,120,CS50 Week5 / sopstvene beleške.,"1. Implementiraj Stack i Queue API.
+2. Valid parentheses sa stack.
+3. BFS queue intuition na malom graph-u.",AI daje samo graph trace.,Možeš izabrati stack vs queue iz problema.,/course/software-engineer/days/d114
+d115,115,f4,w17,Hash tables,23.12.2026,120,CS50 Week5 hash tables + TOP HashMap preview.,"1. Implementiraj simple hash function za string edukativno.
+2. Napravi basic HashMap buckets/chaining u JS ili prati Odin kasnije.
+3. Objasni collision.",AI proverava trade-offs.,Razumeš expected O(1) ideju i collisions.,/course/software-engineer/days/d115
+d116,116,f4,w17,Trees,24.12.2026,120,CS50 Week5 trees + TOP BST preview.,"1. Nacrtaj BST insert/search.
+2. Implementiraj minimal BST insert/find.
+3. Traverse inorder/preorder/postorder.",AI trace questions.,Možeš objasniti balanced vs degenerate tree intuitivno.,/course/software-engineer/days/d116
+d117,117,f4,w17,Pset5 pokušaj,25.12.2026,120,CS50x Problem Set 5.,"1. Samostalan pokušaj.
+2. Pre koda definiši data structure i operations.
+3. Vodi complexity beleške.",Policy-compliant help only.,90+ min kvalitetnog rada.,/course/software-engineer/days/d117
+d118,118,f4,w17,DS synthesis,26.12.2026,180,Bez nove teorije.,"1. Tabela: Array/LinkedList/Stack/Queue/HashMap/BST — access/search/insert/delete/use case.
+2. Reši 3 “koju strukturu biraš i zašto?” scenarija.
+3. Implementiraj jednu strukturu iz memorije.",AI interview pitanja.,Tabela i working implementation.,/course/software-engineer/days/d118
+d119,119,f4,w17,Checkpoint 17,27.12.2026,90,Bez novih resursa.,"1. AI OFF: design URL history (back/forward), print queue, username lookup — izaberi DS za svaki.
+2. Implementiraj jedan.
+3. Objasni complexity.",AI tek na kraju.,Izbori struktura imaju smisla i možeš ih braniti.,/course/software-engineer/days/d119
+d120,120,f4,w18,Python syntax transfer,28.12.2026,120,CS50x Week 6 lecture/notes.,"1. Bez Python “mega kursa”: nauči variables, if, loops, functions, lists, dicts iz CS50.
+2. Prepiši 3 JS funkcije u Python.
+3. Napravi mapu JS ↔ Python syntax.","AI je prevodilac pojmova, ne generator final solutions.",3 ista algoritma rade u oba jezika.,/course/software-engineer/days/d120
+d121,121,f4,w18,Python data structures,29.12.2026,120,CS50 Week6 relevant sections.,"1. List/dict/set vežbe.
+2. wordFrequency u Python.
+3. Expense summary iz nedelje 3 u Python.",AI proverava idiomatičnost tek posle working verzije.,Možeš koristiti dokumentaciju umesto kursa od 40h.,/course/software-engineer/days/d121
+d122,122,f4,w18,Python exceptions/files,30.12.2026,120,CS50 Week6 relevant sections.,"1. Read/write simple file.
+2. Parse CSV/JSON basic.
+3. Handle invalid input.",AI code review.,Mali CLI radi i ima exception handling.,/course/software-engineer/days/d122
+d123,123,f4,w18,Pset6 pokušaj,31.12.2026,120,CS50x Problem Set 6.,"1. Uradi samostalno prema pravilima.
+2. Pre nego što kodiraš, reci sebi algoritam jezik-nezavisno.
+3. Tek onda Python syntax.",Policy-compliant help only.,Pset rad pokazuje transfer.,/course/software-engineer/days/d123
+d124,124,f4,w18,Rebuild challenge,01.01.2027,120,Bez nove teorije.,"1. Izaberi Number Toolkit ili Text Analyzer.
+2. Napravi ga u Pythonu bez gledanja JS implementacije.
+3. Posle uporedi arhitekturu.","AI na kraju poredi, ne vodi.",Working Python verzija iz praznog fajla.,/course/software-engineer/days/d124
+d125,125,f4,w18,Language independence day,02.01.2027,180,Dokumentacija kao primarni alat.,"1. Nauči dovoljno Go ili Java sintakse za Hello/loop/function/array samo 60 min (opciono).
+2. Implementiraj FizzBuzz i binary search.
+3. Ne nastavljaj taj jezik — cilj je dokaz transfera.","AI može dati syntax cheat sheet, ali ti pišeš kod.",Bar jedan treći jezik ti više ne deluje kao “početak od nule”.,/course/software-engineer/days/d125
+d126,126,f4,w18,Checkpoint 18,03.01.2027,90,Bez novih resursa.,"1. AI OFF: dobiješ problem “group transactions by category and sum totals”.
+2. Reši u JS, zatim Python.
+3. Objasni algoritam pre obe implementacije.",AI evaluira samo algoritamsku konzistentnost.,Isti mentalni plan → dva jezika.,/course/software-engineer/days/d126
+d127,127,f4,w19,Relational model + SELECT,04.01.2027,120,CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.,"1. Napravi users/orders schema na papiru.
+2. SELECT/WHERE/ORDER BY/LIMIT vežbe.
+3. 10 query-ja nad malim datasetom.","AI generiše pitanja na postojeću šemu, ne odgovore.",10 query-ja radi.,/course/software-engineer/days/d127
+d128,128,f4,w19,Aggregations,05.01.2027,120,CS50 Week7 aggregate functions.,"1. COUNT/SUM/AVG/MIN/MAX/GROUP BY/HAVING.
+2. Revenue po customer/category/month.
+3. Predvidi output pre izvršavanja.",AI proverava results reasoning.,Možeš razlikovati WHERE vs HAVING.,/course/software-engineer/days/d128
+d129,129,f4,w19,JOINs,06.01.2027,120,CS50 Week7 joins.,"1. INNER/LEFT JOIN vežbe na users/orders/products.
+2. Nacrtaj redove pre query-ja.
+3. 5 join query-ja.",AI samo daje fixture data i očekivani rezultat tek posle tvog pokušaja.,Razumeš multiplicity i zašto nastaju duplicate-looking rows.,/course/software-engineer/days/d129
+d130,130,f4,w19,Schema design,07.01.2027,120,CS50 Week7 + normalizacija osnovno.,"1. Modeluj Study Planner: users,courses,tasks,tags.
+2. Primary/foreign keys, NOT NULL, UNIQUE.
+3. Objasni zašto ne čuvaš comma-separated tags u jednom polju.",AI database reviewer.,Šema ima smislene odnose i constraints.,/course/software-engineer/days/d130
+d131,131,f4,w19,Pset7 pokušaj,08.01.2027,120,CS50x Problem Set 7.,"1. Radi samostalno po pravilima.
+2. Za svaki query napiši šta očekuješ pre run-a.
+3. Koristi EXPLAIN samo kao stretch.",Policy-compliant help.,Značajan samostalan rad.,/course/software-engineer/days/d131
+d132,132,f4,w19,Node + SQL mini integration,09.01.2027,180,Node pg/sqlite library docs; fokus na konceptu parameterized queries.,"1. Mali Node script: insert/list tasks iz baze.
+2. Koristi parameters umesto string concatenation.
+3. Service function getTasksByStatus(status).",AI security reviewer za injection rizik.,Node čita/piše bazu i query je parameterized.,/course/software-engineer/days/d132
+d133,133,f4,w19,Checkpoint 19 — CS foundation gate,10.01.2027,90,CS50 Weeks 0–7 recap.,"1. AI OFF: dizajniraj mini schema za booking system i napiši 5 query-ja.
+2. Objasni algoritam vs data structure vs database.
+3. Napravi listu 10 CS stvari koje sada razumeš bolje.",AI tek na kraju daje 10 interview pitanja.,"Spreman si za Full Stack Open: programiranje, Git, web basics i SQL su funkcionalni.",/course/software-engineer/days/d133
+d134,134,f5,w20,FSO Part 0: kako web radi,11.01.2027,120,Full Stack Open Part 0: General info + Fundamentals of Web apps.,"1. Uradi sequence diagrams exercises 0.4–0.6 ako su i dalje u aktuelnom materijalu.
+2. Objasni browser→HTTP→server→response→DOM.
+3. Nacrtaj SPA flow.","AI proverava diagram, ne daje gotov exercise answer.",Možeš objasniti network flow bez framework reči.,/course/software-engineer/days/d134
+d135,135,f5,w20,React basics,12.01.2027,120,FSO Part 1: Introduction to React.,"1. Napravi minimal React app prema aktuelnim FSO instrukcijama.
+2. Components + props.
+3. Reši prve FSO Part1 exercises do granice teme.",AI syntax helper samo kad zapneš na React API.,Komponente rade i razumeš props kao input.,/course/software-engineer/days/d135
+d136,136,f5,w20,Component decomposition,13.01.2027,120,FSO Part1: JavaScript + component basics.,"1. Razbij Course info UI na 4 komponente.
+2. Izbegni premature generic abstractions.
+3. Objasni data flow parent→child.",AI reviewer component boundaries.,Komponente imaju jasne odgovornosti.,/course/software-engineer/days/d136
+d137,137,f5,w20,State,14.01.2027,120,"FSO Part1: component state, event handlers.","1. useState counter sa više akcija.
+2. Feedback app prema FSO exercises.
+3. Predvidi state posle niza događaja.",AI daje state trace pitanja.,Ne mutiraš state direktno.,/course/software-engineer/days/d137
+d138,138,f5,w20,Complex state + immutability,15.01.2027,120,FSO Part1 relevant sections.,"1. Update object/array state immutably.
+2. Anegdotes exercise ili trenutni ekvivalent.
+3. Objasni stale state i functional update ako se pojavi u materijalu.",AI review state mutation bugs.,Možeš pronaći mutation bug sam.,/course/software-engineer/days/d138
+d139,139,f5,w20,FSO Part1 catch-up,16.01.2027,180,Završi Part1 exercises koje si započeo.,"1. Ne prelazi dalje sa neurađenim core exercises.
+2. Refactor tek nakon working solutiona.
+3. README “šta mi je React sakrio u odnosu na DOM”.",AI final review.,Part1 core set završen u razumnoj meri i možeš objasniti svaki solution.,/course/software-engineer/days/d139
+d140,140,f5,w20,Checkpoint 20,17.01.2027,90,Bez novih resursa.,"1. AI OFF: napravi React mini counter/list app iz praznog projekta.
+2. Props + state + event.
+3. Objasni render ciklus jednostavno.",AI tek posle.,Working mini app za 60 min.,/course/software-engineer/days/d140
+d141,141,f5,w21,Controlled forms,18.01.2027,120,FSO Part2 beginning / React forms sections relevant to course.,"1. Form input state.
+2. Add item list; prevent duplicate.
+3. Validation message.",AI test scenarios.,Form behavior je predvidljiv i controlled.,/course/software-engineer/days/d141
+d142,142,f5,w21,Collections rendering,19.01.2027,120,"FSO Part2: Rendering a collection, modules.","1. Render lists sa stabilnim key.
+2. Filter/search list.
+3. Napravi module za component.",AI reviewer key/data flow.,Nema index-key bez razloga.,/course/software-engineer/days/d142
+d143,143,f5,w21,Lifting state,20.01.2027,120,FSO relevant React state patterns.,"1. Dve sibling komponente dele state preko parent-a.
+2. Napiši diagram state ownership.
+3. Prepoznaj duplicate state i ukloni ga.",AI pita “ko je owner ovog state-a?”.,Single source of truth za shared data.,/course/software-engineer/days/d143
+d144,144,f5,w21,React debugging,21.01.2027,120,React DevTools + FSO debugging guidance.,"1. Namerno napravi prop/state bug.
+2. Koristi DevTools i console ciljano.
+3. Napiši root cause.",AI rubber duck.,3 bugova rešena metodski.,/course/software-engineer/days/d144
+d145,145,f5,w21,Mini React project: Expense UI,22.01.2027,120,"Bez backend-a. Koristi postojeći Expense Tracker model kao inspiraciju, ne copy-paste.","1. Add expense form, list, filter, summary.
+2. State decomposition.
+3. Derived values računaj, ne skladišti duplo.",AI architecture review.,UI radi i nema redundant state-a.,/course/software-engineer/days/d145
+d146,146,f5,w21,Refactor + test thinking,23.01.2027,180,React docs/FSO samo za teme koje koristiš.,"1. Razdvoji components.
+2. Napiši 10 manual UI test scenarios.
+3. Profiling nije potrebno; fokus readability.",AI QA reviewer.,Projekat je čitljiv i stabilan.,/course/software-engineer/days/d146
+d147,147,f5,w21,Checkpoint 21,24.01.2027,90,Bez novih resursa.,"1. AI OFF: mini “contacts filter” React app.
+2. Add/search/delete u local state.
+3. Objasni gde je state i zašto.",AI tek na kraju.,Working za 60 min i jasno objašnjenje.,/course/software-engineer/days/d147
+d148,148,f5,w22,JSON server / HTTP client,25.01.2027,120,FSO Part2: Getting data from server.,"1. Pokreni course backend/json-server po aktuelnim uputstvima.
+2. GET data u React app.
+3. Log network request u browser DevTools.","AI objašnjava network tab, ne piše solution.",Možeš pratiti request/response do UI-a.,/course/software-engineer/days/d148
+d149,149,f5,w22,useEffect mental model,26.01.2027,120,FSO Part2 effects section + React docs reference.,"1. Fetch pri mount-u.
+2. Nacrtaj kada effect radi i dependency array.
+3. Namerno napravi infinite-loop scenario u kontrolisanom mini primeru i popravi ga.",AI postavlja effect trace pitanja.,Ne tretiraš useEffect kao “random mesto za kod”.,/course/software-engineer/days/d149
+d150,150,f5,w22,Service modules,27.01.2027,120,FSO Part2: Altering data in server / extracting communication.,"1. Izvuci API calls u service module.
+2. create/update/delete server data.
+3. UI ne zna URL detalje.",AI reviewer boundary.,API layer je odvojena.,/course/software-engineer/days/d150
+d151,151,f5,w22,Error handling + notifications,28.01.2027,120,FSO Part2 styling/error sections.,"1. Success/error notification.
+2. Rollback/refresh strategy kada update fail.
+3. Obradi 404 za deleted item scenario.",AI QA simulates failures.,App ne pretpostavlja da svaki request uspe.,/course/software-engineer/days/d151
+d152,152,f5,w22,Countries/phonebook exercises,29.01.2027,120,FSO Part2 exercises — radi aktuelne core exercise setove.,"1. Radi bez gledanja model solutions.
+2. Za svaki exercise napiši problem decomposition pre code.
+3. Commit po exercise group.",AI hint ladder.,Core Part2 exercises napreduju i razumeš ih.,/course/software-engineer/days/d152
+d153,153,f5,w22,Part2 finish + synthesis,30.01.2027,180,Završi preostale core exercises.,"1. Refactor service/components.
+2. Napiši data-flow diagram: server→service→state→render.
+3. README lessons learned.",AI final review.,Part2 core završen u ciljnom opsegu.,/course/software-engineer/days/d153
+d154,154,f5,w22,Checkpoint 22,31.01.2027,90,Bez novih resursa.,"1. AI OFF: React app fetchuje listu i ima add/delete sa fake REST endpointom/course setupom.
+2. Dodaj error state.
+3. Objasni effect i service layer.",AI tek posle.,Working data flow bez tutoriala.,/course/software-engineer/days/d154
+d155,155,f5,w23,Node/Express server,01.02.2027,120,FSO Part3: Node.js and Express.,"1. Minimal Express app.
+2. GET collection/item endpoints.
+3. Test ručno curl/Postman/REST client.",AI syntax helper only.,Možeš objasniti request→route→handler→response.,/course/software-engineer/days/d155
+d156,156,f5,w23,REST CRUD,02.02.2027,120,FSO Part3 REST sections.,"1. POST/DELETE/PUT ili PATCH.
+2. Status codes smisleno.
+3. Validation basic.",AI API reviewer.,CRUD endpoints rade i koriste dosledan JSON shape.,/course/software-engineer/days/d156
+d157,157,f5,w23,Middleware + logging,03.02.2027,120,FSO Part3 middleware/error handling.,"1. Request logger.
+2. Unknown endpoint handler.
+3. Central error handler.",AI daje failure scenarios.,Error flow nije copy-paste try/catch svuda.,/course/software-engineer/days/d157
+d158,158,f5,w23,Database integration,04.02.2027,120,FSO Part3 database section (MongoDB prema aktuelnom kursu).,"1. Poveži DB prema course setup-u.
+2. Model/schema, save/find/update/delete.
+3. Environment variables; tajne ne commituj.",AI security/config review.,Backend koristi persistence i .env nije u Git-u.,/course/software-engineer/days/d158
+d159,159,f5,w23,Validation + lint/deploy,05.02.2027,120,FSO Part3 relevant sections.,"1. Schema/app validation.
+2. Lint backend.
+3. Deployment po aktuelnim course opcijama samo ako ne troši disproporcionalno vreme.",AI deployment troubleshooting tek nakon logova.,API je robustniji i konfiguracija razdvojena.,/course/software-engineer/days/d159
+d160,160,f5,w23,Part3 core exercises finish,06.02.2027,180,FSO Part3 exercises.,"1. Završi phonebook backend/core set.
+2. Test endpoints.
+3. Napiši API.md sa endpointima i examples svojim rečima.",AI final API review.,API radi end-to-end.,/course/software-engineer/days/d160
+d161,161,f5,w23,Checkpoint 23,07.02.2027,90,Bez novih resursa.,"1. AI OFF: napravi Express in-memory notes API CRUD za 75 min.
+2. Central error handler.
+3. Objasni 400/404/500 razliku.",AI tek posle.,Working API iz praznog projekta.,/course/software-engineer/days/d161
+d162,162,f5,w24,Backend structure,08.02.2027,120,FSO Part4: Structure of backend application.,"1. Razdvoji app/server/controllers/models/utils.
+2. Objasni zašto test importuje app bez listen.
+3. Refactor postojeći backend.",AI architecture reviewer.,"Folder structure ima razlog, ne ceremonial complexity.",/course/software-engineer/days/d162
+d163,163,f5,w24,Backend unit/integration tests,09.02.2027,120,FSO Part4 testing sections.,"1. Setup test runner prema kursu.
+2. Test helper functions.
+3. API test za GET/POST/error.",AI test gap reviewer.,Testovi mogu da uhvate namerno uveden bug.,/course/software-engineer/days/d163
+d164,164,f5,w24,Test database + isolation,10.02.2027,120,FSO Part4 relevant test DB setup.,"1. Reset DB pre testa.
+2. Deterministic fixtures.
+3. Test response body i status, ne samo “200”.",AI review flaky-test risks.,Testovi su repeatable.,/course/software-engineer/days/d164
+d165,165,f5,w24,Users/password hashing,11.02.2027,120,FSO Part4 user administration.,"1. User model.
+2. Hash password koristeći course-recommended library.
+3. Nikada ne vraćaj password hash u API response bez razloga.",AI security reviewer na visokom nivou.,User creation validira username/password i ne čuva plain text.,/course/software-engineer/days/d165
+d166,166,f5,w24,Token auth,12.02.2027,120,FSO Part4 token authentication.,"1. Login endpoint.
+2. Protected create/delete.
+3. Extract token middleware.",AI threat-model pitanja; ne improvizuj crypto.,Auth flow radi i možeš ga nacrtati.,/course/software-engineer/days/d166
+d167,167,f5,w24,Part4 exercises finish,13.02.2027,180,FSO Part4 core exercises.,"1. Završi relevantne blog list/auth/test exercises.
+2. Refactor nakon zelenih testova.
+3. Napiši AUTH-FLOW.md.",AI final reviewer.,Core auth + tests stabilni.,/course/software-engineer/days/d167
+d168,168,f5,w24,Checkpoint 24,14.02.2027,90,Bez novih resursa.,"1. AI OFF: nacrtaj auth flow client→login→token→protected request.
+2. Napiši 5 security failure scenarija.
+3. Implementiraj jednu protected route u mini app ili test.",AI tek na kraju.,Razumeš flow; ne tretiraš JWT kao “magic string”.,/course/software-engineer/days/d168
+d169,169,f5,w25,Frontend login,15.02.2027,120,FSO Part5 login frontend.,"1. Login form.
+2. Token persistence prema course patternu.
+3. API service auth header.",AI reviewer data flow/security basics.,Login survives intended session behavior i logout radi.,/course/software-engineer/days/d169
+d170,170,f5,w25,Frontend architecture,16.02.2027,120,FSO Part5 props/state patterns.,"1. Razdvoji login/app/notification components.
+2. Izbegni prop chaos gde može jednostavnije.
+3. Nacrtaj frontend data flow.","AI reviewer, bez premature Context/Redux ako kurs ne traži.",Komponente ostaju razumljive.,/course/software-engineer/days/d170
+d171,171,f5,w25,Component testing,17.02.2027,120,FSO Part5 testing React apps.,"1. Test render i user interaction.
+2. Test da submit zove handler sa pravim podacima.
+3. Ne testiraj implementation details bez potrebe.",AI test quality reviewer.,Testovi opisuju behavior.,/course/software-engineer/days/d171
+d172,172,f5,w25,End-to-end testing,18.02.2027,120,FSO Part5 E2E section prema aktuelnom alatu.,"1. Setup course-recommended E2E tool.
+2. Test login + create + like/delete ili analogni flow.
+3. Reset test state.",AI troubleshooting samo uz log/error koji ti prvo protumačiš.,Jedan kompletan E2E flow radi pouzdano.,/course/software-engineer/days/d172
+d173,173,f5,w25,Integration day,19.02.2027,120,Spoji React frontend sa Part4 backendom.,"1. CORS/config.
+2. Loading/error/empty states.
+3. Happy path + failure path ručno.",AI QA reviewer.,End-to-end aplikacija radi lokalno.,/course/software-engineer/days/d173
+d174,174,f5,w25,Part5 finish + cleanup,20.02.2027,180,Završi core exercises u ciljnom opsegu.,"1. Run all tests.
+2. Ukloni dead code/console noise.
+3. README: setup, env vars, commands, architecture.",AI release reviewer.,Repo može druga osoba da pokrene iz README-a.,/course/software-engineer/days/d174
+d175,175,f5,w25,Checkpoint 25 — full-stack gate,21.02.2027,90,Bez novih resursa.,"1. AI OFF 90 min: nacrtaj i objasni kompletan request za “create protected resource” od click-a do DB-a i nazad.
+2. Lociraj gde ide validation/auth/error handling.
+3. Napiši 10 pitanja koja bi postavio na code review-u.",AI ocenjuje explanation depth.,Možeš objasniti ceo stack bez “React/Express magije”.,/course/software-engineer/days/d175
+d176,176,f6,w26,Capstone spec: DevTrack,22.02.2027,120,Bez tutoriala. Koristi dokumentaciju po potrebi.,"1. Problem: full-stack issue/task tracker za projekte.
+2. Entiteti minimum: User, Project, Task/Issue; status, priority, assignee, timestamps.
+3. Napiši user stories, API endpoints, DB schema, validation, auth flow, test plan.",AI je product/architecture reviewer. NE piše kod. Neka napada nejasne requirements i edge cases.,"SPEC.md, ER diagram/skica, API.md i task breakdown postoje.",/course/software-engineer/days/d176
+d177,177,f6,w26,Backend core,23.02.2027,120,Dokumentacija + tvoje prethodne beleške.,"1. Setup Node/Express.
+2. Auth + Project/Task CRUD.
+3. Persistence: koristi DB koju razumeš; preporuka PostgreSQL ako si spreman, inače kursni DB uz jasan razlog.",AI sme generisati boilerplate samo ako možeš objasniti svaku liniju; business logic pišeš ti.,CRUD + auth happy path radi.,/course/software-engineer/days/d177
+d178,178,f6,w26,Backend quality,24.02.2027,120,Testing/security notes.,"1. Validation, authorization ownership rules.
+2. Integration tests za critical endpoints.
+3. Central error handling; env config.",AI security + test reviewer.,"Najmanje 12 backend testova, uključujući failure paths.",/course/software-engineer/days/d178
+d179,179,f6,w26,Frontend core,25.02.2027,120,React/FSO notes.,"1. Login/register ili login-only ako scope zahteva.
+2. Project list/details; Task create/update/filter.
+3. Service layer i loading/error states.",AI UI architecture reviewer; business decisions tvoje.,Core end-to-end flow radi.,/course/software-engineer/days/d179
+d180,180,f6,w26,Frontend quality + E2E,26.02.2027,120,Testing notes.,"1. Component tests za 2 kritične komponente.
+2. 1–2 E2E critical flows.
+3. Polish samo posle tests/bugs.",AI QA reviewer.,Critical flow je testiran i stabilan.,/course/software-engineer/days/d180
+d181,181,f6,w26,Code review + rewrite challenge,27.02.2027,180,Bez nove teorije.,"1. Daj AI-u ceo projekat/fajlove redom za PR-style review: correctness, design, security, tests, readability.
+2. Ne prihvataj predloge slepo; za svaki accepted comment napiši zašto.
+3. Izaberi jednu ključnu funkciju, izbriši je i napiši ponovo iz glave.","AI je senior reviewer, ne autor projekta.",Nema poznatih blocker bugova; možeš ponovo napisati ključni deo.,/course/software-engineer/days/d181
+d182,182,f6,w26,FINALNI ISPIT — AI OFF + plan za dalje,28.02.2027,150,Bez resursa prvih 120 min.,"1. 45 min: nepoznat algorithm problem — plan, brute force, bolja verzija, tests, complexity.
+2. 45 min: design mini booking API — model, endpoints, validation, DB schema.
+3. 30 min: debug unapred pripremljen ili sopstveni bug bez AI.
+4. Posle toga napiši FINAL-RETRO.md: šta umeš sada, dokazi (projekti), 3 najveće rupe, sledećih 90 dana.",AI tek nakon ispita pravi objektivnu rubricu i predlaže sledeću fazu na osnovu tvojih artefakata.,Možeš sam da pređeš problem→model→algoritam→kod→test→debug→refactor i da objasniš odluke.,/course/software-engineer/days/d182
