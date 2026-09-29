@@ -1,0 +1,12 @@
+node_modules
+.next
+data
+.tmp
+coverage
+test-results
+playwright-report
+package-lock.json
+docs/dependency-licenses.json
+docs/THIRD_PARTY_NOTICES.txt
+content/**/source
+next-env.d.ts
