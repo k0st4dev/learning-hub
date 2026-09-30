@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-09-30. **M0, M1 and M2 complete within their agreed scopes.** The user authorized continuing M2 today. Next increment: M3.
+Updated: 2026-09-30. **M0–M2 complete; M3 step 1 complete.** The user now requires confirmation after every M3 step. **Wait for approval before step 2.**
 
 ## Completed
 
@@ -13,6 +13,8 @@ Updated: 2026-09-30. **M0, M1 and M2 complete within their agreed scopes.** The 
 - Browser registration/login/enrollment/preparation/Continue to Day 1 passed. Overview, Day 182 and scorecard inspected at desktop/mobile sizes; no document overflow. Auth forms now use POST before JavaScript hydration to prevent credentials in query strings.
 
 ## Decisions and immutable contracts
+
+- M3 step 1: shared source-ordered navigation, numbered breadcrumbs/current page, Previous/Next for all 364 units and separate day navigation. First study returns to preparation; final exercise opens Progress. No progress/cursor writes. All 70 tests and 663 served-page checks pass, including navigation on 546 day/unit pages. Browser Day 1 study → exercise → Day 2 study and mobile reflow pass. Evidence: docs/M3-STEP1-VERIFICATION.md.
 
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
@@ -34,6 +36,6 @@ Updated: 2026-09-30. **M0, M1 and M2 complete within their agreed scopes.** The 
 
 ## Exact next focused task
 
-M3 first increment: read navigation/page-state sections of the archived specification, then build one shared ordered navigation model for phase/week/day/lesson/exercise. Reuse existing readers/components for outline, breadcrumbs and previous/next links. Verify first/last boundaries, every mapping/anchor and unknown routes. No date/prerequisite locks or progress writes on reference browsing. Run focused traversal tests and repeat served coverage after route changes. Do not mix in M4 task semantics or M6 tools.
+After explicit user approval, M3 step 2: implement a compact expandable course outline using src/server/content/navigation.ts. Show phase → week → day → study/exercise, expand the current path and mark the current page. Avoid showing all 182 days at once. Verify keyboard use, mobile reflow and access to every day. Preserve immutable content and read-only reference navigation. Stop, report and ask again before the following step. Daily workspace polish, route-state UX and the full mobile navigation drawer remain later M3 steps; do not mix in M4 or M6.
 
 Relevant files: IMPLEMENTATION_PLAN.md; archived product-specification.md; src/server/content/read.ts; src/components/curriculum-preview.tsx and full-curriculum-page.tsx; course catch-all; tests/integration/curriculum.test.ts. Import decisions and reproduction commands: docs/M2-VERIFICATION.md.

@@ -3,6 +3,11 @@ import { z } from 'zod';
 import type { Catalog, CatalogPage } from '@/server/content/read';
 import { sourceLinkSchema } from '@/server/content/source-schema';
 import { en } from '@/i18n/en';
+import { courseNavigation } from '@/server/content/navigation';
+import {
+  CurriculumItemLabel,
+  CurriculumNavigation,
+} from './curriculum-navigation';
 const base = '/course/software-engineer';
 function SourceParagraph({ block }: { block: CatalogPage['blocks'][number] }) {
   const links = z.array(sourceLinkSchema).parse(JSON.parse(block.linksJson));
@@ -101,17 +106,17 @@ export function CurriculumPreview({
   page: CatalogPage;
 }) {
   const overview = page.item.stableKey === 'overview';
-  const roots = catalog.items
-    .filter((i) => i.kind === 'module' || i.kind === 'guide')
+  const navigationModel = courseNavigation(catalog);
+  const roots = navigationModel.items
+    .filter(
+      (i) =>
+        (i.kind === 'module' || i.kind === 'guide') && i.id !== page.item.id,
+    )
     .sort((a, b) => a.orderIndex - b.orderIndex);
-  let parent = page.item;
-  const parents: Catalog['items'] = [];
-  while (parent.parentId) {
-    const next = catalog.items.find((i) => i.id === parent.parentId);
-    if (!next) break;
-    parents.unshift(next);
-    parent = next;
-  }
+  const navigation = navigationModel.forItem(page.item.id)!;
+  const parents = navigation.breadcrumbs.filter(
+    (item) => item.id !== page.item.id,
+  );
   const day = catalog.days.find(
     (d) => d.itemId === page.item.id || parents.some((p) => p.id === d.itemId),
   );
@@ -125,12 +130,15 @@ export function CurriculumPreview({
       </aside>
       <nav className="actions mb-8" aria-label={en.curriculum.breadcrumbs}>
         <Link href="/dashboard">{en.dashboard}</Link>
-        <Link href={base}>{en.courseLabel}</Link>
+        {!overview && <Link href={base}>{en.courseLabel}</Link>}
         {parents.map((item) => (
           <Link key={item.id} href={item.route}>
-            <span lang="sr-Latn">{item.title}</span>
+            <CurriculumItemLabel item={item} />
           </Link>
         ))}
+        <span aria-current="page">
+          <CurriculumItemLabel item={navigation.current} />
+        </span>
       </nav>
       <h1 lang="sr-Latn">{page.item.title}</h1>
       <p className="muted">
@@ -140,13 +148,15 @@ export function CurriculumPreview({
       {(overview || page.children.length > 0) && (
         <nav className="card mb-8" aria-label={en.curriculum.contents}>
           <ul className="curriculum-links">
-            {(overview ? roots : page.children).map((item) => (
-              <li key={item.id}>
-                <Link href={item.route}>
-                  <span lang="sr-Latn">{item.title}</span>
-                </Link>
-              </li>
-            ))}
+            {(overview ? roots : navigationModel.children(page.item.id)).map(
+              (item) => (
+                <li key={item.id}>
+                  <Link href={item.route}>
+                    <CurriculumItemLabel item={item} />
+                  </Link>
+                </li>
+              ),
+            )}
           </ul>
         </nav>
       )}
@@ -247,6 +257,7 @@ export function CurriculumPreview({
           </ul>
         </section>
       )}
+      <CurriculumNavigation navigation={navigation} />
     </>
   );
 }

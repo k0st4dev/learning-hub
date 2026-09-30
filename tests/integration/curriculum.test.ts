@@ -230,5 +230,21 @@ describe('complete immutable curriculum', () => {
     expect(links).toBe(19);
     for (const route of plan.report.routes)
       expect(catalogPage(catalog, route), route).not.toBeNull();
+    // Exercise the rendered links too: the pure model alone cannot prove the UI uses them.
+    const unitRoutes = plan.source.days.flatMap((day) => [
+      `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
+      `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+    ]);
+    for (const [index, route] of unitRoutes.entries()) {
+      const dom = rendered.get(route)!;
+      const sequence = dom.querySelector('nav[aria-label="Study sequence"]');
+      expect(
+        sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),
+      ).toBe(unitRoutes[index - 1] ?? '/course/software-engineer/preparation');
+      expect(
+        sequence?.querySelector('a[rel="next"]')?.getAttribute('href'),
+      ).toBe(unitRoutes[index + 1] ?? '/course/software-engineer/progress');
+      expect(dom.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
+    }
   }, 60000);
 });

@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-30T11:20:38.780Z",
+  "server": "development",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "servedPages": 663,
+  "curriculumRoutes": 594,
+  "mappedParagraphs": 2329,
+  "originalHyperlinks": 19,
+  "authenticatedAccess": "passed",
+  "missingRoutes": "passed",
+  "readingDoesNotMutateProgress": "passed",
+  "checkedNavigationPages": 546
+}

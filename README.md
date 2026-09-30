@@ -1,6 +1,6 @@
 # Programming Learning Platform
 
-A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M2, complete curriculum import and authenticated reading preview.** All six phases, 26 weeks, 182 days, 548 task lines, guides, appendices and original links are available. Registration, login/logout and preparation work locally. Full-course interactive exercises and progress are planned for M3–M5; the separate M1 Day 1 fixture retains its verified completion workflow. This is not the final MVP. See `PROJECT_STATUS.md` and `IMPLEMENTATION_PLAN.md`.
+A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M3 step 1, sequential navigation through the complete reading preview.** All six phases, 26 weeks, 182 days, 548 task lines, guides, appendices and original links are available. Registration, login/logout and preparation work locally. Numbered breadcrumbs and Previous/Next follow the source order without changing progress. Full-course interactive exercises and progress are planned for M4–M5; the separate M1 Day 1 fixture retains its verified completion workflow. This is not the final MVP. See `PROJECT_STATUS.md` and `IMPLEMENTATION_PLAN.md`.
 
 ## Requirements and cost
 

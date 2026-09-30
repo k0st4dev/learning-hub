@@ -8,6 +8,11 @@ import { loadArchivedCurriculum } from '../src/server/content/import.ts';
 
 // Developer audit: run only against a server started with this isolated test directory.
 const config = environment();
+assert.ok(
+  process.argv.length <= 3 &&
+    (!process.argv[2] || process.argv[2] === '--m3-step1'),
+);
+const checkNavigation = process.argv[2] === '--m3-step1';
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 const plan = await loadArchivedCurriculum(root);
 const cookies = new Map();
@@ -66,6 +71,14 @@ const started = await post('/api/enrollment', {});
 assert.equal(started.data.enrollment.releaseId, plan.releaseId);
 let checkedMappings = 0;
 let checkedLinks = 0;
+let checkedNavigationPages = 0;
+const unitRoutes = plan.source.days.flatMap((day) => [
+  `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
+  `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+]);
+const dayRoutes = plan.source.days.map(
+  (day) => `/course/software-engineer/days/${day.id}`,
+);
 const routes = [
   ...plan.report.routes,
   ...plan.resources.map((r) => `/resources/${r.stableKey}`),
@@ -76,6 +89,37 @@ for (const [index, route] of routes.entries()) {
   const document = new JSDOM(await response.text()).window.document;
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (checkNavigation) {
+    const unitIndex = unitRoutes.indexOf(route);
+    const dayIndex = dayRoutes.indexOf(route);
+    if (unitIndex >= 0 || dayIndex >= 0) {
+      const isUnit = unitIndex >= 0;
+      const sequence = document.querySelector(
+        isUnit
+          ? 'nav[aria-label="Study sequence"]'
+          : 'nav[aria-label="Previous day / Next day"]',
+      );
+      assert.ok(sequence, route);
+      const ordered = isUnit ? unitRoutes : dayRoutes;
+      const position = isUnit ? unitIndex : dayIndex;
+      assert.equal(
+        sequence.querySelector('a[rel="prev"]')?.getAttribute('href') ?? null,
+        ordered[position - 1] ??
+          (isUnit ? '/course/software-engineer/preparation' : null),
+      );
+      assert.equal(
+        sequence.querySelector('a[rel="next"]')?.getAttribute('href') ?? null,
+        ordered[position + 1] ??
+          (isUnit ? '/course/software-engineer/progress' : null),
+      );
+      assert.equal(
+        document.querySelectorAll('[aria-current="page"]').length,
+        1,
+        route,
+      );
+      checkedNavigationPages++;
+    }
+  }
   for (const mapping of plan.mappings.filter(
     (m) => m.websiteLocation.split('#')[0] === route,
   )) {
@@ -121,6 +165,7 @@ for (const [index, route] of routes.entries()) {
 }
 assert.equal(checkedMappings, 2329);
 assert.equal(checkedLinks, 19);
+if (checkNavigation) assert.equal(checkedNavigationPages, 546);
 for (const route of [
   '/course/software-engineer/days/missing',
   '/resources/missing',
@@ -151,9 +196,15 @@ const report = {
   authenticatedAccess: 'passed',
   missingRoutes: 'passed',
   readingDoesNotMutateProgress: 'passed',
+  ...(checkNavigation ? { checkedNavigationPages } : {}),
 };
 await writeFile(
-  path.join(root, 'docs/m2-served-audit.json'),
+  path.join(
+    root,
+    checkNavigation
+      ? 'docs/m3-step1-served-audit.json'
+      : 'docs/m2-served-audit.json',
+  ),
   JSON.stringify(report, null, 2) + '\n',
 );
 console.log(report);

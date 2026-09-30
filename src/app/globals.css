@@ -299,6 +299,19 @@ textarea {
   grid-template-columns: 220px minmax(0, 1fr);
   gap: 32px;
 }
+.sequence-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.sequence-link {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 44px;
+  overflow-wrap: anywhere;
+}
 .learning-nav {
   display: flex;
   flex-direction: column;
