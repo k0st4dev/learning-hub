@@ -96,7 +96,7 @@ export function AuthForm({
     </div>
   );
   return (
-    <form onSubmit={submit} className="stack" aria-busy={pending}>
+    <form method="post" onSubmit={submit} className="stack" aria-busy={pending}>
       {registered && (
         <p role="status" className="notice">
           {en.auth.registered}
