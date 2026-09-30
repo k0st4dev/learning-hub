@@ -1,4 +1,4 @@
-import { mkdir, open, unlink } from 'node:fs/promises';
+import { mkdir, open, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { environment } from './environment.mjs';
@@ -6,6 +6,10 @@ import { root } from './environment.mjs';
 import { migrate } from '../src/server/db/migrate.ts';
 import { openDatabase } from '../src/server/db/connection.ts';
 import { seedDay1Fixture } from '../src/server/content/day1-fixture.ts';
+import {
+  loadArchivedCurriculum,
+  importCurriculum,
+} from '../src/server/content/import.ts';
 
 try {
   const config = environment();
@@ -27,6 +31,21 @@ try {
     console.log(
       'Isolated Day 1 development fixture ready. It is not the complete published course.',
     );
+  } else {
+    const plan = await loadArchivedCurriculum(root);
+    const store = openDatabase(path.join(config.dataDir, 'learning.sqlite'));
+    try {
+      const result = importCurriculum(store, plan.source);
+      await writeFile(
+        path.join(config.dataDir, 'curriculum-import-report.json'),
+        JSON.stringify(result, null, 2) + '\n',
+      );
+      console.log(
+        `Complete curriculum ${result.imported ? 'imported' : 'already present'}: 182 days, 548 task lines, 364 required units.`,
+      );
+    } finally {
+      store.native.close();
+    }
   }
   console.log(
     `Setup complete. Local URL: ${config.origin}\nData directory: ${config.dataDir}`,

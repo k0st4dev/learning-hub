@@ -188,6 +188,20 @@ export function LearningClient({
       <Link href={`${basePath}/progress`}>{en.learning.progress}</Link>
     </nav>
   );
+  if (
+    !state.enrollment.releaseId.startsWith('development-') &&
+    ['dashboard', 'course', 'progress'].includes(view)
+  )
+    return (
+      <div className="stack">
+        {summary}
+        {navigation}
+        <aside className="preview-notice">
+          <strong>{en.curriculum.preview}</strong>
+          <p>{en.curriculum.previewHelp}</p>
+        </aside>
+      </div>
+    );
   if (['dashboard', 'course', 'progress'].includes(view))
     return (
       <div className="stack">

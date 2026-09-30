@@ -1,4 +1,24 @@
 export const en = {
+  curriculum: {
+    contexts: 'Related learning contexts',
+    scorecard: 'Original scorecard dimensions',
+    preview: 'Complete curriculum · Reading preview',
+    previewHelp:
+      'All original course material is available here. Full navigation and interactive progress for this release are being completed in the next milestones.',
+    newTab: '(opens in a new tab)',
+    sourceRef: 'Source',
+    sourceTable: 'Original table',
+    breadcrumbs: 'Location',
+    contents: 'Contents',
+    release: 'Release',
+    sourceContent: 'Original Serbian curriculum',
+    weekEvidence: 'Weekly evidence',
+    interpretations: 'Product interpretations — added guidance',
+    references: 'Resources and original references',
+    parentLink:
+      'Original parent resource; follow the exact section instruction. Link availability has not been checked live.',
+    noUrl: 'No original URL supplied; the original instruction is retained.',
+  },
   appName: 'Programming Learning Platform',
   skip: 'Skip to content',
   home: 'Home',

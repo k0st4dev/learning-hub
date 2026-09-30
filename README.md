@@ -1,13 +1,13 @@
 # Programming Learning Platform
 
-A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M1, a working Day 1 preview.** Registration, login/logout, preparation, the original first lesson and four exercise tasks, evidence, completion and restart persistence are implemented. This is an isolated development fixture, not the complete course or final MVP. See `PROJECT_STATUS.md` for the exact next task and `IMPLEMENTATION_PLAN.md` for the agreed milestones.
+A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M2, complete curriculum import and authenticated reading preview.** All six phases, 26 weeks, 182 days, 548 task lines, guides, appendices and original links are available. Registration, login/logout and preparation work locally. Full-course interactive exercises and progress are planned for M3–M5; the separate M1 Day 1 fixture retains its verified completion workflow. This is not the final MVP. See `PROJECT_STATUS.md` and `IMPLEMENTATION_PLAN.md`.
 
 ## Requirements and cost
 
 - Node.js **24.21.0** with npm **11.19.0**; patch-compatible versions in those lines are accepted. The exact tested runtime is in `.node-version` and `.nvmrc`.
 - Git for obtaining the source. No separate database server, SQLite CLI, Docker, cloud keys or paid software is required.
 - Windows x64 native modules have been checked. macOS/Linux clean-install evidence remains pending.
-- Installation needs internet access. Accounts, bundled Day 1 content and progress run locally. External course resources need internet access.
+- Installation needs internet access. Accounts, the complete bundled curriculum and saved records run locally. External course resources need internet access.
 
 Use the official [Node.js distribution](https://nodejs.org/dist/v24.21.0/). If an existing version manager reports a changed/untrusted npm script, do not blindly re-trust it. Repair that installation from its official source, or use a fresh official portable runtime after matching its SHA-256 against the official `SHASUMS256.txt`. This project does not modify system-wide Node settings.
 
@@ -17,8 +17,8 @@ From this repository directory:
 
 ```sh
 npm ci
-npm run setup:demo
-npm run dev:demo
+npm run setup
+npm run dev
 ```
 
 Open **http://127.0.0.1:3000**. Keep that terminal running; Ctrl+C stops the application. Always use the printed canonical address, not `localhost` or a LAN address.
@@ -27,12 +27,28 @@ For a production build of this preview:
 
 ```sh
 npm run build
-npm run start:demo
+npm start
 ```
 
-`setup:demo` verifies native dependencies, applies the checksummed reference migration and seeds a clearly named `development-day1-v1` release in `.tmp/m1-demo/learning.sqlite`. Repeat setup preserves accounts, tasks, evidence and completion. Keep this directory to retain your preview records; it is ignored by Git and is not an official student release. Do not delete it while the app is running. Ordinary `setup` creates the reference schema in `APP_DATA_DIR` but does not yet import the full curriculum; the M2 importer will provide that operation.
+`setup` verifies native dependencies, applies the checksummed reference migration and imports the complete `se-26w-v1` release into `data/learning.sqlite` (or `APP_DATA_DIR`). Repeating it preserves existing accounts, enrollment releases and progress. The importer checks every archived file, validates source text and relationships, and publishes the complete release in one transaction. Changed published releases are rejected. Its machine-readable report is saved as `APP_DATA_DIR/curriculum-import-report.json`; rendered coverage evidence is recorded separately in `docs/M2-VERIFICATION.md`.
 
-Register your own local test account, sign in, select Start course, and complete or explicitly defer preparation. Study Day 1, mark the lesson complete, then check the four original task lines, enter evidence, select a passing self-assessment and attest the original criterion. Confirm completion. Sign out, stop the server, restart with `npm run dev:demo`, and sign in again: confirmed progress remains. This fixture has exactly two required units; its 100% means Day 1 only. The full course will have 364 units.
+Register, sign in and start the course. Review or defer preparation, then browse the full curriculum. M2 shows an explicit reading-preview notice: task rules and scorecard definitions are visible, while full-course completion controls, scorecard entry, notes and search are later increments.
+
+To retain the earlier working completion demonstration, use `npm run setup:demo` followed by `npm run dev:demo` (or `npm run start:demo` after building). This uses the separate `.tmp/m1-demo/learning.sqlite` database and its `development-day1-v1` release. Keep that directory to retain your existing M1 accounts and records. Both databases are ignored by Git. Stop the running server before switching modes; do not delete either database.
+
+In the M1 demonstration, register a local test account, start the course and review or defer preparation. Study Day 1, mark the lesson complete, then check its four tasks, enter evidence, select a passing self-assessment and attest the original criterion. Confirm completion. Sign out, stop the server, restart with `npm run dev:demo`, and sign in again: confirmed progress remains. This fixture has exactly two required units; its 100% means Day 1 only. The complete release has 364 required units.
+
+## Curriculum maintenance
+
+```sh
+npm run curriculum:verify-source
+npm run curriculum:import -- --dry-run
+npm run curriculum:import
+```
+
+The dry run validates and reports without opening a database. Actual import requires an initialized database; ordinary `setup` handles both operations. The archive and its manifest are committed in `content/se-26w-v1`. Do not edit archived files, hashes or published content to bypass a validation failure. Future curriculum changes require a reviewed new release and explicit enrollment upgrade (M8).
+
+`python scripts/audit-original-source.py` is an optional developer audit using Python's standard library. It independently compares DOCX paragraphs, links, table coordinates and CSV mappings against the structured source; Python is not needed to install or run the application. `scripts/audit-served-curriculum.mjs` verifies every served source destination and resource page against a running isolated `.tmp/m2-preview` server; reproduction commands are in `docs/M2-VERIFICATION.md`.
 
 Dependency lifecycle scripts are disabled in `.npmrc`. The pinned native packages ship prebuilt modules; `setup`/`doctor` explicitly load and exercise them. This avoids implicit install scripts and allows deterministic installation on this restricted Windows host. Do not remove this policy or silently enable arbitrary installation scripts. A supported platform without a matching prebuilt module must fail clearly and receive a reviewed dependency/build-tool decision.
 
@@ -88,7 +104,7 @@ The production foundation browser suite has not passed on the current restricted
 
 `src/app` contains App Router pages; `src/server` contains configuration/request-boundary code; `scripts` contains cross-platform Node commands; `tests` contains unit, integration and browser checks. `src/i18n/en.ts` holds interface copy. Native database/auth imports stay out of browser components.
 
-`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and seeded fixture releases cannot change silently. Backup/restore, local password recovery, complete curriculum import and enrollment upgrades remain later milestones. Preserve the database, WAL/SHM files and secret; do not copy an open database as an improvised backup. No destructive placeholder recovery commands are provided.
+`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and published releases cannot change silently. Backup/restore, local password recovery and enrollment upgrades remain later milestones. Preserve the database, WAL/SHM files and secret; do not copy an open database as an improvised backup. No destructive placeholder recovery commands are provided.
 
 The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
 

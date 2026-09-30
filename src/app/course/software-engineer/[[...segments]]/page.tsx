@@ -1,7 +1,9 @@
 import { notFound, redirect } from 'next/navigation';
 import { pageStudent } from '@/server/auth/page';
 import { getStore } from '@/server/db/current';
-import { snapshot, coursePath } from '@/server/learning/read';
+import { snapshot, coursePath, latestRelease } from '@/server/learning/read';
+import { readCatalog } from '@/server/content/read';
+import { FullCurriculumPage } from '@/components/full-curriculum-page';
 import {
   LearningClient,
   type LearningView,
@@ -17,6 +19,40 @@ export default async function Course({
   const route = segments.join('/');
   const { student, token } = await pageStudent(`${coursePath}/${route}`);
   const state = snapshot(getStore(), token);
+  const releaseId =
+    state?.enrollment.releaseId ?? latestRelease(getStore())?.id;
+  if (releaseId && !releaseId.startsWith('development-')) {
+    const catalog = readCatalog(getStore(), releaseId);
+    if (!catalog) notFound();
+    return (
+      <StudentShell
+        name={student.displayName || student.email}
+        showFixtureNotice={false}
+      >
+        {route === 'progress' ? (
+          <>
+            <h1>{en.learning.progress}</h1>
+            <LearningClient view="progress" initialState={state} />
+          </>
+        ) : (
+          <FullCurriculumPage
+            catalog={catalog}
+            route={coursePath + (route ? '/' + route : '')}
+          />
+        )}
+        {route === '' && !state && (
+          <section className="section">
+            <LearningClient view="course" initialState={null} />
+          </section>
+        )}
+        {route === 'preparation' && state && (
+          <section className="section">
+            <LearningClient view="preparation" initialState={state} />
+          </section>
+        )}
+      </StudentShell>
+    );
+  }
   let view: LearningView = 'course';
   let itemKey: string | undefined;
   if (route === 'preparation') view = 'preparation';

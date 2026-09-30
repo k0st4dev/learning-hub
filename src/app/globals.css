@@ -1,4 +1,38 @@
 @import 'tailwindcss';
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table-scroll td {
+  vertical-align: top;
+  padding: 12px;
+  border: 1px solid var(--border);
+  min-width: 140px;
+}
+.table-scroll caption {
+  text-align: left;
+  padding: 12px;
+  font-weight: 600;
+}
+.source-paragraph {
+  overflow-wrap: anywhere;
+}
+.source-paragraph p {
+  margin-bottom: 8px;
+}
+.curriculum-links {
+  padding-left: 20px;
+}
+.curriculum-links li {
+  padding: 6px 0;
+  overflow-wrap: anywhere;
+}
 
 :root {
   color-scheme: light;
