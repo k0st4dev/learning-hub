@@ -21,6 +21,7 @@ import { validateSource } from '../../src/server/content/source-schema.ts';
 import { readCatalog, catalogPage } from '../../src/server/content/read.ts';
 import { CurriculumPreview } from '../../src/components/curriculum-preview';
 import { CourseOutline } from '../../src/components/course-outline';
+import { dayWorkspace } from '../../src/server/content/day-workspace';
 import {
   courseNavigation,
   courseOutline,
@@ -50,6 +51,87 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('resolves every daily workspace from day, study and exercise without inventing source content', () => {
+    importCurriculum(store, plan.source);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    for (const original of plan.source.days) {
+      for (const key of [
+        original.id,
+        original.lesson_id,
+        original.exercise_id,
+      ]) {
+        const workspace = dayWorkspace(catalog, `${plan.releaseId}:${key}`)!;
+        expect(workspace.day.estimatedMinutes).toBe(original.estimated_minutes);
+        expect(workspace.week.objectiveMarkdown).toBe(
+          plan.source.weeks.find((w) => w.id === original.week_id)!.objective,
+        );
+        expect(workspace.lesson.bodyMarkdown).toBe(original.study_instruction);
+        expect(workspace.tasks.map((task) => task.bodyMarkdown)).toEqual(
+          original.tasks.map((task) => task.text),
+        );
+        expect(workspace.day.aiPolicyMarkdown).toBe(original.ai_policy);
+        expect(workspace.day.completionCriterionMarkdown).toBe(
+          original.completion_criterion,
+        );
+        expect(workspace.uses).toEqual(
+          catalog.uses.filter(
+            (use) => use.contentItemId === workspace.lesson.id,
+          ),
+        );
+      }
+    }
+    expect(dayWorkspace(catalog, `${plan.releaseId}:overview`)).toBeNull();
+  });
+  it.each(['d001', 'd007', 'd028', 'd125', 'd182'])(
+    'renders an expanded daily workspace with exact tasks and source anchors: %s',
+    (key) => {
+      importCurriculum(store, plan.source);
+      const catalog = readCatalog(store, plan.releaseId)!;
+      const page = catalogPage(
+        catalog,
+        `/course/software-engineer/days/${key}`,
+      )!;
+      const workspace = dayWorkspace(catalog, page.item.id)!;
+      const dom = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(CurriculumPreview, { catalog, page }),
+        ),
+        'text/html',
+      );
+      expect(dom.querySelector('[data-week-objective]')!.textContent).toBe(
+        workspace.week.objectiveMarkdown,
+      );
+      expect(dom.querySelector('[data-daily-study]')!.textContent).toBe(
+        workspace.lesson.bodyMarkdown,
+      );
+      expect(
+        [...dom.querySelectorAll('[data-daily-task]')].map(
+          (item) => item.textContent,
+        ),
+      ).toEqual(workspace.tasks.map((task) => task.bodyMarkdown));
+      expect(
+        [...dom.querySelectorAll('.daily-workspace h2')]
+          .filter((h) => h.id.startsWith('daily-'))
+          .map((h) => h.id),
+      ).toEqual(['daily-study', 'daily-practice', 'daily-review']);
+      for (const anchor of ['ai-policy', 'completion']) {
+        expect(dom.querySelectorAll(`[id="${anchor}"]`)).toHaveLength(1);
+        expect(dom.getElementById(anchor)!.closest('details')).toBeNull();
+      }
+      const routes = [...dom.querySelectorAll('.daily-workspace a')].map((a) =>
+        a.getAttribute('href'),
+      );
+      expect(routes).toContain(workspace.lesson.route);
+      expect(routes).toContain(workspace.exercise.route);
+      for (const use of workspace.uses)
+        expect(routes).toContain(
+          `/resources/${catalog.resources.find((r) => r.id === use.resourceId)!.stableKey}`,
+        );
+      expect(
+        dom.querySelector('.daily-workspace input, .daily-workspace form'),
+      ).toBeNull();
+    },
+  );
   it.each([
     'd001-learn',
     'd125-practice',

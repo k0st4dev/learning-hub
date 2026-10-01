@@ -314,6 +314,23 @@ textarea {
 .course-reading-content {
   min-width: 0;
 }
+.daily-workspace,
+.daily-context {
+  max-width: 76ch;
+}
+.daily-context h2,
+.daily-context nav {
+  margin-top: 20px;
+}
+.daily-tasks {
+  list-style: decimal;
+  padding-left: 24px;
+  margin: 16px 0;
+}
+.daily-tasks li {
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
 .course-outline {
   border: 1px solid var(--border);
   border-radius: 8px;

@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { dayWorkspace } from '@/server/content/day-workspace';
+import { DailyContext, DailyWorkspace } from './daily-workspace';
+import { ResourceCards } from './resource-cards';
 import { z } from 'zod';
 import type { Catalog, CatalogPage } from '@/server/content/read';
 import { sourceLinkSchema } from '@/server/content/source-schema';
@@ -107,6 +110,7 @@ export function CurriculumPreview({
   page: CatalogPage;
 }) {
   const overview = page.item.stableKey === 'overview';
+  const workspace = dayWorkspace(catalog, page.item.id);
   const navigationModel = courseNavigation(catalog);
   const roots = navigationModel.items
     .filter(
@@ -153,20 +157,24 @@ export function CurriculumPreview({
             {en.curriculum.release}: {catalog.release.id} ·{' '}
             {en.curriculum.sourceContent}
           </p>
-          {(overview || page.children.length > 0) && (
-            <nav className="card mb-8" aria-label={en.curriculum.contents}>
-              <ul className="curriculum-links">
-                {(overview
-                  ? roots
-                  : navigationModel.children(page.item.id)
-                ).map((item) => (
-                  <li key={item.id}>
-                    <Link href={item.route}>{curriculumItemLabel(item)}</Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+          {workspace && (
+            <DailyContext workspace={workspace} currentId={page.item.id} />
           )}
+          {page.item.kind !== 'day' &&
+            (overview || page.children.length > 0) && (
+              <nav className="card mb-8" aria-label={en.curriculum.contents}>
+                <ul className="curriculum-links">
+                  {(overview
+                    ? roots
+                    : navigationModel.children(page.item.id)
+                  ).map((item) => (
+                    <li key={item.id}>
+                      <Link href={item.route}>{curriculumItemLabel(item)}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
           {page.item.kind === 'module' && (
             <p lang="sr-Latn" className="source">
               {page.item.bodyMarkdown}
@@ -192,7 +200,31 @@ export function CurriculumPreview({
               </p>
             </section>
           )}
-          <SourceBlocks blocks={page.blocks} />
+          {page.item.kind === 'day' && workspace ? (
+            <DailyWorkspace
+              workspace={workspace}
+              sourceHeader={
+                <SourceBlocks
+                  blocks={page.blocks.filter(
+                    (block) =>
+                      !['ai-policy', 'completion'].includes(block.anchor ?? ''),
+                  )}
+                />
+              }
+              sourceReview={
+                <SourceBlocks
+                  blocks={page.blocks.filter((block) =>
+                    ['ai-policy', 'completion'].includes(block.anchor ?? ''),
+                  )}
+                />
+              }
+              resources={
+                <ResourceCards catalog={catalog} uses={workspace.uses} />
+              }
+            />
+          ) : (
+            <SourceBlocks blocks={page.blocks} />
+          )}
           {page.item.kind === 'exercise' && (
             <section className="section">
               <h2>{en.curriculum.interpretations}</h2>
@@ -213,41 +245,8 @@ export function CurriculumPreview({
             </section>
           )}
           {rule && <p>{rule.requirementMode}</p>}
-          {page.uses.length > 0 && (
-            <section className="section">
-              <h2>{en.curriculum.references}</h2>
-              {page.uses.map((use) => {
-                const resource = catalog.resources.find(
-                  (r) => r.id === use.resourceId,
-                )!;
-                return (
-                  <article className="card mb-4" key={use.id}>
-                    <h3>
-                      <Link href={`/resources/${resource.stableKey}`}>
-                        {resource.title}
-                      </Link>
-                    </h3>
-                    <p className="source" lang="sr-Latn">
-                      {use.assignedText}
-                    </p>
-                    <p>
-                      {resource.originalUrl
-                        ? en.curriculum.parentLink
-                        : en.curriculum.noUrl}
-                    </p>
-                    {resource.originalUrl && (
-                      <a
-                        href={resource.originalUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {resource.title} {en.curriculum.newTab}
-                      </a>
-                    )}
-                  </article>
-                );
-              })}
-            </section>
+          {page.item.kind !== 'day' && (
+            <ResourceCards catalog={catalog} uses={page.uses} />
           )}
           {page.item.stableKey === 'resource-catalog' && (
             <section className="section">

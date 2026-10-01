@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-01T07:05:43.029Z",
+  "server": "development",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "servedPages": 17,
+  "curriculumRoutes": 16,
+  "mappedParagraphs": 62,
+  "originalHyperlinks": 0,
+  "authenticatedAccess": "passed",
+  "missingRoutes": "passed",
+  "readingDoesNotMutateProgress": "passed",
+  "checkedNavigationPages": 15,
+  "checkedOutlinePages": 16,
+  "checkedDailyPages": 15,
+  "scope": "Focused M3 step 3 HTTP regression; full source coverage in integration suite"
+}

@@ -11,10 +11,11 @@ const config = environment();
 assert.ok(
   process.argv.length <= 3 &&
     (!process.argv[2] ||
-      ['--m3-step1', '--m3-step2'].includes(process.argv[2])),
+      ['--m3-step1', '--m3-step2', '--m3-step3'].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
-const checkOutline = process.argv[2] === '--m3-step2';
+const checkDaily = process.argv[2] === '--m3-step3';
+const checkOutline = process.argv[2] === '--m3-step2' || checkDaily;
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 const plan = await loadArchivedCurriculum(root);
 const cookies = new Map();
@@ -75,6 +76,7 @@ let checkedMappings = 0;
 let checkedLinks = 0;
 let checkedNavigationPages = 0;
 let checkedOutlinePages = 0;
+let checkedDailyPages = 0;
 const unitRoutes = plan.source.days.flatMap((day) => [
   `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
   `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
@@ -82,10 +84,19 @@ const unitRoutes = plan.source.days.flatMap((day) => [
 const dayRoutes = plan.source.days.map(
   (day) => `/course/software-engineer/days/${day.id}`,
 );
-const routes = [
+const allRoutes = [
   ...plan.report.routes,
   ...plan.resources.map((r) => `/resources/${r.stableKey}`),
 ];
+// Focused daily UI regression; full source coverage remains in integration tests.
+const routes = checkDaily
+  ? allRoutes.filter(
+      (route) =>
+        /\/days\/(d001|d007|d028|d125|d182)(\/|$)/.test(route) ||
+        route === '/course/software-engineer/weeks/w26' ||
+        route === `/resources/${plan.resources[0].stableKey}`,
+    )
+  : allRoutes;
 for (const [index, route] of routes.entries()) {
   const response = await request(route);
   assert.equal(response.status, 200, route);
@@ -105,6 +116,54 @@ for (const [index, route] of routes.entries()) {
   }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (checkDaily) {
+    const original = plan.source.days.find(
+      (day) =>
+        route === `/course/software-engineer/days/${day.id}` ||
+        route.startsWith(`/course/software-engineer/days/${day.id}/`),
+    );
+    if (original) {
+      assert.equal(
+        document.querySelector('[data-week-objective]')?.textContent,
+        plan.source.weeks.find((week) => week.id === original.week_id)
+          .objective,
+        route,
+      );
+      assert.ok(
+        document
+          .querySelector('.daily-context')
+          ?.textContent.includes(`${original.estimated_minutes} minutes`),
+        route,
+      );
+      if (route === `/course/software-engineer/days/${original.id}`) {
+        assert.equal(
+          document.querySelector('[data-daily-study]')?.textContent,
+          original.study_instruction,
+          route,
+        );
+        assert.deepEqual(
+          [...document.querySelectorAll('[data-daily-task]')].map(
+            (task) => task.textContent,
+          ),
+          original.tasks.map((task) => task.text),
+          route,
+        );
+        for (const anchor of ['ai-policy', 'completion']) {
+          assert.equal(
+            document.querySelectorAll(`[id="${anchor}"]`).length,
+            1,
+            route,
+          );
+          assert.equal(
+            document.getElementById(anchor).closest('details'),
+            null,
+            route,
+          );
+        }
+      }
+      checkedDailyPages++;
+    }
+  }
   if (checkOutline && plan.report.routes.includes(route)) {
     const outline = document.querySelector('nav[aria-label="Course outline"]');
     assert.ok(outline, route);
@@ -230,10 +289,19 @@ for (const [index, route] of routes.entries()) {
   if ((index + 1) % 100 === 0)
     console.log(`Checked ${index + 1}/${routes.length} served pages`);
 }
-assert.equal(checkedMappings, 2329);
-assert.equal(checkedLinks, 19);
-if (checkNavigation) assert.equal(checkedNavigationPages, 546);
-if (checkOutline) assert.equal(checkedOutlinePages, 594);
+assert.equal(
+  checkedMappings,
+  checkDaily
+    ? plan.mappings.filter((mapping) =>
+        routes.includes(mapping.websiteLocation.split('#')[0]),
+      ).length
+    : 2329,
+);
+if (!checkDaily) assert.equal(checkedLinks, 19);
+if (checkNavigation)
+  assert.equal(checkedNavigationPages, checkDaily ? 15 : 546);
+if (checkOutline) assert.equal(checkedOutlinePages, checkDaily ? 16 : 594);
+if (checkDaily) assert.equal(checkedDailyPages, 15);
 for (const route of [
   '/course/software-engineer/days/missing',
   '/resources/missing',
@@ -258,7 +326,8 @@ const report = {
   server: 'development',
   manifestSha256: plan.manifestSha256,
   servedPages: routes.length,
-  curriculumRoutes: plan.report.routes.length,
+  curriculumRoutes: routes.filter((route) => plan.report.routes.includes(route))
+    .length,
   mappedParagraphs: checkedMappings,
   originalHyperlinks: checkedLinks,
   authenticatedAccess: 'passed',
@@ -266,15 +335,24 @@ const report = {
   readingDoesNotMutateProgress: 'passed',
   ...(checkNavigation ? { checkedNavigationPages } : {}),
   ...(checkOutline ? { checkedOutlinePages } : {}),
+  ...(checkDaily
+    ? {
+        checkedDailyPages,
+        scope:
+          'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+      }
+    : {}),
 };
 await writeFile(
   path.join(
     root,
-    checkOutline
-      ? 'docs/m3-step2-served-audit.json'
-      : checkNavigation
-        ? 'docs/m3-step1-served-audit.json'
-        : 'docs/m2-served-audit.json',
+    checkDaily
+      ? 'docs/m3-step3-served-audit.json'
+      : checkOutline
+        ? 'docs/m3-step2-served-audit.json'
+        : checkNavigation
+          ? 'docs/m3-step1-served-audit.json'
+          : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

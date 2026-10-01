@@ -65,6 +65,20 @@ export const en = {
     recovery:
       'Local password recovery is being added in the operations milestone. Do not delete the database to reset an account.',
   },
+  daily: {
+    orient: 'Day orientation',
+    plan: 'Original daily plan',
+    minutes: 'minutes',
+    why: 'Why this matters — weekly objective',
+    destinations: 'This day',
+    overview: 'Day overview',
+    originalContext: 'Original day context',
+    openStudy: 'Open study lesson',
+    openExercise: 'Open exercise',
+    review: 'Review — AI policy and completion criterion',
+    localIde:
+      'Complete these tasks in your local IDE. Open the exercise view for focused practice.',
+  },
   navigation: {
     outline: 'Course outline',
     outlineHelp:
