@@ -1,4 +1,30 @@
 export const en = {
+  routeState: {
+    loading: 'Loading your local workspace…',
+    course: 'Back to course',
+    preserve:
+      'Keep your existing data folder. Do not delete it or reset the database to fix this problem.',
+    missing: {
+      title: 'Page not found',
+      description:
+        'This address does not identify content in your course version. Check the address, browse the course, or return to your dashboard.',
+    },
+    setup: {
+      title: 'Course setup is needed',
+      description:
+        'The local course is not available yet. Follow the setup instructions in the project README, then try again. Setup preserves existing student records.',
+    },
+    unpublished: {
+      title: 'This course version is unavailable',
+      description:
+        'Your course version is not available for reading. Contact the person maintaining this installation. Your enrollment has not been switched to a different version.',
+    },
+    unavailable: {
+      title: 'This page could not be loaded',
+      description:
+        'The application could not read this page. Try again. If the problem continues, restart the local application and follow the recovery instructions in the README.',
+    },
+  },
   curriculum: {
     contexts: 'Related learning contexts',
     scorecard: 'Original scorecard dimensions',

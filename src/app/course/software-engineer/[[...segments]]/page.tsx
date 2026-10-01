@@ -10,6 +10,7 @@ import {
 } from '@/components/learning-client';
 import { StudentShell } from '@/components/student-shell';
 import { en } from '@/i18n/en';
+import { AppError } from '@/server/errors';
 export default async function Course({
   params,
 }: {
@@ -21,9 +22,16 @@ export default async function Course({
   const state = snapshot(getStore(), token);
   const releaseId =
     state?.enrollment.releaseId ?? latestRelease(getStore())?.id;
+  if (!releaseId)
+    throw new AppError(503, 'SETUP_REQUIRED', 'Course setup is needed.');
   if (releaseId && !releaseId.startsWith('development-')) {
     const catalog = readCatalog(getStore(), releaseId);
-    if (!catalog) notFound();
+    if (!catalog)
+      throw new AppError(
+        503,
+        'CONTENT_UNAVAILABLE',
+        'This course version is unavailable.',
+      );
     return (
       <StudentShell
         name={student.displayName || student.email}

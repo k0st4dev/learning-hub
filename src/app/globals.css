@@ -314,6 +314,22 @@ textarea {
 .course-reading-content {
   min-width: 0;
 }
+.route-state p {
+  max-width: 70ch;
+}
+.workspace-skeleton {
+  max-width: 76ch;
+}
+.workspace-skeleton div {
+  height: 64px;
+  margin-top: 20px;
+  background: var(--border);
+  border-radius: 8px;
+}
+.workspace-skeleton div:first-child {
+  width: 60%;
+  height: 36px;
+}
 .daily-workspace,
 .daily-context {
   max-width: 76ch;

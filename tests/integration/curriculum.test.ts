@@ -22,6 +22,9 @@ import { readCatalog, catalogPage } from '../../src/server/content/read.ts';
 import { CurriculumPreview } from '../../src/components/curriculum-preview';
 import { CourseOutline } from '../../src/components/course-outline';
 import { dayWorkspace } from '../../src/server/content/day-workspace';
+import { courseAvailability } from '../../src/server/content/availability';
+import { register, login } from '../../src/server/auth/service';
+import { startCourse } from '../../src/server/learning/mutate';
 import {
   courseNavigation,
   courseOutline,
@@ -51,6 +54,54 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('distinguishes setup, unpublished pinned releases and missing routes after authentication', async () => {
+    const credentials = {
+      email: 'route-states@example.test',
+      password: 'Local route state tests have a long password',
+    };
+    await register(store, {
+      ...credentials,
+      confirmation: credentials.password,
+    });
+    const { token } = await login(store, credentials);
+    const route = '/course/software-engineer/days/d001';
+    expect(courseAvailability(store, undefined, route)).toBeNull();
+    expect(courseAvailability(store, token, route)).toBe('setup');
+    importCurriculum(store, plan.source);
+    const before = startCourse(store, token);
+    for (const route of plan.report.routes)
+      expect(courseAvailability(store, token, route), route).toBeNull();
+    expect(courseAvailability(store, token, '/resources/res-01')).toBeNull();
+    expect(courseAvailability(store, token, '/resources/unknown')).toBe(
+      'missing',
+    );
+    expect(
+      courseAvailability(
+        store,
+        token,
+        '/course/software-engineer/days/unknown',
+      ),
+    ).toBe('missing');
+    expect(startCourse(store, token)).toEqual(before);
+    store.orm
+      .update(s.courseRelease)
+      .set({ status: 'retired' })
+      .where(eq(s.courseRelease.id, plan.releaseId))
+      .run();
+    expect(courseAvailability(store, token, route)).toBe('unpublished');
+    // A second account has no pinned enrollment and must not inherit the first account's release.
+    await register(store, {
+      ...credentials,
+      email: 'other-state@example.test',
+      confirmation: credentials.password,
+    });
+    const other = await login(store, {
+      ...credentials,
+      email: 'other-state@example.test',
+    });
+    expect(courseAvailability(store, other.token, route)).toBe('setup');
+    expect(courseAvailability(store, undefined, route)).toBeNull();
+  });
   it('resolves every daily workspace from day, study and exercise without inventing source content', () => {
     importCurriculum(store, plan.source);
     const catalog = readCatalog(store, plan.releaseId)!;

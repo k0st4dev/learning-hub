@@ -11,10 +11,13 @@ const config = environment();
 assert.ok(
   process.argv.length <= 3 &&
     (!process.argv[2] ||
-      ['--m3-step1', '--m3-step2', '--m3-step3'].includes(process.argv[2])),
+      ['--m3-step1', '--m3-step2', '--m3-step3', '--m3-step4'].includes(
+        process.argv[2],
+      )),
 );
 const checkNavigation = !!process.argv[2];
-const checkDaily = process.argv[2] === '--m3-step3';
+const checkStates = process.argv[2] === '--m3-step4';
+const checkDaily = process.argv[2] === '--m3-step3' || checkStates;
 const checkOutline = process.argv[2] === '--m3-step2' || checkDaily;
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 const plan = await loadArchivedCurriculum(root);
@@ -308,6 +311,21 @@ for (const route of [
 ]) {
   const response = await request(route);
   const text = await response.text();
+  if (checkStates) {
+    assert.equal(response.status, 404, route);
+    const missing = new JSDOM(text);
+    assert.equal(
+      missing.window.document.querySelector('h1')?.textContent,
+      'Page not found',
+    );
+    assert.ok(missing.window.document.querySelector('a[href="/dashboard"]'));
+    assert.ok(
+      missing.window.document.querySelector(
+        'a[href="/course/software-engineer"]',
+      ),
+    );
+    missing.window.close();
+  }
   // Next may stream a not-found boundary with status 200; require its noindex marker.
   assert.ok(
     response.status === 404 || /name="robots" content="noindex"/.test(text),
@@ -338,21 +356,24 @@ const report = {
   ...(checkDaily
     ? {
         checkedDailyPages,
-        scope:
-          'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+        scope: checkStates
+          ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
+          : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
       }
     : {}),
 };
 await writeFile(
   path.join(
     root,
-    checkDaily
-      ? 'docs/m3-step3-served-audit.json'
-      : checkOutline
-        ? 'docs/m3-step2-served-audit.json'
-        : checkNavigation
-          ? 'docs/m3-step1-served-audit.json'
-          : 'docs/m2-served-audit.json',
+    checkStates
+      ? 'docs/m3-step4-served-audit.json'
+      : checkDaily
+        ? 'docs/m3-step3-served-audit.json'
+        : checkOutline
+          ? 'docs/m3-step2-served-audit.json'
+          : checkNavigation
+            ? 'docs/m3-step1-served-audit.json'
+            : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

@@ -2,6 +2,8 @@ import type { NextConfig } from 'next';
 
 const config: NextConfig = {
   poweredByHeader: false,
+  // Keep 127.0.0.1 intact for internal status rewrites and the strict Host guard.
+  skipProxyUrlNormalize: true,
   serverExternalPackages: ['better-sqlite3', 'argon2'],
   // Worker threads retain build-time type checking on restricted Windows hosts.
   experimental: { workerThreads: true, useTypeScriptCli: false, cpus: 2 },

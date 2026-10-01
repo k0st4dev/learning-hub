@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-01. **M0–M2 complete; M3 step 3 complete.** The user requires confirmation after every M3 step. **Do not start step 4 without approval.**
+Updated: 2026-10-01. **M0–M2 complete; M3 step 4 complete.** The user requires confirmation after every M3 step. **Do not start step 5 without approval.**
 
 ## Completed
 
@@ -20,6 +20,8 @@ Updated: 2026-10-01. **M0–M2 complete; M3 step 3 complete.** The user requires
 
 - M3 step 3: daily orientation and Day/Study/Exercise links on all 546 day/unit views; day pages include original study, ordered tasks, contextual resources and expanded AI/criterion blocks. Shared source-only workspace model and resource cards. All 84 tests pass, including all 182 daily models and full 2329-mapping/19-hyperlink rendering. Focused HTTP audit: 17 pages, 62 mappings, 15 daily/sequence views and 16 outline views; progress/cursor unchanged. Desktop/mobile keyboard journey and reflow pass. TypeScript, ESLint and production build pass. Evidence: docs/M3-STEP3-VERIFICATION.md and docs/m3-step3-served-audit.json.
 
+- M3 step 4: shared loading skeleton and distinct missing/setup/unpublished/unavailable recovery states. Pre-stream authenticated availability checks preserve pinned releases and set 404/503; strict Host/CSP/ownership checks remain. All 96 tests pass, including full source rendering and every published route availability. Focused HTTP audit passes 17 valid pages plus strict missing-route checks. Actual absent-database 503 and browser retry recovery verified; mobile missing-page recovery passes. Build/lint/types pass. Production runtime startup remains blocked by automatic approval review. Evidence: docs/M3-STEP4-VERIFICATION.md and docs/m3-step4-served-audit.json.
+
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
@@ -35,11 +37,11 @@ Updated: 2026-10-01. **M0–M2 complete; M3 step 3 complete.** The user requires
 - Separate production-server startup was rejected by automatic approval policy; development browser/HTTP evidence recorded. Production Playwright/axe remains pending because of host IPC restrictions.
 - Real reboot, full browser-process shutdown, screen reader, macOS/Linux and disconnected-network checks remain final gates. A01–A26 are not declared fully passed.
 - Existing two Turbopack filesystem-tracing warnings and ESLint 9 support warning remain tracked.
-- Remaining M3 work includes route states, full mobile navigation drawer and scorecard heading (currently first mapped cell). Change presentation labels without changing published data.
+- Remaining M3 work includes full mobile navigation drawer and scorecard heading (currently first mapped cell). Change presentation labels without changing published data.
 - Notes/search/scorecard entry/profiles/recovery/backup/update tooling remain later milestones.
 
 ## Exact next focused task
 
-After explicit user approval, M3 step 4: course route states — loading, unavailable/missing content, recoverable errors and clear return navigation. Inspect existing boundaries and specification sections 4/15 first. Preserve authentication/ownership checks and distinguish transient errors from empty content. Keep M4 completion controls outside this step. Verify representative route states and keyboard/mobile recovery, then stop and ask again. The full mobile navigation drawer and remaining presentation polish stay in later M3 steps.
+After explicit user approval, M3 step 5: mobile navigation drawer with the same primary destinations and course hierarchy. Follow specification section 15: accessible trigger, modal focus containment, Escape close and focus restoration. Preserve the existing outline, source content and read-only navigation. Test keyboard, mobile reflow and recovery, then stop and ask again. Keep M4 completion controls outside this increment.
 
 Relevant files: IMPLEMENTATION_PLAN.md; archived product-specification.md; src/server/content/read.ts; src/components/curriculum-preview.tsx and full-curriculum-page.tsx; course catch-all; tests/integration/curriculum.test.ts. Import decisions and reproduction commands: docs/M2-VERIFICATION.md.
