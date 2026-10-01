@@ -10,9 +10,11 @@ import { loadArchivedCurriculum } from '../src/server/content/import.ts';
 const config = environment();
 assert.ok(
   process.argv.length <= 3 &&
-    (!process.argv[2] || process.argv[2] === '--m3-step1'),
+    (!process.argv[2] ||
+      ['--m3-step1', '--m3-step2'].includes(process.argv[2])),
 );
-const checkNavigation = process.argv[2] === '--m3-step1';
+const checkNavigation = !!process.argv[2];
+const checkOutline = process.argv[2] === '--m3-step2';
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 const plan = await loadArchivedCurriculum(root);
 const cookies = new Map();
@@ -72,6 +74,7 @@ assert.equal(started.data.enrollment.releaseId, plan.releaseId);
 let checkedMappings = 0;
 let checkedLinks = 0;
 let checkedNavigationPages = 0;
+let checkedOutlinePages = 0;
 const unitRoutes = plan.source.days.flatMap((day) => [
   `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
   `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
@@ -87,8 +90,70 @@ for (const [index, route] of routes.entries()) {
   const response = await request(route);
   assert.equal(response.status, 200, route);
   const document = new JSDOM(await response.text()).window.document;
+  // React can stream large synchronous trees into $RS segments. Place only
+  // these literal segment references; never evaluate page scripts in the audit.
+  for (const script of document.querySelectorAll('script')) {
+    for (const [, sourceId, placeholderId] of script.textContent.matchAll(
+      /\$RS\("(S:[\da-f]+)","(P:[\da-f]+)"\)/g,
+    )) {
+      const segment = document.getElementById(sourceId);
+      const placeholder = document.getElementById(placeholderId);
+      assert.ok(segment && placeholder, `Missing stream segment: ${route}`);
+      placeholder.replaceWith(...segment.childNodes);
+      segment.remove();
+    }
+  }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (checkOutline && plan.report.routes.includes(route)) {
+    const outline = document.querySelector('nav[aria-label="Course outline"]');
+    assert.ok(outline, route);
+    assert.equal(
+      outline.querySelectorAll('details[data-outline-item]').length,
+      214,
+      route,
+    );
+    const currentItem = plan.items.find(
+      (item) => JSON.parse(item.metadataJson).route === route,
+    );
+    const current = outline.querySelectorAll('[aria-current="page"]');
+    const inOutline = ['module', 'week', 'day', 'lesson', 'exercise'].includes(
+      currentItem.kind,
+    );
+    assert.equal(
+      current.length,
+      inOutline || currentItem.stableKey === 'overview' ? 1 : 0,
+      route,
+    );
+    const currentDay = plan.source.days.find((day) =>
+      [day.id, day.lesson_id, day.exercise_id].includes(currentItem.stableKey),
+    );
+    const currentWeek = plan.source.weeks.find(
+      (week) => week.id === currentItem.stableKey,
+    );
+    const expectedOpen = currentDay
+      ? [currentDay.module_id, currentDay.week_id, currentDay.id]
+      : currentWeek
+        ? [currentWeek.module_id, currentWeek.id]
+        : currentItem.kind === 'module'
+          ? [currentItem.stableKey]
+          : [];
+    assert.deepEqual(
+      [...outline.querySelectorAll('details[data-outline-item][open]')].map(
+        (detail) => detail.getAttribute('data-outline-item'),
+      ),
+      expectedOpen.map((key) => `${plan.releaseId}:${key}`),
+      route,
+    );
+    const hrefs = new Set(
+      [...outline.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+    );
+    for (const destination of [...dayRoutes, ...unitRoutes].filter(
+      (destination) => destination !== route,
+    ))
+      assert.ok(hrefs.has(destination), `${route} → ${destination}`);
+    checkedOutlinePages++;
+  }
   if (checkNavigation) {
     const unitIndex = unitRoutes.indexOf(route);
     const dayIndex = dayRoutes.indexOf(route);
@@ -113,7 +178,9 @@ for (const [index, route] of routes.entries()) {
           (isUnit ? '/course/software-engineer/progress' : null),
       );
       assert.equal(
-        document.querySelectorAll('[aria-current="page"]').length,
+        document
+          .querySelector('nav[aria-label="Location"]')
+          .querySelectorAll('[aria-current="page"]').length,
         1,
         route,
       );
@@ -166,6 +233,7 @@ for (const [index, route] of routes.entries()) {
 assert.equal(checkedMappings, 2329);
 assert.equal(checkedLinks, 19);
 if (checkNavigation) assert.equal(checkedNavigationPages, 546);
+if (checkOutline) assert.equal(checkedOutlinePages, 594);
 for (const route of [
   '/course/software-engineer/days/missing',
   '/resources/missing',
@@ -197,13 +265,16 @@ const report = {
   missingRoutes: 'passed',
   readingDoesNotMutateProgress: 'passed',
   ...(checkNavigation ? { checkedNavigationPages } : {}),
+  ...(checkOutline ? { checkedOutlinePages } : {}),
 };
 await writeFile(
   path.join(
     root,
-    checkNavigation
-      ? 'docs/m3-step1-served-audit.json'
-      : 'docs/m2-served-audit.json',
+    checkOutline
+      ? 'docs/m3-step2-served-audit.json'
+      : checkNavigation
+        ? 'docs/m3-step1-served-audit.json'
+        : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

@@ -75,10 +75,16 @@ export function courseNavigation(input: Input) {
     );
   const target = (item: NavigationItem | undefined): NavigationTarget | null =>
     item ? { kind: 'content', item, href: item.route } : null;
-  const children = (parentId: string | null) =>
-    items
-      .filter((item) => item.parentId === parentId)
-      .sort((a, b) => a.orderIndex - b.orderIndex);
+  const grouped = new Map<string | null, NavigationItem[]>();
+  for (const item of items) {
+    const siblings = grouped.get(item.parentId) ?? [];
+    siblings.push(item);
+    grouped.set(item.parentId, siblings);
+  }
+  for (const siblings of grouped.values())
+    siblings.sort((a, b) => a.orderIndex - b.orderIndex);
+  const children = (parentId: string | null): readonly NavigationItem[] =>
+    grouped.get(parentId) ?? [];
   function forItem(id: string): PageNavigation | null {
     const current = byId.get(id);
     if (!current) return null;
@@ -117,4 +123,62 @@ export function courseNavigation(input: Input) {
     };
   }
   return { items, byId, children, daySequence, unitSequence, forItem };
+}
+
+export type OutlineBranch = {
+  item: NavigationItem;
+  expanded: boolean;
+  current: boolean;
+  children: OutlineBranch[];
+};
+export function courseOutline(
+  model: ReturnType<typeof courseNavigation>,
+  currentId: string,
+): OutlineBranch[] {
+  const path = new Set(
+    model.forItem(currentId)?.breadcrumbs.map((item) => item.id),
+  );
+  const branch = (
+    item: NavigationItem,
+    children: OutlineBranch[] = [],
+  ): OutlineBranch => ({
+    item,
+    children,
+    current: item.id === currentId,
+    expanded: path.has(item.id) && children.length > 0,
+  });
+  return model
+    .children(null)
+    .filter((item) => item.kind === 'module')
+    .map((phase) =>
+      branch(
+        phase,
+        model
+          .children(phase.id)
+          .filter((item) => item.kind === 'week')
+          .map((week) =>
+            branch(
+              week,
+              model
+                .children(week.id)
+                .filter((item) => item.kind === 'day')
+                .map((day) =>
+                  branch(
+                    day,
+                    model
+                      .children(day.id)
+                      .filter((item) => item.kind === 'lesson')
+                      .flatMap((lesson) => [
+                        branch(lesson),
+                        ...model
+                          .children(lesson.id)
+                          .filter((item) => item.kind === 'exercise')
+                          .map((exercise) => branch(exercise)),
+                      ]),
+                  ),
+                ),
+            ),
+          ),
+      ),
+    );
 }

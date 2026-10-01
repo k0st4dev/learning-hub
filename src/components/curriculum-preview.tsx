@@ -3,9 +3,10 @@ import { z } from 'zod';
 import type { Catalog, CatalogPage } from '@/server/content/read';
 import { sourceLinkSchema } from '@/server/content/source-schema';
 import { en } from '@/i18n/en';
-import { courseNavigation } from '@/server/content/navigation';
+import { courseNavigation, courseOutline } from '@/server/content/navigation';
+import { CourseOutline } from './course-outline';
 import {
-  CurriculumItemLabel,
+  curriculumItemLabel,
   CurriculumNavigation,
 } from './curriculum-navigation';
 const base = '/course/software-engineer';
@@ -133,131 +134,139 @@ export function CurriculumPreview({
         {!overview && <Link href={base}>{en.courseLabel}</Link>}
         {parents.map((item) => (
           <Link key={item.id} href={item.route}>
-            <CurriculumItemLabel item={item} />
+            {curriculumItemLabel(item)}
           </Link>
         ))}
         <span aria-current="page">
-          <CurriculumItemLabel item={navigation.current} />
+          {curriculumItemLabel(navigation.current)}
         </span>
       </nav>
-      <h1 lang="sr-Latn">{page.item.title}</h1>
-      <p className="muted">
-        {en.curriculum.release}: {catalog.release.id} ·{' '}
-        {en.curriculum.sourceContent}
-      </p>
-      {(overview || page.children.length > 0) && (
-        <nav className="card mb-8" aria-label={en.curriculum.contents}>
-          <ul className="curriculum-links">
-            {(overview ? roots : navigationModel.children(page.item.id)).map(
-              (item) => (
-                <li key={item.id}>
-                  <Link href={item.route}>
-                    <CurriculumItemLabel item={item} />
-                  </Link>
-                </li>
-              ),
-            )}
-          </ul>
-        </nav>
-      )}
-      {page.item.kind === 'module' && (
-        <p lang="sr-Latn" className="source">
-          {page.item.bodyMarkdown}
-        </p>
-      )}
-      {week && (
-        <section className="card mb-8">
-          <h2>{en.curriculum.weekEvidence}</h2>
-          <p lang="sr-Latn" className="source">
-            {week.mainEvidenceMarkdown}
+      <div className="course-reading-layout">
+        <CourseOutline
+          key={page.item.id}
+          branches={courseOutline(navigationModel, page.item.id)}
+          overview={overview}
+        />
+        <div className="course-reading-content">
+          <h1 lang="sr-Latn">{page.item.title}</h1>
+          <p className="muted">
+            {en.curriculum.release}: {catalog.release.id} ·{' '}
+            {en.curriculum.sourceContent}
           </p>
-        </section>
-      )}
-      {day && ['lesson', 'exercise'].includes(page.item.kind) && (
-        <section className="card mb-8">
-          <h2>{en.learning.ai}</h2>
-          <p lang="sr-Latn" className="source">
-            {day.aiPolicyMarkdown}
-          </p>
-          <h2 className="mt-6">{en.learning.criterion}</h2>
-          <p lang="sr-Latn" className="source">
-            {day.completionCriterionMarkdown}
-          </p>
-        </section>
-      )}
-      <SourceBlocks blocks={page.blocks} />
-      {page.item.kind === 'exercise' && (
-        <section className="section">
-          <h2>{en.curriculum.interpretations}</h2>
-          {page.children.map((task) => {
-            const rule = catalog.rules.find((r) => r.itemId === task.id)!;
-            const interpretation = z
-              .object({ completionRule: z.string() })
-              .parse(JSON.parse(rule.ruleJson));
-            return (
-              <div className="card mb-4" key={task.id}>
-                <p lang="sr-Latn">{task.bodyMarkdown}</p>
-                <p className="mt-3">
-                  {rule.requirementMode}: {interpretation.completionRule}
-                </p>
-              </div>
-            );
-          })}
-        </section>
-      )}
-      {rule && <p>{rule.requirementMode}</p>}
-      {page.uses.length > 0 && (
-        <section className="section">
-          <h2>{en.curriculum.references}</h2>
-          {page.uses.map((use) => {
-            const resource = catalog.resources.find(
-              (r) => r.id === use.resourceId,
-            )!;
-            return (
-              <article className="card mb-4" key={use.id}>
-                <h3>
-                  <Link href={`/resources/${resource.stableKey}`}>
-                    {resource.title}
-                  </Link>
-                </h3>
-                <p className="source" lang="sr-Latn">
-                  {use.assignedText}
-                </p>
-                <p>
-                  {resource.originalUrl
-                    ? en.curriculum.parentLink
-                    : en.curriculum.noUrl}
-                </p>
-                {resource.originalUrl && (
-                  <a
-                    href={resource.originalUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {resource.title} {en.curriculum.newTab}
-                  </a>
-                )}
-              </article>
-            );
-          })}
-        </section>
-      )}
-      {page.item.stableKey === 'resource-catalog' && (
-        <section className="section">
-          <h2>{en.curriculum.references}</h2>
-          <ul className="curriculum-links">
-            {catalog.resources.map((resource) => (
-              <li key={resource.id}>
-                <Link href={`/resources/${resource.stableKey}`}>
-                  {resource.title}
-                </Link>
-                {resource.originalUrl ? '' : ` — ${en.curriculum.noUrl}`}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-      <CurriculumNavigation navigation={navigation} />
+          {(overview || page.children.length > 0) && (
+            <nav className="card mb-8" aria-label={en.curriculum.contents}>
+              <ul className="curriculum-links">
+                {(overview
+                  ? roots
+                  : navigationModel.children(page.item.id)
+                ).map((item) => (
+                  <li key={item.id}>
+                    <Link href={item.route}>{curriculumItemLabel(item)}</Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+          {page.item.kind === 'module' && (
+            <p lang="sr-Latn" className="source">
+              {page.item.bodyMarkdown}
+            </p>
+          )}
+          {week && (
+            <section className="card mb-8">
+              <h2>{en.curriculum.weekEvidence}</h2>
+              <p lang="sr-Latn" className="source">
+                {week.mainEvidenceMarkdown}
+              </p>
+            </section>
+          )}
+          {day && ['lesson', 'exercise'].includes(page.item.kind) && (
+            <section className="card mb-8">
+              <h2>{en.learning.ai}</h2>
+              <p lang="sr-Latn" className="source">
+                {day.aiPolicyMarkdown}
+              </p>
+              <h2 className="mt-6">{en.learning.criterion}</h2>
+              <p lang="sr-Latn" className="source">
+                {day.completionCriterionMarkdown}
+              </p>
+            </section>
+          )}
+          <SourceBlocks blocks={page.blocks} />
+          {page.item.kind === 'exercise' && (
+            <section className="section">
+              <h2>{en.curriculum.interpretations}</h2>
+              {page.children.map((task) => {
+                const rule = catalog.rules.find((r) => r.itemId === task.id)!;
+                const interpretation = z
+                  .object({ completionRule: z.string() })
+                  .parse(JSON.parse(rule.ruleJson));
+                return (
+                  <div className="card mb-4" key={task.id}>
+                    <p lang="sr-Latn">{task.bodyMarkdown}</p>
+                    <p className="mt-3">
+                      {rule.requirementMode}: {interpretation.completionRule}
+                    </p>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+          {rule && <p>{rule.requirementMode}</p>}
+          {page.uses.length > 0 && (
+            <section className="section">
+              <h2>{en.curriculum.references}</h2>
+              {page.uses.map((use) => {
+                const resource = catalog.resources.find(
+                  (r) => r.id === use.resourceId,
+                )!;
+                return (
+                  <article className="card mb-4" key={use.id}>
+                    <h3>
+                      <Link href={`/resources/${resource.stableKey}`}>
+                        {resource.title}
+                      </Link>
+                    </h3>
+                    <p className="source" lang="sr-Latn">
+                      {use.assignedText}
+                    </p>
+                    <p>
+                      {resource.originalUrl
+                        ? en.curriculum.parentLink
+                        : en.curriculum.noUrl}
+                    </p>
+                    {resource.originalUrl && (
+                      <a
+                        href={resource.originalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {resource.title} {en.curriculum.newTab}
+                      </a>
+                    )}
+                  </article>
+                );
+              })}
+            </section>
+          )}
+          {page.item.stableKey === 'resource-catalog' && (
+            <section className="section">
+              <h2>{en.curriculum.references}</h2>
+              <ul className="curriculum-links">
+                {catalog.resources.map((resource) => (
+                  <li key={resource.id}>
+                    <Link href={`/resources/${resource.stableKey}`}>
+                      {resource.title}
+                    </Link>
+                    {resource.originalUrl ? '' : ` — ${en.curriculum.noUrl}`}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          <CurriculumNavigation navigation={navigation} />
+        </div>
+      </div>
     </>
   );
 }

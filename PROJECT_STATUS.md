@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-09-30. **M0–M2 complete; M3 step 1 complete.** The user now requires confirmation after every M3 step. **Wait for approval before step 2.**
+Updated: 2026-10-01. **M0–M2 complete; M3 step 2 complete.** The user requires confirmation after every M3 step. **Do not start step 3 without approval.**
 
 ## Completed
 
@@ -15,6 +15,8 @@ Updated: 2026-09-30. **M0–M2 complete; M3 step 1 complete.** The user now requ
 ## Decisions and immutable contracts
 
 - M3 step 1: shared source-ordered navigation, numbered breadcrumbs/current page, Previous/Next for all 364 units and separate day navigation. First study returns to preparation; final exercise opens Progress. No progress/cursor writes. All 70 tests and 663 served-page checks pass, including navigation on 546 day/unit pages. Browser Day 1 study → exercise → Day 2 study and mobile reflow pass. Evidence: docs/M3-STEP1-VERIFICATION.md.
+
+- M3 step 2: native expandable phase/week/day/study/exercise outline with all 578 entries, 214 expandable groups, current-path expansion and current-page marker. Shared pure model/labels; desktop sidebar and mobile stacking/collapse. All 78 tests pass; final browser keyboard/reflow checks at 1440×900 and 360×800 pass. TypeScript, ESLint and production build pass. All 663 served pages pass, including outline checks on 594 curriculum pages and sequence checks on 546 day/unit pages; all 2329 mappings and 19 original hyperlink occurrences preserved. Reading leaves progress/cursor unchanged. Evidence: docs/M3-STEP2-VERIFICATION.md and docs/m3-step2-served-audit.json.
 
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
@@ -31,11 +33,11 @@ Updated: 2026-09-30. **M0–M2 complete; M3 step 1 complete.** The user now requ
 - Separate production-server startup was rejected by automatic approval policy; development browser/HTTP evidence recorded. Production Playwright/axe remains pending because of host IPC restrictions.
 - Real reboot, full browser-process shutdown, screen reader, macOS/Linux and disconnected-network checks remain final gates. A01–A26 are not declared fully passed.
 - Existing two Turbopack filesystem-tracing warnings and ESLint 9 support warning remain tracked.
-- M3 navigation polish includes full outline, previous/next boundaries, route states and scorecard heading (currently first mapped cell). Change presentation labels without changing published data.
+- Remaining M3 work includes daily workspace polish, route states, full mobile navigation drawer and scorecard heading (currently first mapped cell). Change presentation labels without changing published data.
 - Notes/search/scorecard entry/profiles/recovery/backup/update tooling remain later milestones.
 
 ## Exact next focused task
 
-After explicit user approval, M3 step 2: implement a compact expandable course outline using src/server/content/navigation.ts. Show phase → week → day → study/exercise, expand the current path and mark the current page. Avoid showing all 182 days at once. Verify keyboard use, mobile reflow and access to every day. Preserve immutable content and read-only reference navigation. Stop, report and ask again before the following step. Daily workspace polish, route-state UX and the full mobile navigation drawer remain later M3 steps; do not mix in M4 or M6.
+After explicit user approval, M3 step 3: daily workspace presentation with clear study/exercise entry points and original duration, objective, AI criterion and contextual resources. Preserve immutable text and read-only reference navigation. Keep M4 completion controls and M6 learner tools outside this step. Verify relevant component and browser behavior, then stop and ask again. Route-state UX and the full mobile navigation drawer remain later M3 steps.
 
 Relevant files: IMPLEMENTATION_PLAN.md; archived product-specification.md; src/server/content/read.ts; src/components/curriculum-preview.tsx and full-curriculum-page.tsx; course catch-all; tests/integration/curriculum.test.ts. Import decisions and reproduction commands: docs/M2-VERIFICATION.md.

@@ -1,7 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { z } from 'zod';
 import { loadArchivedCurriculum } from '../../src/server/content/import.ts';
-import { courseNavigation } from '../../src/server/content/navigation.ts';
+import {
+  courseNavigation,
+  courseOutline,
+  type OutlineBranch,
+} from '../../src/server/content/navigation.ts';
 let input: Parameters<typeof courseNavigation>[0];
 const id = (key: string) => `se-26w-v1:${key}`;
 const day = (n: number) => `d${String(n).padStart(3, '0')}`;
@@ -25,6 +29,51 @@ beforeAll(async () => {
   };
 });
 describe('source-ordered reading navigation', () => {
+  const flatten = (branches: OutlineBranch[]): OutlineBranch[] =>
+    branches.flatMap((branch) => [branch, ...flatten(branch.children)]);
+  it('includes every phase, week, day and unit exactly once with study/exercise siblings', () => {
+    const outline = courseOutline(courseNavigation(input), id('d125-practice'));
+    const all = flatten(outline);
+    expect(outline).toHaveLength(6);
+    for (const [kind, count] of [
+      ['module', 6],
+      ['week', 26],
+      ['day', 182],
+      ['lesson', 182],
+      ['exercise', 182],
+    ] as const)
+      expect(all.filter((branch) => branch.item.kind === kind)).toHaveLength(
+        count,
+      );
+    expect(new Set(all.map((branch) => branch.item.id)).size).toBe(578);
+    for (const branch of all.filter((branch) => branch.item.kind === 'day')) {
+      expect(branch.children.map((child) => child.item.kind)).toEqual([
+        'lesson',
+        'exercise',
+      ]);
+      expect(
+        branch.children.every(
+          (child) => child.item.dayNumber === branch.item.dayNumber,
+        ),
+      ).toBe(true);
+    }
+  });
+  it('opens only the current phase/week/day and identifies one current item', () => {
+    const all = flatten(
+      courseOutline(courseNavigation(input), id('d125-practice')),
+    );
+    expect(
+      all.filter((branch) => branch.expanded).map((branch) => branch.item.id),
+    ).toEqual([id('f4'), id('w18'), id('d125')]);
+    expect(
+      all.filter((branch) => branch.current).map((branch) => branch.item.id),
+    ).toEqual([id('d125-practice')]);
+    expect(
+      flatten(courseOutline(courseNavigation(input), id('overview'))).some(
+        (branch) => branch.expanded || branch.current,
+      ),
+    ).toBe(false);
+  });
   it('traverses every required unit once in both directions across all week and phase boundaries', () => {
     const navigation = courseNavigation(input);
     const expected = Array.from({ length: 182 }, (_, i) => [

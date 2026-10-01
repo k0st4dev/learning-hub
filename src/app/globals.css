@@ -305,6 +305,56 @@ textarea {
   gap: 16px;
   margin-top: 16px;
 }
+.course-reading-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+.course-reading-content {
+  min-width: 0;
+}
+.course-outline {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  overflow-wrap: anywhere;
+}
+.course-outline ol {
+  list-style: none;
+  padding-left: 10px;
+  margin: 0;
+}
+.course-outline li {
+  margin: 4px 0;
+}
+.course-outline summary {
+  cursor: pointer;
+  padding: 10px 4px;
+  min-height: 44px;
+}
+.course-outline a,
+.outline-current {
+  display: block;
+  min-height: 44px;
+  padding: 10px 8px;
+}
+.outline-current {
+  font-weight: 700;
+  border-left: 3px solid var(--primary);
+}
+.outline-current small {
+  display: block;
+  font-weight: 400;
+}
+.course-outline > details > summary {
+  font-weight: 700;
+}
+@media (max-width: 1023px) {
+  .course-reading-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .sequence-link {
   display: flex;
   flex-direction: column;

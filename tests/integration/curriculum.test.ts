@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, afterEach, describe, expect, it } from 'vitest';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { setImmediate as yieldTasks } from 'node:timers/promises';
 import { eq } from 'drizzle-orm';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -19,6 +20,11 @@ import {
 import { validateSource } from '../../src/server/content/source-schema.ts';
 import { readCatalog, catalogPage } from '../../src/server/content/read.ts';
 import { CurriculumPreview } from '../../src/components/curriculum-preview';
+import { CourseOutline } from '../../src/components/course-outline';
+import {
+  courseNavigation,
+  courseOutline,
+} from '../../src/server/content/navigation.ts';
 import { seedDay1Fixture } from '../../src/server/content/day1-fixture.ts';
 import * as s from '../../src/server/db/schema.ts';
 const root = process.cwd();
@@ -44,6 +50,58 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it.each([
+    'd001-learn',
+    'd125-practice',
+    'd182-practice',
+    'w01',
+    'overview',
+    'guide-appendix-a',
+  ])('renders a compact complete outline: %s', (key) => {
+    importCurriculum(store, plan.source);
+    const model = courseNavigation(readCatalog(store, plan.releaseId)!);
+    const currentId = `${plan.releaseId}:${key}`;
+    const dom = new DOMParser().parseFromString(
+      renderToStaticMarkup(
+        createElement(CourseOutline, {
+          branches: courseOutline(model, currentId),
+          overview: key === 'overview',
+        }),
+      ),
+      'text/html',
+    );
+    const outline = dom.querySelector('nav')!;
+    const expectedItems = model.items.filter((item) =>
+      ['module', 'week', 'day', 'lesson', 'exercise'].includes(item.kind),
+    );
+    const links = new Set(
+      Array.from(outline.querySelectorAll('a')).map((a) =>
+        a.getAttribute('href'),
+      ),
+    );
+    for (const item of expectedItems.filter((item) => item.id !== currentId))
+      expect(links.has(item.route), item.id).toBe(true);
+    const current = outline.querySelectorAll('[aria-current="page"]');
+    expect(current).toHaveLength(key === 'guide-appendix-a' ? 0 : 1);
+    if (current.length) expect(current[0]!.closest('a')).toBeNull();
+    const expectedOpen = model
+      .forItem(currentId)!
+      .breadcrumbs.filter((item) =>
+        ['module', 'week', 'day'].includes(item.kind),
+      )
+      .map((item) => item.id);
+    expect(
+      Array.from(
+        outline.querySelectorAll('details[data-outline-item][open]'),
+      ).map((detail) => detail.getAttribute('data-outline-item')),
+    ).toEqual(expectedOpen);
+    expect(outline.querySelectorAll('details[data-outline-item]')).toHaveLength(
+      214,
+    );
+    expect(outline.querySelectorAll('summary a, summary button')).toHaveLength(
+      0,
+    );
+  });
   it('imports complete typed records, source mappings, original links and special task interpretations', () => {
     const result = importCurriculum(store, plan.source);
     expect(result.imported).toBe(true);
@@ -168,83 +226,95 @@ describe('complete immutable curriculum', () => {
       plan.manifestSha256,
     );
   });
-  it('renders every mapped source paragraph, table coordinate, original hyperlink and target anchor', () => {
+  it('renders every mapped source paragraph, table coordinate, original hyperlink and target anchor', async () => {
     importCurriculum(store, plan.source);
     const catalog = readCatalog(store, 'se-26w-v1')!;
-    const rendered = new Map<string, Document>();
+    let links = 0;
+    let checkedMappings = 0;
+    const unitRoutes = plan.source.days.flatMap((day) => [
+      `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
+      `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+    ]);
     for (const route of new Set(
       catalog.mappings.map((m) => m.websiteLocation.split('#')[0]!),
     )) {
       const page = catalogPage(catalog, route);
       expect(page, route).not.toBeNull();
-      rendered.set(
-        route,
-        new DOMParser().parseFromString(
-          renderToStaticMarkup(
-            createElement(CurriculumPreview, { catalog, page: page! }),
-          ),
-          'text/html',
+      const dom = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(CurriculumPreview, { catalog, page: page! }),
         ),
+        'text/html',
       );
-    }
-    let links = 0;
-    for (const mapping of catalog.mappings) {
-      const [route, anchor] = mapping.websiteLocation.split('#');
-      const dom = rendered.get(route!)!;
-      const block = catalog.blocks.find((b) => b.id === mapping.sourceBlockId)!;
-      const element = Array.from(dom.querySelectorAll('[data-source-id]')).find(
-        (e) => e.getAttribute('data-source-id') === block.sourceLocator,
-      );
-      expect(
-        element?.querySelector('[data-source-text]')?.textContent,
-        block.sourceLocator,
-      ).toBe(block.exactText);
-      if (anchor)
+      const outline = dom.querySelector('nav[aria-label="Course outline"]');
+      expect(outline, route).not.toBeNull();
+      for (const mapping of catalog.mappings.filter(
+        (mapping) => mapping.websiteLocation.split('#')[0] === route,
+      )) {
+        const anchor = mapping.websiteLocation.split('#')[1];
+        const block = catalog.blocks.find(
+          (b) => b.id === mapping.sourceBlockId,
+        )!;
+        const element = Array.from(
+          dom.querySelectorAll('[data-source-id]'),
+        ).find((e) => e.getAttribute('data-source-id') === block.sourceLocator);
         expect(
-          dom.getElementById(anchor),
-          mapping.websiteLocation,
-        ).not.toBeNull();
-      if (block.tableNumber !== null) {
-        expect(
-          element?.closest('table')?.getAttribute('data-source-table'),
-        ).toBe(String(block.tableNumber));
-        expect(element?.closest('tr')?.getAttribute('data-source-row')).toBe(
-          String(block.rowNumber),
+          element?.querySelector('[data-source-text]')?.textContent,
+          block.sourceLocator,
+        ).toBe(block.exactText);
+        if (anchor)
+          expect(
+            dom.getElementById(anchor),
+            mapping.websiteLocation,
+          ).not.toBeNull();
+        if (block.tableNumber !== null) {
+          expect(
+            element?.closest('table')?.getAttribute('data-source-table'),
+          ).toBe(String(block.tableNumber));
+          expect(element?.closest('tr')?.getAttribute('data-source-row')).toBe(
+            String(block.rowNumber),
+          );
+          expect(element?.closest('td')?.getAttribute('data-source-cell')).toBe(
+            String(block.cellNumber),
+          );
+        }
+        const expected = JSON.parse(block.linksJson) as {
+          url: string;
+          label: string;
+        }[];
+        const actual = Array.from(
+          element!.querySelectorAll('[data-source-link]'),
         );
-        expect(element?.closest('td')?.getAttribute('data-source-cell')).toBe(
-          String(block.cellNumber),
+        expect(actual.map((a) => a.getAttribute('href'))).toEqual(
+          expected.map((l) => l.url),
         );
+        links += expected.length;
+        checkedMappings++;
       }
-      const expected = JSON.parse(block.linksJson) as {
-        url: string;
-        label: string;
-      }[];
-      const actual = Array.from(
-        element!.querySelectorAll('[data-source-link]'),
-      );
-      expect(actual.map((a) => a.getAttribute('href'))).toEqual(
-        expected.map((l) => l.url),
-      );
-      links += expected.length;
+      const index = unitRoutes.indexOf(route);
+      if (index >= 0) {
+        const sequence = dom.querySelector('nav[aria-label="Study sequence"]');
+        expect(
+          sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),
+        ).toBe(
+          unitRoutes[index - 1] ?? '/course/software-engineer/preparation',
+        );
+        expect(
+          sequence?.querySelector('a[rel="next"]')?.getAttribute('href'),
+        ).toBe(unitRoutes[index + 1] ?? '/course/software-engineer/progress');
+        expect(
+          dom
+            .querySelector('nav[aria-label="Location"]')
+            ?.querySelectorAll('[aria-current="page"]'),
+        ).toHaveLength(1);
+      }
+      dom.replaceChildren();
+      // Native details toggle events must settle before releasing this document.
+      await yieldTasks();
     }
     expect(links).toBe(19);
+    expect(checkedMappings).toBe(2329);
     for (const route of plan.report.routes)
       expect(catalogPage(catalog, route), route).not.toBeNull();
-    // Exercise the rendered links too: the pure model alone cannot prove the UI uses them.
-    const unitRoutes = plan.source.days.flatMap((day) => [
-      `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
-      `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
-    ]);
-    for (const [index, route] of unitRoutes.entries()) {
-      const dom = rendered.get(route)!;
-      const sequence = dom.querySelector('nav[aria-label="Study sequence"]');
-      expect(
-        sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),
-      ).toBe(unitRoutes[index - 1] ?? '/course/software-engineer/preparation');
-      expect(
-        sequence?.querySelector('a[rel="next"]')?.getAttribute('href'),
-      ).toBe(unitRoutes[index + 1] ?? '/course/software-engineer/progress');
-      expect(dom.querySelectorAll('[aria-current="page"]')).toHaveLength(1);
-    }
   }, 60000);
 });

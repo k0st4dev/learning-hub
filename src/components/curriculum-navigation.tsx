@@ -6,7 +6,8 @@ import type {
 } from '@/server/content/navigation';
 import { en } from '@/i18n/en';
 
-export function CurriculumItemLabel({ item }: { item: NavigationItem }) {
+// A pure renderer keeps the large outline from creating hundreds of RSC component boundaries.
+export function curriculumItemLabel(item: NavigationItem) {
   return (
     <>
       {item.kind === 'week' && `${en.navigation.week} ${item.weekNumber} — `}
@@ -33,9 +34,7 @@ function Destination({
       {target.kind === 'content' ? (
         <>
           <strong>{en.navigation[direction]}</strong>
-          <span>
-            <CurriculumItemLabel item={target.item} />
-          </span>
+          <span>{curriculumItemLabel(target.item)}</span>
         </>
       ) : (
         <strong>

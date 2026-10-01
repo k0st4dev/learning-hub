@@ -66,6 +66,12 @@ export const en = {
       'Local password recovery is being added in the operations milestone. Do not delete the database to reset an account.',
   },
   navigation: {
+    outline: 'Course outline',
+    outlineHelp:
+      'Expand a phase, week or day to browse. Reading does not change your progress.',
+    overview: 'Course overview',
+    currentPage: 'Current page',
+    phase: 'Phase',
     previous: 'Previous',
     next: 'Next',
     day: 'Day',
