@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-02. **M0–M3 complete.** The user requires step-by-step confirmation. **Do not start M4 without approval.**
+Updated: 2026-10-02. **M0–M3 complete; M4 step 1 complete.** The user requires step-by-step confirmation. **Do not start M4 step 2 without approval.**
 
 ## Completed
 
@@ -26,6 +26,8 @@ Updated: 2026-10-02. **M0–M3 complete.** The user requires step-by-step confir
 
 - M3 step 6 / integration gate: shared Monthly scorecard presentation title, breadcrumb and contents label preserve original Oblast table and immutable release. All 102 tests pass; full served audit passes 663 pages, 2329 mappings, 19 original hyperlink occurrences, 546 daily/sequence views, 594 outlines and 663 navigation shells. Strict missing-route status and unchanged progress/cursor pass. Source archive integrity, TypeScript, ESLint and production build pass. Desktop/mobile scorecard and keyboard table scroll verified. Evidence: docs/M3-VERIFICATION.md and docs/m3-final-served-audit.json.
 
+- M4 step 1: pure exercise eligibility evaluator, reviewed 16 alternative routes, conditional reasons, required/mixed clauses, scope/evidence/attestation/passed-result checks and Day 125 transfer/reflection paths. Strict Zod input validation rejects forged skips, choices, duplicate/foreign task IDs and oversized fields. No runtime API/UI/storage changes yet. All 152 tests across 13 files pass, including 50 new cases using all 548 tasks and all 33 special rules. ESLint, strict TypeScript and production build pass. Evidence: docs/M4-STEP1-VERIFICATION.md.
+
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
@@ -46,6 +48,6 @@ Updated: 2026-10-02. **M0–M3 complete.** The user requires step-by-step confir
 
 ## Exact next focused task
 
-After explicit user approval, M4 step 1: review specification exercise-completion rules and all 33 non-default task rules; implement and table-test the pure requirement evaluator for required, optional, conditional, alternative and mixed tasks. Cover Day 125 alternatives and scope/evidence requirements. Reuse immutable imported rule metadata; do not change published content or add completion UI/persistence before the evaluator is verified. Keep the first M4 step small, document the next task and stop for approval.
+After explicit user approval, M4 step 2: implement the owned-release adapter and validated persistence contract for task decisions, choices/reasons, scope, evidence and Day 125 reflection. Document the storage representation using existing task reason / exercise selected scope / rubric fields before changing it; review a migration only if required. Reuse M1 transactions, revisions, idempotency and reopening. Derive trusted requirements and assignment scope from published data, never client input. Prove forged completion rejection, isolation, reload persistence and conflict/retry behavior. Keep UI/checkpoint remediation expansion for later steps; stop and ask after this step.
 
-Relevant files: IMPLEMENTATION_PLAN.md; archived product-specification.md; src/server/content/read.ts; src/components/curriculum-preview.tsx and full-curriculum-page.tsx; course catch-all; tests/integration/curriculum.test.ts. Import decisions and reproduction commands: docs/M2-VERIFICATION.md.
+Relevant files: src/domain/exercise-requirements.ts; tests/unit/exercise-requirements.test.ts; src/server/learning/mutate.ts and read.ts; src/server/db/schema.ts; immutable exercise/task metadata; specification sections 2, 5–7 and 11. M3 coverage evidence: docs/M3-VERIFICATION.md.
