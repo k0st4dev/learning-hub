@@ -45,7 +45,12 @@ export function CourseOutline({
   overview: boolean;
 }) {
   return (
-    <nav className="course-outline" aria-label={en.navigation.outline}>
+    <nav
+      id="course-outline"
+      tabIndex={-1}
+      className="course-outline"
+      aria-label={en.navigation.outline}
+    >
       <details open>
         <summary>{en.navigation.outline}</summary>
         <p className="muted">{en.navigation.outlineHelp}</p>

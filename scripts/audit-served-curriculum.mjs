@@ -11,12 +11,17 @@ const config = environment();
 assert.ok(
   process.argv.length <= 3 &&
     (!process.argv[2] ||
-      ['--m3-step1', '--m3-step2', '--m3-step3', '--m3-step4'].includes(
-        process.argv[2],
-      )),
+      [
+        '--m3-step1',
+        '--m3-step2',
+        '--m3-step3',
+        '--m3-step4',
+        '--m3-step5',
+      ].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
-const checkStates = process.argv[2] === '--m3-step4';
+const checkMobile = process.argv[2] === '--m3-step5';
+const checkStates = process.argv[2] === '--m3-step4' || checkMobile;
 const checkDaily = process.argv[2] === '--m3-step3' || checkStates;
 const checkOutline = process.argv[2] === '--m3-step2' || checkDaily;
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
@@ -119,6 +124,34 @@ for (const [index, route] of routes.entries()) {
   }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (checkMobile) {
+    const drawer = document.querySelector('dialog.mobile-drawer');
+    assert.ok(drawer, route);
+    assert.equal(drawer.hasAttribute('open'), false);
+    assert.equal(
+      document.getElementById(drawer.getAttribute('aria-labelledby'))
+        ?.textContent,
+      'Student navigation',
+    );
+    assert.equal(
+      document
+        .querySelector('.student-mobile-header button')
+        ?.getAttribute('aria-controls'),
+      drawer.id,
+    );
+    assert.deepEqual(
+      [...drawer.querySelectorAll('nav a')].map((a) => a.getAttribute('href')),
+      [...document.querySelectorAll('.student-desktop-nav a')].map((a) =>
+        a.getAttribute('href'),
+      ),
+    );
+    assert.ok(
+      drawer.querySelector(
+        'a[href="/course/software-engineer#course-outline"]',
+      ),
+    );
+    assert.ok(document.querySelectorAll('#course-outline').length <= 1);
+  }
   if (checkDaily) {
     const original = plan.source.days.find(
       (day) =>
@@ -353,27 +386,32 @@ const report = {
   readingDoesNotMutateProgress: 'passed',
   ...(checkNavigation ? { checkedNavigationPages } : {}),
   ...(checkOutline ? { checkedOutlinePages } : {}),
+  ...(checkMobile ? { checkedMobileShells: routes.length } : {}),
   ...(checkDaily
     ? {
         checkedDailyPages,
-        scope: checkStates
-          ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
-          : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+        scope: checkMobile
+          ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
+          : checkStates
+            ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
+            : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
       }
     : {}),
 };
 await writeFile(
   path.join(
     root,
-    checkStates
-      ? 'docs/m3-step4-served-audit.json'
-      : checkDaily
-        ? 'docs/m3-step3-served-audit.json'
-        : checkOutline
-          ? 'docs/m3-step2-served-audit.json'
-          : checkNavigation
-            ? 'docs/m3-step1-served-audit.json'
-            : 'docs/m2-served-audit.json',
+    checkMobile
+      ? 'docs/m3-step5-served-audit.json'
+      : checkStates
+        ? 'docs/m3-step4-served-audit.json'
+        : checkDaily
+          ? 'docs/m3-step3-served-audit.json'
+          : checkOutline
+            ? 'docs/m3-step2-served-audit.json'
+            : checkNavigation
+              ? 'docs/m3-step1-served-audit.json'
+              : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

@@ -1,4 +1,5 @@
 export const en = {
+  mobile: { menu: 'Menu', title: 'Student navigation', close: 'Close menu' },
   routeState: {
     loading: 'Loading your local workspace…',
     course: 'Back to course',

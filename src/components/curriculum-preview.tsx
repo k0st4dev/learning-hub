@@ -133,7 +133,10 @@ export function CurriculumPreview({
         <strong>{en.curriculum.preview}</strong>
         <p>{en.curriculum.previewHelp}</p>
       </aside>
-      <nav className="actions mb-8" aria-label={en.curriculum.breadcrumbs}>
+      <nav
+        className="actions mb-8 course-breadcrumbs"
+        aria-label={en.curriculum.breadcrumbs}
+      >
         <Link href="/dashboard">{en.dashboard}</Link>
         {!overview && <Link href={base}>{en.courseLabel}</Link>}
         {parents.map((item) => (
