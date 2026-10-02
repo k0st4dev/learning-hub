@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-02. **M0–M2 complete; M3 step 5 complete.** The user requires confirmation after every M3 step. **Do not start step 6 without approval.**
+Updated: 2026-10-02. **M0–M3 complete.** The user requires step-by-step confirmation. **Do not start M4 without approval.**
 
 ## Completed
 
@@ -24,6 +24,8 @@ Updated: 2026-10-02. **M0–M2 complete; M3 step 5 complete.** The user requires
 
 - M3 step 5: shared desktop/mobile destinations, accessible modal menu, Tab/Shift+Tab containment, Escape and focus restoration, scroll lock, desktop-resize close and jump to the existing course outline. Compact mobile breadcrumbs preserve ancestor links. All 102 tests across 12 files pass; focused 17-page HTTP regression preserves source/navigation/progress. Browser checks at 320×568, 360×800 and 1440×900 pass. Build/types/lint pass. Evidence: docs/M3-STEP5-VERIFICATION.md and docs/m3-step5-served-audit.json.
 
+- M3 step 6 / integration gate: shared Monthly scorecard presentation title, breadcrumb and contents label preserve original Oblast table and immutable release. All 102 tests pass; full served audit passes 663 pages, 2329 mappings, 19 original hyperlink occurrences, 546 daily/sequence views, 594 outlines and 663 navigation shells. Strict missing-route status and unchanged progress/cursor pass. Source archive integrity, TypeScript, ESLint and production build pass. Desktop/mobile scorecard and keyboard table scroll verified. Evidence: docs/M3-VERIFICATION.md and docs/m3-final-served-audit.json.
+
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
@@ -39,11 +41,11 @@ Updated: 2026-10-02. **M0–M2 complete; M3 step 5 complete.** The user requires
 - Separate production-server startup was rejected by automatic approval policy; development browser/HTTP evidence recorded. Production Playwright/axe remains pending because of host IPC restrictions.
 - Real reboot, full browser-process shutdown, screen reader, macOS/Linux and disconnected-network checks remain final gates. A01–A26 are not declared fully passed.
 - Existing two Turbopack filesystem-tracing warnings and ESLint 9 support warning remain tracked.
-- Remaining M3 work includes the scorecard heading (currently first mapped cell) and final navigation/curriculum integration review. Change presentation labels without changing published data.
+- M3 reading/navigation scope is complete. Settings, search and remaining interaction/accessibility integration follow the original later-milestone plan; final A01–A26 acceptance remains open.
 - Notes/search/scorecard entry/profiles/recovery/backup/update tooling remain later milestones.
 
 ## Exact next focused task
 
-After explicit user approval, M3 step 6: finish the scorecard presentation heading without altering published content, then run the M3 navigation/curriculum integration gate and update acceptance evidence. Review section 15 and the M3 plan; preserve source mappings, immutable release and read-only progress semantics. Confirm source coverage and served navigation, document remaining later-milestone scope, then stop and ask before M4.
+After explicit user approval, M4 step 1: review specification exercise-completion rules and all 33 non-default task rules; implement and table-test the pure requirement evaluator for required, optional, conditional, alternative and mixed tasks. Cover Day 125 alternatives and scope/evidence requirements. Reuse immutable imported rule metadata; do not change published content or add completion UI/persistence before the evaluator is verified. Keep the first M4 step small, document the next task and stop for approval.
 
 Relevant files: IMPLEMENTATION_PLAN.md; archived product-specification.md; src/server/content/read.ts; src/components/curriculum-preview.tsx and full-curriculum-page.tsx; course catch-all; tests/integration/curriculum.test.ts. Import decisions and reproduction commands: docs/M2-VERIFICATION.md.

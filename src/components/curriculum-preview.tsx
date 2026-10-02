@@ -11,6 +11,7 @@ import { CourseOutline } from './course-outline';
 import {
   curriculumItemLabel,
   CurriculumNavigation,
+  curriculumItemTitle,
 } from './curriculum-navigation';
 const base = '/course/software-engineer';
 function SourceParagraph({ block }: { block: CatalogPage['blocks'][number] }) {
@@ -155,7 +156,7 @@ export function CurriculumPreview({
           overview={overview}
         />
         <div className="course-reading-content">
-          <h1 lang="sr-Latn">{page.item.title}</h1>
+          <h1>{curriculumItemTitle({ item: page.item })}</h1>
           <p className="muted">
             {en.curriculum.release}: {catalog.release.id} ·{' '}
             {en.curriculum.sourceContent}

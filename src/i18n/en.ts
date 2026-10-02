@@ -27,11 +27,12 @@ export const en = {
     },
   },
   curriculum: {
+    scorecardTitle: 'Monthly scorecard',
     contexts: 'Related learning contexts',
     scorecard: 'Original scorecard dimensions',
     preview: 'Complete curriculum · Reading preview',
     previewHelp:
-      'All original course material is available here. Full navigation and interactive progress for this release are being completed in the next milestones.',
+      'All original course material and course navigation are available here. Interactive exercises and progress for this release are being completed in the next milestones.',
     newTab: '(opens in a new tab)',
     sourceRef: 'Source',
     sourceTable: 'Original table',

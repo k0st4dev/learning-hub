@@ -6,6 +6,19 @@ import type {
 } from '@/server/content/navigation';
 import { en } from '@/i18n/en';
 
+// Presentation labels never replace the immutable source text or its mappings.
+export function curriculumItemTitle({
+  item,
+}: {
+  item: Pick<NavigationItem, 'route' | 'title'>;
+}) {
+  return item.route === '/progress/scorecard' ? (
+    <span>{en.curriculum.scorecardTitle}</span>
+  ) : (
+    <span lang="sr-Latn">{item.title}</span>
+  );
+}
+
 // A pure renderer keeps the large outline from creating hundreds of RSC component boundaries.
 export function curriculumItemLabel(item: NavigationItem) {
   return (
@@ -14,7 +27,7 @@ export function curriculumItemLabel(item: NavigationItem) {
       {item.dayNumber !== null && `${en.navigation.day} ${item.dayNumber} — `}
       {item.kind === 'lesson' && `${en.learning.study}: `}
       {item.kind === 'exercise' && `${en.learning.practice}: `}
-      <span lang="sr-Latn">{item.title}</span>
+      {curriculumItemTitle({ item })}
     </>
   );
 }
