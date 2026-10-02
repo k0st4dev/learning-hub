@@ -53,7 +53,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
-const menu = () => screen.getByRole('button', { name: 'Menu', exact: true });
+const menu = () => screen.getByRole('button', { name: 'Menu' });
 const dialog = () => screen.getByRole('dialog', { name: 'Student navigation' });
 describe('mobile student navigation', () => {
   it('wraps keyboard focus at both ends of the modal', () => {
@@ -73,9 +73,7 @@ describe('mobile student navigation', () => {
     render(
       createElement(StudentNavigation, { name: 'Student', fullCourse: true }),
     );
-    const desktop = within(
-      screen.getByRole('navigation', { name: 'Student', exact: true }),
-    )
+    const desktop = within(screen.getByRole('navigation', { name: 'Student' }))
       .getAllByRole('link')
       .map((a) => a.getAttribute('href'));
     fireEvent.click(menu());

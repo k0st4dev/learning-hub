@@ -7,13 +7,15 @@ import { requireStudent } from '../auth/service.ts';
 import { digest } from '../auth/crypto.ts';
 import { AppError } from '../errors.ts';
 import { latestRelease, ownedEnrollment, snapshot } from './read.ts';
+import { exerciseSubmissionSchema } from '../../domain/exercise-requirements';
+import { saveExerciseWork } from './exercise-work';
 
 const base = {
   mutationId: z.uuid(),
   expectedRevision: z.number().int().nonnegative(),
 };
 const itemId = z.string().min(1).max(160);
-export const mutationSchema = z.discriminatedUnion('kind', [
+const legacyMutationSchema = z.discriminatedUnion('kind', [
   z
     .object({
       ...base,
@@ -61,6 +63,16 @@ export const mutationSchema = z.discriminatedUnion('kind', [
       anchor: z.string().max(160),
     })
     .strict(),
+]);
+export const mutationSchema = z.union([
+  legacyMutationSchema,
+  z.strictObject({
+    ...base,
+    kind: z.literal('exercise'),
+    itemId,
+    completed: z.boolean(),
+    submission: exerciseSubmissionSchema,
+  }),
 ]);
 export type LearningMutation = z.infer<typeof mutationSchema>;
 export function startCourse(store: Store, token: string | undefined) {
@@ -278,6 +290,12 @@ export function mutateLearning(
             item!.stableKey,
           );
       } else if (data.kind === 'task') {
+        if (enrollment.releaseId !== 'development-day1-v1')
+          throw new AppError(
+            422,
+            'EXERCISE_WORK_REQUIRED',
+            'Save task decisions together with the full exercise submission.',
+          );
         const rule = db
           .select()
           .from(s.exerciseTask)
@@ -314,7 +332,27 @@ export function mutateLearning(
             .run();
           reopenExercise(item!.parentId!);
         }
+      } else if (data.kind === 'exercise' && 'submission' in data) {
+        const wasComplete = saveExerciseWork(
+          store,
+          enrollment,
+          item!.id,
+          data.completed,
+          data.submission,
+          now,
+        );
+        if (data.completed !== wasComplete)
+          event(
+            data.completed ? 'exercise_completed' : 'exercise_reopened',
+            item!.stableKey,
+          );
       } else if (data.kind === 'exercise') {
+        if (enrollment.releaseId !== 'development-day1-v1')
+          throw new AppError(
+            422,
+            'EXERCISE_WORK_REQUIRED',
+            'This course requires the full exercise submission.',
+          );
         const previous = db
           .select()
           .from(s.exerciseProgress)

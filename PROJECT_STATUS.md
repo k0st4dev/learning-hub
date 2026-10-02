@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-02. **M0–M3 complete; M4 step 1 complete.** The user requires step-by-step confirmation. **Do not start M4 step 2 without approval.**
+Updated: 2026-10-02. **M0–M3 complete; M4 step 2 complete.** The user requires step-by-step confirmation. **Do not start M4 step 3 without approval.**
 
 ## Completed
 
@@ -28,6 +28,8 @@ Updated: 2026-10-02. **M0–M3 complete; M4 step 1 complete.** The user requires
 
 - M4 step 1: pure exercise eligibility evaluator, reviewed 16 alternative routes, conditional reasons, required/mixed clauses, scope/evidence/attestation/passed-result checks and Day 125 transfer/reflection paths. Strict Zod input validation rejects forged skips, choices, duplicate/foreign task IDs and oversized fields. No runtime API/UI/storage changes yet. All 152 tests across 13 files pass, including 50 new cases using all 548 tasks and all 33 special rules. ESLint, strict TypeScript and production build pass. Evidence: docs/M4-STEP1-VERIFICATION.md.
 
+- M4 step 2: full exercise submissions now save atomically through the existing owned-enrollment API. Published DB task metadata and reviewed external-scope rules are authoritative. Task reasons remain plain text; versioned choices/transfer reflection/draft attestation use exercise rubricJson.exerciseWork, preserving unrelated rubric keys. No migration. Full-course legacy mutation bypass is rejected; M1 fixture remains supported. All 164 tests / 14 files, direct TypeScript, ESLint and build pass. Actual development HTTP save/retry/409/login-reload/two-user checks pass. Evidence: docs/M4-STEP2-VERIFICATION.md and docs/m4-step2-http-audit.json.
+
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
@@ -48,6 +50,6 @@ Updated: 2026-10-02. **M0–M3 complete; M4 step 1 complete.** The user requires
 
 ## Exact next focused task
 
-After explicit user approval, M4 step 2: implement the owned-release adapter and validated persistence contract for task decisions, choices/reasons, scope, evidence and Day 125 reflection. Document the storage representation using existing task reason / exercise selected scope / rubric fields before changing it; review a migration only if required. Reuse M1 transactions, revisions, idempotency and reopening. Derive trusted requirements and assignment scope from published data, never client input. Prove forged completion rejection, isolation, reload persistence and conflict/retry behavior. Keep UI/checkpoint remediation expansion for later steps; stop and ask after this step.
+After explicit user approval, M4 step 3: build the full-course exercise UI on the verified atomic submission API. Render original tasks plus separately labelled rule help, optional/mixed/conditional/alternative decisions, reason inputs, selected scope/evidence, criterion attestation and Day 125 transfer/reflection. Restore drafts from the returned submission; preserve dirty edits on failure/conflict; explicit reopen only. Centralize API pending/retry/conflict handling and use the shared evaluator for eligibility. Check actual browser keyboard/mobile and save/reload/two-user behavior. Keep detailed checkpoint remediation/final-exam guidance for its focused follow-up. Stop and ask after this step.
 
-Relevant files: src/domain/exercise-requirements.ts; tests/unit/exercise-requirements.test.ts; src/server/learning/mutate.ts and read.ts; src/server/db/schema.ts; immutable exercise/task metadata; specification sections 2, 5–7 and 11. M3 coverage evidence: docs/M3-VERIFICATION.md.
+Relevant files: src/domain/exercise-requirements.ts; src/server/learning/exercise-work.ts, mutate.ts and read.ts; src/components/learning-client.tsx (M1 behavior reference); full-curriculum-page.tsx and daily-workspace.tsx; docs/M4-STEP2-VERIFICATION.md (API/storage contract); tests/integration/exercise-work.test.ts. Preserve all immutable source mappings.

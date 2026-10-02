@@ -3,6 +3,7 @@ import type { Store } from '../db/connection.ts';
 import * as s from '../db/schema.ts';
 import { requireStudent } from '../auth/service.ts';
 import { AppError } from '../errors.ts';
+import { readExerciseSubmission } from './exercise-work';
 
 export const coursePath = '/course/software-engineer';
 export function ownedEnrollment(store: Store, token: string | undefined) {
@@ -116,6 +117,11 @@ export function snapshot(store: Store, token: string | undefined) {
       'The enrolled release has no required learning units.',
     );
   const completed = units.filter((unit) => unit.complete).length;
+  const tasks = db
+    .select()
+    .from(s.taskProgress)
+    .where(eq(s.taskProgress.enrollmentId, enrollment.id))
+    .all();
   return {
     revision: enrollment.revision,
     enrollment: {
@@ -141,12 +147,13 @@ export function snapshot(store: Store, token: string | undefined) {
     total: units.length,
     percent: Math.floor((100 * completed) / units.length),
     lessonProgress,
-    exerciseProgress,
-    tasks: db
-      .select()
-      .from(s.taskProgress)
-      .where(eq(s.taskProgress.enrollmentId, enrollment.id))
-      .all(),
+    exerciseProgress: exerciseProgress.map((progress) => ({
+      ...progress,
+      ...(enrollment.releaseId === 'se-26w-v1'
+        ? { submission: readExerciseSubmission(progress, tasks, items) }
+        : {}),
+    })),
+    tasks,
     preparation: db
       .select()
       .from(s.preparationProgress)

@@ -79,7 +79,7 @@ export type RequirementIssue = {
 
 /** Pure eligibility only. No writes, percentage changes, URLs/files or code execution.
  * Requirements MUST come from the owned enrollment's published release, not a request body.
- * This is deliberately not wired to the M1 mutation API until M4's persistence step.
+ * The server repeats this evaluation inside its owned-enrollment save transaction.
  */
 export function evaluateExercise(
   requirements: ExerciseRequirements,

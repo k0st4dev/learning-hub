@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-02T07:52:58.775Z",
+  "server": "development",
+  "scope": "M4 step 2 actual HTTP exercise persistence",
+  "rejectedMissingReflection": true,
+  "savedTransferPath": true,
+  "idempotentReplay": true,
+  "staleSave409": true,
+  "loginReloadPreservesWork": true,
+  "twoUsersIsolated": true,
+  "completedUnits": 1,
+  "requiredUnits": 364
+}
