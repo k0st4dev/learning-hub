@@ -19,11 +19,13 @@ assert.ok(
         '--m3-step5',
         '--m3-final',
         '--m4-step3',
+        '--m4-step4',
       ].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
 const fullM3 = process.argv[2] === '--m3-final';
-const exerciseUI = process.argv[2] === '--m4-step3';
+const assessmentUI = process.argv[2] === '--m4-step4';
+const exerciseUI = process.argv[2] === '--m4-step3' || assessmentUI;
 const checkMobile = process.argv[2] === '--m3-step5' || fullM3 || exerciseUI;
 const checkStates = process.argv[2] === '--m3-step4' || checkMobile;
 const checkDaily = process.argv[2] === '--m3-step3' || checkStates;
@@ -90,6 +92,7 @@ let checkedLinks = 0;
 let checkedNavigationPages = 0;
 let checkedOutlinePages = 0;
 let checkedDailyPages = 0;
+let checkedAssessments = 0;
 const unitRoutes = plan.source.days.flatMap((day) => [
   `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
   `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
@@ -107,6 +110,13 @@ const routes = focused
       (route) =>
         /\/days\/(d001|d007|d028|d125|d182)(\/|$)/.test(route) ||
         route === '/course/software-engineer/weeks/w26' ||
+        (assessmentUI &&
+          plan.source.days.some(
+            (day) =>
+              day.assessment_kind !== 'practice' &&
+              route ===
+                `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+          )) ||
         route === `/resources/${plan.resources[0].stableKey}`,
     )
   : allRoutes;
@@ -129,6 +139,34 @@ for (const [index, route] of routes.entries()) {
   }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (assessmentUI) {
+    const assessment = plan.source.days.find(
+      (day) =>
+        day.assessment_kind !== 'practice' &&
+        route ===
+          `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+    );
+    if (assessment) {
+      const guidance = document
+        .getElementById('assessment-guidance-title')
+        ?.closest('section');
+      assert.ok(guidance, route);
+      assert.ok(
+        guidance.textContent.includes(assessment.completion_criterion),
+        route,
+      );
+      assert.ok(guidance.textContent.includes(assessment.ai_policy), route);
+      assert.ok(document.getElementById('work-score'), route);
+      assert.ok(document.getElementById('work-remediation'), route);
+      assert.equal(document.querySelector('[role="timer"]'), null);
+      if (assessment.assessment_kind === 'final_exam') {
+        assert.ok(guidance.textContent.includes(assessment.study_instruction));
+        for (const task of assessment.tasks.slice(0, 3))
+          assert.ok(guidance.textContent.includes(task.text));
+      }
+      checkedAssessments++;
+    }
+  }
   if (fullM3 && route === '/progress/scorecard') {
     assert.equal(
       document.querySelector('h1')?.textContent,
@@ -358,9 +396,13 @@ assert.equal(
     : 2329,
 );
 if (!focused) assert.equal(checkedLinks, 19);
-if (checkNavigation) assert.equal(checkedNavigationPages, focused ? 15 : 546);
-if (checkOutline) assert.equal(checkedOutlinePages, focused ? 16 : 594);
-if (checkDaily) assert.equal(checkedDailyPages, focused ? 15 : 546);
+if (checkNavigation)
+  assert.equal(checkedNavigationPages, assessmentUI ? 38 : focused ? 15 : 546);
+if (checkOutline)
+  assert.equal(checkedOutlinePages, assessmentUI ? 39 : focused ? 16 : 594);
+if (checkDaily)
+  assert.equal(checkedDailyPages, assessmentUI ? 38 : focused ? 15 : 546);
+if (assessmentUI) assert.equal(checkedAssessments, 26);
 for (const route of [
   '/course/software-engineer/days/missing',
   '/resources/missing',
@@ -408,6 +450,7 @@ const report = {
   missingRoutes: 'passed',
   readingDoesNotMutateProgress: 'passed',
   ...(checkNavigation ? { checkedNavigationPages } : {}),
+  ...(assessmentUI ? { checkedAssessments } : {}),
   ...(checkOutline ? { checkedOutlinePages } : {}),
   ...(checkMobile ? { checkedMobileShells: routes.length } : {}),
   ...(checkDaily
@@ -428,21 +471,23 @@ const report = {
 await writeFile(
   path.join(
     root,
-    exerciseUI
-      ? 'docs/m4-step3-served-audit.json'
-      : fullM3
-        ? 'docs/m3-final-served-audit.json'
-        : checkMobile
-          ? 'docs/m3-step5-served-audit.json'
-          : checkStates
-            ? 'docs/m3-step4-served-audit.json'
-            : checkDaily
-              ? 'docs/m3-step3-served-audit.json'
-              : checkOutline
-                ? 'docs/m3-step2-served-audit.json'
-                : checkNavigation
-                  ? 'docs/m3-step1-served-audit.json'
-                  : 'docs/m2-served-audit.json',
+    assessmentUI
+      ? 'docs/m4-step4-served-audit.json'
+      : exerciseUI
+        ? 'docs/m4-step3-served-audit.json'
+        : fullM3
+          ? 'docs/m3-final-served-audit.json'
+          : checkMobile
+            ? 'docs/m3-step5-served-audit.json'
+            : checkStates
+              ? 'docs/m3-step4-served-audit.json'
+              : checkDaily
+                ? 'docs/m3-step3-served-audit.json'
+                : checkOutline
+                  ? 'docs/m3-step2-served-audit.json'
+                  : checkNavigation
+                    ? 'docs/m3-step1-served-audit.json'
+                    : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

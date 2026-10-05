@@ -35,6 +35,8 @@ const workSchema = z.strictObject({
   transferPath: exerciseSubmissionSchema.shape.transferPath,
   transferReflection: exerciseSubmissionSchema.shape.transferReflection,
   attested: z.boolean(),
+  scoreEvidence: exerciseSubmissionSchema.shape.scoreEvidence,
+  remediationNote: exerciseSubmissionSchema.shape.remediationNote,
 });
 type Progress = typeof s.exerciseProgress.$inferSelect;
 type TaskProgress = typeof s.taskProgress.$inferSelect;
@@ -97,6 +99,8 @@ export function readExerciseSubmission(
     result: progress.result,
     transferPath: work?.transferPath ?? null,
     transferReflection: work?.transferReflection ?? '',
+    scoreEvidence: work?.scoreEvidence ?? '',
+    remediationNote: work?.remediationNote ?? '',
   };
   const submission = exerciseSubmissionSchema.safeParse(input);
   if (!submission.success)
@@ -181,6 +185,19 @@ export function loadExerciseRequirements(
       requiresScope: (scopedAssignmentDays as readonly number[]).includes(
         day.dayNumber,
       ),
+      ...(day.assessmentKind === 'practice'
+        ? {}
+        : {
+            assessment: {
+              kind: z
+                .enum(['weekly_checkpoint', 'final_exam'])
+                .parse(day.assessmentKind),
+              dayNumber: day.dayNumber,
+              criterion: day.completionCriterionMarkdown,
+              aiPolicy: day.aiPolicyMarkdown,
+              studyInstruction: lesson!.bodyMarkdown,
+            },
+          }),
       tasks: rows.map(({ content_item: item, exercise_task: task }) => ({
         id: item.stableKey,
         requirement_mode: mode.parse(task.requirementMode),
@@ -220,6 +237,15 @@ export function saveExerciseWork(
     exerciseId,
   );
   const evaluation = evaluateExercise(requirements, submission);
+  if (
+    !requirements.assessment &&
+    (submission.scoreEvidence.trim() || submission.remediationNote.trim())
+  )
+    throw new AppError(
+      422,
+      'ASSESSMENT_NOT_AVAILABLE',
+      'Assessment notes belong to checkpoints or the final exam.',
+    );
   const hardIssues = evaluation.issues.filter((issue) => {
     if (
       [
@@ -297,6 +323,8 @@ export function saveExerciseWork(
         transferPath: submission.transferPath,
         transferReflection: submission.transferReflection,
         attested: submission.attested,
+        scoreEvidence: submission.scoreEvidence,
+        remediationNote: submission.remediationNote,
       },
     }),
     updatedAt: now,

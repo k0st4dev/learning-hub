@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-05. **M0–M3 complete; M4 step 3 complete.** The user requires step-by-step confirmation. **Do not start M4 step 4 without approval.**
+Updated: 2026-10-05. **M0–M3 complete; M4 step 4 complete.** The user requires step-by-step confirmation. **Do not start the next focused step without approval.**
 
 ## Completed
 
@@ -32,6 +32,8 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 3 complete.** The user requires
 
 - M4 step 3: full-course exercise editor, explicit draft/complete/reopen flow, all task modes and Day 125 reflection; shared pending/retry/conflict handling preserves drafts. Session-switch guard prevents saving an old form into another student account. No schema/source/dependency changes. All 175 tests / 15 files, TypeScript, ESLint, build and source integrity pass. Focused HTTP regression 17 pages; actual desktop/mobile draft/reload/complete/reopen and second-account isolation pass. Evidence: docs/M4-STEP3-VERIFICATION.md. Browser-history unsaved navigation guard remains an integration follow-up; save before Back/Forward.
 
+- M4 step 4: all 25 checkpoint and final-exam pages show original criteria/AI, durable score/remediation text, Criteria met/Needs review and review links. Day 7 and Day 28 source advice and Day 182 120-minute/45–45–30 guidance retained. Failed assessments receive no exercise credit; independent lesson credit and review-transition activity preserved. Additive existing-rubric fields and legacy receipt compatibility; no migration/source/dependency changes. All 182 tests / 15 files, types/lint/build/source integrity pass; 40-route/26-assessment HTTP audit and actual API/browser persistence/two-user/mobile checks pass. Evidence: docs/M4-STEP4-VERIFICATION.md. Restart development server after server schema changes; HMR alone retained old API schema during this step.
+
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
@@ -40,7 +42,7 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 3 complete.** The user requires
 - M1 demo remains separately in .tmp/m1-demo with its two-unit development-day1-v1 release; old accounts/progress preserved.
 - Current preview at http://127.0.0.1:3000 uses APP_DATA_DIR=<repository>/.tmp/m2-preview with synthetic accounts. To resume it, set that absolute path then npm run dev. Ordinary setup/dev uses the normal data directory; see README.
 - All 208 resource instructions remain exact. Parent-resource matches are added interpretations using original URLs; 57 unmatched instructions are explicitly unresolved. Live availability unchecked.
-- Full-release reading/navigation and exercise editing are available; checkpoint guidance and full study/progress integration remain M4–M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
+- Full-release reading/navigation and exercise editing are available; checkpoint exercise guidance is implemented; full study/progress integration remains M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
 
 ## Open issues / final acceptance
 
@@ -54,6 +56,6 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 3 complete.** The user requires
 
 ## Exact next focused task
 
-After explicit user approval, M4 step 4: implement checkpoint remediation and final-exam guidance from the original specification and manual. Review relevant checkpoint/day-kind data and the original Day 7, Day 28 and Day 182 instructions. Reuse the verified exercise editor/API/evaluator; preserve needs-review behavior and original AI/time rules. Add only necessary storage after reviewing existing rubric fields; never rewrite applied migrations or published curriculum. Verify checkpoint/final-exam scenarios, original source visibility, mobile/keyboard behavior and persistence. Stop and ask after this step.
+After explicit user approval, M5 step 1: implement explicit full-course study completion and Study this day/Open reference distinctions, using the existing owned-enrollment/revision API and shared required-unit logic. Review specification progress/cursor rules before editing. Preserve independent study/exercise completion, completed review visits, all original source anchors and reference navigation with no implicit completion. Verify Day 1 study/exercise independence, revisiting completed work while Day 2 stays active, reading ahead and restart/two-user behavior. Keep broader dashboard/rollup/conflict/history refinements in their focused follow-ups. Stop and ask after the step.
 
-Relevant files: src/components/exercise-editor.tsx and use-exercise-save.ts; src/domain/exercise-requirements.ts; src/server/learning/exercise-work.ts, mutate.ts and read.ts; src/i18n/exercise.ts; docs/M4-STEP3-VERIFICATION.md; tests/unit/exercise-editor.test.ts; tests/integration/exercise-work.test.ts; content/se-26w-v1/source/product-specification.md. Preserve all immutable source mappings.
+Relevant files: src/server/learning/read.ts and mutate.ts; src/components/learning-client.tsx; src/app/course/software-engineer/[[...segments]]/page.tsx; daily-workspace.tsx and full-curriculum-page.tsx; src/components/use-exercise-save.ts; docs/M4-STEP4-VERIFICATION.md; content/se-26w-v1/source/product-specification.md. Preserve all immutable source mappings. GitHub sync for local M4 step 3 and subsequent work remains to retry when the configured network is available.

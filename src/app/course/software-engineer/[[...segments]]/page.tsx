@@ -68,6 +68,8 @@ export default async function Course({
               result: null,
               transferPath: null,
               transferReflection: '',
+              scoreEvidence: '',
+              remediationNote: '',
             },
           }}
         />

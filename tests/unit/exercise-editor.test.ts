@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 import { createElement } from 'react';
+import { readFileSync } from 'node:fs';
+import { validateSource } from '../../src/server/content/source-schema';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
@@ -29,6 +31,8 @@ const empty: ExerciseSubmission = {
   result: null,
   transferPath: null,
   transferReflection: '',
+  scoreEvidence: '',
+  remediationNote: '',
 };
 const requirements: ExerciseRequirements = {
   releaseId: 'se-26w-v1',
@@ -128,6 +132,82 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe('full-course exercise editing', () => {
+  it.each([7, 28, 35, 182])(
+    'saves assessment evidence and remediation for day %i without awarding completion',
+    async (number) => {
+      const source = validateSource(
+        JSON.parse(
+          readFileSync(
+            'content/se-26w-v1/source/curriculum-source.json',
+            'utf8',
+          ),
+        ),
+      );
+      const day = source.days.find((row) => row.number === number)!;
+      render(
+        createElement(ExerciseEditor, {
+          itemId,
+          studentId: 'owner',
+          requirements: {
+            releaseId: source.release_id,
+            exerciseId: day.exercise_id,
+            tasks: day.tasks,
+            requiresScope: false,
+            assessment: {
+              kind: day.assessment_kind as 'weekly_checkpoint' | 'final_exam',
+              dayNumber: number,
+              criterion: day.completion_criterion,
+              aiPolicy: day.ai_policy,
+              studyInstruction: day.study_instruction,
+            },
+          },
+          tasks: day.tasks,
+          initial: { revision: 0, completed: false, submission: empty },
+        }),
+      );
+      expect(screen.getByText(day.completion_criterion)).toBeTruthy();
+      expect(screen.getByText(day.ai_policy)).toBeTruthy();
+      fireEvent.change(screen.getByLabelText('Self-assessment'), {
+        target: { value: 'needs_review' },
+      });
+      fireEvent.change(
+        screen.getByLabelText('Score or rubric evidence (when applicable)'),
+        { target: { value: 'Independent result: review needed' } },
+      );
+      fireEvent.change(screen.getByLabelText('Review and remediation note'), {
+        target: { value: 'Repeat weak cases and explain the invariant' },
+      });
+      if (number === 7)
+        expect(
+          screen.getByRole('link', { name: 'Day 3' }).getAttribute('href'),
+        ).toContain('/days/d003');
+      if (number === 28)
+        expect(screen.getByRole('link', { name: 'Week 1' })).toBeTruthy();
+      if (number === 35)
+        expect(screen.getByRole('link', { name: 'Week 5' })).toBeTruthy();
+      if (number === 182) {
+        expect(screen.getByText(day.study_instruction)).toBeTruthy();
+        for (const task of day.tasks.slice(0, 3))
+          expect(screen.getAllByText(task.text)).toHaveLength(2);
+        expect(screen.queryByRole('timer')).toBeNull();
+      }
+      expect(button('Mark exercise complete').disabled).toBe(true);
+      fireEvent.click(button('Save assessment'));
+      await screen.findByText('Saved on this computer.');
+      expect(api.mock.calls[0]![2]).toMatchObject({
+        completed: false,
+        submission: {
+          result: 'needs_review',
+          scoreEvidence: 'Independent result: review needed',
+          remediationNote: 'Repeat weak cases and explain the invariant',
+        },
+      });
+      expect(
+        screen.getByLabelText('Review and remediation note').closest('fieldset')
+          ?.disabled,
+      ).toBe(false);
+    },
+  );
   it('keeps original wording separate from rule guidance and gates completion', () => {
     mount();
     expect(screen.getByText('Original d017-task-01').getAttribute('lang')).toBe(

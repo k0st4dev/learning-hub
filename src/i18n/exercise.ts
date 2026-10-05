@@ -1,4 +1,28 @@
 export const exerciseText = {
+  checkpoint: 'Weekly checkpoint',
+  finalExam: 'Final exam — independent attempt',
+  originalCriterion: 'Original pass criterion and review advice',
+  originalAI: 'Original AI policy',
+  originalTiming: 'Original exam timing and task plan',
+  timingHelp:
+    'Use these times to plan the attempt. You may take longer or spread work across sessions. Completion is self-reported against the original criterion.',
+  assessmentHelp:
+    'Assess your work against the original criterion. Record Criteria met or Needs review, score evidence when applicable, and a review note. Saving Needs review keeps this exercise incomplete and all course pages available.',
+  reviewHelp:
+    'Review the original criterion and your saved note, then retry the work when ready.',
+  reviewLinks: 'Review material',
+  addedReviewHelp:
+    'Added navigation help: open the source review days or the relevant week and choose the work needed for your recorded weaknesses.',
+  scoreEvidence: 'Score or rubric evidence (when applicable)',
+  scoreHelp:
+    'Record your quiz result or rubric scores as text. Use only the original pass mark; where none exists, assess the original criterion. This app does not grade work.',
+  remediation: 'Review and remediation note',
+  remediationHelp:
+    'Record what needs improvement, what you will repeat and your next attempt. This note is saved with this assessment.',
+  criteriaMet: 'Criteria met',
+  criteriaRequired:
+    'Record Criteria met only when your work meets the original criterion.',
+  saveAssessment: 'Save assessment',
   decision: 'Task decision',
   title: 'Your exercise work',
   intro:

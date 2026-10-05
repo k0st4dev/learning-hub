@@ -133,7 +133,23 @@ export function mutateLearning(
       const db = store.orm;
       const now = Date.now();
       const whereEnrollment = eq(s.enrollment.id, enrollment.id);
-      const hash = digest(JSON.stringify(data));
+      // Empty additive fields keep M4 step 2/3 receipt hashes replayable after updates.
+      const hashData =
+        'submission' in data
+          ? {
+              ...data,
+              submission: Object.fromEntries(
+                Object.entries(data.submission).filter(
+                  ([key, value]) =>
+                    !(
+                      ['scoreEvidence', 'remediationNote'].includes(key) &&
+                      value === ''
+                    ),
+                ),
+              ),
+            }
+          : data;
+      const hash = digest(JSON.stringify(hashData));
       const receipt = db
         .select()
         .from(s.mutationReceipt)
@@ -344,6 +360,11 @@ export function mutateLearning(
           reopenExercise(item!.parentId!);
         }
       } else if (data.kind === 'exercise' && 'submission' in data) {
+        const previousResult = db
+          .select()
+          .from(s.exerciseProgress)
+          .where(epWhere(item!.id))
+          .get()?.result;
         const wasComplete = saveExerciseWork(
           store,
           enrollment,
@@ -357,6 +378,19 @@ export function mutateLearning(
             data.completed ? 'exercise_completed' : 'exercise_reopened',
             item!.stableKey,
           );
+        if (
+          data.submission.result === 'needs_review' &&
+          previousResult !== 'needs_review'
+        ) {
+          const parentLesson = before.items.find(
+            (candidate) => candidate.id === item!.parentId,
+          );
+          const assessmentDay = before.days.find(
+            (day) => day.itemId === parentLesson?.parentId,
+          );
+          if (assessmentDay && assessmentDay.assessmentKind !== 'practice')
+            event('checkpoint_needs_review', item!.stableKey);
+        }
       } else if (data.kind === 'exercise') {
         if (enrollment.releaseId !== 'development-day1-v1')
           throw new AppError(

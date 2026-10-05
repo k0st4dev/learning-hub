@@ -9,7 +9,12 @@ import {
   importCurriculum,
 } from '../../src/server/content/import';
 import { register, login } from '../../src/server/auth/service';
-import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
+import { digest } from '../../src/server/auth/crypto';
+import {
+  startCourse,
+  mutateLearning,
+  mutationSchema,
+} from '../../src/server/learning/mutate';
 import { snapshot } from '../../src/server/learning/read';
 import { loadExerciseRequirements } from '../../src/server/learning/exercise-work';
 import {
@@ -68,6 +73,8 @@ function payload(number: number, completed = true) {
     result: 'passed',
     transferPath: number === 125 ? 'go' : null,
     transferReflection: '',
+    scoreEvidence: '',
+    remediationNote: '',
   };
   return {
     kind: 'exercise' as const,
@@ -95,6 +102,104 @@ function counts() {
 }
 
 describe('owned full-course exercise transactions', () => {
+  it('loads every assessment from published metadata without inventing pass marks', () => {
+    const assessments = plan.source.days.filter(
+      (day) => day.assessment_kind !== 'practice',
+    );
+    expect(assessments).toHaveLength(26);
+    for (const day of assessments) {
+      const { requirements } = loadExerciseRequirements(
+        store,
+        plan.releaseId,
+        id(day.exercise_id),
+      );
+      expect(requirements.assessment).toEqual({
+        kind: day.assessment_kind,
+        dayNumber: day.number,
+        criterion: day.completion_criterion,
+        aiPolicy: day.ai_policy,
+        studyInstruction: day.study_instruction,
+      });
+    }
+  });
+  it('restores assessment notes after restart, retains lesson credit and records review transitions once', async () => {
+    const data = payload(7, false);
+    data.submission.result = 'needs_review';
+    data.submission.scoreEvidence =
+      '6/10; isPrime and reverseNumber need fixes';
+    data.submission.remediationNote = 'Repeat Days 3–5 before another attempt';
+    save({ kind: 'lesson', itemId: id('d007-learn'), completed: true });
+    const saved = save(data);
+    expect(saved.completed).toBe(1);
+    save(data);
+    expect(
+      store.native
+        .prepare(
+          "SELECT count(*) AS n FROM activity_event WHERE type='checkpoint_needs_review'",
+        )
+        .get(),
+    ).toEqual({ n: 1 });
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    token = (await login(store, { email: 'work@example.test', password }))
+      .token;
+    expect(snapshot(store, token)!.exerciseProgress[0]!.submission).toEqual(
+      data.submission,
+    );
+    expect(snapshot(store, token)!.exerciseProgress[0]!.status).toBe('started');
+    expect(snapshot(store, token)!.completed).toBe(1);
+    data.submission.result = 'passed';
+    data.submission.scoreEvidence = '8/10, all three problems solved';
+    expect(save({ ...data, completed: true }).completed).toBe(2);
+    data.submission.result = 'needs_review';
+    expect(save(data).completed).toBe(1);
+    expect(
+      store.native
+        .prepare(
+          "SELECT count(*) AS n FROM activity_event WHERE type='checkpoint_needs_review'",
+        )
+        .get(),
+    ).toEqual({ n: 2 });
+  });
+  it('supports legacy saved work and receipt retries while rejecting assessment notes on practice', () => {
+    const data = {
+      ...payload(1),
+      expectedRevision: 0,
+      mutationId: randomUUID(),
+    };
+    const saved = mutateLearning(store, token, data);
+    const canonical = mutationSchema.parse(data);
+    if (!('submission' in canonical)) throw new Error('Expected exercise work');
+    const legacy = {
+      ...canonical,
+      submission: Object.fromEntries(
+        Object.entries(canonical.submission).filter(
+          ([key]) => !['scoreEvidence', 'remediationNote'].includes(key),
+        ),
+      ),
+    };
+    store.native
+      .prepare('UPDATE mutation_receipt SET request_hash=? WHERE mutation_id=?')
+      .run(digest(JSON.stringify(legacy)), data.mutationId);
+    expect(mutateLearning(store, token, legacy)).toEqual(saved);
+    store.native
+      .prepare(
+        "UPDATE exercise_progress SET rubric_json=json_remove(rubric_json, '$.exerciseWork.scoreEvidence', '$.exerciseWork.remediationNote')",
+      )
+      .run();
+    expect(
+      snapshot(store, token)!.exerciseProgress[0]!.submission,
+    ).toMatchObject({ scoreEvidence: '', remediationNote: '' });
+    const forged = payload(1, false);
+    forged.submission.remediationNote = 'not an assessment';
+    const before = snapshot(store, token);
+    expect(() => save(forged)).toThrow('Assessment notes');
+    expect(snapshot(store, token)).toEqual(before);
+    const oversized = payload(7, false);
+    oversized.submission.remediationNote = 'x'.repeat(2001);
+    expect(() => save(oversized)).toThrow();
+    expect(snapshot(store, token)).toEqual(before);
+  });
   it('derives all 548 task requirements from the published database and reviewed assignment scope', () => {
     let count = 0;
     for (const day of plan.source.days) {

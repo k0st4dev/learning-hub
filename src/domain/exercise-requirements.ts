@@ -33,6 +33,13 @@ export type ExerciseRequirements = {
   tasks: readonly TaskRequirement[];
   // Trusted course adapter decides this from the selected assignment, never the client.
   requiresScope: boolean;
+  assessment?: {
+    kind: 'weekly_checkpoint' | 'final_exam';
+    dayNumber: number;
+    criterion: string;
+    aiPolicy: string;
+    studyInstruction: string;
+  };
 };
 const text = z.string().max(2000);
 export const exerciseSubmissionSchema = z.strictObject({
@@ -55,6 +62,8 @@ export const exerciseSubmissionSchema = z.strictObject({
     .nullable()
     .default(null),
   transferReflection: text.default(''),
+  scoreEvidence: text.default(''),
+  remediationNote: text.default(''),
 });
 export type ExerciseSubmission = z.infer<typeof exerciseSubmissionSchema>;
 export type RequirementIssue = {

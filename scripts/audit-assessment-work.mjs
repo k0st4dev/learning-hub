@@ -33,7 +33,12 @@ function client() {
       body: JSON.stringify(body),
     });
     remember(response);
-    assert.equal(response.status, expected, route);
+    if (response.status !== expected) {
+      const diagnostic = await response.json();
+      throw new Error(
+        route + ': ' + response.status + ' ' + JSON.stringify(diagnostic.error),
+      );
+    }
     return response.status === 204 ? null : response.json();
   };
 }
@@ -50,49 +55,45 @@ await first('/api/auth/login', { email, password });
 const initial = await first('/api/enrollment', {});
 assert.equal(initial.data.enrollment.releaseId, 'se-26w-v1');
 const submission = {
-  scoreEvidence: '',
-  remediationNote: '',
-  tasks: [
-    {
-      taskId: 'd125-task-02',
-      status: 'not_applicable',
-      reason: 'Selected existing-language transfer',
-      choice: '',
-    },
-    { taskId: 'd125-task-03', status: 'done', reason: '', choice: '' },
-  ],
-  evidence: 'Prior JS/C/Python binary search implementations, commit abc123',
-  selectedScope: 'Existing JS/C/Python transfer',
-  attested: true,
-  result: 'passed',
-  transferPath: 'existing_languages',
-  transferReflection:
-    'Compared the same binary search invariant across JS, C and Python; syntax/types differ while reasoning stays the same.',
+  tasks: [],
+  evidence: '',
+  selectedScope: '',
+  attested: false,
+  result: 'needs_review',
+  transferPath: null,
+  transferReflection: '',
+  scoreEvidence: '6/10, two of three problems solved',
+  remediationNote: 'Repeat Days 3–5, then retry all three problems',
 };
 const input = {
   kind: 'exercise',
-  itemId: 'se-26w-v1:d125-practice',
-  completed: true,
+  itemId: 'se-26w-v1:d007-practice',
+  completed: false,
   expectedRevision: initial.data.revision,
   mutationId: randomUUID(),
   submission,
 };
 const route = '/api/progress/exercises/' + encodeURIComponent(input.itemId);
+const saved = await first(route, input, 200, 'PUT');
+assert.equal(saved.data.completed, 0);
+assert.equal(saved.data.exerciseProgress[0].status, 'started');
+assert.deepEqual(saved.data.exerciseProgress[0].submission, submission);
+assert.deepEqual(await first(route, input, 200, 'PUT'), saved);
 await first(
   route,
-  { ...input, submission: { ...submission, transferReflection: '' } },
+  {
+    ...input,
+    mutationId: randomUUID(),
+    expectedRevision: saved.data.revision,
+    completed: true,
+  },
   422,
   'PUT',
 );
-const saved = await first(route, input, 200, 'PUT');
-assert.equal(saved.data.completed, 1);
-assert.deepEqual(saved.data.exerciseProgress[0].submission, submission);
-assert.deepEqual(await first(route, input, 200, 'PUT'), saved);
-await first(route, { ...input, mutationId: randomUUID() }, 409, 'PUT');
 await first('/api/auth/logout', {}, 204);
 await first('/api/auth/login', { email, password });
 assert.deepEqual((await first('/api/enrollment', {})).data, saved.data);
-const otherEmail = `exercise-other-${randomUUID()}@example.test`;
+const otherEmail = `assessment-other-${randomUUID()}@example.test`;
 await second(
   '/api/auth/register',
   { email: otherEmail, password, confirmation: password },
@@ -100,26 +101,21 @@ await second(
 );
 await second('/api/auth/login', { email: otherEmail, password });
 const other = await second('/api/enrollment', {});
-assert.equal(other.data.completed, 0);
 assert.deepEqual(other.data.exerciseProgress, []);
-assert.deepEqual(other.data.tasks, []);
+assert.equal(other.data.completed, 0);
 await first('/api/auth/logout', {}, 204);
 await second('/api/auth/logout', {}, 204);
 const report = {
   date: new Date().toISOString(),
   server: 'development',
-  scope: 'M4 step 2 actual HTTP exercise persistence',
-  rejectedMissingReflection: true,
-  savedTransferPath: true,
-  idempotentReplay: true,
-  staleSave409: true,
-  loginReloadPreservesWork: true,
-  twoUsersIsolated: true,
-  completedUnits: 1,
-  requiredUnits: saved.data.total,
+  saveReviewWithoutCredit: 'passed',
+  retry: 'passed',
+  forgedCompletion: 'rejected',
+  loginReloadPersistence: 'passed',
+  twoUsers: 'isolated',
 };
 await writeFile(
-  path.join(root, 'docs/m4-step2-http-audit.json'),
+  path.join(root, 'docs/m4-step4-http-audit.json'),
   JSON.stringify(report, null, 2) + '\n',
 );
 console.log(report);

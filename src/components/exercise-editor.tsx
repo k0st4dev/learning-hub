@@ -10,6 +10,7 @@ import {
 import { exerciseText as t } from '@/i18n/exercise';
 import { en } from '@/i18n/en';
 import { useExerciseSave, type ConfirmedExercise } from './use-exercise-save';
+import { AssessmentGuidance } from './assessment-guidance';
 
 export function ExerciseEditor({
   itemId,
@@ -32,6 +33,8 @@ export function ExerciseEditor({
     result: null,
     transferPath: null,
     transferReflection: '',
+    scoreEvidence: '',
+    remediationNote: '',
   };
   const work = useExerciseSave(itemId, studentId, initial, empty);
   const [reopening, setReopening] = useState(false);
@@ -68,6 +71,13 @@ export function ExerciseEditor({
     >
       <h2 id="exercise-work-title">{t.title}</h2>
       <p>{t.intro}</p>
+      {requirements.assessment && (
+        <AssessmentGuidance
+          assessment={requirements.assessment}
+          tasks={tasks}
+          needsReview={work.draft.result === 'needs_review'}
+        />
+      )}
       <p role="status">
         {work.pending
           ? t.saving
@@ -322,8 +332,36 @@ export function ExerciseEditor({
         >
           <option value="">{t.unassessed}</option>
           <option value="needs_review">{t.review}</option>
-          <option value="passed">{t.passed}</option>
+          <option value="passed">
+            {requirements.assessment ? t.criteriaMet : t.passed}
+          </option>
         </select>
+        {requirements.assessment && (
+          <>
+            <label htmlFor="work-score">{t.scoreEvidence}</label>
+            <p id="work-score-help">{t.scoreHelp}</p>
+            <textarea
+              id="work-score"
+              maxLength={2000}
+              aria-describedby="work-score-help"
+              value={work.draft.scoreEvidence}
+              onChange={(event) =>
+                change({ scoreEvidence: event.target.value })
+              }
+            />
+            <label htmlFor="work-remediation">{t.remediation}</label>
+            <p id="work-remediation-help">{t.remediationHelp}</p>
+            <textarea
+              id="work-remediation"
+              maxLength={2000}
+              aria-describedby="work-remediation-help"
+              value={work.draft.remediationNote}
+              onChange={(event) =>
+                change({ remediationNote: event.target.value })
+              }
+            />
+          </>
+        )}
       </fieldset>
       {!work.confirmed.completed && (
         <>
@@ -336,7 +374,10 @@ export function ExerciseEditor({
                     {issue.taskId
                       ? `${requirements.tasks.findIndex((task) => task.id === issue.taskId) + 1}. `
                       : ''}
-                    {t.issues[issue.code]}
+                    {requirements.assessment &&
+                    issue.code === 'passed_result_required'
+                      ? t.criteriaRequired
+                      : t.issues[issue.code]}
                   </li>
                 ))}
               </ul>
@@ -348,7 +389,7 @@ export function ExerciseEditor({
               disabled={work.locked || !work.dirty}
               onClick={() => void work.save(false)}
             >
-              {t.save}
+              {requirements.assessment ? t.saveAssessment : t.save}
             </button>
             <button
               className="button primary"

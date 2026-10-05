@@ -53,6 +53,8 @@ function fixture(number: number) {
     result: 'passed',
     transferPath: number === 125 ? 'go' : null,
     transferReflection: '',
+    scoreEvidence: '',
+    remediationNote: '',
   };
   return { day, requirements, submission };
 }
