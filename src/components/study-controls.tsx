@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import type { useExerciseSave } from './use-exercise-save';
 import { studyText as t } from '@/i18n/study';
+import { en } from '@/i18n/en';
 export function StudyControls({
   work,
   itemId,
@@ -11,9 +12,32 @@ export function StudyControls({
 }) {
   const context = work.confirmed.context;
   if (!context) return null;
+  const savedAnchor =
+    context.activeItemId === itemId &&
+    context.anchors.includes(context.resumeAnchor ?? '')
+      ? context.resumeAnchor
+      : null;
+  const anchorLabels: Record<string, string> = {
+    study: en.learning.study,
+    tasks: en.learning.practice,
+    ai: en.learning.ai,
+    criterion: en.learning.criterion,
+    evidence: 'Evidence',
+  };
   return (
     <section className="card stack" aria-label={t.context}>
       <p>{context.activeItemId === itemId ? t.active : t.reference}</p>
+      {savedAnchor && (
+        <p>
+          Saved section:{' '}
+          <Link
+            href={`${itemId === context.lessonId ? context.lessonPath : context.exercisePath}#${savedAnchor}`}
+          >
+            {anchorLabels[savedAnchor] ??
+              `Task ${Number(savedAnchor.split('-').at(-1))}`}
+          </Link>
+        </p>
+      )}
       <p>
         {context.completed}/{context.total} required units in this day ·{' '}
         {context.percent}%

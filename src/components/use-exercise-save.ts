@@ -13,6 +13,7 @@ import {
   studyStateSchema,
   type StudyContext,
 } from '@/domain/study-context';
+import { useSectionResume } from './use-section-resume';
 
 export type ConfirmedExercise = {
   revision: number;
@@ -68,9 +69,10 @@ type Payload = PayloadBase &
         kind: 'exercise';
         completed: boolean;
         submission: ExerciseSubmission;
+        anchor?: string;
       }
     | { kind: 'lesson'; completed: boolean }
-    | { kind: 'cursor'; mode: 'open' | 'study'; anchor: string }
+    | { kind: 'cursor'; mode: 'open' | 'study' | 'anchor'; anchor: string }
   );
 export function useExerciseSave(
   itemId: string,
@@ -93,6 +95,8 @@ export function useExerciseSave(
   } | null>(null);
   const busy = useRef(false);
   const opened = useRef(false);
+  const actionAnchor = useRef<string | null>(null);
+  const [openRecorded, setOpenRecorded] = useState(!trackOpen);
   const dirty = JSON.stringify(draft) !== JSON.stringify(confirmed.submission);
   const locked =
     pending ||
@@ -165,11 +169,17 @@ export function useExerciseSave(
           initial.context,
         );
         setConfirmed(next);
-        if (!preserveDraft) setDraft(next.submission);
+        if (payload.kind === 'cursor' && payload.mode === 'open')
+          setOpenRecorded(true);
+        if (!preserveDraft) {
+          setDraft(next.submission);
+          actionAnchor.current = null;
+        }
         setRetry(null);
         setConflict(null);
         setMessage(t.saved);
-        router.refresh();
+        if (payload.kind !== 'cursor' || payload.mode === 'study')
+          router.refresh();
         return next;
       } catch (cause) {
         const failure =
@@ -214,6 +224,28 @@ export function useExerciseSave(
       true,
     );
   }, [trackOpen, initial, itemId, kind, studentId, send]);
+  const sections = useSectionResume({
+    itemId,
+    context: confirmed.context,
+    completed: confirmed.completed,
+    enabled: trackOpen && openRecorded,
+    locked,
+    save: (anchor) => {
+      if (busy.current || locked) return;
+      return send(
+        {
+          kind: 'cursor',
+          mode: 'anchor',
+          itemId,
+          anchor,
+          expectedStudentId: studentId,
+          expectedRevision: confirmed.revision,
+          mutationId: crypto.randomUUID(),
+        },
+        true,
+      );
+    },
+  });
   return {
     draft,
     setDraft,
@@ -223,15 +255,29 @@ export function useExerciseSave(
     error,
     conflict,
     locked,
+    editingLocked:
+      locked &&
+      !(
+        pending &&
+        retry?.payload.kind === 'cursor' &&
+        retry.payload.mode === 'anchor'
+      ),
     message,
+    noteActionAnchor: (anchor: string) => {
+      if (confirmed.context?.anchors.includes(anchor))
+        actionAnchor.current = anchor;
+    },
     save: (completed: boolean, reopen = false) => {
       if (busy.current || locked || (confirmed.completed && !reopen)) return;
+      sections.cancel();
+      const savedAnchor = actionAnchor.current ?? sections.current();
       return send(
         {
           ...(kind === 'exercise'
             ? {
                 kind: 'exercise' as const,
                 submission: reopen ? confirmed.submission : draft,
+                ...(savedAnchor && !reopen ? { anchor: savedAnchor } : {}),
               }
             : { kind: 'lesson' as const }),
           itemId,
@@ -245,6 +291,7 @@ export function useExerciseSave(
     },
     saveCursor: (mode: 'open' | 'study') => {
       if (busy.current || locked) return;
+      sections.cancel();
       const context = confirmed.context;
       const target = mode === 'study' ? context?.studyTargetId : itemId;
       if (!target) return;
@@ -280,13 +327,18 @@ export function useExerciseSave(
       retry && !pending
         ? () => {
             const saved = retry!;
+            sections.cancel();
             return send(saved.payload, saved.preserveDraft);
           }
         : null,
     resolve: (keep: boolean) => {
       if (!conflict) return;
+      sections.cancel();
       setConfirmed(conflict);
-      if (!keep) setDraft(conflict.submission);
+      if (!keep) {
+        setDraft(conflict.submission);
+        actionAnchor.current = null;
+      }
       setConflict(null);
       setError(null);
       setMessage('');

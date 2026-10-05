@@ -143,6 +143,7 @@ export default async function Course({
             catalog={catalog}
             route={coursePath + (route ? '/' + route : '')}
             exerciseEditor={exerciseEditor}
+            exerciseWorkAvailable={!!state && !!exercise}
             studyEditor={studyEditor}
             progressView={
               state &&

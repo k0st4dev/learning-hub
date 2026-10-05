@@ -10,6 +10,7 @@ import {
 } from '@testing-library/react';
 import { ProgressOverview } from '../../src/components/progress-overview';
 import type { ProgressViewState } from '../../src/domain/progress-presentation';
+import { studyAnchors } from '../../src/domain/study-anchors';
 function fixture(): ProgressViewState {
   const days = [1, 2, 7];
   const units = days.flatMap((day) =>
@@ -17,6 +18,7 @@ function fixture(): ProgressViewState {
       id: `d${day}-${kind}`,
       key: `d${String(day).padStart(3, '0')}-${kind === 'lesson' ? 'learn' : 'practice'}`,
       kind,
+      anchors: studyAnchors(kind),
       dayId: 'day' + day,
       dayKey: 'd' + String(day).padStart(3, '0'),
       dayNumber: day,

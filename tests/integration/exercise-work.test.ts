@@ -105,6 +105,107 @@ function counts() {
 }
 
 describe('owned full-course exercise transactions', () => {
+  it('persists only active allowlisted anchors without progress, history or reference changes; replays and rejects stale writes', async () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d017-practice'),
+      anchor: 'tasks',
+    });
+    save({
+      kind: 'cursor',
+      mode: 'open',
+      itemId: id('d028-learn'),
+      anchor: 'study',
+    });
+    const before = snapshot(store, token)!;
+    const history = counts()[2];
+    const data = {
+      kind: 'cursor',
+      mode: 'anchor',
+      itemId: id('d017-practice'),
+      anchor: 'd017-task-02',
+      expectedRevision: before.revision,
+      mutationId: randomUUID(),
+    };
+    const saved = mutateLearning(store, token, data);
+    expect(saved.enrollment).toMatchObject({
+      resumeItemId: id('d017-practice'),
+      resumeAnchor: 'd017-task-02',
+      lastOpenedItemId: before.enrollment.lastOpenedItemId,
+      lastOpenedAt: before.enrollment.lastOpenedAt,
+    });
+    expect(saved.completed).toBe(0);
+    expect(saved.exerciseProgress).toEqual(before.exerciseProgress);
+    expect(saved.tasks).toEqual(before.tasks);
+    expect(counts()[2]).toEqual(history);
+    expect(continuePath(saved)).toContain('#d017-task-02');
+    const baseline = counts();
+    expect(mutateLearning(store, token, data)).toEqual(saved);
+    expect(counts()).toEqual(baseline);
+    expect(() =>
+      mutateLearning(store, token, { ...data, mutationId: randomUUID() }),
+    ).toThrow('another tab');
+    for (const change of [
+      { itemId: id('d017-practice'), anchor: 'd018-task-01' },
+      { itemId: id('d017-practice'), anchor: 'javascript:bad' },
+      { itemId: id('d028-learn'), anchor: 'study' },
+      {
+        itemId: id('d017-practice'),
+        anchor: 'ai',
+        expectedStudentId: 'other-account',
+      },
+    ]) {
+      expect(() =>
+        save({ kind: 'cursor', mode: 'anchor', ...change }),
+      ).toThrow();
+      expect(snapshot(store, token)).toEqual(saved);
+      expect(counts()).toEqual(baseline);
+    }
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    token = (await login(store, { email: 'work@example.test', password }))
+      .token;
+    expect(continuePath(snapshot(store, token))).toContain('#d017-task-02');
+    expect(snapshot(store, token)!.completed).toBe(0);
+    save(payload(17));
+    const completedState = snapshot(store, token);
+    expect(() =>
+      save({
+        kind: 'cursor',
+        mode: 'anchor',
+        itemId: id('d017-practice'),
+        anchor: 'ai',
+      }),
+    ).toThrow('active study location');
+    expect(snapshot(store, token)).toEqual(completedState);
+  });
+  it('acknowledges the current task in the same exercise transaction and validates its pinned section', () => {
+    const data = { ...payload(17, false), anchor: 'd017-task-02' };
+    expect(save(data).enrollment.resumeAnchor).toBe('d017-task-02');
+    const before = snapshot(store, token);
+    const baseline = counts();
+    expect(() => save({ ...data, anchor: 'd018-task-01' })).toThrow('section');
+    expect(snapshot(store, token)).toEqual(before);
+    expect(counts()).toEqual(baseline);
+    expect(
+      save({
+        kind: 'cursor',
+        mode: 'study',
+        itemId: id('d001-learn'),
+        anchor: 'criterion',
+      }).enrollment.resumeAnchor,
+    ).toBe('criterion');
+    expect(() =>
+      save({
+        kind: 'cursor',
+        mode: 'anchor',
+        itemId: id('d001-learn'),
+        anchor: 'evidence',
+      }),
+    ).toThrow('section');
+  });
   it('derives all published scope denominators and the 13/14 week example; reopening cascades', () => {
     const initial = progressPresentation(snapshot(store, token)!);
     expect(initial.summary).toMatchObject({

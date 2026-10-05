@@ -1,5 +1,6 @@
 import { unitPath, type unitSchema } from './study-context';
 import type { z } from 'zod';
+import { defaultStudyAnchor, studyAnchors } from './study-anchors';
 export type ResumeState = {
   units: z.infer<typeof unitSchema>[];
   enrollment: {
@@ -43,10 +44,12 @@ export function resolveContinue(state: ResumeState | null) {
           : unitPath(
               target!,
               active
-                ? state!.enrollment.resumeAnchor
-                : target!.kind === 'lesson'
-                  ? 'study'
-                  : 'tasks',
+                ? (active.anchors ?? studyAnchors(active.kind)).includes(
+                    state!.enrollment.resumeAnchor ?? '',
+                  )
+                  ? state!.enrollment.resumeAnchor
+                  : defaultStudyAnchor(active.kind)
+                : defaultStudyAnchor(target!.kind),
             );
   return {
     path,

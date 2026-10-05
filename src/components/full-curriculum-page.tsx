@@ -11,12 +11,14 @@ export function FullCurriculumPage({
   exerciseEditor,
   studyEditor,
   progressView,
+  exerciseWorkAvailable = false,
 }: {
   catalog: Catalog;
   route: string;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
   progressView?: React.ReactNode;
+  exerciseWorkAvailable?: boolean;
 }) {
   if (route.startsWith('/resources/')) {
     const resource = catalog.resources.find(
@@ -76,6 +78,7 @@ export function FullCurriculumPage({
         exerciseEditor={exerciseEditor}
         studyEditor={studyEditor}
         progressView={progressView}
+        exerciseWorkAvailable={exerciseWorkAvailable}
       />
       {route === '/progress/scorecard' && (
         <section className="section">

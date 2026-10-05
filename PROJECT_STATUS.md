@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-05. **M0–M4 complete; M5 step 2 complete.** The user requires step-by-step confirmation. **Do not start the next focused step without approval.**
+Updated: 2026-10-05. **M0–M4 complete; M5 step 3 complete.** The user requires step-by-step confirmation. **Do not start the next focused step without approval.**
 
 ## Completed
 
@@ -44,20 +44,22 @@ Updated: 2026-10-05. **M0–M4 complete; M5 step 2 complete.** The user requires
 - M1 demo remains separately in .tmp/m1-demo with its two-unit development-day1-v1 release; old accounts/progress preserved.
 - Current preview at http://127.0.0.1:3000 uses APP_DATA_DIR=<repository>/.tmp/m2-preview with synthetic accounts. To resume it, set that absolute path then npm run dev. Ordinary setup/dev uses the normal data directory; see README.
 - All 208 resource instructions remain exact. Parent-resource matches are added interpretations using original URLs; 57 unmatched instructions are explicitly unresolved. Live availability unchecked.
-- Full-release reading/navigation, study completion/reopening, exercise editing and hierarchical progress presentation are available; checkpoint exercise guidance is implemented. Anchor tracking and activity presentation remain M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
+- M5 step 3: shared allowlisted active section/task tracking with one-second debounce, saved-section links and acknowledged scroll/focus restoration. Reference/completed views cannot update anchors. Owned transactional cursor mode preserves Last opened, work, credit and history; serializes pending writes and reuses exact retries/409/account guards. Immediate exercise saves preserve the last edited task/field anchor; background saves preserve typing/drafts. No migration/source/dependency changes. All 218 tests / 19 files pass; final focused 40-test regression plus types/lint/format/build/source/licences pass. HTTP API/restart/login/isolation audit, 20-route source regression and desktop/mobile/stale-tab browser checks pass. Evidence: docs/M5-STEP3-VERIFICATION.md.
+- Full-release reading/navigation, study completion/reopening, exercise editing, hierarchical progress and section resume are available; checkpoint guidance is implemented. Activity presentation remains M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
 
 ## Open issues / final acceptance
 
-- User confirmed successful GitHub push through da37814 (M4 step 4) in the supplied PowerShell screenshot. M5 step 1 (b2a8f73) and step 2 are saved locally and still need pushing from normal PowerShell. Agent network proxy 127.0.0.1:9 remains restricted; do not bypass network controls.
+- User confirmed successful GitHub push through da37814 (M4 step 4) in the supplied PowerShell screenshot. M5 steps 1 (b2a8f73), 2 (03989ed) and 3 are saved locally and still need pushing from normal PowerShell. Agent network proxy 127.0.0.1:9 remains restricted; do not bypass network controls.
 
 - Separate production-server startup was rejected by automatic approval policy; development browser/HTTP evidence recorded. Production Playwright/axe remains pending because of host IPC restrictions.
 - Real reboot, full browser-process shutdown, screen reader, macOS/Linux and disconnected-network checks remain final gates. A01–A26 are not declared fully passed.
 - Existing two Turbopack filesystem-tracing warnings and ESLint 9 support warning remain tracked.
+- Development streaming emitted a Gzip drain-listener warning during M5 step 3 browser/audit work; requests and build pass. Review at integration without suppressing it or changing unrelated server internals in this increment.
 - M3 reading/navigation scope is complete. Settings, search and remaining interaction/accessibility integration follow the original later-milestone plan; final A01–A26 acceptance remains open.
 - Notes/search/scorecard entry/profiles/recovery/backup/update tooling remain later milestones.
 
 ## Exact next focused task
 
-After explicit user approval, M5 step 3: persist allowlisted section/task anchors for the active unit, debounced one second, without selecting reference work as active. Reuse owned revision/idempotency/account guards and shared pending/retry handling; keep immediate task/completion anchors. Resume restores only acknowledged anchors. Verify reload/restart, reference browsing, pending writes, stale tabs, duplicate retries and no credit changes. Review specification section 7 and source section anchors before editing. Activity history, browser Back/Forward unsaved handling and the M5 integration gate remain subsequent focused steps. Stop and ask after this step.
+After explicit user approval, M5 step 4: present read-only recent activity from the existing meaningful completion/reopening/checkpoint/day/course transition events. Use owned enrollment/pinned-release data, original item labels and the student's timezone. Inspect specification activity requirements before editing; cursor/reference/anchor writes must not appear as completion activity or add credit. Verify ordering, empty states, duplicate-retry history, account isolation and desktop/mobile accessibility. Do not add notes or other later tools. Browser Back/Forward unsaved handling and the M5 integration gate remain subsequent focused steps. Stop and ask after this step.
 
-Relevant files: src/server/learning/mutate.ts and read.ts; src/domain/resume.ts and study-context.ts; src/components/use-exercise-save.ts, study-editor.tsx, exercise-editor.tsx and curriculum-preview.tsx; docs/M5-STEP2-VERIFICATION.md; content/se-26w-v1/source/product-specification.md. Preserve immutable source mappings and existing receipt compatibility. Running isolated preview: http://127.0.0.1:3000, APP_DATA_DIR=<repo>/.tmp/m2-preview, portable Node, exec session 85318. Reload/open a fresh client document after restarting the development server. Browser-history dirty guard remains pending.
+Relevant files: src/server/learning/read.ts and mutate.ts; src/server/db/schema.ts activityEvent; src/components/progress-overview.tsx and learning-client.tsx; src/domain/progress-presentation.ts; docs/M5-STEP3-VERIFICATION.md; content/se-26w-v1/source/product-specification.md. Preserve immutable source mappings, migrations and receipt compatibility. Running isolated preview: http://127.0.0.1:3000, APP_DATA_DIR=<repo>/.tmp/m2-preview, portable Node, exec session 83221. Fresh browser tab 7 remains signed into the synthetic UI account, with 2/364 credit, Day 2 exercise active at Evidence and task 2/3 saved; the HTTP anchor fixture independently resumes Day 17 task 2 with zero credit. Open a fresh client document after a server restart. Browser-history dirty guard remains pending.

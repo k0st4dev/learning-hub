@@ -47,14 +47,19 @@ export function ExerciseEditor({
     true,
   );
   const [reopening, setReopening] = useState(false);
-  const disabled = work.locked || work.confirmed.completed;
+  const disabled = work.editingLocked || work.confirmed.completed;
   const evaluation = evaluateExercise(requirements, work.draft);
-  const change = (patch: Partial<ExerciseSubmission>) =>
+  const change = (patch: Partial<ExerciseSubmission>) => {
+    work.noteActionAnchor(
+      'attested' in patch || 'result' in patch ? 'criterion' : 'evidence',
+    );
     work.setDraft((draft) => ({ ...draft, ...patch }));
+  };
   const taskChange = (
     taskId: string,
     patch: Partial<ExerciseSubmission['tasks'][number]> | null,
-  ) =>
+  ) => {
+    work.noteActionAnchor(taskId);
     work.setDraft((draft) => {
       const existing = draft.tasks.find((task) => task.taskId === taskId);
       const next = draft.tasks.filter((task) => task.taskId !== taskId);
@@ -69,6 +74,7 @@ export function ExerciseEditor({
         });
       return { ...draft, tasks: next };
     });
+  };
   return (
     <section
       className="section exercise-editor"
@@ -174,7 +180,11 @@ export function ExerciseEditor({
               ? alternativeRoutes[task.id as keyof typeof alternativeRoutes]
               : [];
           return (
-            <fieldset className="card stack" key={task.id}>
+            <fieldset
+              className="card stack"
+              key={task.id}
+              data-study-anchor={task.id}
+            >
               <legend>
                 {index + 1}. {t[task.requirement_mode]}
               </legend>
@@ -281,6 +291,7 @@ export function ExerciseEditor({
         <p id="work-evidence-help">{t.evidenceHelp}</p>
         <textarea
           id="evidence"
+          data-study-anchor="evidence"
           maxLength={2000}
           aria-describedby="work-evidence-help"
           value={work.draft.evidence}

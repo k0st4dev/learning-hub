@@ -119,6 +119,8 @@ describe('canonical required-unit rollups and resume', () => {
       recommended: { id: data[0]!.id },
     });
     expect(resolveContinue(state).path).toMatch(/#criterion$/);
+    state.enrollment.resumeAnchor = 'unavailable-section';
+    expect(resolveContinue(state).path).toMatch(/#study$/);
     data[12]!.complete = true;
     expect(resolveContinue(state).target?.id).toBe(data[13]!.id);
     data[13]!.complete = true;

@@ -8,17 +8,28 @@ import { sourceLinkSchema } from '@/server/content/source-schema';
 import { en } from '@/i18n/en';
 import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
+import { studyAnchors } from '@/domain/study-anchors';
 import {
   curriculumItemLabel,
   CurriculumNavigation,
   curriculumItemTitle,
 } from './curriculum-navigation';
 const base = '/course/software-engineer';
-function SourceParagraph({ block }: { block: CatalogPage['blocks'][number] }) {
+function SourceParagraph({
+  block,
+  anchors,
+}: {
+  block: CatalogPage['blocks'][number];
+  anchors: readonly string[];
+}) {
   const links = z.array(sourceLinkSchema).parse(JSON.parse(block.linksJson));
   return (
     <div
       id={block.anchor ?? undefined}
+      data-study-anchor={
+        anchors.includes(block.anchor ?? '') ? block.anchor : undefined
+      }
+      tabIndex={anchors.includes(block.anchor ?? '') ? -1 : undefined}
       data-source-id={block.sourceLocator}
       className="source-paragraph"
     >
@@ -44,12 +55,20 @@ function SourceParagraph({ block }: { block: CatalogPage['blocks'][number] }) {
     </div>
   );
 }
-export function SourceBlocks({ blocks }: { blocks: CatalogPage['blocks'] }) {
+export function SourceBlocks({
+  blocks,
+  anchors = [],
+}: {
+  blocks: CatalogPage['blocks'];
+  anchors?: readonly string[];
+}) {
   const parts: React.ReactNode[] = [];
   for (let index = 0; index < blocks.length;) {
     const block = blocks[index]!;
     if (block.tableNumber === null) {
-      parts.push(<SourceParagraph key={block.id} block={block} />);
+      parts.push(
+        <SourceParagraph key={block.id} block={block} anchors={anchors} />,
+      );
       index++;
       continue;
     }
@@ -90,7 +109,11 @@ export function SourceBlocks({ blocks }: { blocks: CatalogPage['blocks'] }) {
                           (b) => b.rowNumber === row && b.cellNumber === cell,
                         )
                         .map((b) => (
-                          <SourceParagraph key={b.id} block={b} />
+                          <SourceParagraph
+                            key={b.id}
+                            block={b}
+                            anchors={anchors}
+                          />
                         ))}
                     </td>
                   ))}
@@ -109,12 +132,14 @@ export function CurriculumPreview({
   exerciseEditor,
   studyEditor,
   progressView,
+  exerciseWorkAvailable = false,
 }: {
   catalog: Catalog;
   page: CatalogPage;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
   progressView?: React.ReactNode;
+  exerciseWorkAvailable?: boolean;
 }) {
   const overview = page.item.stableKey === 'overview';
   const workspace = dayWorkspace(catalog, page.item.id);
@@ -134,6 +159,12 @@ export function CurriculumPreview({
   );
   const week = catalog.weeks.find((w) => w.itemId === page.item.id);
   const rule = catalog.rules.find((rule) => rule.itemId === page.item.id);
+  const anchors = studyAnchors(
+    page.item.kind,
+    page.children
+      .filter((item) => item.kind === 'task')
+      .map((item) => item.stableKey),
+  );
   return (
     <>
       <aside className="preview-notice mb-8">
@@ -161,7 +192,10 @@ export function CurriculumPreview({
           branches={courseOutline(navigationModel, page.item.id)}
           overview={overview}
         />
-        <div className="course-reading-content">
+        <div
+          className="course-reading-content"
+          data-learning-unit={anchors.length ? page.item.id : undefined}
+        >
           <h1>{curriculumItemTitle({ item: page.item })}</h1>
           <p className="muted">
             {en.curriculum.release}: {catalog.release.id} ·{' '}
@@ -171,6 +205,20 @@ export function CurriculumPreview({
             <DailyContext workspace={workspace} currentId={page.item.id} />
           )}
           {progressView}
+          {anchors.length > 0 && (
+            <nav className="actions mb-8" aria-label="Lesson sections">
+              <Link href={page.item.kind === 'lesson' ? '#study' : '#tasks'}>
+                {page.item.kind === 'lesson'
+                  ? en.learning.study
+                  : en.learning.practice}
+              </Link>
+              <Link href="#ai">{en.learning.ai}</Link>
+              <Link href="#criterion">{en.learning.criterion}</Link>
+              {page.item.kind === 'exercise' && exerciseWorkAvailable && (
+                <Link href="#evidence">Evidence</Link>
+              )}
+            </nav>
+          )}
           {page.item.kind !== 'day' &&
             (overview || page.children.length > 0) && (
               <nav className="card mb-8" aria-label={en.curriculum.contents}>
@@ -200,16 +248,24 @@ export function CurriculumPreview({
             </section>
           )}
           {day && ['lesson', 'exercise'].includes(page.item.kind) && (
-            <section className="card mb-8">
-              <h2>{en.learning.ai}</h2>
-              <p lang="sr-Latn" className="source">
-                {day.aiPolicyMarkdown}
-              </p>
-              <h2 className="mt-6">{en.learning.criterion}</h2>
-              <p lang="sr-Latn" className="source">
-                {day.completionCriterionMarkdown}
-              </p>
-            </section>
+            <div className="card mb-8">
+              <section id="ai" data-study-anchor="ai" tabIndex={-1}>
+                <h2>{en.learning.ai}</h2>
+                <p lang="sr-Latn" className="source">
+                  {day.aiPolicyMarkdown}
+                </p>
+              </section>
+              <section
+                id="criterion"
+                data-study-anchor="criterion"
+                tabIndex={-1}
+              >
+                <h2 className="mt-6">{en.learning.criterion}</h2>
+                <p lang="sr-Latn" className="source">
+                  {day.completionCriterionMarkdown}
+                </p>
+              </section>
+            </div>
           )}
           {page.item.kind === 'day' && workspace ? (
             <DailyWorkspace
@@ -233,8 +289,17 @@ export function CurriculumPreview({
                 <ResourceCards catalog={catalog} uses={workspace.uses} />
               }
             />
+          ) : page.item.kind === 'exercise' ? (
+            <section
+              id="tasks"
+              data-study-anchor="tasks"
+              tabIndex={-1}
+              aria-label={en.learning.practice}
+            >
+              <SourceBlocks blocks={page.blocks} anchors={anchors} />
+            </section>
           ) : (
-            <SourceBlocks blocks={page.blocks} />
+            <SourceBlocks blocks={page.blocks} anchors={anchors} />
           )}
           {studyEditor}
           {exerciseEditor ??

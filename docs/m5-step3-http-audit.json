@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-05T14:44:58.919Z",
+  "server": "development",
+  "debounce": "Verified separately in unit and browser checks",
+  "ownedAllowlist": "passed",
+  "activeVersusReference": "passed",
+  "immediateTaskAnchor": "passed",
+  "duplicateReceipts": "passed",
+  "staleAndReusedReceipt": "passed",
+  "accountGuard": "passed",
+  "noCreditOrSubmissionChanges": "passed",
+  "separateAccounts": "passed",
+  "readOnlyGET": "passed",
+  "sectionTargets": 9,
+  "logoutAndLogin": "passed",
+  "serverRestartAndFreshLogin": "passed",
+  "finalRevision": 4,
+  "completed": 0,
+  "savedTasks": 1,
+  "restartVerifiedAt": "2026-10-05T14:57:59.784Z"
+}

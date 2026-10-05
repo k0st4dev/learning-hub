@@ -426,6 +426,26 @@ describe('complete immutable curriculum', () => {
       }
       const index = unitRoutes.indexOf(route);
       if (index >= 0) {
+        const keys =
+          page!.item.kind === 'lesson'
+            ? ['study', 'ai', 'criterion']
+            : [
+                'tasks',
+                'ai',
+                'criterion',
+                ...page!.children
+                  .filter((item) => item.kind === 'task')
+                  .map((item) => item.stableKey),
+              ];
+        for (const key of keys) {
+          expect(
+            dom.querySelectorAll(`[id="${key}"]`),
+            `${route}#${key}`,
+          ).toHaveLength(1);
+          expect(
+            dom.getElementById(key)?.getAttribute('data-study-anchor'),
+          ).toBe(key);
+        }
         const sequence = dom.querySelector('nav[aria-label="Study sequence"]');
         expect(
           sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),

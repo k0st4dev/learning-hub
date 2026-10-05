@@ -9,6 +9,7 @@ import { AppError } from '../errors.ts';
 import { latestRelease, ownedEnrollment, snapshot } from './read.ts';
 import { exerciseSubmissionSchema } from '../../domain/exercise-requirements';
 import { saveExerciseWork } from './exercise-work';
+import { studyAnchors } from '../../domain/study-anchors';
 
 const base = {
   mutationId: z.uuid(),
@@ -60,7 +61,7 @@ const legacyMutationSchema = z.discriminatedUnion('kind', [
       ...base,
       kind: z.literal('cursor'),
       itemId,
-      mode: z.enum(['open', 'study']),
+      mode: z.enum(['open', 'study', 'anchor']),
       anchor: z.string().max(160),
       expectedStudentId: z.string().min(1).max(160).optional(),
     })
@@ -74,6 +75,7 @@ export const mutationSchema = z.union([
     itemId,
     completed: z.boolean(),
     submission: exerciseSubmissionSchema,
+    anchor: z.string().max(160).optional(),
     expectedStudentId: z.string().min(1).max(160).optional(),
   }),
 ]);
@@ -214,6 +216,23 @@ export function mutateLearning(
             occurredAt: now,
           })
           .run();
+      if (
+        'submission' in data &&
+        data.anchor !== undefined &&
+        !studyAnchors(
+          'exercise',
+          before.items
+            .filter(
+              (task) => task.kind === 'task' && task.parentId === item!.id,
+            )
+            .map((task) => task.stableKey),
+        ).includes(data.anchor)
+      )
+        throw new AppError(
+          400,
+          'INVALID_ANCHOR',
+          'This section is not available.',
+        );
       const epWhere = (id: string) =>
         and(
           eq(s.exerciseProgress.enrollmentId, enrollment.id),
@@ -469,30 +488,41 @@ export function mutateLearning(
             'INVALID_CURSOR',
             'Choose a study lesson or exercise.',
           );
-        const anchors = [
-          'study',
-          'tasks',
-          'evidence',
-          'criterion',
-          'ai',
-          ...before.items
+        const anchors = studyAnchors(
+          item!.kind,
+          before.items
             .filter(
               (task) => task.kind === 'task' && task.parentId === item!.id,
             )
             .map((task) => task.stableKey),
-        ];
+        );
         if (!anchors.includes(data.anchor))
           throw new AppError(
             400,
             'INVALID_ANCHOR',
             'This section is not available.',
           );
+        const incomplete = !before.units.find((unit) => unit.id === item!.id)
+          ?.complete;
+        if (
+          data.mode === 'anchor' &&
+          (enrollment.resumeItemId !== item!.id || !incomplete)
+        )
+          throw new AppError(
+            409,
+            'ACTIVE_LOCATION_CHANGED',
+            'Your active study location changed. Reload confirmed state before saving this section.',
+            { revision: enrollment.revision, currentState: before },
+          );
         db.update(s.enrollment)
           .set({
-            lastOpenedItemId: item!.id,
-            lastOpenedAt: now,
-            ...(data.mode === 'study' &&
-            !before.units.find((unit) => unit.id === item!.id)?.complete
+            ...(data.mode !== 'anchor'
+              ? {
+                  lastOpenedItemId: item!.id,
+                  lastOpenedAt: now,
+                }
+              : {}),
+            ...((data.mode === 'study' || data.mode === 'anchor') && incomplete
               ? {
                   resumeItemId: item!.id,
                   resumeAnchor: data.anchor,
@@ -533,7 +563,9 @@ export function mutateLearning(
                 ? item.stableKey
                 : data.kind === 'lesson'
                   ? 'study'
-                  : 'evidence',
+                  : 'anchor' in data && data.anchor
+                    ? data.anchor
+                    : 'evidence',
             resumeUpdatedAt: now,
           })
           .where(whereEnrollment)

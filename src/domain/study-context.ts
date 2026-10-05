@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { requiredProgress } from './progress';
+import { studyAnchors } from './study-anchors';
 export const unitSchema = z.object({
   id: z.string(),
   key: z.string(),
@@ -9,10 +10,23 @@ export const unitSchema = z.object({
   dayNumber: z.number().int(),
   complete: z.boolean(),
   completedAt: z.number().nullable().optional(),
+  anchors: z.array(z.string()).optional(),
 });
 export const studyStateSchema = z.object({
   units: z.array(unitSchema),
-  enrollment: z.object({ resumeItemId: z.string().nullable() }),
+  enrollment: z.object({
+    resumeItemId: z.string().nullable(),
+    resumeAnchor: z.string().nullable().optional(),
+  }),
+  items: z
+    .array(
+      z.object({
+        kind: z.string(),
+        stableKey: z.string(),
+        parentId: z.string().nullable(),
+      }),
+    )
+    .optional(),
   timezone: z.string().optional(),
 });
 export function unitPath(
@@ -49,6 +63,15 @@ export function studyContext(
       ? unitPath(target, target.kind === 'lesson' ? 'study' : 'tasks')
       : null,
     activeItemId: state.enrollment.resumeItemId,
+    resumeAnchor: state.enrollment.resumeAnchor ?? null,
+    anchors:
+      current.anchors ??
+      studyAnchors(
+        current.kind,
+        (state.items ?? [])
+          .filter((item) => item.kind === 'task' && item.parentId === itemId)
+          .map((item) => item.stableKey),
+      ),
     outOfSequence:
       !!earliest &&
       state.units.indexOf(current) > state.units.indexOf(earliest),

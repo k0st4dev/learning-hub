@@ -7,6 +7,7 @@ import { readExerciseSubmission } from './exercise-work';
 export { unitPath } from '../../domain/study-context';
 import { requiredProgress } from '../../domain/progress';
 import { resolveContinue } from '../../domain/resume';
+import { studyAnchors } from '../../domain/study-anchors';
 
 export const coursePath = '/course/software-engineer';
 export function ownedEnrollment(store: Store, token: string | undefined) {
@@ -114,6 +115,12 @@ export function snapshot(store: Store, token: string | undefined) {
         dayKey: byId.get(dayId)!.stableKey,
         dayNumber: day.dayNumber,
         complete: done.has(item.id),
+        anchors: studyAnchors(
+          item.kind,
+          items
+            .filter((task) => task.kind === 'task' && task.parentId === item.id)
+            .map((task) => task.stableKey),
+        ),
         started: !!progress,
         completedAt: progress?.completedAt ?? null,
         updatedAt: progress?.updatedAt ?? null,
