@@ -107,10 +107,12 @@ export function CurriculumPreview({
   catalog,
   page,
   exerciseEditor,
+  studyEditor,
 }: {
   catalog: Catalog;
   page: CatalogPage;
   exerciseEditor?: React.ReactNode;
+  studyEditor?: React.ReactNode;
 }) {
   const overview = page.item.stableKey === 'overview';
   const workspace = dayWorkspace(catalog, page.item.id);
@@ -231,6 +233,7 @@ export function CurriculumPreview({
           ) : (
             <SourceBlocks blocks={page.blocks} />
           )}
+          {studyEditor}
           {exerciseEditor ??
             (page.item.kind === 'exercise' && (
               <section className="section">

@@ -15,7 +15,8 @@ import {
   mutateLearning,
   mutationSchema,
 } from '../../src/server/learning/mutate';
-import { snapshot } from '../../src/server/learning/read';
+import { snapshot, continuePath } from '../../src/server/learning/read';
+import { studyContext } from '../../src/domain/study-context';
 import { loadExerciseRequirements } from '../../src/server/learning/exercise-work';
 import {
   alternativeRoutes,
@@ -102,6 +103,138 @@ function counts() {
 }
 
 describe('owned full-course exercise transactions', () => {
+  it('records reference visits separately, starts deliberate study without credit, and survives restart', async () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d002-learn'),
+      anchor: 'study',
+    });
+    const before = snapshot(store, token)!;
+    expect(before.completed).toBe(0);
+    expect(before.lessonProgress).toMatchObject([
+      { lessonId: id('d002-learn'), status: 'started', completedAt: null },
+    ]);
+    save({
+      kind: 'cursor',
+      mode: 'open',
+      itemId: id('d028-learn'),
+      anchor: 'study',
+    });
+    expect(snapshot(store, token)!.enrollment.resumeItemId).toBe(
+      id('d002-learn'),
+    );
+    expect(continuePath(snapshot(store, token))).toContain(
+      '/d002/lessons/d002-learn#study',
+    );
+    expect(
+      store.native
+        .prepare('SELECT last_opened_item_id AS item FROM enrollment')
+        .get(),
+    ).toEqual({ item: id('d028-learn') });
+    expect(
+      studyContext(snapshot(store, token)!, id('d028-learn')).outOfSequence,
+    ).toBe(true);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    token = (await login(store, { email: 'work@example.test', password }))
+      .token;
+    expect(continuePath(snapshot(store, token))).toContain(
+      '/d002/lessons/d002-learn#study',
+    );
+    expect(snapshot(store, token)!.completed).toBe(0);
+  });
+  it('keeps study/exercise independent and completed review visits cannot replace Day 2', () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    expect(
+      save({ kind: 'lesson', itemId: id('d001-learn'), completed: true })
+        .completed,
+    ).toBe(1);
+    let state = snapshot(store, token)!;
+    expect(state.total).toBe(364);
+    expect(studyContext(state, id('d001-learn'))).toMatchObject({
+      completed: 1,
+      total: 2,
+      lessonComplete: true,
+      exerciseComplete: false,
+    });
+    expect(continuePath(state)).toContain(
+      '/d001/exercises/d001-practice#tasks',
+    );
+    state = save(payload(1));
+    expect(state.completed).toBe(2);
+    expect(continuePath(state)).toContain('/d002/lessons/d002-learn#study');
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d002-learn'),
+      anchor: 'study',
+    });
+    const timestamp = state.lessonProgress[0]!.completedAt;
+    save({
+      kind: 'cursor',
+      mode: 'open',
+      itemId: id('d001-learn'),
+      anchor: 'study',
+    });
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d001-learn'),
+      anchor: 'study',
+    });
+    save({ kind: 'lesson', itemId: id('d001-learn'), completed: true });
+    save(payload(1));
+    expect(snapshot(store, token)!.enrollment.resumeItemId).toBe(
+      id('d002-learn'),
+    );
+    expect(
+      snapshot(store, token)!.lessonProgress.find(
+        (p) => p.lessonId === id('d001-learn'),
+      )!.completedAt,
+    ).toBe(timestamp);
+    state = save({
+      kind: 'lesson',
+      itemId: id('d001-learn'),
+      completed: false,
+    });
+    expect(state.completed).toBe(1);
+    expect(state.exerciseProgress[0]!.status).toBe('completed');
+    expect(continuePath(state)).toContain('/d001/lessons/d001-learn#study');
+  });
+  it('returns from completed later work to earlier gaps and rejects changed-account study writes atomically', () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d028-learn'),
+      anchor: 'study',
+    });
+    save({ kind: 'lesson', itemId: id('d028-learn'), completed: true });
+    expect(continuePath(snapshot(store, token))).toContain(
+      '/d028/exercises/d028-practice#tasks',
+    );
+    save(payload(28));
+    expect(continuePath(snapshot(store, token))).toContain(
+      '/d001/lessons/d001-learn#study',
+    );
+    const before = snapshot(store, token);
+    for (const change of [
+      { kind: 'lesson', itemId: id('d001-learn'), completed: true },
+      {
+        kind: 'cursor',
+        mode: 'study',
+        itemId: id('d001-learn'),
+        anchor: 'study',
+      },
+    ]) {
+      expect(() =>
+        save({ ...change, expectedStudentId: 'other-account' }),
+      ).toThrow('account changed');
+      expect(snapshot(store, token)).toEqual(before);
+    }
+  });
   it('loads every assessment from published metadata without inventing pass marks', () => {
     const assessments = plan.source.days.filter(
       (day) => day.assessment_kind !== 'practice',

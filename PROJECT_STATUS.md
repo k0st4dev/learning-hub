@@ -1,6 +1,6 @@
 # Project status
 
-Updated: 2026-10-05. **M0–M3 complete; M4 step 4 complete.** The user requires step-by-step confirmation. **Do not start the next focused step without approval.**
+Updated: 2026-10-05. **M0–M4 complete; M5 step 1 complete.** The user requires step-by-step confirmation. **Do not start the next focused step without approval.**
 
 ## Completed
 
@@ -35,6 +35,7 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 4 complete.** The user requires
 - M4 step 4: all 25 checkpoint and final-exam pages show original criteria/AI, durable score/remediation text, Criteria met/Needs review and review links. Day 7 and Day 28 source advice and Day 182 120-minute/45–45–30 guidance retained. Failed assessments receive no exercise credit; independent lesson credit and review-transition activity preserved. Additive existing-rubric fields and legacy receipt compatibility; no migration/source/dependency changes. All 182 tests / 15 files, types/lint/build/source integrity pass; 40-route/26-assessment HTTP audit and actual API/browser persistence/two-user/mobile checks pass. Evidence: docs/M4-STEP4-VERIFICATION.md. Restart development server after server schema changes; HMR alone retained old API schema during this step.
 
 - User instructions govern engineering; manual assignments are curriculum content, not platform instructions.
+- M5 step 1: full-course study confirmation/reopening, shared owned save/retry/conflict feedback and deliberate Study this day versus Open reference. Day overview and study/exercise views show independent required-unit credit. Opening a lesson/exercise records only Last opened, with no implicit completion or active-cursor replacement; HTTP GET stays read-only. Completed review visits/repeated confirmations preserve unfinished active study. Deliberate incomplete lesson study records started with zero credit. No migration/source/dependency changes. All 192 tests / 16 files, types/lint/build/source/licence checks pass; 17-page HTTP regression plus owned API audit pass. Browser Day 1 study → exercise → 2/364 → Day 2 → completed reference → server restart/login → Day 2 passed; desktop/mobile/keyboard checks passed. Evidence: docs/M5-STEP1-VERIFICATION.md.
 - Requested Next/React/SQLite/Drizzle/better-sqlite3/Tailwind/Zod stack; Argon2id 64 MiB/3/p1/max two concurrent; opaque digest-only sessions. No new dependency or paid service in M2.
 - Verified portable runtime: ../../work/toolchain/node-v24.21.0-win-x64. Do not bypass broken system npm trust.
 - Official release se-26w-v1 manifest: 064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265. Never change published normalized content, applied SQL or archive hashes to bypass validation.
@@ -42,11 +43,11 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 4 complete.** The user requires
 - M1 demo remains separately in .tmp/m1-demo with its two-unit development-day1-v1 release; old accounts/progress preserved.
 - Current preview at http://127.0.0.1:3000 uses APP_DATA_DIR=<repository>/.tmp/m2-preview with synthetic accounts. To resume it, set that absolute path then npm run dev. Ordinary setup/dev uses the normal data directory; see README.
 - All 208 resource instructions remain exact. Parent-resource matches are added interpretations using original URLs; 57 unmatched instructions are explicitly unresolved. Live availability unchecked.
-- Full-release reading/navigation and exercise editing are available; checkpoint exercise guidance is implemented; full study/progress integration remains M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
+- Full-release reading/navigation, study completion/reopening and exercise editing are available; checkpoint exercise guidance is implemented. Broader progress rollups, anchor tracking and activity presentation remain M5. Preparation already works. Guides/resources/tasks/scorecards add no required progress units.
 
 ## Open issues / final acceptance
 
-- M4 step 3 is committed locally. GitHub push on 2026-10-05 failed: configured proxy 127.0.0.1 could not connect to github.com:443. Push the existing local main commit when network access returns; do not repeat implementation or bypass network controls.
+- User confirmed successful GitHub push through da37814 (M4 step 4) in the supplied PowerShell screenshot. M5 step 1 is saved in a subsequent local commit and still needs pushing from normal PowerShell. Agent network proxy 127.0.0.1:9 remains restricted; do not bypass network controls.
 
 - Separate production-server startup was rejected by automatic approval policy; development browser/HTTP evidence recorded. Production Playwright/axe remains pending because of host IPC restrictions.
 - Real reboot, full browser-process shutdown, screen reader, macOS/Linux and disconnected-network checks remain final gates. A01–A26 are not declared fully passed.
@@ -56,6 +57,6 @@ Updated: 2026-10-05. **M0–M3 complete; M4 step 4 complete.** The user requires
 
 ## Exact next focused task
 
-After explicit user approval, M5 step 1: implement explicit full-course study completion and Study this day/Open reference distinctions, using the existing owned-enrollment/revision API and shared required-unit logic. Review specification progress/cursor rules before editing. Preserve independent study/exercise completion, completed review visits, all original source anchors and reference navigation with no implicit completion. Verify Day 1 study/exercise independence, revisiting completed work while Day 2 stays active, reading ahead and restart/two-user behavior. Keep broader dashboard/rollup/conflict/history refinements in their focused follow-ups. Stop and ask after the step.
+After explicit user approval, M5 step 2: centralize required-unit rollups and present exact fractions/floor percentages on dashboard/course/progress and phase/week/day views, including completed versus started and assessment Needs review states. Show Continue recommendation, active out-of-sequence location and Last opened distinctly using the existing confirmed state; no new completion units. Review specification sections 7 and relevant page states before editing. Cover gaps, all-complete, reopening, independent credit and preparation priority. Section-anchor persistence, activity history and the M5 integration gate remain subsequent focused steps. Stop and ask after this step.
 
-Relevant files: src/server/learning/read.ts and mutate.ts; src/components/learning-client.tsx; src/app/course/software-engineer/[[...segments]]/page.tsx; daily-workspace.tsx and full-curriculum-page.tsx; src/components/use-exercise-save.ts; docs/M4-STEP4-VERIFICATION.md; content/se-26w-v1/source/product-specification.md. Preserve all immutable source mappings. GitHub sync for local M4 step 3 and subsequent work remains to retry when the configured network is available.
+Relevant files: src/server/learning/read.ts; src/domain/study-context.ts; src/components/learning-client.tsx, study-controls.tsx and full-curriculum-page.tsx; src/app/dashboard/page.tsx and course/software-engineer/[[...segments]]/page.tsx; docs/M5-STEP1-VERIFICATION.md; content/se-26w-v1/source/product-specification.md. Preserve all immutable source mappings. Running isolated preview: http://127.0.0.1:3000, APP_DATA_DIR=<repo>/.tmp/m2-preview, portable Node, exec session 68370. Development server restart requires a page reload before resuming a stale client document; fresh-document login works. Browser-history dirty guard remains pending.

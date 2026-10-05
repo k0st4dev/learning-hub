@@ -9,10 +9,12 @@ export function FullCurriculumPage({
   catalog,
   route,
   exerciseEditor,
+  studyEditor,
 }: {
   catalog: Catalog;
   route: string;
   exerciseEditor?: React.ReactNode;
+  studyEditor?: React.ReactNode;
 }) {
   if (route.startsWith('/resources/')) {
     const resource = catalog.resources.find(
@@ -70,6 +72,7 @@ export function FullCurriculumPage({
         catalog={catalog}
         page={page}
         exerciseEditor={exerciseEditor}
+        studyEditor={studyEditor}
       />
       {route === '/progress/scorecard' && (
         <section className="section">

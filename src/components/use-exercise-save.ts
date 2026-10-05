@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import {
@@ -8,11 +8,17 @@ import {
 } from '@/domain/exercise-requirements';
 import { RequestError, writeApi } from '@/lib/client-api';
 import { exerciseText as t } from '@/i18n/exercise';
+import {
+  studyContext,
+  studyStateSchema,
+  type StudyContext,
+} from '@/domain/study-context';
 
 export type ConfirmedExercise = {
   revision: number;
   completed: boolean;
   submission: ExerciseSubmission;
+  context?: StudyContext;
 };
 const responseState = z.object({
   revision: z.number().int(),
@@ -28,8 +34,13 @@ function confirmedFrom(
   value: unknown,
   itemId: string,
   empty: ExerciseSubmission,
+  kind: 'lesson' | 'exercise',
+  context?: StudyContext,
 ): ConfirmedExercise {
   const state = responseState.parse(value);
+  const nextContext = context
+    ? studyContext(studyStateSchema.parse(value), itemId)
+    : undefined;
   const progress = state.exerciseProgress.find(
     (item) => item.exerciseId === itemId,
   );
@@ -37,24 +48,37 @@ function confirmedFrom(
     throw new Error('Missing confirmed exercise');
   return {
     revision: state.revision,
-    completed: progress?.status === 'completed',
+    completed:
+      kind === 'lesson'
+        ? !!nextContext?.lessonComplete
+        : progress?.status === 'completed',
     submission: progress?.submission ?? empty,
+    ...(nextContext ? { context: nextContext } : {}),
   };
 }
-type Payload = {
-  kind: 'exercise';
+type PayloadBase = {
   itemId: string;
   expectedStudentId: string;
   mutationId: string;
   expectedRevision: number;
-  completed: boolean;
-  submission: ExerciseSubmission;
 };
+type Payload = PayloadBase &
+  (
+    | {
+        kind: 'exercise';
+        completed: boolean;
+        submission: ExerciseSubmission;
+      }
+    | { kind: 'lesson'; completed: boolean }
+    | { kind: 'cursor'; mode: 'open' | 'study'; anchor: string }
+  );
 export function useExerciseSave(
   itemId: string,
   studentId: string,
   initial: ConfirmedExercise,
   empty: ExerciseSubmission,
+  kind: 'lesson' | 'exercise' = 'exercise',
+  trackOpen = false,
 ) {
   const router = useRouter();
   const [confirmed, setConfirmed] = useState(initial);
@@ -68,6 +92,7 @@ export function useExerciseSave(
     preserveDraft: boolean;
   } | null>(null);
   const busy = useRef(false);
+  const opened = useRef(false);
   const dirty = JSON.stringify(draft) !== JSON.stringify(confirmed.submission);
   const locked =
     pending ||
@@ -116,43 +141,79 @@ export function useExerciseSave(
       document.removeEventListener('learning:before-leave', leave);
     };
   }, [dirty, pending, error, retry]);
-  async function send(payload: Payload, preserveDraft = false) {
-    if (busy.current) return;
-    busy.current = true;
-    setPending(true);
-    setError(null);
-    setMessage('');
-    setRetry({ payload, preserveDraft });
-    try {
-      const response = await writeApi<{ data: unknown }>(
-        `/api/progress/exercises/${encodeURIComponent(itemId)}`,
-        'PUT',
-        payload,
-      );
-      const next = confirmedFrom(response.data, itemId, empty);
-      setConfirmed(next);
-      if (!preserveDraft) setDraft(next.submission);
-      setRetry(null);
-      setConflict(null);
-      setMessage(t.saved);
-      router.refresh();
-    } catch (cause) {
-      const failure =
-        cause instanceof RequestError ? cause : new RequestError(t.error, 0);
-      if (failure.status === 409) {
-        try {
-          setConflict(confirmedFrom(failure.currentState, itemId, empty));
-        } catch {
-          /* Keep the draft locked if no trusted current state was returned. */
-        }
+  const send = useCallback(
+    async (payload: Payload, preserveDraft = false) => {
+      if (busy.current) return;
+      busy.current = true;
+      setPending(true);
+      setError(null);
+      setMessage('');
+      setRetry({ payload, preserveDraft });
+      try {
+        const response = await writeApi<{ data: unknown }>(
+          payload.kind === 'cursor'
+            ? '/api/enrollment/cursor'
+            : `/api/progress/${payload.kind === 'lesson' ? 'lessons' : 'exercises'}/${encodeURIComponent(itemId)}`,
+          'PUT',
+          payload,
+        );
+        const next = confirmedFrom(
+          response.data,
+          itemId,
+          empty,
+          kind,
+          initial.context,
+        );
+        setConfirmed(next);
+        if (!preserveDraft) setDraft(next.submission);
         setRetry(null);
-      } else if ([400, 422].includes(failure.status)) setRetry(null);
-      setError(failure);
-    } finally {
-      busy.current = false;
-      setPending(false);
-    }
-  }
+        setConflict(null);
+        setMessage(t.saved);
+        router.refresh();
+        return next;
+      } catch (cause) {
+        const failure =
+          cause instanceof RequestError ? cause : new RequestError(t.error, 0);
+        if (failure.status === 409) {
+          try {
+            setConflict(
+              confirmedFrom(
+                failure.currentState,
+                itemId,
+                empty,
+                kind,
+                initial.context,
+              ),
+            );
+          } catch {
+            /* Keep the draft locked if no trusted current state was returned. */
+          }
+          setRetry(null);
+        } else if ([400, 422].includes(failure.status)) setRetry(null);
+        setError(failure);
+      } finally {
+        busy.current = false;
+        setPending(false);
+      }
+    },
+    [router, itemId, empty, kind, initial.context],
+  );
+  useEffect(() => {
+    if (!trackOpen || !initial.context || opened.current) return;
+    opened.current = true;
+    void send(
+      {
+        kind: 'cursor',
+        mode: 'open',
+        itemId,
+        anchor: kind === 'lesson' ? 'study' : 'tasks',
+        expectedStudentId: studentId,
+        expectedRevision: initial.revision,
+        mutationId: crypto.randomUUID(),
+      },
+      true,
+    );
+  }, [trackOpen, initial, itemId, kind, studentId, send]);
   return {
     draft,
     setDraft,
@@ -167,16 +228,53 @@ export function useExerciseSave(
       if (busy.current || locked || (confirmed.completed && !reopen)) return;
       return send(
         {
-          kind: 'exercise',
+          ...(kind === 'exercise'
+            ? {
+                kind: 'exercise' as const,
+                submission: reopen ? confirmed.submission : draft,
+              }
+            : { kind: 'lesson' as const }),
           itemId,
           expectedStudentId: studentId,
           mutationId: crypto.randomUUID(),
           expectedRevision: confirmed.revision,
           completed,
-          submission: reopen ? confirmed.submission : draft,
         },
         reopen && dirty,
       );
+    },
+    saveCursor: (mode: 'open' | 'study') => {
+      if (busy.current || locked) return;
+      const context = confirmed.context;
+      const target = mode === 'study' ? context?.studyTargetId : itemId;
+      if (!target) return;
+      if (
+        mode === 'study' &&
+        target !== itemId &&
+        dirty &&
+        !window.confirm(t.leave)
+      )
+        return;
+      return send(
+        {
+          kind: 'cursor',
+          mode,
+          itemId: target,
+          anchor: target === context?.lessonId ? 'study' : 'tasks',
+          expectedStudentId: studentId,
+          expectedRevision: confirmed.revision,
+          mutationId: crypto.randomUUID(),
+        },
+        true,
+      ).then((next) => {
+        if (
+          next &&
+          mode === 'study' &&
+          target !== itemId &&
+          context?.studyTargetPath
+        )
+          router.push(context.studyTargetPath);
+      });
     },
     retry:
       retry && !pending

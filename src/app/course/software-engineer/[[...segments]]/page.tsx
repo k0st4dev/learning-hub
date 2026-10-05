@@ -14,6 +14,9 @@ import { AppError } from '@/server/errors';
 import { ExerciseEditor } from '@/components/exercise-editor';
 import { loadExerciseRequirements } from '@/server/learning/exercise-work';
 import Link from 'next/link';
+import { StudyEditor } from '@/components/study-editor';
+import { studyContext } from '@/domain/study-context';
+import { exerciseSubmissionSchema } from '@/domain/exercise-requirements';
 export default async function Course({
   params,
 }: {
@@ -60,6 +63,7 @@ export default async function Course({
           initial={{
             revision: state.revision,
             completed: progress?.status === 'completed',
+            context: studyContext(state, exercise.id),
             submission: progress?.submission ?? {
               tasks: [],
               evidence: '',
@@ -79,6 +83,45 @@ export default async function Course({
         </p>
       )
     ) : undefined;
+    const currentItem = catalog.items.find(
+      (item) => item.route === coursePath + '/' + route,
+    );
+    const studyLesson =
+      currentItem?.kind === 'lesson'
+        ? currentItem
+        : currentItem?.kind === 'day'
+          ? catalog.items.find(
+              (item) =>
+                item.kind === 'lesson' && item.parentId === currentItem.id,
+            )
+          : undefined;
+    const studyEditor =
+      studyLesson && state ? (
+        <StudyEditor
+          key={`${student.id}:${studyLesson.id}:${currentItem?.kind}`}
+          itemId={studyLesson.id}
+          studentId={student.id}
+          dayOverview={currentItem?.kind === 'day'}
+          initial={{
+            revision: state.revision,
+            completed:
+              state.units.find((unit) => unit.id === studyLesson.id)
+                ?.complete ?? false,
+            context: studyContext(state, studyLesson.id),
+            submission: exerciseSubmissionSchema.parse({
+              tasks: [],
+              evidence: '',
+              selectedScope: '',
+              attested: false,
+              result: null,
+            }),
+          }}
+        />
+      ) : studyLesson ? (
+        <p className="section">
+          <Link href={coursePath}>{en.learning.start}</Link>
+        </p>
+      ) : undefined;
     return (
       <StudentShell
         name={student.displayName || student.email}
@@ -94,6 +137,7 @@ export default async function Course({
             catalog={catalog}
             route={coursePath + (route ? '/' + route : '')}
             exerciseEditor={exerciseEditor}
+            studyEditor={studyEditor}
           />
         )}
         {route === '' && !state && (

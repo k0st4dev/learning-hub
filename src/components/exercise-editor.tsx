@@ -1,6 +1,5 @@
 'use client';
-import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   alternativeRoutes,
   evaluateExercise,
@@ -11,6 +10,8 @@ import { exerciseText as t } from '@/i18n/exercise';
 import { en } from '@/i18n/en';
 import { useExerciseSave, type ConfirmedExercise } from './use-exercise-save';
 import { AssessmentGuidance } from './assessment-guidance';
+import { SaveFeedback } from './save-feedback';
+import { StudyControls } from './study-controls';
 
 export function ExerciseEditor({
   itemId,
@@ -36,12 +37,15 @@ export function ExerciseEditor({
     scoreEvidence: '',
     remediationNote: '',
   };
-  const work = useExerciseSave(itemId, studentId, initial, empty);
+  const work = useExerciseSave(
+    itemId,
+    studentId,
+    initial,
+    empty,
+    'exercise',
+    true,
+  );
   const [reopening, setReopening] = useState(false);
-  const errorRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (work.error) errorRef.current?.focus();
-  }, [work.error]);
   const disabled = work.locked || work.confirmed.completed;
   const evaluation = evaluateExercise(requirements, work.draft);
   const change = (patch: Partial<ExerciseSubmission>) =>
@@ -78,47 +82,8 @@ export function ExerciseEditor({
           needsReview={work.draft.result === 'needs_review'}
         />
       )}
-      <p role="status">
-        {work.pending
-          ? t.saving
-          : work.dirty
-            ? t.unsaved
-            : work.message ||
-              (work.confirmed.completed ? t.completed : t.initial)}
-      </p>
-      {work.error && (
-        <div
-          role="alert"
-          tabIndex={-1}
-          ref={errorRef}
-          className="error-summary"
-        >
-          <p>{work.conflict ? t.conflict : work.error.message}</p>
-          <p>{t.error}</p>
-          <div className="actions">
-            {work.retry && (
-              <button className="button" onClick={() => void work.retry?.()}>
-                {t.retry}
-              </button>
-            )}
-            {work.conflict && (
-              <>
-                <button className="button" onClick={() => work.resolve(true)}>
-                  {t.keep}
-                </button>
-                <button className="button" onClick={() => work.resolve(false)}>
-                  {t.useSaved}
-                </button>
-              </>
-            )}
-            {[401, 403].includes(work.error.status) && (
-              <Link target="_blank" rel="noopener noreferrer" href="/login">
-                {en.login} {en.curriculum.newTab}
-              </Link>
-            )}
-          </div>
-        </div>
-      )}
+      <StudyControls work={work} itemId={itemId} />
+      <SaveFeedback work={work} />
       {work.confirmed.completed && (
         <div className="card">
           <p>{t.completed}</p>

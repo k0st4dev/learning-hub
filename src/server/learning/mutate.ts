@@ -38,6 +38,7 @@ const legacyMutationSchema = z.discriminatedUnion('kind', [
       kind: z.literal('lesson'),
       itemId,
       completed: z.boolean(),
+      expectedStudentId: z.string().min(1).max(160).optional(),
     })
     .strict(),
   z
@@ -61,6 +62,7 @@ const legacyMutationSchema = z.discriminatedUnion('kind', [
       itemId,
       mode: z.enum(['open', 'study']),
       anchor: z.string().max(160),
+      expectedStudentId: z.string().min(1).max(160).optional(),
     })
     .strict(),
 ]);
@@ -217,6 +219,7 @@ export function mutateLearning(
           eq(s.exerciseProgress.enrollmentId, enrollment.id),
           eq(s.exerciseProgress.exerciseId, id),
         );
+      let activateAfterSave = true;
       const reopenExercise = (id: string) => {
         const previous = db
           .select()
@@ -290,6 +293,7 @@ export function mutateLearning(
         );
         const previous = db.select().from(s.userProgress).where(where).get();
         const wasComplete = previous?.status === 'completed';
+        activateAfterSave = !(wasComplete && data.completed);
         db.insert(s.userProgress)
           .values({
             enrollmentId: enrollment.id,
@@ -373,6 +377,7 @@ export function mutateLearning(
           data.submission,
           now,
         );
+        activateAfterSave = !(wasComplete && data.completed);
         if (data.completed !== wasComplete)
           event(
             data.completed ? 'exercise_completed' : 'exercise_reopened',
@@ -486,7 +491,8 @@ export function mutateLearning(
           .set({
             lastOpenedItemId: item!.id,
             lastOpenedAt: now,
-            ...(data.mode === 'study'
+            ...(data.mode === 'study' &&
+            !before.units.find((unit) => unit.id === item!.id)?.complete
               ? {
                   resumeItemId: item!.id,
                   resumeAnchor: data.anchor,
@@ -496,8 +502,28 @@ export function mutateLearning(
           })
           .where(whereEnrollment)
           .run();
+        if (
+          data.mode === 'study' &&
+          item!.kind === 'lesson' &&
+          !before.units.find((unit) => unit.id === item!.id)?.complete
+        )
+          db.insert(s.userProgress)
+            .values({
+              enrollmentId: enrollment.id,
+              releaseId: enrollment.releaseId,
+              lessonId: item!.id,
+              status: 'started',
+              startedAt: now,
+              updatedAt: now,
+            })
+            .onConflictDoNothing()
+            .run();
       }
-      if (item && ['lesson', 'exercise', 'task'].includes(data.kind)) {
+      if (
+        item &&
+        activateAfterSave &&
+        ['lesson', 'exercise', 'task'].includes(data.kind)
+      ) {
         const resumeItemId = data.kind === 'task' ? item.parentId! : item.id;
         db.update(s.enrollment)
           .set({

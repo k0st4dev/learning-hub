@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-05T13:34:57.196Z",
+  "server": "development",
+  "release": "se-26w-v1",
+  "preparationPriority": "passed",
+  "independentStudyExerciseCredit": "passed",
+  "requiredUnits": 364,
+  "floorPercentage": "passed",
+  "explicitStudyWithoutCredit": "passed",
+  "referenceAndCompletedVisitsPreserveActiveStudy": "passed",
+  "exactRetry": "passed",
+  "loginReloadPersistence": "passed",
+  "twoUserIsolation": "passed",
+  "reopenPreservesExercise": "passed",
+  "continueDestinations": "passed"
+}

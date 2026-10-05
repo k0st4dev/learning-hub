@@ -12,6 +12,10 @@ import {
 } from '@testing-library/react';
 import { ExerciseEditor } from '../../src/components/exercise-editor';
 import { RequestError, writeApi } from '../../src/lib/client-api';
+import {
+  studyContext,
+  type StudyContext,
+} from '../../src/domain/study-context';
 import type {
   ExerciseRequirements,
   ExerciseSubmission,
@@ -97,7 +101,7 @@ function state(
     ],
   };
 }
-function mount(submission = empty, completed = false) {
+function mount(submission = empty, completed = false, context?: StudyContext) {
   return render(
     createElement(ExerciseEditor, {
       itemId,
@@ -107,7 +111,12 @@ function mount(submission = empty, completed = false) {
         id: task.id,
         text: `Original ${task.id}`,
       })),
-      initial: { revision: 0, completed, submission },
+      initial: {
+        revision: 0,
+        completed,
+        submission,
+        ...(context ? { context } : {}),
+      },
     }),
   );
 }
@@ -132,6 +141,33 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe('full-course exercise editing', () => {
+  it('keeps an unsaved exercise when study selection would leave for its lesson', async () => {
+    const units = ['lesson', 'exercise'].map((kind) => ({
+      id: kind === 'lesson' ? 'se-26w-v1:d017-learn' : itemId,
+      key: kind === 'lesson' ? 'd017-learn' : 'd017-practice',
+      kind,
+      dayId: 'd017',
+      dayKey: 'd017',
+      dayNumber: 17,
+      complete: false,
+    }));
+    const current = {
+      ...state(empty),
+      units,
+      enrollment: { resumeItemId: itemId },
+    };
+    api.mockResolvedValue({ data: current });
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    mount(empty, false, studyContext(current, itemId));
+    await screen.findByText('Saved on this computer.');
+    fireEvent.change(evidence(), {
+      target: { value: 'Unsaved implementation notes' },
+    });
+    fireEvent.click(button('Study this day'));
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(evidence().value).toBe('Unsaved implementation notes');
+  });
   it.each([7, 28, 35, 182])(
     'saves assessment evidence and remediation for day %i without awarding completion',
     async (number) => {

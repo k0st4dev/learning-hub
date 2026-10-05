@@ -4,6 +4,8 @@ import * as s from '../db/schema.ts';
 import { requireStudent } from '../auth/service.ts';
 import { AppError } from '../errors.ts';
 import { readExerciseSubmission } from './exercise-work';
+export { unitPath } from '../../domain/study-context';
+import { unitPath } from '../../domain/study-context';
 
 export const coursePath = '/course/software-engineer';
 export function ownedEnrollment(store: Store, token: string | undefined) {
@@ -172,12 +174,6 @@ export function snapshot(store: Store, token: string | undefined) {
   };
 }
 export type LearningState = NonNullable<ReturnType<typeof snapshot>>;
-export function unitPath(
-  unit: LearningState['units'][number],
-  anchor?: string | null,
-) {
-  return `${coursePath}/days/${unit.dayKey}/${unit.kind === 'lesson' ? 'lessons' : 'exercises'}/${unit.key}${anchor ? '#' + anchor : ''}`;
-}
 export function continuePath(state: LearningState | null) {
   if (!state) return coursePath;
   if (!state.enrollment.preparationAcknowledgedAt)

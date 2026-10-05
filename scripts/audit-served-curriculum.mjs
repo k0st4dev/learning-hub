@@ -20,12 +20,14 @@ assert.ok(
         '--m3-final',
         '--m4-step3',
         '--m4-step4',
+        '--m5-step1',
       ].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
 const fullM3 = process.argv[2] === '--m3-final';
 const assessmentUI = process.argv[2] === '--m4-step4';
-const exerciseUI = process.argv[2] === '--m4-step3' || assessmentUI;
+const studyUI = process.argv[2] === '--m5-step1';
+const exerciseUI = process.argv[2] === '--m4-step3' || assessmentUI || studyUI;
 const checkMobile = process.argv[2] === '--m3-step5' || fullM3 || exerciseUI;
 const checkStates = process.argv[2] === '--m3-step4' || checkMobile;
 const checkDaily = process.argv[2] === '--m3-step3' || checkStates;
@@ -93,6 +95,7 @@ let checkedNavigationPages = 0;
 let checkedOutlinePages = 0;
 let checkedDailyPages = 0;
 let checkedAssessments = 0;
+let checkedStudyViews = 0;
 const unitRoutes = plan.source.days.flatMap((day) => [
   `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
   `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
@@ -139,6 +142,17 @@ for (const [index, route] of routes.entries()) {
   }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (studyUI && /\/days\/d\d{3}(\/|$)/.test(route)) {
+    const controls = document.querySelector(
+      'section[aria-label="Learning context"]',
+    );
+    assert.ok(controls, route);
+    assert.ok(controls.textContent.includes('Study this day'), route);
+    assert.ok(controls.textContent.includes('Open reference'), route);
+    if (!route.includes('/exercises/'))
+      assert.ok(document.getElementById('study-progress-title'), route);
+    checkedStudyViews++;
+  }
   if (assessmentUI) {
     const assessment = plan.source.days.find(
       (day) =>
@@ -403,6 +417,7 @@ if (checkOutline)
 if (checkDaily)
   assert.equal(checkedDailyPages, assessmentUI ? 38 : focused ? 15 : 546);
 if (assessmentUI) assert.equal(checkedAssessments, 26);
+if (studyUI) assert.equal(checkedStudyViews, 15);
 for (const route of [
   '/course/software-engineer/days/missing',
   '/resources/missing',
@@ -451,43 +466,48 @@ const report = {
   readingDoesNotMutateProgress: 'passed',
   ...(checkNavigation ? { checkedNavigationPages } : {}),
   ...(assessmentUI ? { checkedAssessments } : {}),
+  ...(studyUI ? { checkedStudyViews } : {}),
   ...(checkOutline ? { checkedOutlinePages } : {}),
   ...(checkMobile ? { checkedMobileShells: routes.length } : {}),
   ...(checkDaily
     ? {
         checkedDailyPages,
-        scope: exerciseUI
-          ? 'Focused M4 exercise UI source/navigation regression; full source coverage in integration suite'
-          : fullM3
-            ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
-            : checkMobile
-              ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
-              : checkStates
-                ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
-                : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+        scope: studyUI
+          ? 'Focused M5 study/reference UI source/navigation regression; full source coverage in integration suite'
+          : exerciseUI
+            ? 'Focused M4 exercise UI source/navigation regression; full source coverage in integration suite'
+            : fullM3
+              ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
+              : checkMobile
+                ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
+                : checkStates
+                  ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
+                  : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
       }
     : {}),
 };
 await writeFile(
   path.join(
     root,
-    assessmentUI
-      ? 'docs/m4-step4-served-audit.json'
-      : exerciseUI
-        ? 'docs/m4-step3-served-audit.json'
-        : fullM3
-          ? 'docs/m3-final-served-audit.json'
-          : checkMobile
-            ? 'docs/m3-step5-served-audit.json'
-            : checkStates
-              ? 'docs/m3-step4-served-audit.json'
-              : checkDaily
-                ? 'docs/m3-step3-served-audit.json'
-                : checkOutline
-                  ? 'docs/m3-step2-served-audit.json'
-                  : checkNavigation
-                    ? 'docs/m3-step1-served-audit.json'
-                    : 'docs/m2-served-audit.json',
+    studyUI
+      ? 'docs/m5-step1-served-audit.json'
+      : assessmentUI
+        ? 'docs/m4-step4-served-audit.json'
+        : exerciseUI
+          ? 'docs/m4-step3-served-audit.json'
+          : fullM3
+            ? 'docs/m3-final-served-audit.json'
+            : checkMobile
+              ? 'docs/m3-step5-served-audit.json'
+              : checkStates
+                ? 'docs/m3-step4-served-audit.json'
+                : checkDaily
+                  ? 'docs/m3-step3-served-audit.json'
+                  : checkOutline
+                    ? 'docs/m3-step2-served-audit.json'
+                    : checkNavigation
+                      ? 'docs/m3-step1-served-audit.json'
+                      : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );
