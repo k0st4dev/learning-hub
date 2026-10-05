@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-05T14:08:58.499Z",
+  "server": "development",
+  "release": "se-26w-v1",
+  "preparationPriority": "passed",
+  "independentStudyExerciseCredit": "passed",
+  "requiredUnits": 364,
+  "floorPercentage": "passed",
+  "explicitStudyWithoutCredit": "passed",
+  "referenceAndCompletedVisitsPreserveActiveStudy": "passed",
+  "exactRetry": "passed",
+  "loginReloadPersistence": "passed",
+  "twoUserIsolation": "passed",
+  "reopenPreservesExercise": "passed",
+  "continueDestinations": "passed",
+  "checkedProgressPages": 8,
+  "hierarchicalRollups": "passed",
+  "activeRecommendedReferenceDistinction": "passed",
+  "needsReviewReminder": "passed",
+  "dashboardCounts": "passed",
+  "reopeningRollupRefresh": "passed",
+  "readOnlyPresentation": "passed"
+}

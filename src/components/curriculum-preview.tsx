@@ -108,11 +108,13 @@ export function CurriculumPreview({
   page,
   exerciseEditor,
   studyEditor,
+  progressView,
 }: {
   catalog: Catalog;
   page: CatalogPage;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
+  progressView?: React.ReactNode;
 }) {
   const overview = page.item.stableKey === 'overview';
   const workspace = dayWorkspace(catalog, page.item.id);
@@ -168,6 +170,7 @@ export function CurriculumPreview({
           {workspace && (
             <DailyContext workspace={workspace} currentId={page.item.id} />
           )}
+          {progressView}
           {page.item.kind !== 'day' &&
             (overview || page.children.length > 0) && (
               <nav className="card mb-8" aria-label={en.curriculum.contents}>

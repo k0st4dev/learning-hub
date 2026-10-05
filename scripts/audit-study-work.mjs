@@ -8,6 +8,8 @@ import { loadArchivedCurriculum } from '../src/server/content/import.ts';
 
 // Writes only synthetic student records in the isolated preview database.
 const config = environment();
+const progressUI = process.argv[2] === '--m5-step2';
+assert.ok(process.argv.length <= 3 && (!process.argv[2] || progressUI));
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 const plan = await loadArchivedCurriculum(root);
 function client() {
@@ -163,6 +165,108 @@ assert.equal(state.exerciseProgress[0].status, 'completed');
 await destination(
   '/course/software-engineer/days/d001/lessons/d001-learn#study',
 );
+let checkedProgressPages = 0;
+if (progressUI) {
+  for (let number = 1; number <= 7; number++) {
+    const row = plan.source.days.find((day) => day.number === number);
+    await save({ kind: 'lesson', itemId: id(row.lesson_id), completed: true });
+    if (number < 7)
+      await save({
+        ...exercise,
+        itemId: id(row.exercise_id),
+        submission: {
+          ...exercise.submission,
+          tasks: row.tasks.map((task) => ({
+            taskId: task.id,
+            status: 'done',
+            reason: '',
+            choice: '',
+          })),
+        },
+      });
+    else
+      await save({
+        ...exercise,
+        itemId: id(row.exercise_id),
+        completed: false,
+        submission: {
+          ...exercise.submission,
+          tasks: [],
+          result: 'needs_review',
+          evidence: 'Synthetic checkpoint review',
+          attested: false,
+        },
+      });
+  }
+  assert.equal(state.completed, 13);
+  assert.equal(state.percent, 3);
+  await save({
+    kind: 'cursor',
+    mode: 'study',
+    itemId: id('d028-learn'),
+    anchor: 'study',
+  });
+  await save({
+    kind: 'cursor',
+    mode: 'open',
+    itemId: id('d001-practice'),
+    anchor: 'tasks',
+  });
+  assert.equal(state.enrollment.lastOpenedItemId, id('d001-practice'));
+  async function page(route, account = first) {
+    const response = await account(route, undefined, 200, 'GET');
+    assert.equal(response.status, 200, route);
+    const document = new JSDOM(await response.text()).window.document;
+    checkedProgressPages++;
+    return document;
+  }
+  const dashboard = await page('/dashboard');
+  const card = dashboard
+    .getElementById('continue-card-title')
+    .closest('section');
+  assert.ok(card.textContent.includes('Day 28 · Study'));
+  assert.ok(card.textContent.includes('Out of sequence'));
+  assert.ok(card.textContent.includes('Day 7 · Exercise'));
+  assert.equal(
+    dashboard.querySelectorAll('.progress-counts > section').length,
+    4,
+  );
+  assert.ok(
+    dashboard.body.textContent.includes(
+      'Last opened for reference: Day 1 · Exercise',
+    ),
+  );
+  assert.ok(
+    dashboard.body.textContent.includes(
+      plan.source.days.find((day) => day.number === 7).completion_criterion,
+    ),
+  );
+  for (const [route, fraction] of [
+    ['/course/software-engineer', '13/364 required units · 3%'],
+    ['/course/software-engineer/modules/f1', '13/56 required units · 23%'],
+    ['/course/software-engineer/weeks/w01', '13/14 required units · 92%'],
+    ['/course/software-engineer/days/d007', '1/2 required units · 50%'],
+    ['/course/software-engineer/progress', '13/364 required units · 3%'],
+  ])
+    assert.ok((await page(route)).body.textContent.includes(fraction), route);
+  assert.ok(
+    (await page('/dashboard', second)).body.textContent.includes(
+      '0/364 required units · 0%',
+    ),
+  );
+  assert.deepEqual(
+    (await first('/api/enrollment', {})).data,
+    state,
+    'Read-only pages do not change records',
+  );
+  await save({ kind: 'lesson', itemId: id('d003-learn'), completed: false });
+  assert.equal(state.completed, 12);
+  assert.ok(
+    (
+      await page('/course/software-engineer/weeks/w01')
+    ).body.textContent.includes('12/14 required units · 85%'),
+  );
+}
 await first('/api/auth/logout', {}, 204);
 await second('/api/auth/logout', {}, 204);
 const report = {
@@ -180,9 +284,25 @@ const report = {
   twoUserIsolation: 'passed',
   reopenPreservesExercise: 'passed',
   continueDestinations: 'passed',
+  ...(progressUI
+    ? {
+        checkedProgressPages,
+        hierarchicalRollups: 'passed',
+        activeRecommendedReferenceDistinction: 'passed',
+        needsReviewReminder: 'passed',
+        dashboardCounts: 'passed',
+        reopeningRollupRefresh: 'passed',
+        readOnlyPresentation: 'passed',
+      }
+    : {}),
 };
 await writeFile(
-  path.join(root, 'docs/m5-step1-http-audit.json'),
+  path.join(
+    root,
+    progressUI
+      ? 'docs/m5-step2-http-audit.json'
+      : 'docs/m5-step1-http-audit.json',
+  ),
   JSON.stringify(report, null, 2) + '\n',
 );
 console.log(report);

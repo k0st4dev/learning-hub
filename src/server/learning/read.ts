@@ -5,7 +5,8 @@ import { requireStudent } from '../auth/service.ts';
 import { AppError } from '../errors.ts';
 import { readExerciseSubmission } from './exercise-work';
 export { unitPath } from '../../domain/study-context';
-import { unitPath } from '../../domain/study-context';
+import { requiredProgress } from '../../domain/progress';
+import { resolveContinue } from '../../domain/resume';
 
 export const coursePath = '/course/software-engineer';
 export function ownedEnrollment(store: Store, token: string | undefined) {
@@ -83,6 +84,7 @@ export function snapshot(store: Store, token: string | undefined) {
       .map((p) => p.exerciseId),
   ]);
   const units = items
+    // Only required lessons/exercises contribute to every derived scope.
     .filter(
       (item) =>
         item.required === 1 && ['lesson', 'exercise'].includes(item.kind),
@@ -96,6 +98,14 @@ export function snapshot(store: Store, token: string | undefined) {
           'INVALID_CONTENT',
           'A required learning unit has no day.',
         );
+      const progress =
+        item.kind === 'lesson'
+          ? lessonProgress.find((row) => row.lessonId === item.id)
+          : exerciseProgress.find((row) => row.exerciseId === item.id);
+      const exercise =
+        item.kind === 'exercise'
+          ? exerciseProgress.find((row) => row.exerciseId === item.id)
+          : undefined;
       return {
         id: item.id,
         key: item.stableKey,
@@ -104,6 +114,13 @@ export function snapshot(store: Store, token: string | undefined) {
         dayKey: byId.get(dayId)!.stableKey,
         dayNumber: day.dayNumber,
         complete: done.has(item.id),
+        started: !!progress,
+        completedAt: progress?.completedAt ?? null,
+        updatedAt: progress?.updatedAt ?? null,
+        needsReview:
+          !done.has(item.id) &&
+          day.assessmentKind !== 'practice' &&
+          exercise?.result === 'needs_review',
         order: item.orderIndex,
       };
     })
@@ -118,19 +135,23 @@ export function snapshot(store: Store, token: string | undefined) {
       'INVALID_CONTENT',
       'The enrolled release has no required learning units.',
     );
-  const completed = units.filter((unit) => unit.complete).length;
+  const rollup = requiredProgress(units);
   const tasks = db
     .select()
     .from(s.taskProgress)
     .where(eq(s.taskProgress.enrollmentId, enrollment.id))
     .all();
   return {
+    timezone: requireStudent(store, token).timezone,
     revision: enrollment.revision,
     enrollment: {
       releaseId: enrollment.releaseId,
       preparationAcknowledgedAt: enrollment.preparationAcknowledgedAt,
       resumeItemId: enrollment.resumeItemId,
       resumeAnchor: enrollment.resumeAnchor,
+      resumeUpdatedAt: enrollment.resumeUpdatedAt,
+      lastOpenedItemId: enrollment.lastOpenedItemId,
+      lastOpenedAt: enrollment.lastOpenedAt,
     },
     items: items.map(
       ({ id, stableKey, kind, title, parentId, bodyMarkdown, orderIndex }) => ({
@@ -145,9 +166,9 @@ export function snapshot(store: Store, token: string | undefined) {
     ),
     days: dayRows,
     units,
-    completed,
-    total: units.length,
-    percent: Math.floor((100 * completed) / units.length),
+    completed: rollup.completed,
+    total: rollup.total,
+    percent: rollup.percent!,
     lessonProgress,
     exerciseProgress: exerciseProgress.map((progress) => ({
       ...progress,
@@ -175,20 +196,5 @@ export function snapshot(store: Store, token: string | undefined) {
 }
 export type LearningState = NonNullable<ReturnType<typeof snapshot>>;
 export function continuePath(state: LearningState | null) {
-  if (!state) return coursePath;
-  if (!state.enrollment.preparationAcknowledgedAt)
-    return `${coursePath}/preparation`;
-  const earliest = state.units.find((unit) => !unit.complete);
-  if (!earliest) return `${coursePath}/progress`;
-  const active = state.units.find(
-    (unit) => unit.id === state.enrollment.resumeItemId,
-  );
-  if (active && !active.complete)
-    return unitPath(active, state.enrollment.resumeAnchor);
-  const next = active
-    ? (state.units.find(
-        (unit) => unit.dayId === active.dayId && !unit.complete,
-      ) ?? earliest)
-    : earliest;
-  return unitPath(next, next.kind === 'lesson' ? 'study' : 'tasks');
+  return resolveContinue(state).path;
 }

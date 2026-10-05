@@ -6,6 +6,7 @@ import { en } from '@/i18n/en';
 import { RequestError, writeApi } from '@/lib/client-api';
 import type { LearningState } from '@/server/learning/read';
 import type { LearningMutation } from '@/server/learning/mutate';
+import { ProgressOverview } from './progress-overview';
 
 const basePath = '/course/software-engineer';
 type Change = LearningMutation extends infer T
@@ -194,8 +195,10 @@ export function LearningClient({
   )
     return (
       <div className="stack">
-        {summary}
-        {navigation}
+        <ProgressOverview
+          state={state}
+          view={view as 'dashboard' | 'course' | 'progress'}
+        />
         <aside className="preview-notice">
           <strong>{en.curriculum.preview}</strong>
           <p>{en.curriculum.previewHelp}</p>

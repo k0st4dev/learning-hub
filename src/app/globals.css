@@ -508,6 +508,31 @@ progress {
   height: 12px;
   accent-color: var(--primary);
 }
+.progress-counts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+.progress-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+.progress-overview,
+.progress-counts > *,
+.progress-list > * {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.progress-counts h2 {
+  font-size: 1.1rem;
+}
+@media (max-width: 767px) {
+  .progress-counts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 @media (max-width: 767px) {
   .learning-grid {
     grid-template-columns: 1fr;

@@ -4,6 +4,7 @@ import { getStore } from '@/server/db/current';
 import { sessionCookieName } from '@/server/auth/service';
 import { endpoint, guardRequest, readJson } from '@/server/http';
 import { AppError } from '@/server/errors';
+import { revalidateLearningPages } from '@/server/learning/revalidate';
 const kinds: Record<string, string> = {
   lessons: 'lesson',
   exercises: 'exercise',
@@ -37,6 +38,7 @@ export async function PUT(
       request.cookies.get(sessionCookieName)?.value,
       body,
     );
+    revalidateLearningPages();
     return NextResponse.json({ data, revision: data.revision });
   });
 }

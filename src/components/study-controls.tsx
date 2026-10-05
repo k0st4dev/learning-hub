@@ -16,7 +16,7 @@ export function StudyControls({
       <p>{context.activeItemId === itemId ? t.active : t.reference}</p>
       <p>
         {context.completed}/{context.total} required units in this day ·{' '}
-        {Math.floor((100 * context.completed) / context.total)}%
+        {context.percent}%
       </p>
       {context.completed === context.total && <p>{t.dayComplete}</p>}
       {context.outOfSequence && (

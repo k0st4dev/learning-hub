@@ -6,6 +6,7 @@ import { SaveFeedback } from './save-feedback';
 import { StudyControls } from './study-controls';
 import { studyText as t } from '@/i18n/study';
 import { exerciseText } from '@/i18n/exercise';
+import { SavedTime } from './progress-summary';
 export function StudyEditor({
   itemId,
   studentId,
@@ -35,6 +36,15 @@ export function StudyEditor({
       {work.confirmed.completed ? (
         <div className="card stack">
           <p>{t.completed}</p>
+          {work.confirmed.context?.lessonCompletedAt != null && (
+            <p>
+              Completed{' '}
+              <SavedTime
+                value={work.confirmed.context.lessonCompletedAt}
+                timezone={work.confirmed.context.timezone}
+              />
+            </p>
+          )}
           {work.confirmed.context && (
             <Link
               className="button primary"

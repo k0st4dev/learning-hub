@@ -1,4 +1,5 @@
 'use client';
+import { SavedTime } from './progress-summary';
 import { useState } from 'react';
 import {
   alternativeRoutes,
@@ -87,6 +88,15 @@ export function ExerciseEditor({
       {work.confirmed.completed && (
         <div className="card">
           <p>{t.completed}</p>
+          {work.confirmed.context?.exerciseCompletedAt != null && (
+            <p>
+              Completed{' '}
+              <SavedTime
+                value={work.confirmed.context.exerciseCompletedAt}
+                timezone={work.confirmed.context.timezone}
+              />
+            </p>
+          )}
           {!reopening ? (
             <button
               className="button"

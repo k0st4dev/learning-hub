@@ -12,7 +12,6 @@ export function AssessmentGuidance({
   needsReview: boolean;
 }) {
   const exam = assessment.kind === 'final_exam';
-  const week = Math.ceil(assessment.dayNumber / 7);
   return (
     <section className="card stack" aria-labelledby="assessment-guidance-title">
       <h3 id="assessment-guidance-title">
@@ -52,39 +51,26 @@ export function AssessmentGuidance({
         <>
           <h4>{t.reviewLinks}</h4>
           <p>{t.addedReviewHelp}</p>
-          <ul>
-            {assessment.dayNumber === 7 ? (
-              [3, 4, 5].map((day) => (
-                <li key={day}>
-                  <Link
-                    href={`/course/software-engineer/days/d${String(day).padStart(3, '0')}`}
-                  >
-                    Day {day}
-                  </Link>
-                </li>
-              ))
-            ) : assessment.dayNumber === 28 ? (
-              [1, 2, 3, 4].map((reviewWeek) => (
-                <li key={reviewWeek}>
-                  <Link
-                    href={`/course/software-engineer/weeks/w${String(reviewWeek).padStart(2, '0')}`}
-                  >
-                    Week {reviewWeek}
-                  </Link>
-                </li>
-              ))
-            ) : (
-              <li>
-                <Link
-                  href={`/course/software-engineer/weeks/w${String(week).padStart(2, '0')}`}
-                >
-                  Week {week}
-                </Link>
-              </li>
-            )}
-          </ul>
+          <AssessmentReviewLinks dayNumber={assessment.dayNumber} />
         </>
       )}
     </section>
+  );
+}
+export function AssessmentReviewLinks({ dayNumber }: { dayNumber: number }) {
+  const days = dayNumber === 7 ? [3, 4, 5] : null;
+  const weeks = dayNumber === 28 ? [1, 2, 3, 4] : [Math.ceil(dayNumber / 7)];
+  return (
+    <ul className="curriculum-links">
+      {(days ?? weeks).map((number) => (
+        <li key={number}>
+          <Link
+            href={`/course/software-engineer/${days ? 'days/d' + String(number).padStart(3, '0') : 'weeks/w' + String(number).padStart(2, '0')}`}
+          >
+            {days ? 'Day' : 'Week'} {number}
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }

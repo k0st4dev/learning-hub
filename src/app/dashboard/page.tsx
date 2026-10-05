@@ -17,7 +17,12 @@ export default async function Dashboard() {
       showFixtureNotice={fixture}
     >
       <h1>{en.dashboard}</h1>
-      <LearningClient view="dashboard" initialState={state} />
+      <p>{student.displayName || student.email}</p>
+      <LearningClient
+        key={`${student.id}:${state?.revision}`}
+        view="dashboard"
+        initialState={state}
+      />
     </StudentShell>
   );
 }

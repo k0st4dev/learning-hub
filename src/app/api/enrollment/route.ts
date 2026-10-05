@@ -4,6 +4,7 @@ import { startCourse } from '@/server/learning/mutate';
 import { getStore } from '@/server/db/current';
 import { sessionCookieName } from '@/server/auth/service';
 import { endpoint, guardRequest, readJson } from '@/server/http';
+import { revalidateLearningPages } from '@/server/learning/revalidate';
 export async function POST(request: NextRequest) {
   return endpoint(async () => {
     guardRequest(request);
@@ -14,6 +15,7 @@ export async function POST(request: NextRequest) {
       getStore(),
       request.cookies.get(sessionCookieName)?.value,
     );
+    revalidateLearningPages();
     return NextResponse.json({ data, revision: data.revision });
   });
 }

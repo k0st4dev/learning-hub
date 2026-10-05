@@ -17,6 +17,8 @@ import Link from 'next/link';
 import { StudyEditor } from '@/components/study-editor';
 import { studyContext } from '@/domain/study-context';
 import { exerciseSubmissionSchema } from '@/domain/exercise-requirements';
+import { ScopedProgress } from '@/components/scoped-progress';
+import { ProgressOverview } from '@/components/progress-overview';
 export default async function Course({
   params,
 }: {
@@ -130,7 +132,11 @@ export default async function Course({
         {route === 'progress' ? (
           <>
             <h1>{en.learning.progress}</h1>
-            <LearningClient view="progress" initialState={state} />
+            <LearningClient
+              key={`${student.id}:${state?.revision}`}
+              view="progress"
+              initialState={state}
+            />
           </>
         ) : (
           <FullCurriculumPage
@@ -138,6 +144,19 @@ export default async function Course({
             route={coursePath + (route ? '/' + route : '')}
             exerciseEditor={exerciseEditor}
             studyEditor={studyEditor}
+            progressView={
+              state &&
+              (route === '' ? (
+                <ProgressOverview
+                  key={student.id}
+                  state={state}
+                  view="course"
+                />
+              ) : currentItem &&
+                ['module', 'week', 'day'].includes(currentItem.kind) ? (
+                <ScopedProgress state={state} itemId={currentItem.id} />
+              ) : undefined)
+            }
           />
         )}
         {route === '' && !state && (

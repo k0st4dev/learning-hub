@@ -17,6 +17,8 @@ import {
 } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
 import { studyContext } from '../../src/domain/study-context';
+import { requiredProgress } from '../../src/domain/progress';
+import { progressPresentation } from '../../src/domain/progress-presentation';
 import { loadExerciseRequirements } from '../../src/server/learning/exercise-work';
 import {
   alternativeRoutes,
@@ -103,6 +105,132 @@ function counts() {
 }
 
 describe('owned full-course exercise transactions', () => {
+  it('derives all published scope denominators and the 13/14 week example; reopening cascades', () => {
+    const initial = progressPresentation(snapshot(store, token)!);
+    expect(initial.summary).toMatchObject({
+      total: 364,
+      completed: 0,
+      totalDays: 182,
+      remainingLessons: 182,
+      remainingExercises: 182,
+    });
+    expect(
+      initial.modules.map(
+        (phase) => requiredProgress(initial.scopes.get(phase.id)!).total,
+      ),
+    ).toEqual([56, 28, 84, 98, 84, 14]);
+    for (const week of snapshot(store, token)!.items.filter(
+      (item) => item.kind === 'week',
+    ))
+      expect(requiredProgress(initial.scopes.get(week.id)!).total).toBe(14);
+    for (let day = 1; day <= 6; day++) {
+      save({
+        kind: 'lesson',
+        itemId: id(`d${String(day).padStart(3, '0')}-learn`),
+        completed: true,
+      });
+      save(payload(day));
+    }
+    save({ kind: 'lesson', itemId: id('d007-learn'), completed: true });
+    const review = payload(7, false);
+    review.submission.result = 'needs_review';
+    save(review);
+    let state = snapshot(store, token)!;
+    let model = progressPresentation(state);
+    expect(model.summary).toMatchObject({
+      completed: 13,
+      percent: 3,
+      completedDays: 6,
+      needsReview: 1,
+    });
+    expect(requiredProgress(model.scopes.get(id('w01'))!)).toMatchObject({
+      completed: 13,
+      total: 14,
+      percent: 92,
+    });
+    expect(model.checkpoint).toMatchObject({
+      id: id('d007-practice'),
+      complete: false,
+      needsReview: true,
+    });
+    const dayOne = model.scopes.get(id('d001'))!;
+    expect(requiredProgress(dayOne).completedAt).toBe(
+      Math.max(...dayOne.map((unit) => unit.completedAt!)),
+    );
+    save({ kind: 'lesson', itemId: id('d003-learn'), completed: false });
+    state = snapshot(store, token)!;
+    model = progressPresentation(state);
+    expect(model.summary).toMatchObject({
+      completed: 12,
+      percent: 3,
+      completedDays: 5,
+    });
+    expect(requiredProgress(model.scopes.get(id('w01'))!)).toMatchObject({
+      completed: 12,
+      percent: 85,
+      completedAt: null,
+    });
+    expect(requiredProgress(model.scopes.get(id('f1'))!)).toMatchObject({
+      completed: 12,
+      total: 56,
+    });
+    expect(requiredProgress(model.scopes.get(id('d003'))!).percent).toBe(50);
+    expect(model.scopes.get(id('appendix-g'))).toBeUndefined();
+  });
+  it('derives 100 percent only after all 364 confirmed units, then removes it on reopening', () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    const enrollment = store.native
+      .prepare('SELECT id FROM enrollment')
+      .get() as { id: string };
+    // Read-model fixture in this isolated test DB; no import or real student data is modified.
+    const timestamp = Date.UTC(2026, 9, 5, 12);
+    const lessonInsert = store.native.prepare(
+      "INSERT INTO user_progress (enrollment_id,release_id,lesson_id,status,started_at,completed_at,updated_at) VALUES (?, ?, ?, 'completed', ?, ?, ?)",
+    );
+    const exerciseInsert = store.native.prepare(
+      "INSERT INTO exercise_progress (enrollment_id,release_id,exercise_id,status,started_at,completed_at,updated_at,criterion_attested_at,result,evidence_text) VALUES (?, ?, ?, 'completed', ?, ?, ?, ?, 'passed', 'Synthetic read-model fixture')",
+    );
+    for (const unit of snapshot(store, token)!.units)
+      if (unit.kind === 'lesson')
+        lessonInsert.run(
+          enrollment.id,
+          plan.releaseId,
+          unit.id,
+          timestamp,
+          timestamp,
+          timestamp,
+        );
+      else
+        exerciseInsert.run(
+          enrollment.id,
+          plan.releaseId,
+          unit.id,
+          timestamp,
+          timestamp,
+          timestamp,
+          timestamp,
+        );
+    let state = snapshot(store, token)!;
+    expect(progressPresentation(state).summary).toMatchObject({
+      completed: 364,
+      total: 364,
+      percent: 100,
+      completedDays: 182,
+      remainingLessons: 0,
+      remainingExercises: 0,
+      completedAt: timestamp,
+    });
+    expect(continuePath(state)).toBe('/course/software-engineer/progress');
+    save({ kind: 'lesson', itemId: id('d182-learn'), completed: false });
+    state = snapshot(store, token)!;
+    expect(progressPresentation(state).summary).toMatchObject({
+      completed: 363,
+      percent: 99,
+      completedDays: 181,
+      completedAt: null,
+    });
+    expect(continuePath(state)).toContain('/d182/lessons/d182-learn#study');
+  });
   it('records reference visits separately, starts deliberate study without credit, and survives restart', async () => {
     save({ kind: 'orientation', acknowledged: true, deferred: true });
     save({

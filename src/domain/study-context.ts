@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { requiredProgress } from './progress';
 export const unitSchema = z.object({
   id: z.string(),
   key: z.string(),
@@ -7,10 +8,12 @@ export const unitSchema = z.object({
   dayKey: z.string(),
   dayNumber: z.number().int(),
   complete: z.boolean(),
+  completedAt: z.number().nullable().optional(),
 });
 export const studyStateSchema = z.object({
   units: z.array(unitSchema),
   enrollment: z.object({ resumeItemId: z.string().nullable() }),
+  timezone: z.string().optional(),
 });
 export function unitPath(
   unit: z.infer<typeof unitSchema>,
@@ -30,6 +33,7 @@ export function studyContext(
   if (!lesson || !exercise) throw new Error('Day requirements unavailable');
   const earliest = state.units.find((unit) => !unit.complete);
   const target = day.find((unit) => !unit.complete);
+  const progress = requiredProgress(day);
   return {
     lessonId: lesson.id,
     exerciseId: exercise.id,
@@ -37,17 +41,23 @@ export function studyContext(
     exercisePath: unitPath(exercise),
     lessonComplete: lesson.complete,
     exerciseComplete: exercise.complete,
+    lessonCompletedAt: lesson.completedAt ?? null,
+    exerciseCompletedAt: exercise.completedAt ?? null,
+    timezone: state.timezone ?? 'UTC',
     studyTargetId: target?.id ?? null,
     studyTargetPath: target
       ? unitPath(target, target.kind === 'lesson' ? 'study' : 'tasks')
       : null,
     activeItemId: state.enrollment.resumeItemId,
-    outOfSequence: !!earliest && current.dayNumber > earliest.dayNumber,
+    outOfSequence:
+      !!earliest &&
+      state.units.indexOf(current) > state.units.indexOf(earliest),
     recommendedPath: earliest
       ? unitPath(earliest)
       : '/course/software-engineer/progress',
-    completed: day.filter((unit) => unit.complete).length,
-    total: day.length,
+    completed: progress.completed,
+    total: progress.total,
+    percent: progress.percent!,
   };
 }
 export type StudyContext = ReturnType<typeof studyContext>;

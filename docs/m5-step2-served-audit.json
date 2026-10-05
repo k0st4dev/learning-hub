@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-05T14:09:17.321Z",
+  "server": "development",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "servedPages": 20,
+  "curriculumRoutes": 19,
+  "mappedParagraphs": 77,
+  "originalHyperlinks": 0,
+  "authenticatedAccess": "passed",
+  "missingRoutes": "passed",
+  "readingDoesNotMutateProgress": "passed",
+  "checkedNavigationPages": 15,
+  "checkedStudyViews": 15,
+  "checkedOutlinePages": 19,
+  "checkedMobileShells": 20,
+  "checkedDailyPages": 15,
+  "scope": "Focused M5 rollup presentation/source/navigation regression; full source coverage in integration suite"
+}
