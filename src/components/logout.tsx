@@ -13,6 +13,12 @@ export function Logout() {
         className="button"
         disabled={pending}
         onClick={async () => {
+          if (
+            !document.dispatchEvent(
+              new Event('learning:before-leave', { cancelable: true }),
+            )
+          )
+            return;
           setPending(true);
           setError(false);
           try {

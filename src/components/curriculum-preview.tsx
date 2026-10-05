@@ -106,9 +106,11 @@ export function SourceBlocks({ blocks }: { blocks: CatalogPage['blocks'] }) {
 export function CurriculumPreview({
   catalog,
   page,
+  exerciseEditor,
 }: {
   catalog: Catalog;
   page: CatalogPage;
+  exerciseEditor?: React.ReactNode;
 }) {
   const overview = page.item.stableKey === 'overview';
   const workspace = dayWorkspace(catalog, page.item.id);
@@ -229,25 +231,26 @@ export function CurriculumPreview({
           ) : (
             <SourceBlocks blocks={page.blocks} />
           )}
-          {page.item.kind === 'exercise' && (
-            <section className="section">
-              <h2>{en.curriculum.interpretations}</h2>
-              {page.children.map((task) => {
-                const rule = catalog.rules.find((r) => r.itemId === task.id)!;
-                const interpretation = z
-                  .object({ completionRule: z.string() })
-                  .parse(JSON.parse(rule.ruleJson));
-                return (
-                  <div className="card mb-4" key={task.id}>
-                    <p lang="sr-Latn">{task.bodyMarkdown}</p>
-                    <p className="mt-3">
-                      {rule.requirementMode}: {interpretation.completionRule}
-                    </p>
-                  </div>
-                );
-              })}
-            </section>
-          )}
+          {exerciseEditor ??
+            (page.item.kind === 'exercise' && (
+              <section className="section">
+                <h2>{en.curriculum.interpretations}</h2>
+                {page.children.map((task) => {
+                  const rule = catalog.rules.find((r) => r.itemId === task.id)!;
+                  const interpretation = z
+                    .object({ completionRule: z.string() })
+                    .parse(JSON.parse(rule.ruleJson));
+                  return (
+                    <div className="card mb-4" key={task.id}>
+                      <p lang="sr-Latn">{task.bodyMarkdown}</p>
+                      <p className="mt-3">
+                        {rule.requirementMode}: {interpretation.completionRule}
+                      </p>
+                    </div>
+                  );
+                })}
+              </section>
+            ))}
           {rule && <p>{rule.requirementMode}</p>}
           {page.item.kind !== 'day' && (
             <ResourceCards catalog={catalog} uses={page.uses} />

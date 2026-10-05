@@ -266,6 +266,15 @@ describe('owned full-course exercise transactions', () => {
     ).token;
     expect(startCourse(store, other).exerciseProgress).toHaveLength(0);
     expect(snapshot(store, other)!.tasks).toHaveLength(0);
+    const beforeAccountChange = counts();
+    expect(() =>
+      save(
+        { ...payload(1), expectedStudentId: 'previous-session-owner' },
+        other,
+      ),
+    ).toThrow('account changed');
+    expect(counts()).toEqual(beforeAccountChange);
+    expect(snapshot(store, other)!.exerciseProgress).toHaveLength(0);
     save(payload(1), other);
     expect(
       snapshot(store, other)!.exerciseProgress.map((p) => p.exerciseId),

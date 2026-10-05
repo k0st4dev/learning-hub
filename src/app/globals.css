@@ -192,6 +192,38 @@ p {
   padding: 24px;
   background: var(--surface);
 }
+.exercise-editor fieldset {
+  min-inline-size: 0;
+}
+.exercise-fields {
+  display: grid;
+  gap: 16px;
+  border: 0;
+  padding: 0;
+  margin: 24px 0;
+}
+.exercise-editor legend {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-weight: 650;
+}
+.exercise-editor textarea {
+  min-height: 100px;
+}
+.exercise-editor .check {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.exercise-editor input[type='checkbox'] {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.exercise-editor button,
+.exercise-editor label {
+  overflow-wrap: anywhere;
+}
 .card p {
   color: var(--muted);
   margin-bottom: 0;

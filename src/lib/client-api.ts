@@ -2,14 +2,17 @@
 export class RequestError extends Error {
   status: number;
   fieldErrors: Record<string, string>;
+  currentState: unknown;
   constructor(
     message: string,
     status: number,
     fieldErrors: Record<string, string> = {},
+    currentState?: unknown,
   ) {
     super(message);
     this.status = status;
     this.fieldErrors = fieldErrors;
+    this.currentState = currentState;
   }
 }
 export async function writeApi<T>(
@@ -39,6 +42,7 @@ export async function writeApi<T>(
       result.error?.message ?? 'Your change was not confirmed. Please retry.',
       response.status,
       result.error?.fieldErrors,
+      result.error?.currentState,
     );
   return result as T;
 }

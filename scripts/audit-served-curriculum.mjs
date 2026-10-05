@@ -18,11 +18,13 @@ assert.ok(
         '--m3-step4',
         '--m3-step5',
         '--m3-final',
+        '--m4-step3',
       ].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
 const fullM3 = process.argv[2] === '--m3-final';
-const checkMobile = process.argv[2] === '--m3-step5' || fullM3;
+const exerciseUI = process.argv[2] === '--m4-step3';
+const checkMobile = process.argv[2] === '--m3-step5' || fullM3 || exerciseUI;
 const checkStates = process.argv[2] === '--m3-step4' || checkMobile;
 const checkDaily = process.argv[2] === '--m3-step3' || checkStates;
 const checkOutline = process.argv[2] === '--m3-step2' || checkDaily;
@@ -411,32 +413,36 @@ const report = {
   ...(checkDaily
     ? {
         checkedDailyPages,
-        scope: fullM3
-          ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
-          : checkMobile
-            ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
-            : checkStates
-              ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
-              : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+        scope: exerciseUI
+          ? 'Focused M4 exercise UI source/navigation regression; full source coverage in integration suite'
+          : fullM3
+            ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
+            : checkMobile
+              ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
+              : checkStates
+                ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
+                : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
       }
     : {}),
 };
 await writeFile(
   path.join(
     root,
-    fullM3
-      ? 'docs/m3-final-served-audit.json'
-      : checkMobile
-        ? 'docs/m3-step5-served-audit.json'
-        : checkStates
-          ? 'docs/m3-step4-served-audit.json'
-          : checkDaily
-            ? 'docs/m3-step3-served-audit.json'
-            : checkOutline
-              ? 'docs/m3-step2-served-audit.json'
-              : checkNavigation
-                ? 'docs/m3-step1-served-audit.json'
-                : 'docs/m2-served-audit.json',
+    exerciseUI
+      ? 'docs/m4-step3-served-audit.json'
+      : fullM3
+        ? 'docs/m3-final-served-audit.json'
+        : checkMobile
+          ? 'docs/m3-step5-served-audit.json'
+          : checkStates
+            ? 'docs/m3-step4-served-audit.json'
+            : checkDaily
+              ? 'docs/m3-step3-served-audit.json'
+              : checkOutline
+                ? 'docs/m3-step2-served-audit.json'
+                : checkNavigation
+                  ? 'docs/m3-step1-served-audit.json'
+                  : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

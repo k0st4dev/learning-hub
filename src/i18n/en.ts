@@ -32,7 +32,7 @@ export const en = {
     scorecard: 'Original scorecard dimensions',
     preview: 'Complete curriculum · Reading preview',
     previewHelp:
-      'All original course material and course navigation are available here. Interactive exercises and progress for this release are being completed in the next milestones.',
+      'All original course material, navigation and exercise saving are available here. Study completion, checkpoint guidance and remaining learner tools are being completed in the next milestones.',
     newTab: '(opens in a new tab)',
     sourceRef: 'Source',
     sourceTable: 'Original table',

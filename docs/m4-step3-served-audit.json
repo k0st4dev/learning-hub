@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-05T06:04:16.110Z",
+  "server": "development",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "servedPages": 17,
+  "curriculumRoutes": 16,
+  "mappedParagraphs": 62,
+  "originalHyperlinks": 0,
+  "authenticatedAccess": "passed",
+  "missingRoutes": "passed",
+  "readingDoesNotMutateProgress": "passed",
+  "checkedNavigationPages": 15,
+  "checkedOutlinePages": 16,
+  "checkedMobileShells": 17,
+  "checkedDailyPages": 15,
+  "scope": "Focused M4 exercise UI source/navigation regression; full source coverage in integration suite"
+}

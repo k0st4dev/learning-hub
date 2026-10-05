@@ -8,9 +8,11 @@ import { en } from '@/i18n/en';
 export function FullCurriculumPage({
   catalog,
   route,
+  exerciseEditor,
 }: {
   catalog: Catalog;
   route: string;
+  exerciseEditor?: React.ReactNode;
 }) {
   if (route.startsWith('/resources/')) {
     const resource = catalog.resources.find(
@@ -64,7 +66,11 @@ export function FullCurriculumPage({
   if (!page) notFound();
   return (
     <>
-      <CurriculumPreview catalog={catalog} page={page} />
+      <CurriculumPreview
+        catalog={catalog}
+        page={page}
+        exerciseEditor={exerciseEditor}
+      />
       {route === '/progress/scorecard' && (
         <section className="section">
           <h2>{en.curriculum.scorecard}</h2>

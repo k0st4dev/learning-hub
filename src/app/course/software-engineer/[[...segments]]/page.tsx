@@ -11,6 +11,9 @@ import {
 import { StudentShell } from '@/components/student-shell';
 import { en } from '@/i18n/en';
 import { AppError } from '@/server/errors';
+import { ExerciseEditor } from '@/components/exercise-editor';
+import { loadExerciseRequirements } from '@/server/learning/exercise-work';
+import Link from 'next/link';
 export default async function Course({
   params,
 }: {
@@ -32,6 +35,48 @@ export default async function Course({
         'CONTENT_UNAVAILABLE',
         'This course version is unavailable.',
       );
+    const exercise = catalog.items.find(
+      (item) =>
+        item.kind === 'exercise' && item.route === coursePath + '/' + route,
+    );
+    const progress = state?.exerciseProgress.find(
+      (item) => item.exerciseId === exercise?.id,
+    );
+    const exerciseEditor = exercise ? (
+      state ? (
+        <ExerciseEditor
+          key={`${student.id}:${exercise.id}`}
+          itemId={exercise.id}
+          studentId={student.id}
+          requirements={
+            loadExerciseRequirements(getStore(), releaseId, exercise.id)
+              .requirements
+          }
+          tasks={catalog.items
+            .filter(
+              (item) => item.kind === 'task' && item.parentId === exercise.id,
+            )
+            .map((item) => ({ id: item.stableKey, text: item.bodyMarkdown }))}
+          initial={{
+            revision: state.revision,
+            completed: progress?.status === 'completed',
+            submission: progress?.submission ?? {
+              tasks: [],
+              evidence: '',
+              selectedScope: '',
+              attested: false,
+              result: null,
+              transferPath: null,
+              transferReflection: '',
+            },
+          }}
+        />
+      ) : (
+        <p className="section">
+          <Link href={coursePath}>{en.learning.start}</Link>
+        </p>
+      )
+    ) : undefined;
     return (
       <StudentShell
         name={student.displayName || student.email}
@@ -46,6 +91,7 @@ export default async function Course({
           <FullCurriculumPage
             catalog={catalog}
             route={coursePath + (route ? '/' + route : '')}
+            exerciseEditor={exerciseEditor}
           />
         )}
         {route === '' && !state && (

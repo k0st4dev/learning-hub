@@ -72,6 +72,7 @@ export const mutationSchema = z.union([
     itemId,
     completed: z.boolean(),
     submission: exerciseSubmissionSchema,
+    expectedStudentId: z.string().min(1).max(160).optional(),
   }),
 ]);
 export type LearningMutation = z.infer<typeof mutationSchema>;
@@ -108,8 +109,18 @@ export function mutateLearning(
   token: string | undefined,
   input: unknown,
 ) {
-  requireStudent(store, token);
+  const student = requireStudent(store, token);
   const data = mutationSchema.parse(input);
+  if (
+    'expectedStudentId' in data &&
+    data.expectedStudentId &&
+    data.expectedStudentId !== student.id
+  )
+    throw new AppError(
+      403,
+      'ACCOUNT_CHANGED',
+      'The signed-in account changed. Return to the original account before saving this draft.',
+    );
   return store.native
     .transaction(() => {
       const enrollment = ownedEnrollment(store, token);
