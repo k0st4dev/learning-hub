@@ -12,6 +12,7 @@ export function FullCurriculumPage({
   studyEditor,
   noteEditor,
   progressView,
+  learnerTool,
   exerciseWorkAvailable = false,
 }: {
   catalog: Catalog;
@@ -20,6 +21,7 @@ export function FullCurriculumPage({
   studyEditor?: React.ReactNode;
   noteEditor?: React.ReactNode;
   progressView?: React.ReactNode;
+  learnerTool?: React.ReactNode;
   exerciseWorkAvailable?: boolean;
 }) {
   if (route.startsWith('/resources/')) {
@@ -81,6 +83,7 @@ export function FullCurriculumPage({
         studyEditor={studyEditor}
         noteEditor={noteEditor}
         progressView={progressView}
+        learnerTool={learnerTool}
         exerciseWorkAvailable={exerciseWorkAvailable}
       />
       {route === '/progress/scorecard' && (

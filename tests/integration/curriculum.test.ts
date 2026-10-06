@@ -364,13 +364,18 @@ describe('complete immutable curriculum', () => {
     const catalog = readCatalog(store, 'se-26w-v1')!;
     let links = 0;
     let checkedMappings = 0;
+    const blocksById = new Map(
+      catalog.blocks.map((block) => [block.id, block]),
+    );
+    const mappingsByRoute = Map.groupBy(
+      catalog.mappings,
+      (mapping) => mapping.websiteLocation.split('#')[0]!,
+    );
     const unitRoutes = plan.source.days.flatMap((day) => [
       `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
       `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
     ]);
-    for (const route of new Set(
-      catalog.mappings.map((m) => m.websiteLocation.split('#')[0]!),
-    )) {
+    for (const [route, mappings] of mappingsByRoute) {
       const page = catalogPage(catalog, route);
       expect(page, route).not.toBeNull();
       const dom = new DOMParser().parseFromString(
@@ -381,16 +386,16 @@ describe('complete immutable curriculum', () => {
       );
       const outline = dom.querySelector('nav[aria-label="Course outline"]');
       expect(outline, route).not.toBeNull();
-      for (const mapping of catalog.mappings.filter(
-        (mapping) => mapping.websiteLocation.split('#')[0] === route,
-      )) {
+      const elementsByLocator = new Map<string | null, Element>();
+      for (const element of dom.querySelectorAll('[data-source-id]')) {
+        const locator = element.getAttribute('data-source-id');
+        if (!elementsByLocator.has(locator))
+          elementsByLocator.set(locator, element);
+      }
+      for (const mapping of mappings) {
         const anchor = mapping.websiteLocation.split('#')[1];
-        const block = catalog.blocks.find(
-          (b) => b.id === mapping.sourceBlockId,
-        )!;
-        const element = Array.from(
-          dom.querySelectorAll('[data-source-id]'),
-        ).find((e) => e.getAttribute('data-source-id') === block.sourceLocator);
+        const block = blocksById.get(mapping.sourceBlockId)!;
+        const element = elementsByLocator.get(block.sourceLocator);
         expect(
           element?.querySelector('[data-source-text]')?.textContent,
           block.sourceLocator,

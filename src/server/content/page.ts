@@ -23,5 +23,5 @@ export async function publishedPage(route: string) {
       'CONTENT_UNAVAILABLE',
       'This course version is unavailable.',
     );
-  return { student, catalog };
+  return { student, catalog, token };
 }

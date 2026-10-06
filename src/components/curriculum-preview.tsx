@@ -133,6 +133,7 @@ export function CurriculumPreview({
   studyEditor,
   noteEditor,
   progressView,
+  learnerTool,
   exerciseWorkAvailable = false,
 }: {
   catalog: Catalog;
@@ -141,6 +142,7 @@ export function CurriculumPreview({
   studyEditor?: React.ReactNode;
   noteEditor?: React.ReactNode;
   progressView?: React.ReactNode;
+  learnerTool?: React.ReactNode;
   exerciseWorkAvailable?: boolean;
 }) {
   const overview = page.item.stableKey === 'overview';
@@ -207,6 +209,7 @@ export function CurriculumPreview({
             <DailyContext workspace={workspace} currentId={page.item.id} />
           )}
           {progressView}
+          {learnerTool}
           {anchors.length > 0 && (
             <nav className="actions mb-8" aria-label="Lesson sections">
               <Link href={page.item.kind === 'lesson' ? '#study' : '#tasks'}>

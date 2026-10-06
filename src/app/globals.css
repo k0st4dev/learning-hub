@@ -20,6 +20,22 @@
   padding: 12px;
   font-weight: 600;
 }
+.scorecard-editor fieldset {
+  min-inline-size: 0;
+}
+.scorecard-editor legend {
+  max-width: 100%;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.scorecard-editor .table-scroll {
+  overflow-wrap: anywhere;
+}
+.scorecard-editor th {
+  padding: 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
 .source-paragraph {
   overflow-wrap: anywhere;
 }

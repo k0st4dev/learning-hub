@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { noteCharacterLimit, type NoteState } from '@/domain/notes';
 import { useNoteSave } from './use-note-save';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLeaveDialog } from './use-leave-dialog';
 export function NoteEditor({
   studentId,
   initial,
@@ -12,35 +12,11 @@ export function NoteEditor({
   initial: NoteState;
   kind: 'day' | 'lesson' | 'exercise';
 }) {
-  const [leaving, setLeaving] = useState(false);
-  const dialog = useRef<HTMLDialogElement>(null);
-  const decision = useRef<((allowed: boolean) => void) | null>(null);
-  const confirmLeave = useCallback(
-    () =>
-      new Promise<boolean>((resolve) => {
-        if (decision.current) return resolve(false);
-        decision.current = resolve;
-        setLeaving(true);
-      }),
-    [],
+  const leave = useLeaveDialog(
+    'Leave with an unsaved note?',
+    'This note has unconfirmed text. Stay here to copy it or retry saving. Leaving discards the unconfirmed text.',
   );
-  const choose = (allowed: boolean) => {
-    const resolve = decision.current;
-    decision.current = null;
-    setLeaving(false);
-    dialog.current?.close();
-    resolve?.(allowed);
-  };
-  useEffect(() => {
-    if (leaving) dialog.current?.showModal();
-  }, [leaving]);
-  useEffect(
-    () => () => {
-      decision.current?.(false);
-    },
-    [],
-  );
-  const note = useNoteSave(studentId, initial, confirmLeave);
+  const note = useNoteSave(studentId, initial, leave.confirm);
   const context =
     kind === 'day' ? 'day' : kind === 'lesson' ? 'study lesson' : 'exercise';
   return (
@@ -167,49 +143,7 @@ export function NoteEditor({
           )}
         </div>
       )}
-      <dialog
-        ref={dialog}
-        aria-labelledby="note-leave-title"
-        aria-describedby="note-leave-help"
-        className="card note-leave-dialog"
-        onCancel={(event) => {
-          event.preventDefault();
-          choose(false);
-        }}
-        onKeyDown={(event) => {
-          if (event.key !== 'Tab') return;
-          const buttons =
-            dialog.current?.querySelectorAll<HTMLButtonElement>('button');
-          const first = buttons?.[0];
-          const last = buttons?.[1];
-          if (!first || !last) return;
-          if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-          } else if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-          }
-        }}
-      >
-        <h2 id="note-leave-title">Leave with an unsaved note?</h2>
-        <p id="note-leave-help">
-          This note has unconfirmed text. Stay here to copy it or retry saving.
-          Leaving discards the unconfirmed text.
-        </p>
-        <div className="actions">
-          <button
-            className="button primary"
-            autoFocus
-            onClick={() => choose(false)}
-          >
-            Stay and keep my draft
-          </button>
-          <button className="button" onClick={() => choose(true)}>
-            Leave and discard unconfirmed text
-          </button>
-        </div>
-      </dialog>
+      {leave.dialog}
     </section>
   );
 }
