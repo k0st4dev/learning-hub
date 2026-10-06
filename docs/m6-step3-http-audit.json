@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-06T13:08:03.268Z",
+  "server": "development",
+  "accounts": 2,
+  "dimensions": 14,
+  "exactTextAndRatings": "passed",
+  "restartFreshLoginAndExactReceipt": "passed",
+  "accountIsolationAndStaleForm": "passed",
+  "revisionConflict": "passed",
+  "validationAndPeriodIsolation": "passed",
+  "unchangedLearningState": "passed",
+  "scope": "Synthetic preview accounts; operator server restart, not OS reboot or scorecard UI"
+}
