@@ -1,6 +1,6 @@
 # M6 step 2 — private note editor
 
-Date: 2026-10-06. Implementation and automated/development HTTP checks pass. Desktop note-save/conflict/history checks pass; the final fresh-login/two-account UI check remains pending after browser-control failure. Do not close this step or start the scorecard yet.
+Date: 2026-10-06. **M6 step 2 complete in the tested local development/service scope.** Implementation, automated/development HTTP checks and the recovered browser fresh-login/two-account UI gate pass. Stop for user approval before the scorecard step.
 
 ## Behavior and scope
 
@@ -24,13 +24,23 @@ One reusable editor appears on every enrolled full-release day, study lesson and
 
 Screenshots: [saved exercise note](m6-notes-ui.png), [failed-save leave dialog](m6-notes-leave-dialog.png). All edits use synthetic preview accounts; normal student databases were preserved. Credentials remain only in ignored test fixtures.
 
-## Remaining gate and reproduction
+## Browser recovery and closeout
 
-Browser tab 21 stopped responding to control while clicking from a saved study note to Exercise. Dialog lookup returned no controllable dialog; DOM commands and closing that tab timed out. Another tab could edit/reload notes, but link/button activation and a new login form did not complete. The cause is unestablished. No fresh-login or second-account UI pass is claimed. Existing owned service/real-route isolation tests and M6 step 1 two-account restart/fresh-login HTTP audit pass; they do not replace the pending UI check.
+The initial browser tab 21 stopped responding to control while clicking from a saved study note to Exercise. Dialog lookup returned no controllable dialog; DOM commands and closing that tab timed out. Another tab could edit/reload notes, but link/button activation and a new login form did not complete. The cause remains unestablished. At that point fresh-login and second-account UI verification were explicitly left pending.
 
 The temporary healthy tabs were closed; stuck tab 21 could not be closed through the available tool. User MDN and Dashboard tabs were not changed. Temporary viewport override was reset. The resize observation still reported the default 1024px viewport, so no new mobile-size pass is claimed.
 
-Next focused task: reopen the in-app browser, then verify saved notes after logout/fresh login, second-account separation, clean day/study/exercise link navigation and one basic narrow-screen reflow. Investigate only a reproducible application failure; do not bypass browser security or change progress semantics based on the control timeout. Stop for approval after this gate. Scorecard backend/API is the following separate step.
+After the user's approval to finish verification, the recovered browser inventory no longer contained stuck tab 21. A fresh temporary tab 23 completed the following on the running preview:
+
+1. Sign in as the original synthetic account; Day 1, study lesson and exercise each show their distinct previously saved text and Saved.
+2. Navigate through the visible Study and Exercise links, then Sign out; all reach their expected pages.
+3. Sign in as the second synthetic account; Day 1 has its own empty saved body, while study/exercise have no saved note. Save a distinct second-account day note; it remains separate from study/exercise.
+4. Sign out and sign back in as the first account; its original day note is unchanged. Original lesson/exercise bodies were already confirmed in step 1.
+5. Request a 360x800 viewport override, reload and wait for Saved. The measured CSS viewport is **288x640**, document width **276**, note field width **236**: no horizontal document overflow. Screenshot inspection confirms wrapped help/text and usable field. These are the actual observed dimensions, not a claim of 360 CSS pixels. Reset the override afterward.
+
+The recovered UI gate passes without application code changes. No progress/completion action was invoked. Screenshot: [original account note after fresh login](m6-notes-login-verified.png). The temporary tab was closed; user tabs remain unchanged. Existing 294-test suite, 74-test final focused regression, type/lint/build/source/licence/format and served checks remain valid; this follow-up only updates evidence/documentation.
+
+Next focused task, after separate user approval: M6 step 3 monthly scorecard backend/API. Keep scorecard, search and resource/template work outside this completed note step. Final MVP acceptance remains open.
 
 For automated reproduction use the README test/type/lint/build commands. Against the isolated preview server, set APP_DATA_DIR to the absolute repository .tmp/m2-preview path and run:
 
