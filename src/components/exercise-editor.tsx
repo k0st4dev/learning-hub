@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   alternativeRoutes,
   evaluateExercise,
+  exerciseDraftIssues,
   type ExerciseRequirements,
   type ExerciseSubmission,
 } from '@/domain/exercise-requirements';
@@ -58,22 +59,35 @@ export function ExerciseEditor({
   const taskChange = (
     taskId: string,
     patch: Partial<ExerciseSubmission['tasks'][number]> | null,
+    persist = true,
   ) => {
-    work.noteActionAnchor(taskId);
-    work.setDraft((draft) => {
-      const existing = draft.tasks.find((task) => task.taskId === taskId);
-      const next = draft.tasks.filter((task) => task.taskId !== taskId);
-      if (patch)
-        next.push({
-          taskId,
-          status: 'done',
-          reason: '',
-          choice: '',
-          ...existing,
-          ...patch,
-        });
-      return { ...draft, tasks: next };
-    });
+    const existing = work.draft.tasks.find((task) => task.taskId === taskId);
+    const next = work.draft.tasks.filter((task) => task.taskId !== taskId);
+    if (patch)
+      next.push({
+        taskId,
+        status: 'done',
+        reason: '',
+        choice: '',
+        ...existing,
+        ...patch,
+      });
+    next.sort(
+      (left, right) =>
+        requirements.tasks.findIndex((task) => task.id === left.taskId) -
+        requirements.tasks.findIndex((task) => task.id === right.taskId),
+    );
+    let submission = { ...work.draft, tasks: next };
+    const checked = evaluateExercise(requirements, submission);
+    const completed = work.confirmed.completed && checked.eligible;
+    if (work.confirmed.completed && !completed)
+      submission = { ...submission, attested: false };
+    const valid =
+      !exerciseDraftIssues(requirements, submission).length &&
+      !checked.issues.some((issue) =>
+        ['reason_required', 'choice_required'].includes(issue.code),
+      );
+    work.saveTasks(submission, completed, taskId, persist && valid);
   };
   return (
     <section
@@ -82,6 +96,7 @@ export function ExerciseEditor({
     >
       <h2 id="exercise-work-title">{t.title}</h2>
       <p>{t.intro}</p>
+      <p>{t.taskSaveHelp}</p>
       {requirements.assessment && (
         <AssessmentGuidance
           assessment={requirements.assessment}
@@ -133,13 +148,14 @@ export function ExerciseEditor({
           )}
         </div>
       )}
-      <fieldset disabled={disabled} className="exercise-fields">
+      <fieldset disabled={work.editingLocked} className="exercise-fields">
         <legend>{en.learning.practice}</legend>
         {requirements.exerciseId === 'd125-practice' && (
           <div className="card stack">
             <label htmlFor="work-transfer">{t.transfer}</label>
             <select
               id="work-transfer"
+              disabled={disabled}
               value={work.draft.transferPath ?? ''}
               onChange={(event) =>
                 change({
@@ -161,6 +177,7 @@ export function ExerciseEditor({
                 <label htmlFor="work-reflection">{t.reflection}</label>
                 <textarea
                   id="work-reflection"
+                  disabled={disabled}
                   maxLength={2000}
                   value={work.draft.transferReflection}
                   onChange={(event) =>
@@ -267,7 +284,10 @@ export function ExerciseEditor({
                     maxLength={2000}
                     value={response.reason}
                     onChange={(event) =>
-                      taskChange(task.id, { reason: event.target.value })
+                      taskChange(task.id, { reason: event.target.value }, false)
+                    }
+                    onBlur={() =>
+                      taskChange(task.id, { reason: response.reason })
                     }
                   />
                 </>
@@ -282,6 +302,7 @@ export function ExerciseEditor({
         <p id="work-scope-help">{t.scopeHelp}</p>
         <textarea
           id="work-scope"
+          disabled={disabled}
           maxLength={2000}
           aria-describedby="work-scope-help"
           value={work.draft.selectedScope}
@@ -291,6 +312,7 @@ export function ExerciseEditor({
         <p id="work-evidence-help">{t.evidenceHelp}</p>
         <textarea
           id="evidence"
+          disabled={disabled}
           data-study-anchor="evidence"
           maxLength={2000}
           aria-describedby="work-evidence-help"
@@ -301,6 +323,7 @@ export function ExerciseEditor({
           <input
             type="checkbox"
             checked={work.draft.attested}
+            disabled={disabled}
             onChange={(event) => change({ attested: event.target.checked })}
           />
           {t.attested}
@@ -308,6 +331,7 @@ export function ExerciseEditor({
         <label htmlFor="work-result">{t.result}</label>
         <select
           id="work-result"
+          disabled={disabled}
           value={work.draft.result ?? ''}
           onChange={(event) =>
             change({
@@ -328,6 +352,7 @@ export function ExerciseEditor({
             <p id="work-score-help">{t.scoreHelp}</p>
             <textarea
               id="work-score"
+              disabled={disabled}
               maxLength={2000}
               aria-describedby="work-score-help"
               value={work.draft.scoreEvidence}
@@ -339,6 +364,7 @@ export function ExerciseEditor({
             <p id="work-remediation-help">{t.remediationHelp}</p>
             <textarea
               id="work-remediation"
+              disabled={disabled}
               maxLength={2000}
               aria-describedby="work-remediation-help"
               value={work.draft.remediationNote}

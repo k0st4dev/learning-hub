@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
-import { createElement } from 'react';
+import { createElement, StrictMode } from 'react';
 import { readFileSync } from 'node:fs';
 import { validateSource } from '../../src/server/content/source-schema';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   cleanup,
+  act,
   fireEvent,
   render,
   screen,
@@ -101,24 +102,28 @@ function state(
     ],
   };
 }
-function mount(submission = empty, completed = false, context?: StudyContext) {
-  return render(
-    createElement(ExerciseEditor, {
-      itemId,
-      studentId: 'owner',
-      requirements,
-      tasks: requirements.tasks.map((task) => ({
-        id: task.id,
-        text: `Original ${task.id}`,
-      })),
-      initial: {
-        revision: 0,
-        completed,
-        submission,
-        ...(context ? { context } : {}),
-      },
-    }),
-  );
+function mount(
+  submission = empty,
+  completed = false,
+  context?: StudyContext,
+  strict = false,
+) {
+  const editor = createElement(ExerciseEditor, {
+    itemId,
+    studentId: 'owner',
+    requirements,
+    tasks: requirements.tasks.map((task) => ({
+      id: task.id,
+      text: `Original ${task.id}`,
+    })),
+    initial: {
+      revision: 0,
+      completed,
+      submission,
+      ...(context ? { context } : {}),
+    },
+  });
+  return render(strict ? createElement(StrictMode, null, editor) : editor);
 }
 const evidence = () => screen.getByLabelText('Evidence') as HTMLTextAreaElement;
 const button = (name: string) =>
@@ -141,6 +146,161 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 describe('full-course exercise editing', () => {
+  it('immediately saves a task with its owner and anchor; remount restores confirmed checks', async () => {
+    const view = mount(empty, false, undefined, true);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    await screen.findByText('Saved on this computer.');
+    expect(api).toHaveBeenCalledTimes(1);
+    const sent = api.mock.calls[0]![2] as { submission: ExerciseSubmission };
+    expect(sent).toMatchObject({
+      expectedStudentId: 'owner',
+      expectedRevision: 0,
+      kind: 'exercise',
+      completed: false,
+      anchor: 'd017-task-01',
+      submission: { tasks: [{ taskId: 'd017-task-01', status: 'done' }] },
+    });
+    view.unmount();
+    mount(sent.submission);
+    expect((screen.getByLabelText('1. Done') as HTMLInputElement).checked).toBe(
+      true,
+    );
+    expect(api).toHaveBeenCalledTimes(1);
+  });
+  it('keeps incomplete decisions unsaved and saves a required reason once on blur', async () => {
+    mount();
+    fireEvent.change(screen.getByLabelText('3. Task decision'), {
+      target: { value: 'not_applicable' },
+    });
+    await act(async () => {});
+    expect(api).not.toHaveBeenCalled();
+    expect(screen.getByRole('status').textContent).toContain('Unsaved');
+    const reason = screen.getByLabelText('3. Reason or plan');
+    fireEvent.change(reason, { target: { value: 'Manual' } });
+    fireEvent.change(reason, { target: { value: 'Manual testing' } });
+    expect(api).not.toHaveBeenCalled();
+    fireEvent.blur(reason);
+    await screen.findByText('Saved on this computer.');
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(api.mock.calls[0]![2]).toMatchObject({
+      submission: {
+        tasks: [{ status: 'not_applicable', reason: 'Manual testing' }],
+      },
+    });
+    fireEvent.blur(reason);
+    await act(async () => {});
+    expect(api).toHaveBeenCalledTimes(1);
+  });
+  it('automatically reopens required completed work while retaining evidence and other tasks', async () => {
+    mount(complete, true);
+    expect(evidence().matches(':disabled')).toBe(true);
+    expect(screen.getByLabelText('1. Done').matches(':disabled')).toBe(false);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    await screen.findByText('Saved on this computer.');
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(api.mock.calls[0]![2]).toMatchObject({
+      completed: false,
+      submission: {
+        evidence: complete.evidence,
+        attested: false,
+        result: 'passed',
+      },
+    });
+    const sent = api.mock.calls[0]![2] as { submission: ExerciseSubmission };
+    expect(sent.submission.tasks).toEqual(complete.tasks.slice(1));
+    expect(evidence().matches(':disabled')).toBe(false);
+    expect(
+      screen.queryByRole('button', { name: 'Reopen exercise' }),
+    ).toBeNull();
+    expect(button('Mark exercise complete').disabled).toBe(true);
+  });
+  it('retains completion when optional-only work is changed', async () => {
+    mount(complete, true);
+    fireEvent.click(screen.getByLabelText('4. Done'));
+    await screen.findByText('Saved on this computer.');
+    expect(api.mock.calls[0]![2]).toMatchObject({
+      completed: true,
+      submission: { attested: true },
+    });
+    expect(button('Reopen exercise')).toBeTruthy();
+    expect(evidence().matches(':disabled')).toBe(true);
+    fireEvent.click(screen.getByLabelText('4. Done'));
+    await waitFor(() => expect(api).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toContain('Saved'),
+    );
+    expect(api.mock.calls[1]![2]).toMatchObject({
+      completed: true,
+      submission: complete,
+    });
+  });
+  it('does not claim a task saved during a pending request or allow duplicate writes', async () => {
+    let finish!: (value: unknown) => void;
+    api.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    mount();
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    await waitFor(() => expect(api).toHaveBeenCalledTimes(1));
+    expect(screen.getByRole('status').textContent).toContain('Saving');
+    expect(screen.getByLabelText('1. Done').matches(':disabled')).toBe(true);
+    fireEvent.click(button('Save draft'));
+    expect(api).toHaveBeenCalledTimes(1);
+    const leave = new Event('beforeunload', { cancelable: true });
+    window.dispatchEvent(leave);
+    expect(leave.defaultPrevented).toBe(true);
+    const body = api.mock.calls[0]![2] as { submission: ExerciseSubmission };
+    await act(async () => {
+      finish({ data: state(body.submission) });
+    });
+    expect(screen.getByRole('status').textContent).toContain('Saved');
+  });
+  it.each([0, 422, 403])(
+    'preserves unconfirmed task changes after status %i',
+    async (status) => {
+      api.mockRejectedValueOnce(new RequestError('Task save failed', status));
+      mount();
+      fireEvent.click(screen.getByLabelText('1. Done'));
+      await screen.findByRole('alert');
+      expect(
+        (screen.getByLabelText('1. Done') as HTMLInputElement).checked,
+      ).toBe(true);
+      expect(screen.getByRole('status').textContent).toContain('Unsaved');
+      expect(api).toHaveBeenCalledTimes(1);
+      if (status === 422) {
+        expect(screen.getByLabelText('1. Done').matches(':disabled')).toBe(
+          false,
+        );
+        expect(
+          screen.queryByRole('button', { name: 'Retry the same save' }),
+        ).toBeNull();
+      } else {
+        expect(screen.getByLabelText('1. Done').matches(':disabled')).toBe(
+          true,
+        );
+        fireEvent.click(button('Retry the same save'));
+        await screen.findByText('Saved on this computer.');
+        expect(api.mock.calls[1]![2]).toEqual(api.mock.calls[0]![2]);
+      }
+    },
+  );
+  it('requires explicit resolution of conflicting automatic task saves', async () => {
+    api.mockRejectedValueOnce(
+      new RequestError('Conflict', 409, {}, state(complete, 8, true)),
+    );
+    mount();
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    await screen.findByRole('alert');
+    expect(api).toHaveBeenCalledTimes(1);
+    fireEvent.click(button('Use saved version and discard my edits'));
+    await act(async () => {});
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(evidence().value).toBe(complete.evidence);
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
   it('keeps an unsaved exercise when study selection would leave for its lesson', async () => {
     const units = ['lesson', 'exercise'].map((kind) => ({
       id: kind === 'lesson' ? 'se-26w-v1:d017-learn' : itemId,
@@ -282,17 +442,31 @@ describe('full-course exercise editing', () => {
   it('records conditional reasons and allowed alternatives without requiring optional work', async () => {
     mount();
     fireEvent.click(screen.getByLabelText('1. Done'));
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toContain('Saved'),
+    );
     fireEvent.click(screen.getByLabelText('2. Done'));
+    expect(screen.getByRole('status').textContent).toContain('Unsaved');
     fireEvent.change(screen.getByLabelText('2. Chosen path'), {
       target: { value: 'manual_copy' },
     });
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toContain('Saved'),
+    );
     fireEvent.change(screen.getByLabelText('3. Task decision'), {
       target: { value: 'not_applicable' },
     });
     fireEvent.change(screen.getByLabelText('3. Reason or plan'), {
       target: { value: 'Manual testing path' },
     });
+    fireEvent.blur(screen.getByLabelText('3. Reason or plan'));
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toContain('Saved'),
+    );
     fireEvent.click(screen.getByLabelText('5. Done'));
+    await waitFor(() =>
+      expect(screen.getByRole('status').textContent).toContain('Saved'),
+    );
     fireEvent.change(screen.getByLabelText('Selected scope'), {
       target: { value: 'Manual copy and tests' },
     });
@@ -308,7 +482,7 @@ describe('full-course exercise editing', () => {
     expect(button('Mark exercise complete').disabled).toBe(false);
     fireEvent.click(button('Mark exercise complete'));
     await screen.findByRole('button', { name: 'Reopen exercise' });
-    const sent = api.mock.calls[0]![2] as {
+    const sent = api.mock.calls.at(-1)![2] as {
       submission: ExerciseSubmission;
       completed: boolean;
     };
@@ -316,7 +490,7 @@ describe('full-course exercise editing', () => {
     expect(
       sent.submission.tasks.some((task) => task.taskId === 'd131-task-03'),
     ).toBe(false);
-    expect(evidence().closest('fieldset')?.disabled).toBe(true);
+    expect(evidence().matches(':disabled')).toBe(true);
   });
   it('requires an explicit reopen confirmation and does not write just by visiting', async () => {
     mount(complete, true);

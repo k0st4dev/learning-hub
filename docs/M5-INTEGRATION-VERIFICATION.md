@@ -25,7 +25,7 @@ node scripts/licenses.mjs --check
 
 For the served audit, first start the development server with `APP_DATA_DIR=<repository>/.tmp/m2-preview`, then run `node scripts/audit-served-curriculum.mjs --m3-final` with that same absolute data-directory setting. The audit creates only a synthetic preview account. Its legacy output is docs/m3-final-served-audit.json; this increment saved a copy as docs/m5-integration-served-audit.json and preserved the old evidence file. Never point this audit at normal student data.
 
-## Actual gap blocking M5 completion
+## Gap found at this audit (subsequently repaired)
 
 Specification sections 7 and 30 require immediate persistence of task checks and automatic transactional reopening when a required task is unchecked in a completed exercise. The current full-course editor changes task decisions in the local draft and waits for **Save draft**. It disables the whole exercise fieldset when complete, so a student must use explicit Reopen before unchecking a required task. This is safe from false Saved/completion claims and has unsaved-navigation protection, but it does **not** meet the specified task interaction.
 
@@ -35,4 +35,4 @@ No production code was changed during this audit. The gap is recorded before imp
 
 ## Next task and evidence
 
-After user approval, implement the task-check persistence/reopening repair above. Reuse the passing desktop guard evidence rather than repeating long viewport sessions. Keep basic responsive regression; desktop and keyboard behavior are the primary demonstration. See M5-ACCEPTANCE-MATRIX.md for A01–A26 status. Production/axe, screen reader, real reboot, disconnected operation, target-OS installs, notes/search/scorecard/settings and operational tools remain explicitly pending.
+The separately approved repair is now implemented and verified in [M5-TASKS-VERIFICATION.md](M5-TASKS-VERIFICATION.md). The descriptions above record the gap at the original audit date. After the next approval, perform the final M5 integration closeout; do not start M6 yet. Reuse the passing desktop guard evidence rather than repeating long viewport sessions. Keep basic responsive regression; desktop and keyboard behavior are the primary demonstration. See M5-ACCEPTANCE-MATRIX.md for A01–A26 status. Production/axe, screen reader, real reboot, disconnected operation, target-OS installs, notes/search/scorecard/settings and operational tools remain explicitly pending.

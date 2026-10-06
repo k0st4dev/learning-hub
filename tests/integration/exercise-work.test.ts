@@ -742,6 +742,82 @@ describe('owned full-course exercise transactions', () => {
       'Manual testing path; overall suite criterion satisfied';
     expect(save(conditional).completed).toBe(3);
   });
+  it('keeps optional completed edits credited with original timestamps and active study, then atomically reopens required work', () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    save({ kind: 'lesson', itemId: id('d131-learn'), completed: true });
+    const full = payload(131);
+    const first = save(full);
+    const exercise = first.exerciseProgress.find(
+      (row) => row.exerciseId === full.itemId,
+    )!;
+    save({
+      kind: 'cursor',
+      mode: 'study',
+      itemId: id('d132-learn'),
+      anchor: 'study',
+    });
+    const before = snapshot(store, token)!;
+    const optional = {
+      ...full,
+      submission: {
+        ...full.submission,
+        tasks: full.submission.tasks.filter(
+          (row) => row.taskId !== 'd131-task-03',
+        ),
+      },
+    };
+    const kept = save({ ...optional, anchor: 'd131-task-03' });
+    expect(kept.completed).toBe(before.completed);
+    expect(kept.enrollment.resumeItemId).toBe(before.enrollment.resumeItemId);
+    expect(kept.enrollment.resumeAnchor).toBe(before.enrollment.resumeAnchor);
+    expect(
+      kept.exerciseProgress.find((row) => row.exerciseId === full.itemId),
+    ).toMatchObject({
+      status: 'completed',
+      completedAt: exercise.completedAt,
+      criterionAttestedAt: exercise.criterionAttestedAt,
+    });
+    expect(
+      readActivity(store, token, { limit: 20 }).events.filter(
+        (row) => row.type === 'exercise_reopened',
+      ),
+    ).toHaveLength(0);
+    const reopened = save({
+      ...optional,
+      completed: false,
+      anchor: 'd131-task-01',
+      submission: {
+        ...optional.submission,
+        attested: false,
+        tasks: optional.submission.tasks.filter(
+          (row) => row.taskId !== 'd131-task-01',
+        ),
+      },
+    });
+    expect(reopened.completed).toBe(before.completed - 1);
+    expect(
+      reopened.exerciseProgress.find((row) => row.exerciseId === full.itemId),
+    ).toMatchObject({
+      status: 'started',
+      completedAt: null,
+      criterionAttestedAt: null,
+      submission: {
+        evidence: full.submission.evidence,
+        selectedScope: full.submission.selectedScope,
+        attested: false,
+      },
+    });
+    expect(continuePath(reopened)).toContain('d131-practice#d131-task-01');
+    expect(
+      requiredProgress(progressPresentation(reopened).scopes.get(id('d131'))!)
+        .percent,
+    ).toBe(50);
+    expect(
+      readActivity(store, token, { limit: 20 }).events.filter(
+        (row) => row.type === 'exercise_reopened',
+      ),
+    ).toHaveLength(1);
+  });
   it.each([7, 28, 182])(
     'keeps needs-review day %i started and rejects forged completion',
     (number) => {

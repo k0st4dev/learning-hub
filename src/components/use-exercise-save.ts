@@ -89,6 +89,11 @@ export function useExerciseSave(
   const [error, setError] = useState<RequestError | null>(null);
   const [conflict, setConflict] = useState<ConfirmedExercise | null>(null);
   const [message, setMessage] = useState('');
+  const [taskWrite, setTaskWrite] = useState<{
+    submission: ExerciseSubmission;
+    completed: boolean;
+    anchor: string;
+  } | null>(null);
   const [retry, setRetry] = useState<{
     payload: Payload;
     preserveDraft: boolean;
@@ -103,6 +108,13 @@ export function useExerciseSave(
     !!retry ||
     !!conflict ||
     (!!error && [401, 403, 409].includes(error.status));
+  const editingLocked =
+    locked &&
+    !(
+      pending &&
+      retry?.payload.kind === 'cursor' &&
+      retry.payload.mode === 'anchor'
+    );
   useEffect(() => {
     if (!dirty && !pending && !retry) return;
     const unload = (event: BeforeUnloadEvent) => {
@@ -175,6 +187,13 @@ export function useExerciseSave(
         if (!preserveDraft) {
           setDraft(next.submission);
           actionAnchor.current = null;
+        } else if (payload.kind === 'exercise') {
+          // A queued task save must not erase text typed during an anchor write.
+          setDraft((current) =>
+            JSON.stringify(current) === JSON.stringify(payload.submission)
+              ? next.submission
+              : current,
+          );
         }
         setRetry(null);
         setConflict(null);
@@ -185,6 +204,8 @@ export function useExerciseSave(
       } catch (cause) {
         const failure =
           cause instanceof RequestError ? cause : new RequestError(t.error, 0);
+        if ([400, 401, 403, 409, 422].includes(failure.status))
+          setTaskWrite(null);
         if (failure.status === 409) {
           try {
             setConflict(
@@ -230,9 +251,9 @@ export function useExerciseSave(
     context: confirmed.context,
     completed: confirmed.completed,
     enabled: trackOpen && openRecorded,
-    locked,
+    locked: locked || !!taskWrite,
     save: (anchor) => {
-      if (busy.current || locked) return;
+      if (busy.current || locked || taskWrite) return;
       return send(
         {
           kind: 'cursor',
@@ -247,6 +268,42 @@ export function useExerciseSave(
       );
     },
   });
+  useEffect(() => {
+    if (!taskWrite || pending || locked || busy.current) return;
+    if (error) return;
+    // Dispatch after React commits the latest draft/revision. Cleanup cancels a
+    // superseded decision or unmounted page before any request is issued.
+    let canceled = false;
+    queueMicrotask(() => {
+      if (canceled || busy.current) return;
+      sections.cancel();
+      setTaskWrite(null);
+      void send(
+        {
+          kind: 'exercise',
+          itemId,
+          expectedStudentId: studentId,
+          mutationId: crypto.randomUUID(),
+          expectedRevision: confirmed.revision,
+          ...taskWrite,
+        },
+        true,
+      );
+    });
+    return () => {
+      canceled = true;
+    };
+  }, [
+    taskWrite,
+    pending,
+    locked,
+    error,
+    sections,
+    send,
+    itemId,
+    studentId,
+    confirmed.revision,
+  ]);
   return {
     draft,
     setDraft,
@@ -255,21 +312,41 @@ export function useExerciseSave(
     pending,
     error,
     conflict,
-    locked,
-    editingLocked:
-      locked &&
-      !(
-        pending &&
-        retry?.payload.kind === 'cursor' &&
-        retry.payload.mode === 'anchor'
-      ),
+    locked: locked || !!taskWrite,
+    editingLocked,
     message,
+    saveTasks: (
+      submission: ExerciseSubmission,
+      completed: boolean,
+      anchor: string,
+      persist: boolean,
+    ) => {
+      if (editingLocked || kind !== 'exercise') return;
+      setDraft(submission);
+      actionAnchor.current = anchor;
+      sections.cancel();
+      // Incomplete decisions stay visibly unsaved; do not enqueue a partial reason.
+      const changed =
+        completed !== confirmed.completed ||
+        JSON.stringify(submission) !== JSON.stringify(confirmed.submission);
+      setTaskWrite(
+        persist && changed ? { submission, completed, anchor } : null,
+      );
+      setMessage('');
+      if (!locked) setError(null);
+    },
     noteActionAnchor: (anchor: string) => {
       if (confirmed.context?.anchors.includes(anchor))
         actionAnchor.current = anchor;
     },
     save: (completed: boolean, reopen = false) => {
-      if (busy.current || locked || (confirmed.completed && !reopen)) return;
+      if (
+        busy.current ||
+        locked ||
+        taskWrite ||
+        (confirmed.completed && !reopen)
+      )
+        return;
       sections.cancel();
       const savedAnchor = actionAnchor.current ?? sections.current();
       return send(
@@ -291,7 +368,7 @@ export function useExerciseSave(
       );
     },
     saveCursor: (mode: 'open' | 'study') => {
-      if (busy.current || locked) return;
+      if (busy.current || locked || taskWrite) return;
       sections.cancel();
       const context = confirmed.context;
       const target = mode === 'study' ? context?.studyTargetId : itemId;
@@ -335,6 +412,7 @@ export function useExerciseSave(
     resolve: (keep: boolean) => {
       if (!conflict) return;
       sections.cancel();
+      setTaskWrite(null);
       setConfirmed(conflict);
       if (!keep) {
         setDraft(conflict.submission);

@@ -5,6 +5,7 @@ import * as s from '../db/schema';
 import { AppError } from '../errors';
 import {
   evaluateExercise,
+  exerciseDraftIssues,
   exerciseSubmissionSchema,
   type ExerciseRequirements,
   type ExerciseSubmission,
@@ -246,28 +247,11 @@ export function saveExerciseWork(
       'ASSESSMENT_NOT_AVAILABLE',
       'Assessment notes belong to checkpoints or the final exam.',
     );
-  const hardIssues = evaluation.issues.filter((issue) => {
-    if (
-      [
-        'invalid_submission',
-        'unknown_task',
-        'duplicate_task',
-        'not_applicable_forbidden',
-        'choice_forbidden',
-      ].includes(issue.code)
-    )
-      return true;
-    const response = submission.tasks.find(
-      (task) => task.taskId === issue.taskId,
-    );
-    if (issue.code === 'reason_required')
-      return response?.status === 'not_applicable';
-    if (issue.code === 'choice_required') return !!response?.choice;
-    return (
-      issue.code === 'transfer_path_conflict' &&
-      requirements.exerciseId !== 'd125-practice'
-    );
-  });
+  const hardIssues = exerciseDraftIssues(
+    requirements,
+    submission,
+    evaluation.issues,
+  );
   const issues = completed ? evaluation.issues : hardIssues;
   if (issues.length)
     throw new AppError(

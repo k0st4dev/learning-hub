@@ -210,9 +210,11 @@ describe('acknowledged active section tracking', () => {
       ).toBeTruthy();
     },
   );
-  it('debounces to exactly one second, keeps only the latest section and preserves unsaved task text', async () => {
+  it('debounces to exactly one second, keeps only the latest section and preserves unsaved evidence', async () => {
     await mount();
-    fireEvent.click(screen.getByLabelText('1. Done'));
+    fireEvent.change(screen.getByLabelText('Evidence'), {
+      target: { value: 'Unsaved text' },
+    });
     focus('ai');
     await tick(700);
     focus('criterion');
@@ -226,9 +228,9 @@ describe('acknowledged active section tracking', () => {
       expectedRevision: 1,
       expectedStudentId: 'owner',
     });
-    expect((screen.getByLabelText('1. Done') as HTMLInputElement).checked).toBe(
-      true,
-    );
+    expect(
+      (screen.getByLabelText('Evidence') as HTMLTextAreaElement).value,
+    ).toBe('Unsaved text');
     expect(screen.getByRole('status').textContent).toContain('Unsaved');
     expect(complete).toBe(false);
     expect(submission.tasks).toHaveLength(0);
@@ -289,7 +291,6 @@ describe('acknowledged active section tracking', () => {
     await tick(20);
     fireEvent.click(screen.getByLabelText('1. Done'));
     focus('evidence'); // Scrolling to Save must not erase the last confirmed task action's anchor.
-    fireEvent.click(screen.getByRole('button', { name: 'Save draft' }));
     await act(async () => {});
     expect(api.mock.calls[0]![2]).toMatchObject({
       kind: 'exercise',
@@ -333,6 +334,121 @@ describe('acknowledged active section tracking', () => {
       anchor: 'criterion',
       expectedRevision: 2,
     });
+  });
+  it('queues task changes behind an anchor write, uses its revision and preserves newer text', async () => {
+    await mount();
+    let finish!: (value: unknown) => void;
+    api.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    focus('ai');
+    await tick(1000);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    fireEvent.change(screen.getByLabelText('Evidence'), {
+      target: { value: 'Newer unsaved text' },
+    });
+    expect(api).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      finish(accept(api.mock.calls[0]![2]));
+    });
+    await tick(0);
+    expect(api).toHaveBeenCalledTimes(2);
+    expect(api.mock.calls[1]![2]).toMatchObject({
+      kind: 'exercise',
+      anchor: 'd001-task-01',
+      expectedRevision: 2,
+      submission: {
+        tasks: [{ taskId: 'd001-task-01', status: 'done' }],
+        evidence: '',
+      },
+    });
+    expect(submission.tasks).toHaveLength(1);
+    expect(
+      (screen.getByLabelText('Evidence') as HTMLTextAreaElement).value,
+    ).toBe('Newer unsaved text');
+    expect(screen.getByRole('status').textContent).toContain('Unsaved');
+    await tick(2000);
+    expect(api).toHaveBeenCalledTimes(2);
+  });
+  it('retains the queued task through an uncertain anchor retry without issuing a new receipt first', async () => {
+    await mount();
+    let fail!: (cause: unknown) => void;
+    api.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          fail = reject;
+        }),
+    );
+    focus('ai');
+    await tick(1000);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    await act(async () => {
+      fail(new RequestError('Network unavailable', 0));
+    });
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('status').textContent).toContain('Unsaved');
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Retry the same save' }),
+    );
+    await act(async () => {});
+    await tick(0);
+    expect(api).toHaveBeenCalledTimes(3);
+    expect(api.mock.calls[1]![2]).toEqual(api.mock.calls[0]![2]);
+    expect(api.mock.calls[2]![2]).toMatchObject({
+      kind: 'exercise',
+      expectedRevision: 2,
+    });
+    expect(submission.tasks).toHaveLength(1);
+  });
+  it('cancels queued task writes after an anchor conflict and explicit saved-version recovery', async () => {
+    await mount();
+    let fail!: (cause: unknown) => void;
+    api.mockImplementationOnce(
+      () =>
+        new Promise((_resolve, reject) => {
+          fail = reject;
+        }),
+    );
+    focus('ai');
+    await tick(1000);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    revision = 9;
+    await act(async () => {
+      fail(new RequestError('Conflict', 409, {}, state()));
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Use saved version and discard my edits',
+      }),
+    );
+    await tick(2000);
+    expect(api).toHaveBeenCalledTimes(1);
+    expect((screen.getByLabelText('1. Done') as HTMLInputElement).checked).toBe(
+      false,
+    );
+  });
+  it('does not send queued task changes after the page unmounts', async () => {
+    await mount();
+    let finish!: (value: unknown) => void;
+    api.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve;
+        }),
+    );
+    focus('ai');
+    await tick(1000);
+    fireEvent.click(screen.getByLabelText('1. Done'));
+    cleanup();
+    await act(async () => {
+      finish(accept(api.mock.calls[0]![2]));
+    });
+    await tick(2000);
+    expect(api).toHaveBeenCalledTimes(1);
+    expect(submission.tasks).toHaveLength(0);
   });
   it('locks uncertain saves, retries the identical receipt and keeps the draft', async () => {
     await mount();

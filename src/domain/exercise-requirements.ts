@@ -86,6 +86,36 @@ export type RequirementIssue = {
   taskId?: string;
 };
 
+/** Drafts may omit completion work, but may never contain forged decisions. */
+export function exerciseDraftIssues(
+  requirements: ExerciseRequirements,
+  submission: ExerciseSubmission,
+  issues = evaluateExercise(requirements, submission).issues,
+) {
+  return issues.filter((issue) => {
+    if (
+      [
+        'invalid_submission',
+        'unknown_task',
+        'duplicate_task',
+        'not_applicable_forbidden',
+        'choice_forbidden',
+      ].includes(issue.code)
+    )
+      return true;
+    const response = submission.tasks.find(
+      (task) => task.taskId === issue.taskId,
+    );
+    if (issue.code === 'reason_required')
+      return response?.status === 'not_applicable';
+    if (issue.code === 'choice_required') return !!response?.choice;
+    return (
+      issue.code === 'transfer_path_conflict' &&
+      requirements.exerciseId !== 'd125-practice'
+    );
+  });
+}
+
 /** Pure eligibility only. No writes, percentage changes, URLs/files or code execution.
  * Requirements MUST come from the owned enrollment's published release, not a request body.
  * The server repeats this evaluation inside its owned-enrollment save transaction.

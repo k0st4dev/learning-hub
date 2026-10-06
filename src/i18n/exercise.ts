@@ -27,6 +27,8 @@ export const exerciseText = {
   title: 'Your exercise work',
   intro:
     'Work in your local IDE. Save partial work here; only confirmed completion counts toward progress.',
+  taskSaveHelp:
+    'Task decisions save automatically. Choose a path or add a required reason first; reasons save when you leave the field. Save draft also saves your evidence and assessment. Removing required work reopens a completed exercise.',
   required: 'Required',
   optional: 'Optional — does not block completion',
   conditional: 'Conditional',
@@ -56,7 +58,8 @@ export const exerciseText = {
   saved: 'Saved on this computer.',
   unsaved: 'Unsaved changes — save before leaving.',
   initial: 'No changes to save.',
-  completed: 'Exercise completed. Reopen explicitly to change your work.',
+  completed:
+    'Exercise completed. Reopen to edit evidence or assessment; removing required work reopens it automatically.',
   reopen: 'Reopen exercise',
   confirmReopen: 'Confirm reopen',
   cancel: 'Cancel',
