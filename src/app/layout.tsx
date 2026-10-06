@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { en } from '@/i18n/en';
+import { HistoryProtection } from '@/components/history-protection';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <HistoryProtection />
         <a className="skip-link" href="#main">
           {en.skip}
         </a>

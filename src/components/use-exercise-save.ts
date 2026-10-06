@@ -122,6 +122,7 @@ export function useExerciseSave(
         event.ctrlKey ||
         event.metaKey ||
         event.shiftKey ||
+        event.altKey ||
         event.button !== 0
       )
         return;
