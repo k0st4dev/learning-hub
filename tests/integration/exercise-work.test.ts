@@ -333,6 +333,68 @@ describe('owned full-course exercise transactions', () => {
     });
     expect(continuePath(state)).toContain('/d182/lessons/d182-learn#study');
   });
+  it('completes every real required unit through transactions, never rounds early to 100, and reopens all ancestors', () => {
+    save({ kind: 'orientation', acknowledged: true, deferred: true });
+    let state = snapshot(store, token)!;
+    for (const day of plan.source.days) {
+      state = save({
+        kind: 'lesson',
+        itemId: id(day.lesson_id),
+        completed: true,
+      });
+      expect(state.completed).toBe(day.number * 2 - 1);
+      expect(state.percent).toBe(Math.floor((state.completed * 100) / 364));
+      expect(state.percent).toBeLessThan(100);
+      state = save(payload(day.number));
+      expect(state.completed).toBe(day.number * 2);
+      expect(state.percent).toBe(Math.floor((state.completed * 100) / 364));
+      if (day.number < 182) expect(state.percent).toBeLessThan(100);
+    }
+    const model = progressPresentation(state);
+    expect(model.summary).toMatchObject({
+      completed: 364,
+      percent: 100,
+      completedDays: 182,
+      remainingLessons: 0,
+      remainingExercises: 0,
+    });
+    for (const key of ['f1', 'f2', 'f3', 'f4', 'f5', 'f6'])
+      expect(requiredProgress(model.scopes.get(id(key))!).percent).toBe(100);
+    expect(state.tasks).toHaveLength(548);
+    expect(continuePath(state)).toBe('/course/software-engineer/progress');
+    const reopen = payload(182, false);
+    reopen.submission.tasks = reopen.submission.tasks.slice(1);
+    reopen.submission.attested = false;
+    state = save({ ...reopen, anchor: plan.source.days[181]!.tasks[0]!.id });
+    const reopened = progressPresentation(state);
+    expect(reopened.summary).toMatchObject({
+      completed: 363,
+      percent: 99,
+      completedDays: 181,
+      completedAt: null,
+    });
+    expect(requiredProgress(reopened.scopes.get(id('f6'))!)).toMatchObject({
+      completed: 13,
+      total: 14,
+      percent: 92,
+      completedAt: null,
+    });
+    expect(requiredProgress(reopened.scopes.get(id('w26'))!)).toMatchObject({
+      completed: 13,
+      total: 14,
+      percent: 92,
+    });
+    expect(requiredProgress(reopened.scopes.get(id('d182'))!).percent).toBe(50);
+    expect(continuePath(state)).toContain('/d182-practice#d182-task-01');
+    expect(
+      readActivity(store, token, { limit: 20 }).events.map(
+        (event) => event.type,
+      ),
+    ).toContain('course_reopened');
+    expect(
+      state.exerciseProgress.find((p) => p.exerciseId === reopen.itemId),
+    ).toMatchObject({ completedAt: null, criterionAttestedAt: null });
+  }, 60000);
   it('records reference visits separately, starts deliberate study without credit, and survives restart', async () => {
     save({ kind: 'orientation', acknowledged: true, deferred: true });
     save({

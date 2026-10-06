@@ -2,6 +2,8 @@
 
 Status: agreed by the user on 2026-09-29. M0 foundation implemented and verified; see PROJECT_STATUS.md for ongoing work.
 
+Execution preference updated by the user on 2026-10-06: prioritize desktop use. Preserve the existing responsive UI and basic mobile regression, but do not repeat extended mobile/viewport sessions at each increment. Desktop, keyboard, data integrity and required learning behavior remain primary gates. Keep approval after each focused step.
+
 ## Review and authority
 
 Reviewed the complete product specification, reference SQL, README, verification report, structured curriculum, CSV inventories and curriculum audit. Independently compared the original DOCX XML with the archive: source fingerprint, all 2,365 body paragraphs, 197 tables and their coordinates, header/footer text, and all 19 hyperlink labels/targets match. All 2,327 substantive body paragraphs have mappings; the CSV contains 2,329 mappings including document furniture. Confirmed 6 phases, 26 weeks, 182 days, 548 tasks, 25 weekly checkpoints and one final exam. The structured daily fields separate the original study/completion labels from their unchanged text. The importer must preserve the labels as well.
