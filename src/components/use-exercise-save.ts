@@ -349,12 +349,16 @@ export function useExerciseSave(
         return;
       sections.cancel();
       const savedAnchor = actionAnchor.current ?? sections.current();
+      if (kind === 'exercise' && reopen && dirty)
+        setDraft((current) => ({ ...current, attested: false }));
       return send(
         {
           ...(kind === 'exercise'
             ? {
                 kind: 'exercise' as const,
-                submission: reopen ? confirmed.submission : draft,
+                submission: reopen
+                  ? { ...confirmed.submission, attested: false }
+                  : draft,
                 ...(savedAnchor && !reopen ? { anchor: savedAnchor } : {}),
               }
             : { kind: 'lesson' as const }),

@@ -503,9 +503,24 @@ describe('full-course exercise editing', () => {
     await screen.findByText('Saved on this computer.');
     expect(api.mock.calls[0]![2]).toMatchObject({
       completed: false,
-      submission: complete,
+      submission: { ...complete, attested: false },
     });
     expect(evidence().closest('fieldset')?.disabled).toBe(false);
+    expect(
+      (
+        screen.getByLabelText(
+          'My work satisfies the original completion criterion',
+        ) as HTMLInputElement
+      ).checked,
+    ).toBe(false);
+    expect(evidence().value).toBe(complete.evidence);
+    expect(button('Mark exercise complete').disabled).toBe(true);
+    fireEvent.click(
+      screen.getByLabelText(
+        'My work satisfies the original completion criterion',
+      ),
+    );
+    expect(button('Mark exercise complete').disabled).toBe(false);
   });
   it('preserves the draft after an uncertain save and retries the identical receipt', async () => {
     mount();
@@ -518,6 +533,32 @@ describe('full-course exercise editing', () => {
     fireEvent.click(button('Retry the same save'));
     await screen.findByText('Saved on this computer.');
     expect(api.mock.calls[1]![2]).toEqual(api.mock.calls[0]![2]);
+  });
+  it('keeps completion confirmed after an uncertain reopen and retries the cleared-attestation request exactly', async () => {
+    mount(complete, true);
+    api.mockRejectedValueOnce(new RequestError('Network unavailable', 0));
+    fireEvent.click(button('Reopen exercise'));
+    fireEvent.click(button('Confirm reopen'));
+    await screen.findByRole('alert');
+    expect(button('Reopen exercise')).toBeTruthy();
+    expect(evidence().matches(':disabled')).toBe(true);
+    expect(evidence().value).toBe(complete.evidence);
+    const sent = api.mock.calls[0]![2];
+    expect(sent).toMatchObject({
+      completed: false,
+      submission: { ...complete, attested: false },
+    });
+    fireEvent.click(button('Retry the same save'));
+    await screen.findByText('Saved on this computer.');
+    expect(api.mock.calls[1]![2]).toEqual(sent);
+    expect(button('Mark exercise complete').disabled).toBe(true);
+    expect(
+      (
+        screen.getByLabelText(
+          'My work satisfies the original completion criterion',
+        ) as HTMLInputElement
+      ).checked,
+    ).toBe(false);
   });
   it('keeps validation failures editable and focuses the error', async () => {
     mount();
@@ -569,7 +610,7 @@ describe('full-course exercise editing', () => {
     expect(button('Save draft').disabled).toBe(true);
   });
   it('keeps edits when a conflict requires explicitly reopening a completed exercise', async () => {
-    mount();
+    mount({ ...empty, attested: true });
     api.mockRejectedValueOnce(
       new RequestError('Conflict', 409, {}, state(complete, 8, true)),
     );
@@ -585,10 +626,17 @@ describe('full-course exercise editing', () => {
     );
     expect(api.mock.calls[1]![2]).toMatchObject({
       completed: false,
-      submission: complete,
+      submission: { ...complete, attested: false },
       expectedRevision: 8,
     });
     expect(evidence().value).toBe('Unsent edits');
+    expect(
+      (
+        screen.getByLabelText(
+          'My work satisfies the original completion criterion',
+        ) as HTMLInputElement
+      ).checked,
+    ).toBe(false);
     fireEvent.click(button('Save draft'));
     await screen.findByText('Saved on this computer.');
     expect(api.mock.calls[2]![2]).toMatchObject({

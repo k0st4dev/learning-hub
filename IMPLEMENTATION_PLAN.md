@@ -1,6 +1,6 @@
 # Programming learning platform — proposed implementation plan
 
-Status: agreed by the user on 2026-09-29. M0 foundation implemented and verified; see PROJECT_STATUS.md for ongoing work.
+Status: agreed by the user on 2026-09-29. M0-M5 implemented and verified in the available local development/service scope; M6 remains unstarted. See PROJECT_STATUS.md and docs/M5-VERIFICATION.md for evidence and pending final release gates.
 
 Execution preference updated by the user on 2026-10-06: prioritize desktop use. Preserve the existing responsive UI and basic mobile regression, but do not repeat extended mobile/viewport sessions at each increment. Desktop, keyboard, data integrity and required learning behavior remain primary gates. Keep approval after each focused step.
 

@@ -1,5 +1,7 @@
 # M5 task persistence and automatic reopening repair
 
+Subsequent final integration closeout is recorded in [M5-VERIFICATION.md](M5-VERIFICATION.md). This file preserves the task-repair evidence and then-pending next step.
+
 2026-10-06. Focused repair of the gap found in the first M5 integration audit, against specification sections 7 and 30. The final M5 integration closeout still requires the user's next approval; this is not final MVP acceptance.
 
 ## Behavior and implementation

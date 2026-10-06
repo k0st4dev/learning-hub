@@ -306,7 +306,12 @@ export function saveExerciseWork(
           .map(({ taskId, choice }) => ({ taskId, choice })),
         transferPath: submission.transferPath,
         transferReflection: submission.transferReflection,
-        attested: submission.attested,
+        // A completed exercise reopens without a carried-forward criterion claim,
+        // even when an older client sends its previously confirmed submission.
+        attested:
+          previous?.status === 'completed' && !completed
+            ? false
+            : submission.attested,
         scoreEvidence: submission.scoreEvidence,
         remediationNote: submission.remediationNote,
       },

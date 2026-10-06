@@ -33,6 +33,8 @@ The current full-course API already validates and atomically saves complete exer
 
 No production code was changed during this audit. The gap is recorded before implementing a separate focused repair, in keeping with the user's approval after each step. **Do not start M6 or label M5 complete until repaired and verified.**
 
-## Next task and evidence
+## Historical next task and evidence
+
+The final integration closeout is now recorded in [M5-VERIFICATION.md](M5-VERIFICATION.md); M5 is complete in the tested development/service scope. The following paragraph preserves the earlier task context.
 
 The separately approved repair is now implemented and verified in [M5-TASKS-VERIFICATION.md](M5-TASKS-VERIFICATION.md). The descriptions above record the gap at the original audit date. After the next approval, perform the final M5 integration closeout; do not start M6 yet. Reuse the passing desktop guard evidence rather than repeating long viewport sessions. Keep basic responsive regression; desktop and keyboard behavior are the primary demonstration. See M5-ACCEPTANCE-MATRIX.md for A01–A26 status. Production/axe, screen reader, real reboot, disconnected operation, target-OS installs, notes/search/scorecard/settings and operational tools remain explicitly pending.

@@ -953,6 +953,7 @@ describe('owned full-course exercise transactions', () => {
       status: 'started',
       completedAt: null,
       criterionAttestedAt: null,
+      submission: { attested: false },
     });
     expect(JSON.parse(work.rubricJson).futureRubric).toBe('retained');
     expect(
@@ -962,6 +963,41 @@ describe('owned full-course exercise transactions', () => {
         )
         .get(),
     ).toEqual({ n: 1 });
+  });
+  it('clears carried-forward attestation on explicit reopen and retains checks/evidence across restart and receipt replay', async () => {
+    const completed = payload(17);
+    const initial = save(completed);
+    const data = {
+      ...completed,
+      completed: false,
+      mutationId: randomUUID(),
+      expectedRevision: initial.revision,
+    };
+    // An old client sends its previously confirmed attestation; the service clears it.
+    const opened = mutateLearning(store, token, data);
+    const work = opened.exerciseProgress.find(
+      (row) => row.exerciseId === completed.itemId,
+    )!;
+    expect(work).toMatchObject({
+      completedAt: null,
+      criterionAttestedAt: null,
+      submission: { ...completed.submission, attested: false },
+    });
+    expect(opened.completed).toBe(0);
+    const baseline = counts();
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(snapshot(store, token)).toEqual(opened);
+    expect(mutateLearning(store, token, data)).toEqual(opened);
+    expect(counts()).toEqual(baseline);
+    const request = { ...completed, submission: work.submission! };
+    expect(() => save(request)).toThrow('criterion');
+    expect(snapshot(store, token)).toEqual(opened);
+    const restored = save({
+      ...request,
+      submission: { ...request.submission, attested: true },
+    });
+    expect(restored.completed).toBe(1);
   });
   it('rolls back task decisions, evidence, cursor, events and revision on a failed receipt write', () => {
     const before = snapshot(store, token);
