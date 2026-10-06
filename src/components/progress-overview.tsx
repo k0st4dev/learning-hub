@@ -18,9 +18,11 @@ const base = '/course/software-engineer';
 export function ProgressOverview({
   state,
   view,
+  activity,
 }: {
   state: ProgressViewState;
   view: 'dashboard' | 'course' | 'progress';
+  activity?: React.ReactNode;
 }) {
   const [filter, setFilter] = useState<keyof typeof t.filters>('incomplete');
   const model = progressPresentation(state);
@@ -182,6 +184,7 @@ export function ProgressOverview({
           )}
         </section>
       )}
+      {activity}
       {resume.reason === 'completed' && (
         <section className="notice stack">
           <h2>{t.completeHelp}</h2>

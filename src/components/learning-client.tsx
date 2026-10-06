@@ -26,10 +26,12 @@ export function LearningClient({
   initialState,
   view,
   itemKey,
+  activity,
 }: {
   initialState: LearningState | null;
   view: LearningView;
   itemKey?: string;
+  activity?: React.ReactNode;
 }) {
   const router = useRouter();
   const [state, setState] = useState(initialState);
@@ -198,6 +200,7 @@ export function LearningClient({
         <ProgressOverview
           state={state}
           view={view as 'dashboard' | 'course' | 'progress'}
+          activity={activity}
         />
         <aside className="preview-notice">
           <strong>{en.curriculum.preview}</strong>

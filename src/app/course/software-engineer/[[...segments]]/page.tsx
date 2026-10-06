@@ -19,15 +19,41 @@ import { studyContext } from '@/domain/study-context';
 import { exerciseSubmissionSchema } from '@/domain/exercise-requirements';
 import { ScopedProgress } from '@/components/scoped-progress';
 import { ProgressOverview } from '@/components/progress-overview';
+import { readActivity, type ActivityPage } from '@/server/learning/activity';
+import { ActivityHistory } from '@/components/activity-history';
+import type { ReactNode } from 'react';
 export default async function Course({
   params,
+  searchParams,
 }: {
   params: Promise<{ segments?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { segments = [] } = await params;
   const route = segments.join('/');
   const { student, token } = await pageStudent(`${coursePath}/${route}`);
   const state = snapshot(getStore(), token);
+  let activity: ReactNode = undefined;
+  if (state && route === 'progress') {
+    const before = (await searchParams).activity;
+    let page: ActivityPage | null = null;
+    try {
+      page = readActivity(getStore(), token, { limit: 20, before });
+    } catch (error) {
+      if (
+        !(error instanceof AppError) ||
+        error.code !== 'HISTORY_PAGE_UNAVAILABLE'
+      )
+        throw error;
+    }
+    activity = (
+      <ActivityHistory
+        state={state}
+        page={page}
+        olderPage={before !== undefined}
+      />
+    );
+  }
   const releaseId =
     state?.enrollment.releaseId ?? latestRelease(getStore())?.id;
   if (!releaseId)
@@ -136,6 +162,7 @@ export default async function Course({
               key={`${student.id}:${state?.revision}`}
               view="progress"
               initialState={state}
+              activity={activity}
             />
           </>
         ) : (
@@ -204,6 +231,7 @@ export default async function Course({
         view={view}
         itemKey={itemKey}
         initialState={state}
+        activity={activity}
       />
     </StudentShell>
   );

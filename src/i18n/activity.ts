@@ -1,0 +1,26 @@
+export const activityText = {
+  recent: 'Recent activity',
+  history: 'Activity history',
+  full: 'View full Progress history',
+  help: 'Confirmed state changes, newest first. Earlier completions remain in history after reopening.',
+  empty:
+    'No activity yet. Your confirmed completions and reopenings will appear here.',
+  emptyPage: 'No older activity on this page.',
+  newest: 'View newest activity',
+  older: 'Older activity',
+  unavailable: 'This history page is unavailable. View the newest activity.',
+  archived: 'Archived curriculum item',
+  course: 'Software Engineer Training Manual',
+  events: {
+    lesson_completed: 'Study lesson completed',
+    lesson_reopened: 'Study lesson reopened',
+    exercise_completed: 'Exercise completed',
+    exercise_reopened: 'Exercise reopened',
+    checkpoint_needs_review: 'Checkpoint needs review',
+    day_completed: 'Day completed',
+    day_reopened: 'Day reopened',
+    course_completed: 'Course completed',
+    course_reopened: 'Course reopened',
+    release_migrated: 'Curriculum release changed',
+  },
+};

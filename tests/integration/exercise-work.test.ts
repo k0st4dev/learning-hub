@@ -16,6 +16,7 @@ import {
   mutationSchema,
 } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
+import { readActivity } from '../../src/server/learning/activity';
 import { studyContext } from '../../src/domain/study-context';
 import { requiredProgress } from '../../src/domain/progress';
 import { progressPresentation } from '../../src/domain/progress-presentation';
@@ -494,6 +495,13 @@ describe('owned full-course exercise transactions', () => {
     const saved = save(data);
     expect(saved.completed).toBe(1);
     save(data);
+    const reviewHistory = readActivity(store, token, { limit: 20 });
+    expect(reviewHistory.events.map((event) => event.type)).toEqual([
+      'checkpoint_needs_review',
+      'lesson_completed',
+    ]);
+    expect(reviewHistory.events[0]!.itemStableKey).toBe('d007-practice');
+    expect(JSON.stringify(reviewHistory)).not.toContain('remediationNote');
     expect(
       store.native
         .prepare(
@@ -510,11 +518,27 @@ describe('owned full-course exercise transactions', () => {
     );
     expect(snapshot(store, token)!.exerciseProgress[0]!.status).toBe('started');
     expect(snapshot(store, token)!.completed).toBe(1);
+    expect(readActivity(store, token, { limit: 20 })).toEqual(reviewHistory);
     data.submission.result = 'passed';
     data.submission.scoreEvidence = '8/10, all three problems solved';
     expect(save({ ...data, completed: true }).completed).toBe(2);
     data.submission.result = 'needs_review';
     expect(save(data).completed).toBe(1);
+    const beforeReading = snapshot(store, token);
+    expect(
+      readActivity(store, token, { limit: 20 }).events.map(
+        (event) => event.type,
+      ),
+    ).toEqual([
+      'day_reopened',
+      'checkpoint_needs_review',
+      'exercise_reopened',
+      'day_completed',
+      'exercise_completed',
+      'checkpoint_needs_review',
+      'lesson_completed',
+    ]);
+    expect(snapshot(store, token)).toEqual(beforeReading);
     expect(
       store.native
         .prepare(

@@ -1,0 +1,145 @@
+{
+  "verifiedAt": "2026-10-06T06:26:54.572Z",
+  "environment": ".tmp/m2-preview",
+  "addedTransitions": 24,
+  "initialVisibleEvents": 20,
+  "dashboardEvents": 5,
+  "newestPageEvents": 20,
+  "olderPageEvents": 20,
+  "historyPages": 4,
+  "allHistoryEvents": 72,
+  "equalTimeOrderingAndPaging": "covered by integration tests",
+  "duplicateReceiptNoExtraHistory": "passed",
+  "cursorVisitNoExtraHistory": "passed",
+  "invalidRepeatedUnknownForeignCursor": "passed",
+  "originalTitleAndLocalizedTime": "passed",
+  "readOnlyState": "passed",
+  "separateStudentRecords": "passed",
+  "logoutFreshLogin": "passed",
+  "completed": 0,
+  "finalRevision": 75,
+  "newestEvents": [
+    {
+      "id": "55505c96-81c9-4f4f-ab40-32c2d66e4865",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.683Z"
+    },
+    {
+      "id": "b5385d4f-da22-4992-bc72-78eefb0fcd7b",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.590Z"
+    },
+    {
+      "id": "9d7b8788-a9af-484f-9b17-c40bcd6dc21a",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.519Z"
+    },
+    {
+      "id": "71b37378-f5e4-4403-b406-05683e728c12",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.449Z"
+    },
+    {
+      "id": "d1cc79b8-c14d-43a1-9738-bcf36178a380",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.376Z"
+    },
+    {
+      "id": "e04f483d-bbe8-4237-a95f-23f69485286a",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.306Z"
+    },
+    {
+      "id": "100eb4d8-d3b2-4713-aea9-c01c0ac3b364",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.236Z"
+    },
+    {
+      "id": "c0516e2d-6c22-4ae2-90c2-9da070ea0c6c",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.167Z"
+    },
+    {
+      "id": "4d0f8fb4-12b7-464a-9749-0c34e51be4fb",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.097Z"
+    },
+    {
+      "id": "c964eb8e-d6c8-42d2-8253-5e38553fefb8",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:51.016Z"
+    },
+    {
+      "id": "76989009-d972-4f70-9bd6-6e9d8a436c43",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.944Z"
+    },
+    {
+      "id": "5c45c618-3fa4-42c1-95ea-9e8de510a330",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.875Z"
+    },
+    {
+      "id": "30d4a70a-02a2-424b-8135-516db297c76d",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.808Z"
+    },
+    {
+      "id": "a207233f-836b-4d1f-9fca-a3196c9f563a",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.740Z"
+    },
+    {
+      "id": "a57a99e3-7b4d-4676-bbea-d3ae6a6b1889",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.672Z"
+    },
+    {
+      "id": "abd1d965-6996-49fb-ab06-637522df6378",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.603Z"
+    },
+    {
+      "id": "133cc219-a9a3-4074-bda4-b8321e5e5776",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.532Z"
+    },
+    {
+      "id": "885781f8-1e26-408d-8829-39bdf9debb41",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.451Z"
+    },
+    {
+      "id": "e49c1c8d-68ec-4354-9221-e9f2ffb49490",
+      "type": "lesson_reopened",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.381Z"
+    },
+    {
+      "id": "c863eba3-5f52-477c-9620-7bc2c9dba5ca",
+      "type": "lesson_completed",
+      "title": "Day 1 — Okruženje + baseline bez pomoći",
+      "time": "2026-10-06T06:26:50.312Z"
+    }
+  ],
+  "serverRestartAndFreshLogin": "passed",
+  "restartVerifiedAt": "2026-10-06T06:27:58.151Z"
+}

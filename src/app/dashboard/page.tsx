@@ -4,6 +4,8 @@ import { snapshot, latestRelease } from '@/server/learning/read';
 import { LearningClient } from '@/components/learning-client';
 import { StudentShell } from '@/components/student-shell';
 import { en } from '@/i18n/en';
+import { readActivity } from '@/server/learning/activity';
+import { ActivityHistory } from '@/components/activity-history';
 export default async function Dashboard() {
   const { student, token } = await pageStudent('/dashboard');
   const state = snapshot(getStore(), token);
@@ -22,6 +24,15 @@ export default async function Dashboard() {
         key={`${student.id}:${state?.revision}`}
         view="dashboard"
         initialState={state}
+        activity={
+          state ? (
+            <ActivityHistory
+              state={state}
+              page={readActivity(getStore(), token, { limit: 5 })}
+              recent
+            />
+          ) : undefined
+        }
       />
     </StudentShell>
   );
