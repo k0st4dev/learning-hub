@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-06T11:55:31.341Z",
+  "savedAt": "2026-10-06T11:54:56.182Z",
+  "server": "development",
+  "scope": "M6 step 1 owned notes API; verify run after externally stopping/restarting the development server",
+  "exactUnicodeText": true,
+  "full20000CharacterNote": true,
+  "updateAndClear": true,
+  "independentNoteRevision": true,
+  "exactRetryIncludingOlderReceipt": true,
+  "staleSave409WithOwnedCurrentState": true,
+  "reusedKey409": true,
+  "oversizedAndRouteMismatch400": true,
+  "inaccessibleItem404": true,
+  "loggedOut401": true,
+  "accountSwitch403": true,
+  "twoUsersIsolated": true,
+  "learningAndActivityUnchanged": true,
+  "freshLoginAfterServerRestart": true,
+  "committedNotesAndReceiptsPreserved": true,
+  "noStoreResponses": true,
+  "notesUI": "not implemented in this step"
+}

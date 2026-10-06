@@ -59,7 +59,10 @@ export function guardRequest(request: NextRequest, write = true) {
       'Refresh this page and try again.',
     );
 }
-export async function readJson(request: Request): Promise<unknown> {
+export async function readJson(
+  request: Request,
+  byteLimit = 32768,
+): Promise<unknown> {
   if (!request.headers.get('content-type')?.startsWith('application/json'))
     throw new AppError(400, 'INVALID_BODY', 'Send a JSON request.');
   const reader = request.body?.getReader();
@@ -70,7 +73,7 @@ export async function readJson(request: Request): Promise<unknown> {
     const { done, value } = await reader.read();
     if (done) break;
     size += value.byteLength;
-    if (size > 32768) {
+    if (size > byteLimit) {
       await reader.cancel();
       throw new AppError(400, 'BODY_TOO_LARGE', 'This request is too large.');
     }
