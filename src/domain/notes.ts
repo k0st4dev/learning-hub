@@ -10,10 +10,11 @@ export const noteSubmissionSchema = z.strictObject({
   body: z.string().max(noteCharacterLimit),
 });
 export type NoteSubmission = z.infer<typeof noteSubmissionSchema>;
-export type NoteState = {
-  itemId: string;
-  body: string;
-  revision: number;
-  createdAt: number | null;
-  updatedAt: number | null;
-};
+export const noteStateSchema = z.strictObject({
+  itemId: noteItemIdSchema,
+  body: z.string().max(noteCharacterLimit),
+  revision: z.number().int().nonnegative(),
+  createdAt: z.number().int().nonnegative().nullable(),
+  updatedAt: z.number().int().nonnegative().nullable(),
+});
+export type NoteState = z.infer<typeof noteStateSchema>;

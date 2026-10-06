@@ -67,8 +67,19 @@ export function readNote(
   store: Store,
   token: string | undefined,
   input: unknown,
+  expectedStudentId?: unknown,
 ): NoteState {
-  requireStudent(store, token);
+  const student = requireStudent(store, token);
+  if (
+    expectedStudentId !== undefined &&
+    noteSubmissionSchema.shape.expectedStudentId.parse(expectedStudentId) !==
+      student.id
+  )
+    throw new AppError(
+      403,
+      'ACCOUNT_CHANGED',
+      'The signed-in account changed. Return to the original account before reading this draft’s saved note.',
+    );
   const itemId = noteItemIdSchema.parse(input);
   return store.native
     .transaction(() => {

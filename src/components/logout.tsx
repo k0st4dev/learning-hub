@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { writeApi } from '@/lib/client-api';
 import { en } from '@/i18n/en';
+import { allowLearningLeave } from '@/lib/learning-leave';
 export function Logout() {
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -13,15 +14,10 @@ export function Logout() {
         className="button"
         disabled={pending}
         onClick={async () => {
-          if (
-            !document.dispatchEvent(
-              new Event('learning:before-leave', { cancelable: true }),
-            )
-          )
-            return;
           setPending(true);
           setError(false);
           try {
+            if (!(await allowLearningLeave())) return;
             await writeApi('/api/auth/logout', 'POST');
             router.push('/login');
             router.refresh();

@@ -23,12 +23,14 @@ assert.ok(
         '--m5-step1',
         '--m5-step2',
         '--m5-step3',
+        '--m6-step2',
       ].includes(process.argv[2])),
 );
 const checkNavigation = !!process.argv[2];
 const fullM3 = process.argv[2] === '--m3-final';
 const assessmentUI = process.argv[2] === '--m4-step4';
-const anchorUI = process.argv[2] === '--m5-step3';
+const notesUI = process.argv[2] === '--m6-step2';
+const anchorUI = process.argv[2] === '--m5-step3' || notesUI;
 const progressUI = process.argv[2] === '--m5-step2' || anchorUI;
 const studyUI = process.argv[2] === '--m5-step1' || progressUI;
 const exerciseUI = process.argv[2] === '--m4-step3' || assessmentUI || studyUI;
@@ -100,6 +102,7 @@ let checkedOutlinePages = 0;
 let checkedDailyPages = 0;
 let checkedAssessments = 0;
 let checkedStudyViews = 0;
+let checkedNoteViews = 0;
 const unitRoutes = plan.source.days.flatMap((day) => [
   `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
   `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
@@ -152,6 +155,28 @@ for (const [index, route] of routes.entries()) {
   }
   // Next streams suspended page content in a sibling container before placing it in main.
   assert.equal(document.querySelectorAll('h1').length, 1, route);
+  if (notesUI && /\/days\/d\d{3}(\/|$)/.test(route)) {
+    assert.equal(document.querySelectorAll('#notes').length, 1, route);
+    assert.equal(document.querySelectorAll('#note-body').length, 1, route);
+    assert.equal(
+      document.getElementById('note-body').getAttribute('maxlength'),
+      '20000',
+    );
+    assert.equal(
+      document.querySelector('label[for="note-body"]').textContent,
+      'My note',
+    );
+    assert.equal(
+      document.getElementById('note-status').getAttribute('role'),
+      'status',
+    );
+    assert.equal(
+      document.querySelectorAll('button dialog').length,
+      0,
+      'No invalid nested dialog',
+    );
+    checkedNoteViews++;
+  }
   if (anchorUI && /\/(lessons|exercises)\//.test(route)) {
     const original = plan.source.days.find((day) =>
       route.includes(`/days/${day.id}/`),
@@ -509,55 +534,60 @@ const report = {
   ...(checkNavigation ? { checkedNavigationPages } : {}),
   ...(assessmentUI ? { checkedAssessments } : {}),
   ...(studyUI ? { checkedStudyViews } : {}),
+  ...(notesUI ? { checkedNoteViews } : {}),
   ...(checkOutline ? { checkedOutlinePages } : {}),
   ...(checkMobile ? { checkedMobileShells: routes.length } : {}),
   ...(checkDaily
     ? {
         checkedDailyPages,
-        scope: anchorUI
-          ? 'Focused M5 section targets/source/navigation regression; all 364 unit targets and full source coverage in integration suite'
-          : progressUI
-            ? 'Focused M5 rollup presentation/source/navigation regression; full source coverage in integration suite'
-            : studyUI
-              ? 'Focused M5 study/reference UI source/navigation regression; full source coverage in integration suite'
-              : exerciseUI
-                ? 'Focused M4 exercise UI source/navigation regression; full source coverage in integration suite'
-                : fullM3
-                  ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
-                  : checkMobile
-                    ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
-                    : checkStates
-                      ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
-                      : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
+        scope: notesUI
+          ? 'Focused M6 private note views/source/navigation/read-only regression; full source coverage in integration suite'
+          : anchorUI
+            ? 'Focused M5 section targets/source/navigation regression; all 364 unit targets and full source coverage in integration suite'
+            : progressUI
+              ? 'Focused M5 rollup presentation/source/navigation regression; full source coverage in integration suite'
+              : studyUI
+                ? 'Focused M5 study/reference UI source/navigation regression; full source coverage in integration suite'
+                : exerciseUI
+                  ? 'Focused M4 exercise UI source/navigation regression; full source coverage in integration suite'
+                  : fullM3
+                    ? 'Complete M3 integration gate: all published routes, mappings, links, daily views, outlines, navigation shells and strict missing-route status'
+                    : checkMobile
+                      ? 'Focused M3 step 5 navigation-shell and strict route-state regression; full source coverage in integration suite'
+                      : checkStates
+                        ? 'Focused M3 step 4 HTTP regression with strict missing-route status checks'
+                        : 'Focused M3 step 3 HTTP regression; full source coverage in integration suite',
       }
     : {}),
 };
 await writeFile(
   path.join(
     root,
-    anchorUI
-      ? 'docs/m5-step3-served-audit.json'
-      : progressUI
-        ? 'docs/m5-step2-served-audit.json'
-        : studyUI
-          ? 'docs/m5-step1-served-audit.json'
-          : assessmentUI
-            ? 'docs/m4-step4-served-audit.json'
-            : exerciseUI
-              ? 'docs/m4-step3-served-audit.json'
-              : fullM3
-                ? 'docs/m3-final-served-audit.json'
-                : checkMobile
-                  ? 'docs/m3-step5-served-audit.json'
-                  : checkStates
-                    ? 'docs/m3-step4-served-audit.json'
-                    : checkDaily
-                      ? 'docs/m3-step3-served-audit.json'
-                      : checkOutline
-                        ? 'docs/m3-step2-served-audit.json'
-                        : checkNavigation
-                          ? 'docs/m3-step1-served-audit.json'
-                          : 'docs/m2-served-audit.json',
+    notesUI
+      ? 'docs/m6-step2-served-audit.json'
+      : anchorUI
+        ? 'docs/m5-step3-served-audit.json'
+        : progressUI
+          ? 'docs/m5-step2-served-audit.json'
+          : studyUI
+            ? 'docs/m5-step1-served-audit.json'
+            : assessmentUI
+              ? 'docs/m4-step4-served-audit.json'
+              : exerciseUI
+                ? 'docs/m4-step3-served-audit.json'
+                : fullM3
+                  ? 'docs/m3-final-served-audit.json'
+                  : checkMobile
+                    ? 'docs/m3-step5-served-audit.json'
+                    : checkStates
+                      ? 'docs/m3-step4-served-audit.json'
+                      : checkDaily
+                        ? 'docs/m3-step3-served-audit.json'
+                        : checkOutline
+                          ? 'docs/m3-step2-served-audit.json'
+                          : checkNavigation
+                            ? 'docs/m3-step1-served-audit.json'
+                            : 'docs/m2-served-audit.json',
   ),
   JSON.stringify(report, null, 2) + '\n',
 );

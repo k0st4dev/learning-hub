@@ -284,6 +284,15 @@ select {
 textarea {
   min-height: 120px;
 }
+.note-leave-dialog {
+  margin: auto;
+  width: min(36rem, calc(100% - 2rem));
+  color: var(--text);
+  background: var(--surface);
+}
+.note-leave-dialog::backdrop {
+  background: rgb(0 0 0 / 55%);
+}
 .check-row {
   display: flex;
   gap: 12px;

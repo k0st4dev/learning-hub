@@ -14,6 +14,7 @@ import {
   type StudyContext,
 } from '@/domain/study-context';
 import { useSectionResume } from './use-section-resume';
+import { allowLearningLeave } from '@/lib/learning-leave';
 
 export type ConfirmedExercise = {
   revision: number;
@@ -124,37 +125,10 @@ export function useExerciseSave(
     const leave = (event: Event) => {
       if (!window.confirm(t.leave)) event.preventDefault();
     };
-    const click = (event: MouseEvent) => {
-      const anchor =
-        event.target instanceof Element ? event.target.closest('a') : null;
-      if (
-        !anchor ||
-        anchor.target === '_blank' ||
-        anchor.hasAttribute('download') ||
-        event.ctrlKey ||
-        event.metaKey ||
-        event.shiftKey ||
-        event.altKey ||
-        event.button !== 0
-      )
-        return;
-      const next = new URL(anchor.href, window.location.href);
-      if (
-        next.pathname === location.pathname &&
-        next.search === location.search
-      )
-        return;
-      if (!window.confirm(t.leave)) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
     window.addEventListener('beforeunload', unload);
-    document.addEventListener('click', click, true);
     document.addEventListener('learning:before-leave', leave);
     return () => {
       window.removeEventListener('beforeunload', unload);
-      document.removeEventListener('click', click, true);
       document.removeEventListener('learning:before-leave', leave);
     };
   }, [dirty, pending, error, retry]);
@@ -371,7 +345,7 @@ export function useExerciseSave(
         reopen && dirty,
       );
     },
-    saveCursor: (mode: 'open' | 'study') => {
+    saveCursor: async (mode: 'open' | 'study') => {
       if (busy.current || locked || taskWrite) return;
       sections.cancel();
       const context = confirmed.context;
@@ -380,8 +354,7 @@ export function useExerciseSave(
       if (
         mode === 'study' &&
         target !== itemId &&
-        dirty &&
-        !window.confirm(t.leave)
+        !(await allowLearningLeave())
       )
         return;
       return send(

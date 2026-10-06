@@ -410,6 +410,21 @@ describe('note HTTP boundary with real authentication/database/services', () => 
       body: '',
       revision: 0,
     });
+    const guardedRequest = request('GET', undefined, {}, secondToken);
+    const guardedRead = await GET(
+      new NextRequest(
+        guardedRequest.url +
+          '?expectedStudentId=' +
+          encodeURIComponent(studentId),
+        { headers: guardedRequest.headers },
+      ),
+      context(),
+    );
+    expect(guardedRead.status).toBe(403);
+    expect(await guardedRead.text()).not.toContain(first.body);
+    expect(() => readNote(store, secondToken, day, studentId)).toThrow(
+      expect.objectContaining({ code: 'ACCOUNT_CHANGED' }),
+    );
     const missingContext = {
       params: Promise.resolve({ itemId: 'se-26w-v1:missing' }),
     };

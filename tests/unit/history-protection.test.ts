@@ -15,6 +15,7 @@ let request: Mock<() => boolean>;
 let router: Mock<(event: PopStateEvent) => void>;
 let go: ReturnType<typeof vi.spyOn>;
 let leave: (event: Event) => void;
+let deferredLeave: ((event: Event) => void) | undefined;
 const originalReplace = history.replaceState.bind(history);
 function arrive(url: string, state: unknown) {
   originalReplace(state, '', url);
@@ -29,6 +30,7 @@ function entries() {
   return { first, exercise, progress };
 }
 beforeEach(() => {
+  deferredLeave = undefined;
   originalReplace({ __NA: true, tree: 'dashboard' }, '', '/dashboard');
   request = vi.fn(() => false);
   leave = (event) => {
@@ -42,12 +44,97 @@ beforeEach(() => {
   go = vi.spyOn(history, 'go').mockImplementation(() => {});
 });
 afterEach(() => {
+  if (deferredLeave)
+    document.removeEventListener('learning:before-leave', deferredLeave);
   dispose();
   document.removeEventListener('learning:before-leave', leave);
   window.removeEventListener('popstate', router);
   vi.restoreAllMocks();
 });
 describe('document-lifetime history protection', () => {
+  it('restores Back while awaiting a note flush, then replays only the approved traversal without asking twice', async () => {
+    request.mockReturnValue(true);
+    let complete!: (allowed: boolean) => void;
+    deferredLeave = (event) => {
+      (event as CustomEvent).detail.defer(
+        () =>
+          new Promise<boolean>((resolve) => {
+            complete = resolve;
+          }),
+      );
+    };
+    document.addEventListener('learning:before-leave', deferredLeave);
+    const { exercise, progress } = entries();
+    arrive('/exercise', exercise);
+    expect(router).not.toHaveBeenCalled();
+    expect(go).toHaveBeenLastCalledWith(1);
+    complete(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(go).toHaveBeenCalledTimes(1);
+    arrive('/progress', progress);
+    expect(go).toHaveBeenLastCalledWith(-1);
+    arrive('/exercise', exercise);
+    expect(router).toHaveBeenCalledOnce();
+    expect(request).toHaveBeenCalledOnce();
+  });
+  it('keeps the editor mounted and Forward intact when an asynchronous note flush is canceled', async () => {
+    request.mockReturnValue(true);
+    let complete!: (allowed: boolean) => void;
+    deferredLeave = (event) => {
+      (event as CustomEvent).detail.defer(
+        () =>
+          new Promise<boolean>((resolve) => {
+            complete = resolve;
+          }),
+      );
+    };
+    document.addEventListener('learning:before-leave', deferredLeave);
+    const { exercise, progress } = entries();
+    arrive('/exercise', exercise);
+    arrive('/progress', progress);
+    complete(false);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(router).not.toHaveBeenCalled();
+    expect(go).toHaveBeenCalledTimes(1);
+    document.removeEventListener('learning:before-leave', deferredLeave);
+    arrive('/exercise', exercise);
+    expect(router).toHaveBeenCalledOnce();
+  });
+  it('uses one leave event for links, waits for successful notes and ignores same-page/new-tab links', async () => {
+    dispose();
+    const navigate = vi.fn();
+    dispose = installHistoryProtection(navigate);
+    request.mockReturnValue(true);
+    let complete!: (allowed: boolean) => void;
+    deferredLeave = (event) => {
+      (event as CustomEvent).detail.defer(
+        () =>
+          new Promise<boolean>((resolve) => {
+            complete = resolve;
+          }),
+      );
+    };
+    document.addEventListener('learning:before-leave', deferredLeave);
+    const anchor = document.createElement('a');
+    anchor.href = '/exercise';
+    document.body.append(anchor);
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true });
+    anchor.dispatchEvent(click);
+    expect(click.defaultPrevented).toBe(true);
+    expect(navigate).not.toHaveBeenCalled();
+    complete(true);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(navigate).toHaveBeenCalledWith(anchor.href);
+    expect(request).toHaveBeenCalledOnce();
+    anchor.target = '_blank';
+    anchor.addEventListener('click', (event) => event.preventDefault());
+    anchor.click();
+    anchor.target = '';
+    anchor.href = location.pathname + '#notes';
+    anchor.click();
+    expect(request).toHaveBeenCalledOnce();
+    anchor.remove();
+  });
   it('keeps router state and history length; adds no sentinel or draft storage', () => {
     const length = history.length;
     expect(history.state).toMatchObject({ __NA: true, tree: 'dashboard' });

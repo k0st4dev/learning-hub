@@ -131,6 +131,7 @@ export function CurriculumPreview({
   page,
   exerciseEditor,
   studyEditor,
+  noteEditor,
   progressView,
   exerciseWorkAvailable = false,
 }: {
@@ -138,6 +139,7 @@ export function CurriculumPreview({
   page: CatalogPage;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
+  noteEditor?: React.ReactNode;
   progressView?: React.ReactNode;
   exerciseWorkAvailable?: boolean;
 }) {
@@ -217,6 +219,7 @@ export function CurriculumPreview({
               {page.item.kind === 'exercise' && exerciseWorkAvailable && (
                 <Link href="#evidence">Evidence</Link>
               )}
+              {noteEditor && <Link href="#notes">Private notes</Link>}
             </nav>
           )}
           {page.item.kind !== 'day' &&
@@ -323,6 +326,7 @@ export function CurriculumPreview({
               </section>
             ))}
           {rule && <p>{rule.requirementMode}</p>}
+          {noteEditor}
           {page.item.kind !== 'day' && (
             <ResourceCards catalog={catalog} uses={page.uses} />
           )}

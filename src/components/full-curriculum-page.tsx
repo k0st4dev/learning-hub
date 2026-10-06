@@ -10,6 +10,7 @@ export function FullCurriculumPage({
   route,
   exerciseEditor,
   studyEditor,
+  noteEditor,
   progressView,
   exerciseWorkAvailable = false,
 }: {
@@ -17,6 +18,7 @@ export function FullCurriculumPage({
   route: string;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
+  noteEditor?: React.ReactNode;
   progressView?: React.ReactNode;
   exerciseWorkAvailable?: boolean;
 }) {
@@ -77,6 +79,7 @@ export function FullCurriculumPage({
         page={page}
         exerciseEditor={exerciseEditor}
         studyEditor={studyEditor}
+        noteEditor={noteEditor}
         progressView={progressView}
         exerciseWorkAvailable={exerciseWorkAvailable}
       />

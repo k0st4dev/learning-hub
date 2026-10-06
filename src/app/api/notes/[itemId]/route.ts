@@ -18,6 +18,7 @@ export async function GET(request: NextRequest, { params }: Context) {
       getStore(),
       request.cookies.get(sessionCookieName)?.value,
       itemId,
+      request.nextUrl.searchParams.get('expectedStudentId') ?? undefined,
     );
     return NextResponse.json({ data, revision: data.revision });
   });

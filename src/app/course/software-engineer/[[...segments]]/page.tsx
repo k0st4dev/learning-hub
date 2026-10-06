@@ -22,6 +22,8 @@ import { ProgressOverview } from '@/components/progress-overview';
 import { readActivity, type ActivityPage } from '@/server/learning/activity';
 import { ActivityHistory } from '@/components/activity-history';
 import type { ReactNode } from 'react';
+import { NoteEditor } from '@/components/note-editor';
+import { readNote } from '@/server/learning/notes';
 export default async function Course({
   params,
   searchParams,
@@ -172,6 +174,23 @@ export default async function Course({
             exerciseEditor={exerciseEditor}
             exerciseWorkAvailable={!!state && !!exercise}
             studyEditor={studyEditor}
+            noteEditor={
+              state &&
+              currentItem &&
+              ['day', 'lesson', 'exercise'].includes(currentItem.kind) ? (
+                <NoteEditor
+                  key={'note:' + student.id + ':' + currentItem.id}
+                  studentId={student.id}
+                  kind={currentItem.kind as 'day' | 'lesson' | 'exercise'}
+                  initial={readNote(
+                    getStore(),
+                    token,
+                    currentItem.id,
+                    student.id,
+                  )}
+                />
+              ) : undefined
+            }
             progressView={
               state &&
               (route === '' ? (
