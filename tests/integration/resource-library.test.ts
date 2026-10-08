@@ -12,11 +12,25 @@ import {
   readResourceLibrary,
   type ResourceLibrary,
 } from '../../src/server/content/resource-library';
-import { resourceQuerySchema } from '../../src/domain/resource-library';
+import {
+  resourceQuerySchema,
+  resourceProviderKey,
+} from '../../src/domain/resource-library';
 import { register, login, requireStudent } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { saveNote } from '../../src/server/learning/notes';
 import { AppError } from '../../src/server/errors';
+import frozen from '../../content/interpretations/se-26w-v1-resource-labels-v1.json';
+import { readCatalog, type Catalog } from '../../src/server/content/read';
+import {
+  resourceLabelPresentation,
+  validateResourceLabels,
+  resourceLabelSha256,
+} from '../../src/server/content/resource-labels';
+import {
+  labelDigest,
+  resourceLabelSchema,
+} from '../../src/server/content/resource-label-contract';
 
 const root = process.cwd();
 let directory: string;
@@ -51,6 +65,9 @@ function fingerprint() {
     'content_item',
     'resource',
     'resource_use',
+    'source_block',
+    'source_mapping',
+    'exercise_task',
   ];
   return createHash('sha256')
     .update(
@@ -259,6 +276,7 @@ describe('owned resource library read model', () => {
     expect(all.filter((r) => r.linkOrigin === 'unresolved')).toHaveLength(57);
     for (const original of plan.resources) {
       const record = all.find((r) => r.id === original.id)!;
+      expect(record).toMatchObject(original);
       expect(record.title).toBe(original.title);
       expect(record.originalUrl).toBe(original.originalUrl);
       expect(record.sourceName).toBe(original.sourceName);
@@ -271,6 +289,7 @@ describe('owned resource library read model', () => {
     expect(uses.filter((u) => u.id.includes(':hyperlink:'))).toHaveLength(19);
     for (const use of plan.uses) {
       const record = uses.find((u) => u.id === use.id)!;
+      expect(record).toMatchObject(use);
       expect(record.assignedText).toBe(use.assignedText);
       expect(record.sectionLocator).toBe(use.sectionLocator);
       expect(record.requirementMode).toBe(use.requirementMode);
@@ -437,10 +456,405 @@ describe('owned resource library read model', () => {
       { week: ['unknown'] },
       { day: ['d001'], week: ['w26'] },
       { type: ['video'] },
-      { requirement: ['required'] },
     ])
       expect(readResourceLibrary(store, token, input).total).toBe(0);
     expect(resourceQuerySchema.parse({ q: '' }).q).toBe('');
+  });
+  it('applies the complete approved inventory with separate raw fields and exact Word evidence', () => {
+    const before = fingerprint();
+    const { first, all } = pages();
+    const count = (values: string[]) =>
+      Object.fromEntries(
+        [...new Set(values)]
+          .sort()
+          .map((value) => [value, values.filter((v) => v === value).length]),
+      );
+    expect(count(all.map((row) => row.effective.type))).toEqual({
+      article: 1,
+      course: 4,
+      documentation: 6,
+      guide: 52,
+      practice: 2,
+      reference: 4,
+    });
+    expect(
+      count(
+        all.flatMap((row) =>
+          row.uses.map((use) => use.effective.requirementMode),
+        ),
+      ),
+    ).toEqual({ conditional: 4, optional: 4, reference: 131, required: 151 });
+    expect(first.metadataInterpretation).toEqual({
+      origin: 'added-product-interpretation',
+      version: 'se-26w-v1-resource-labels-v1',
+      sha256: resourceLabelSha256,
+    });
+    expect(first.effectiveMetadataCoverage).toEqual({
+      typesObserved: [
+        'article',
+        'course',
+        'documentation',
+        'guide',
+        'practice',
+        'reference',
+      ],
+      requirementsObserved: [
+        'conditional',
+        'optional',
+        'reference',
+        'required',
+      ],
+    });
+    for (const interpretation of all.flatMap((row) => [
+      row.interpretation,
+      ...row.uses.map((use) => use.interpretation),
+    ])) {
+      expect(interpretation.origin).toBe('added-product-interpretation');
+      expect(interpretation.evidence.length).toBeGreaterThan(0);
+      for (const evidence of interpretation.evidence) {
+        const original = plan.blocks.find(
+          (block) => block.sourceLocator === evidence.sourceId,
+        )!;
+        expect(evidence.exactText).toBe(original.exactText);
+        expect(evidence.sha256).toBe(original.textSha256);
+        expect(evidence.table).toBe(original.tableNumber);
+        expect(evidence.row).toBe(original.rowNumber);
+        expect(evidence.cell).toBe(original.cellNumber);
+      }
+    }
+    expect(
+      all.every(
+        (row) =>
+          row.type === 'reference' &&
+          row.uses.every((use) => use.requirementMode === 'reference'),
+      ),
+    ).toBe(true);
+    expect(all.filter((row) => row.interpretation.ambiguity)).toHaveLength(6);
+    expect(
+      all
+        .flatMap((row) => row.uses)
+        .filter(
+          (use) =>
+            use.interpretation.ambiguity || use.interpretation.caveats.length,
+        ),
+    ).toHaveLength(63);
+    expect(
+      all
+        .flatMap((row) => row.uses)
+        .filter((use) => use.id.includes(':hyperlink:'))
+        .every((use) => use.effective.requirementMode === 'reference'),
+    ).toBe(true);
+    expect(fingerprint()).toBe(before);
+  });
+  it('filters reviewed type/provider labels, groups shared providers and retains unknown choices', () => {
+    const keys = (input: unknown) =>
+      readResourceLibrary(store, token, input)
+        .results.map((row) => row.stableKey)
+        .sort();
+    expect(
+      keys({ source: [resourceProviderKey('MDN')], type: ['documentation'] }),
+    ).toEqual(['res-07']);
+    expect(
+      keys({
+        source: [resourceProviderKey('The Odin Project')],
+        type: ['course'],
+      }),
+    ).toEqual(['res-01', 'res-02']);
+    expect(keys({ type: ['article'] })).toEqual(['res-08']);
+    expect(
+      keys({
+        source: [resourceProviderKey(null)],
+        day: ['d125'],
+        requirement: ['required'],
+      }),
+    ).toEqual(['unresolved-p1604']);
+    expect(
+      keys({
+        source: [resourceProviderKey(null)],
+        day: ['d132'],
+        requirement: ['required'],
+      }),
+    ).toEqual(['unresolved-p1679']);
+    const unknown = readResourceLibrary(store, token, { day: ['d132'] })
+      .results[0]!;
+    expect(unknown.effective.provider).toBeNull();
+    expect(unknown.originalUrl).toBeNull();
+    expect(unknown.sourceName).toBe(
+      'Original instruction without supplied URL',
+    );
+    expect(unknown.interpretation.ambiguity).toBe(true);
+    expect(unknown.uses[0]!.interpretation.caveats.length).toBeGreaterThan(0);
+    expect(pages().first.options.source).toContainEqual({
+      value: resourceProviderKey(null),
+      label: 'Provider not specified in manual',
+    });
+    expect(resourceProviderKey(null)).not.toBe(
+      resourceProviderKey('unspecified'),
+    );
+    // An unsupported published release has an explicit raw fallback, never the official labels.
+    const fallback = readResourceLibrary(store, fixtureToken, {});
+    expect(fallback.metadataInterpretation).toEqual({
+      origin: 'imported-metadata',
+      version: null,
+      sha256: null,
+    });
+    expect(
+      fallback.results.find((row) => row.stableKey === 'r1')!.effective,
+    ).toEqual({
+      type: 'documentation',
+      provider: 'Provider A',
+      sourceFilterKey: 'Provider A',
+    });
+    expect(
+      fallback.results.every((row) => row.interpretation.evidence.length === 0),
+    ).toBe(true);
+  });
+  it('keeps alternatives conditional and source-only restrictions outside required-resource filters', () => {
+    const keys = (day: string, requirement: string) =>
+      readResourceLibrary(store, token, {
+        day: [day],
+        requirement: [requirement],
+      })
+        .results.map((row) => row.stableKey)
+        .sort();
+    for (const [day, key, choice] of [
+      ['d025', 'res-02', 'choice:p0530'],
+      ['d083', 'res-06', 'choice:p1152'],
+    ]) {
+      expect(keys(day!, 'conditional')).toEqual([key]);
+      expect(keys(day!, 'required')).toEqual([]);
+      const result = readResourceLibrary(store, token, {
+        day: [day!],
+        requirement: ['conditional'],
+      }).results[0]!;
+      expect(
+        result.uses.find((use) => use.day === day)!.interpretation.choiceGroup,
+      ).toBe(choice);
+    }
+    expect(keys('d146', 'conditional')).toEqual(['res-05', 'res-09']);
+    expect(keys('d146', 'required')).toEqual([]);
+    expect(keys('d182', 'reference')).toEqual(['unresolved-p2218']);
+    expect(keys('d182', 'required')).toEqual([]);
+    expect(
+      readResourceLibrary(store, token, { day: ['d182'] }).results[0]!.uses[0]!
+        .assignedText,
+    ).toContain('120');
+  });
+  it('scopes optional and as-needed clauses to the same provider/use without altering parents', () => {
+    const keys = (input: unknown) =>
+      readResourceLibrary(store, token, input)
+        .results.map((row) => row.stableKey)
+        .sort();
+    expect(keys({ day: ['d113'], requirement: ['optional'] })).toEqual([
+      'res-02',
+    ]);
+    expect(keys({ day: ['d113'], requirement: ['required'] })).toEqual([
+      'res-03',
+    ]);
+    expect(
+      keys({
+        source: [resourceProviderKey('The Odin Project')],
+        day: ['d113'],
+        requirement: ['required'],
+      }),
+    ).toEqual([]);
+    expect(keys({ day: ['d127'], requirement: ['required'] })).toEqual([
+      'res-03',
+    ]);
+    expect(keys({ day: ['d127'], requirement: ['reference'] })).toEqual([
+      'res-12',
+    ]);
+    expect(keys({ day: ['d149'], requirement: ['required'] })).toEqual([
+      'res-05',
+    ]);
+    expect(keys({ day: ['d149'], requirement: ['reference'] })).toEqual([
+      'res-09',
+    ]);
+    expect(keys({ day: ['d179'], requirement: ['required'] })).toEqual([]);
+    // Parent regrouping is separately reviewed; early generic TOP and implicit FSO keep original IDs.
+    expect(keys({ day: ['d025'] })).toEqual(['res-02']);
+    expect(
+      pages()
+        .all.flatMap((row) => row.uses)
+        .map((use) => [use.id, use.resourceId])
+        .sort(),
+    ).toEqual(plan.uses.map((use) => [use.id, use.resourceId]).sort());
+    expect(
+      keys({
+        source: [
+          resourceProviderKey('CS50'),
+          resourceProviderKey('The Odin Project'),
+        ],
+        day: ['d113'],
+        requirement: ['required', 'optional'],
+      }),
+    ).toEqual(['res-02', 'res-03']);
+  });
+  it('fails visibly on release/raw-content/evidence drift and never modifies a catalog', () => {
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const before = JSON.stringify(catalog);
+    const cases: ((copy: Catalog) => void)[] = [
+      (copy) => {
+        copy.release.id = synthetic;
+      },
+      (copy) => {
+        copy.release.status = 'draft';
+      },
+      (copy) => {
+        copy.release.manifestSha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.release.sourceSha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.resources[0]!.title += ' changed';
+      },
+      (copy) => {
+        copy.resources[0]!.originalUrl = 'https://example.test/changed';
+      },
+      (copy) => {
+        copy.resources[0]!.sourceName = 'forged';
+      },
+      (copy) => {
+        copy.resources.pop();
+      },
+      (copy) => {
+        copy.resources[0] = copy.resources[1]!;
+      },
+      (copy) => {
+        copy.uses[0]!.assignedText += ' changed';
+      },
+      (copy) => {
+        copy.uses[0]!.resourceId = copy.resources[1]!.id;
+      },
+      (copy) => {
+        copy.uses[0]!.requirementMode = 'required';
+      },
+      (copy) => {
+        copy.uses.pop();
+      },
+      (copy) => {
+        copy.uses[0] = copy.uses[1]!;
+      },
+      (copy) => {
+        copy.blocks.find(
+          (block) => block.sourceLocator === 'p0025',
+        )!.exactText += ' changed';
+      },
+      (copy) => {
+        copy.blocks.find(
+          (block) => block.sourceLocator === 'p0025',
+        )!.tableNumber = 99;
+      },
+    ];
+    for (const change of cases) {
+      const copy = structuredClone(catalog);
+      change(copy);
+      expect(() =>
+        validateResourceLabels(copy, frozen, resourceLabelSha256),
+      ).toThrowError(
+        expect.objectContaining({
+          status: 503,
+          code: 'RESOURCE_LABELS_UNAVAILABLE',
+        }),
+      );
+    }
+    const operational = structuredClone(catalog);
+    operational.resources[0]!.linkStatus = 'unavailable';
+    operational.resources[0]!.resolvedUrl = 'https://example.test/reviewed';
+    operational.resources[0]!.checkedAt = 42;
+    expect(() => resourceLabelPresentation(operational)).not.toThrow();
+    expect(JSON.stringify(catalog)).toBe(before);
+  });
+  it('rejects stale/tampered label versions, incomplete inventories, foreign rows and invalid evidence/rules', () => {
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    expect(() =>
+      validateResourceLabels(catalog, null, resourceLabelSha256),
+    ).toThrowError(AppError);
+    expect(() =>
+      validateResourceLabels(catalog, undefined, resourceLabelSha256),
+    ).toThrowError(AppError);
+    const tampered = structuredClone(frozen);
+    tampered.resources[0]!.type = 'guide';
+    expect(() =>
+      validateResourceLabels(catalog, tampered, resourceLabelSha256),
+    ).toThrowError(AppError);
+    // A test trust pin exercises provenance validation independently of the production checksum.
+    const cases: ((copy: typeof frozen) => void)[] = [
+      (copy) => {
+        copy.interpretationId = 'se-26w-v1-resource-labels-v2';
+      },
+      (copy) => {
+        copy.resources[0]!.type = 'password';
+      },
+      (copy) => {
+        copy.uses[0]!.requirementMode = 'complete';
+      },
+      (copy) => {
+        copy.resources.pop();
+      },
+      (copy) => {
+        copy.resources[0] = copy.resources[1]!;
+      },
+      (copy) => {
+        copy.uses[0] = copy.uses[1]!;
+      },
+      (copy) => {
+        copy.resources[0]!.resourceId = synthetic + ':r1';
+      },
+      (copy) => {
+        copy.resources[0]!.evidenceRefs = ['p9999'];
+      },
+      (copy) => {
+        copy.uses[0]!.rule = 'unknown';
+      },
+      (copy) => {
+        copy.uses[0]!.sourceId = 'p9999';
+      },
+      (copy) => {
+        copy.evidence[0] = copy.evidence[1]!;
+      },
+      (copy) => {
+        copy.evidence[0]!.sha256 = '0'.repeat(64);
+      },
+    ];
+    for (const change of cases) {
+      const copy = structuredClone(frozen);
+      change(copy);
+      expect(() =>
+        validateResourceLabels(catalog, copy, labelDigest(copy)),
+      ).toThrowError(AppError);
+    }
+    expect(() =>
+      validateResourceLabels(
+        catalog,
+        { ...frozen, unexpected: true },
+        labelDigest({ ...frozen, unexpected: true }),
+      ),
+    ).toThrowError(AppError);
+    expect(resourceLabelSchema.safeParse(frozen).success).toBe(true);
+    expect(labelDigest(frozen)).toBe(resourceLabelSha256);
+  });
+  it('preserves learner/source records through no-op reseeding and repeated effective reads', () => {
+    const before = fingerprint();
+    const expected = readResourceLibrary(store, token, {
+      day: ['d113'],
+      requirement: ['optional'],
+    });
+    importCurriculum(store, plan.source);
+    expect(
+      readResourceLibrary(store, token, {
+        day: ['d113'],
+        requirement: ['optional'],
+      }),
+    ).toEqual(expected);
+    expect(
+      readResourceLibrary(store, other, {
+        day: ['d113'],
+        requirement: ['optional'],
+      }).results,
+    ).toEqual(expected.results);
+    expect(fingerprint()).toBe(before);
   });
   it('rebuilds derived search after reopening the same database and rejects unavailable pinned content', () => {
     const before = fingerprint();

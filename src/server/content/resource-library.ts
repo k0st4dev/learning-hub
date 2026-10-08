@@ -10,23 +10,31 @@ import { ensureSearchIndex } from './search-index.ts';
 import { readCatalog, type Catalog } from './read.ts';
 import { courseNavigation } from './navigation.ts';
 import { catalogScopeOptions } from './scope-options.ts';
+import {
+  resourceLabelPresentation,
+  type ResourceUsePresentation,
+} from './resource-labels.ts';
 
 // Explicit code-unit title/ID order, independent of locale, insertion order or query rank.
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
-function resourceContexts(catalog: Catalog) {
+function resourceContexts(
+  catalog: Catalog,
+  labels: ReturnType<typeof resourceLabelPresentation>,
+) {
   const navigation = courseNavigation(catalog);
   const keys = new Map(catalog.items.map((item) => [item.id, item.stableKey]));
   const grouped = new Map<
     string,
-    (Catalog['uses'][number] & {
-      href: string;
-      title: string;
-      module: string | null;
-      week: string | null;
-      day: string | null;
-      dayNumber: number | null;
-      breadcrumbs: { title: string; href: string }[];
-    })[]
+    (Catalog['uses'][number] &
+      ResourceUsePresentation & {
+        href: string;
+        title: string;
+        module: string | null;
+        week: string | null;
+        day: string | null;
+        dayNumber: number | null;
+        breadcrumbs: { title: string; href: string }[];
+      })[]
   >();
   for (const use of catalog.uses) {
     const page = navigation.forItem(use.contentItemId);
@@ -38,6 +46,7 @@ function resourceContexts(catalog: Catalog) {
       );
     const context = {
       ...use,
+      ...labels.uses.get(use.id)!,
       href: page.current.route,
       title: page.current.title,
       module:
@@ -100,6 +109,7 @@ export function readResourceLibrary(
         'Your enrolled resources are unavailable.',
       );
     const tokens = searchTokens(query.q);
+    const labels = resourceLabelPresentation(catalog);
     const candidates = new Set(
       (
         store.native
@@ -115,7 +125,19 @@ export function readResourceLibrary(
           ) as { id: string }[]
       ).map((row) => row.id),
     );
-    const contexts = resourceContexts(catalog);
+    const contexts = resourceContexts(catalog, labels);
+    const matchesUse = (
+      use: (typeof catalog.uses)[number] & {
+        effective: { requirementMode: string };
+        module: string | null;
+        week: string | null;
+        day: string | null;
+      },
+    ) =>
+      resourceUseMatches(query, {
+        ...use,
+        requirementMode: use.effective.requirementMode,
+      });
     const contextual =
       query.requirement.length ||
       query.module.length ||
@@ -123,19 +145,18 @@ export function readResourceLibrary(
       query.day.length;
     const resources = catalog.resources
       .filter((resource) => {
+        const effective = labels.resources.get(resource.id)!.effective;
         if (
           !candidates.has(resource.id) ||
           (query.source.length &&
-            !query.source.includes(resource.sourceName)) ||
+            !query.source.includes(effective.sourceFilterKey)) ||
           (query.type.length &&
-            !query.type.some((type) => type === resource.type))
+            !query.type.some((type) => type === effective.type))
         )
           return false;
         return (
           !contextual ||
-          (contexts.get(resource.id) ?? []).some((use) =>
-            resourceUseMatches(query, use),
-          )
+          (contexts.get(resource.id) ?? []).some((use) => matchesUse(use))
         );
       })
       .sort((a, b) => compare(a.title, b.title) || compare(a.id, b.id));
@@ -156,11 +177,10 @@ export function readResourceLibrary(
         }
         return {
           ...resource,
+          ...labels.resources.get(resource.id)!,
           href: '/resources/' + resource.stableKey,
           uses,
-          matchingUseIds: uses
-            .filter((use) => resourceUseMatches(query, use))
-            .map((use) => use.id),
+          matchingUseIds: uses.filter(matchesUse).map((use) => use.id),
           relatedDays: [...days.values()].sort(
             (a, b) => a.dayNumber - b.dayNumber,
           ),
@@ -172,13 +192,22 @@ export function readResourceLibrary(
       pageSize: 25 as const,
       total: resources.length,
       results,
+      metadataInterpretation: labels.status,
       options: {
         ...catalogScopeOptions(catalog),
         source: [
-          ...new Set(catalog.resources.map((resource) => resource.sourceName)),
-        ]
-          .sort(compare)
-          .map((value) => ({ value, label: value })),
+          ...new Map(
+            [...labels.resources.values()].map(({ effective }) => [
+              effective.sourceFilterKey,
+              {
+                value: effective.sourceFilterKey,
+                label: effective.provider ?? 'Provider not specified in manual',
+              },
+            ]),
+          ).values(),
+        ].sort(
+          (a, b) => compare(a.label, b.label) || compare(a.value, b.value),
+        ),
       },
       metadataCoverage: {
         typesObserved: [
@@ -186,6 +215,20 @@ export function readResourceLibrary(
         ].sort(compare),
         requirementsObserved: [
           ...new Set(catalog.uses.map((use) => use.requirementMode)),
+        ].sort(compare),
+      },
+      effectiveMetadataCoverage: {
+        typesObserved: [
+          ...new Set(
+            [...labels.resources.values()].map((row) => row.effective.type),
+          ),
+        ].sort(compare),
+        requirementsObserved: [
+          ...new Set(
+            [...labels.uses.values()].map(
+              (row) => row.effective.requirementMode,
+            ),
+          ),
         ].sort(compare),
       },
     };

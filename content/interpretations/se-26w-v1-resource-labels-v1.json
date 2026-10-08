@@ -1,0 +1,5863 @@
+{
+  "formatVersion": 1,
+  "interpretationId": "se-26w-v1-resource-labels-v1",
+  "releaseId": "se-26w-v1",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "proposalSha256": "d36d4e53073d8773b306a89d8533e987a3be15f7688e059eb91d7972356c0536",
+  "rules": {
+    "catalog-reference": "Catalog/source-status links are references, not a new assignment.",
+    "weekly-overview": "Weekly resource lists are overview references; explicit optional clauses take priority.",
+    "daily-assignment": "A named resource in Uči / pročitaj is assigned reading of the named section only (p0025). No external course-wide completion is implied.",
+    "as-needed-reference": "po potrebi/as reference/preview or personal notes remain supporting references; not mandatory external coursework.",
+    "explicit-optional": "An explicit optional clause, or its same-provider weekly optional designation, is optional.",
+    "alternative-choice": "An explicit alternative is conditional on the selected route; do not require both sources.",
+    "used-topics-condition": "Only the topics used in the learner project are applicable; do not prescribe the whole course/docs.",
+    "problem-set-primary": "The selected problem-set registry is the assigned source; the general CS50 parent is reference navigation.",
+    "manual-instruction": "This record preserves a source instruction/review topic, not a newly supplied external learning link.",
+    "unspecified-documentation": "Documentation is specified but its provider/library is not; retain this uncertainty.",
+    "resource-restriction": "Preserve the exact no-new-resource/no-tutorial/first-120-minutes restriction; never turn it into a resource requirement."
+  },
+  "resources": [
+    {
+      "resourceId": "se-26w-v1:res-01",
+      "identitySha256": "39b591864fe04dd2ddafef3ccd04cc46febbd1640c4cb16321d3aae1f86c5368",
+      "type": "course",
+      "provider": "The Odin Project",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0082", "p0083", "p0084"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-02",
+      "identitySha256": "ea68ee01f404b8c710025db6309cb09b8325243fa202f46c0b683ef28efafc75",
+      "type": "course",
+      "provider": "The Odin Project",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0085", "p0086", "p0087"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-03",
+      "identitySha256": "d434fa9774c376444fa80a735037a7cce11e468651ac5cf60c3207a768a42e70",
+      "type": "course",
+      "provider": "CS50",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0088", "p0089", "p0090"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-04",
+      "identitySha256": "af6a30f810c85dc774d3034cd3b349992931fd617ac1951060e43e1aebcf5b66",
+      "type": "practice",
+      "provider": "CS50",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0091", "p0092", "p0093"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-05",
+      "identitySha256": "33639fcaf552de56cc96818730facfe39bdb3c3a76acd5484bc8e912448f9ec5",
+      "type": "course",
+      "provider": "Full Stack Open",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0094", "p0095", "p0096"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-06",
+      "identitySha256": "77e8dea0781b56297e2abcd36b295c0539895d9fe77f63fd98578f300c61c4ce",
+      "type": "practice",
+      "provider": "Exercism",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0097", "p0098", "p0099"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-07",
+      "identitySha256": "7b3fac70156cadcc3de6bd47a25838d060c78ce2ead21cfb144044b60b1f4855",
+      "type": "documentation",
+      "provider": "MDN",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0100", "p0101", "p0102"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-08",
+      "identitySha256": "2ba6c962d8adda2d0108a1ae343f9b1fc99d6137952bd9166e2044d9efe47e79",
+      "type": "article",
+      "provider": "javascript.info",
+      "confidence": "medium",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations. Tutorial/reference is mapped to article in the allowed vocabulary; this is a product choice, not a claim that the source specifies that type.",
+      "evidenceRefs": ["p0103", "p0104", "p0105"],
+      "ambiguity": true
+    },
+    {
+      "resourceId": "se-26w-v1:res-09",
+      "identitySha256": "d8b0a1485ea483a6727a2ebbf8f7ecb2961f792ab85cb04f1b8d77cb59cdb9f7",
+      "type": "documentation",
+      "provider": "React",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0106", "p0107", "p0108"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-10",
+      "identitySha256": "a1c685d5df006dbfa0349fd9a30a18f826be79aeb651e25abe9405c1e377947e",
+      "type": "documentation",
+      "provider": "Node.js",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0109", "p0110", "p0111"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-11",
+      "identitySha256": "730605b9b52f04839b0d3a56fd790d4558c9a46d43e50789c4859d2b1ef54661",
+      "type": "reference",
+      "provider": "Pro Git",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0112", "p0113", "p0114"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:res-12",
+      "identitySha256": "deff9c1bb7d0150ab8312487e4e13dd2a5df9709138164e33e2e173fd9ce7ef3",
+      "type": "documentation",
+      "provider": "PostgreSQL",
+      "confidence": "high",
+      "category": "named-resource",
+      "rationale": "Title and role in the original resource table. Type/provider are added presentation interpretations.",
+      "evidenceRefs": ["p0115", "p0116", "p0117"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0325",
+      "identitySha256": "824b8746e7d999951e7b4b8e5cef7bdb7e9658768fbfec1e3fb0f3e122640ce4",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0325"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0335",
+      "identitySha256": "a0a016a5f7b27f96842a0190959e7ccb1a80976135453933b773c9e332f1c055",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0335"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0400",
+      "identitySha256": "c1b300c858731199b5ebe0c328304014839ece85f6f49a0271965eb9fc6bf47f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0400"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0410",
+      "identitySha256": "c61dc88fc52b76bb03734437daa317ecd49fc91e0718e00747327876a5ddd600",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0410"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0465",
+      "identitySha256": "993defed9713ef94c9f4784dd25daf108f3107c928f6a0ceb265203c2669b122",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0465"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0475",
+      "identitySha256": "80119e3777cb0c2b221522ae4f01d988db086b6d02ff95921238b47b0fa560d0",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0475"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0485",
+      "identitySha256": "05613fb649a37150ed8191624f65615b1d0243848ee2865ed7f6ae17ed40a018",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0485"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0550",
+      "identitySha256": "03dfafc79e07c712e94a0530ce49650b379ebdd878bf31067251d76a85976fdf",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0550"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0560",
+      "identitySha256": "6a5dff2c6476fa4f8965a110e4a49e0fe24dcd3a396a5881af8b4ca881f43e4e",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0560"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0625",
+      "identitySha256": "a53fc7f079fe55205549bda5ff07f592e30b2fe6f3be3ce70b3df945c78d0849",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0625"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0635",
+      "identitySha256": "98cf2fd66ecfaf5293d9121fbff8c341cafb6881542dd55b7a7e1ed5ee0f02fc",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0635"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0670",
+      "identitySha256": "898496a2407f7012b5b91c788ced049394643be3306b83b6ca5eecc1ece26fba",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0670"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0680",
+      "identitySha256": "af4c4513d3e30cd269b1691dafe99e41a1450e60a5d44c629f966a675defee70",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0680"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0700",
+      "identitySha256": "f81a37b4e15583c2afe8586429ce361b537a51045e84272b4b51d29f25b81fad",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0700"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0710",
+      "identitySha256": "33e169b8fc5bfe66f8dfe0baab927551cbc74b8699f6184298cb6fbacb9dcc3f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0710"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0747",
+      "identitySha256": "24f04aecf214c623183792b6f8f76af09c68bb544a4a0ea36860d1f885f6f01a",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0747"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0777",
+      "identitySha256": "26baa8b8b3e304d2cca1986875fed1107013190c86af5171cba0a75f4bf26edf",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0777"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0787",
+      "identitySha256": "8d8fd5b9a759c74a5510f3b13dd3d8cac4f7af1e2f5c80d28e6da613c344f1b5",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0787"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0812",
+      "identitySha256": "d35300ff131c7b03e456ddb30a6288797570b6f5ffd5e5af64ef92178ed7d74f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0812"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0852",
+      "identitySha256": "08822def98fbca43f8d14d08e245f57c0f38da041c9611a35cf6cdf32a79d800",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0852"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0862",
+      "identitySha256": "c20c6871e253b2cd308f4c7df82c81265c3bf64ff1208a29467b9279e8ee6be7",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0862"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0897",
+      "identitySha256": "4a61af3663b38ea95ff3311599ce2a1e0980bbbb087b6a9d6a1d2f6ce97271bf",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0897"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0927",
+      "identitySha256": "844541d70df6718d2c2223601a5cc83bdf20e5a81f22b5b6d684500aa1191aae",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0927"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0937",
+      "identitySha256": "309dea4ea0965760ed73dbf71049122a6d1041b6058597b4be6f0901453ebe01",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0937"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0962",
+      "identitySha256": "5d73d4bdf44aea2681fedb6db43168f632cfe7ddafa47b107d3e1f5b7e3e171c",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0962"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p0972",
+      "identitySha256": "6f20452bc538be44b55ffd8d001df3f7fdd7234765fc962fbd562f7699a42ff1",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p0972"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1012",
+      "identitySha256": "2129ad8d13c620ea9aeb6568cfd6e0ce9135b3f54caf88a5a5149b232d9e421f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1012"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1077",
+      "identitySha256": "bcc795da45caacbd18e0e457f1b93dfa45ada618de0e249640db05f843922434",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1077"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1087",
+      "identitySha256": "21515f12cee46510d898d9e93e6521d4b73373a2b478696d4dc3a6ad906b509a",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1087"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1162",
+      "identitySha256": "489731db5f5f1af9907b0bfd7c95a0206e4ed288e74fca172203954a7e12479d",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1162"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1314",
+      "identitySha256": "a6ac91de34470b49c5e187b7e2bafd9d98f4edb4cd61eee6409f5a8cad2d0b95",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1314"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1389",
+      "identitySha256": "3064e37e9e185b6cdbaf4861047e6ecaa8555ee2c625d4283ef64b74f977090b",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1389"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1464",
+      "identitySha256": "b8ac98a2428f7a03662fd29a7e5d1af9432206021410e312cc83039963ede6f7",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1464"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1529",
+      "identitySha256": "4597e9bf23f55d05fe1cd524fd9d34264884c7691959295cabfc80713b20fe42",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1529"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1539",
+      "identitySha256": "0f1b9aa815353004ae3167c596bab9176b7b715e35910b77c077fa157f9122d5",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1539"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1594",
+      "identitySha256": "df856f0d75fdbc92e4ab6373b1baa04110a9e6e110df752ee8464b268a4a3d60",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1594"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1604",
+      "identitySha256": "f5ef37469cf8e65817cb0839674a18e4a20f1f9277341b9b35a08fa29ef92439",
+      "type": "documentation",
+      "provider": null,
+      "confidence": "medium",
+      "category": "unspecified-reference",
+      "rationale": "The source requests documentation but does not name a provider.",
+      "evidenceRefs": ["p1604"],
+      "ambiguity": true
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1614",
+      "identitySha256": "abc9a453709ffc3cc63b6fdeedef4836543c998017ed735d305c1b991a05bc23",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1614"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1679",
+      "identitySha256": "035f3ccbbf5e970c9cf5db352c8dc8d8e3e0be6097180914e11234a1152d52aa",
+      "type": "documentation",
+      "provider": null,
+      "confidence": "medium",
+      "category": "composite-reference",
+      "rationale": "Node pg/sqlite library docs names multiple potential libraries; no library URL/provider selection is supplied.",
+      "evidenceRefs": ["p1679"],
+      "ambiguity": true
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1756",
+      "identitySha256": "166bf9bbae71b9d016988f83f0bffefaca808e040142bc27f5937879b3a359c7",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1756"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1766",
+      "identitySha256": "3ab5b2fbcc69bc388b5f6bec495390f1f5d8236046723c4d000c9519d685b5f5",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1766"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1821",
+      "identitySha256": "3ac2ebed32df2b0ccb7a609065100580264e46d03e675f4d0912b0e215d8e0da",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1821"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1841",
+      "identitySha256": "94a18942c0dc124d2b3475a1911da6ddd6a45f229809cc119626586999b80874",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1841"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1906",
+      "identitySha256": "c6098d47377ee727a2e83fe587f1d9c3a3c3dffd37b132af0ee4042540bb5adc",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1906"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1916",
+      "identitySha256": "c6053c964aaddfc4f61cc06d4edba79f59b8e010720d00b69c685c6320aa4e00",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1916"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p1991",
+      "identitySha256": "93d05130dd282179be311accbab5efdd3b79994e58b943237cf281e5119c7c41",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p1991"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2066",
+      "identitySha256": "c123b1c4b45946bc9eaf4fc53612501f434b5514032deeb64d0f8cf89c30b616",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2066"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2121",
+      "identitySha256": "9509dc8469a4d3a4872f4979e809b0b0228baf30756c854d7a67888d7c5a11fa",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2121"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2131",
+      "identitySha256": "55e02a243a48b37d712d9058668bcc739ce2bb275a2c1f72f621a4e74da7d285",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2131"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2141",
+      "identitySha256": "94d8649ed90c82988dadc44dd163230be06ca68089700dcb1a614db0c8d56be2",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2141"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2158",
+      "identitySha256": "73d6a0fa54d4524119edbf69e9e6723f4980cd056b8d628502b2a09dbf4c602f",
+      "type": "reference",
+      "provider": null,
+      "confidence": "medium",
+      "category": "composite-reference",
+      "rationale": "As-needed documentation and/or own notes are combined. A single external provider or mandatory documentation set cannot be inferred.",
+      "evidenceRefs": ["p2158"],
+      "ambiguity": true
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2168",
+      "identitySha256": "947b198b77a6b1429a561a55ec5b1c4ffe5e13ffa4b56d8dfdf48daa1124631c",
+      "type": "reference",
+      "provider": null,
+      "confidence": "medium",
+      "category": "composite-reference",
+      "rationale": "As-needed documentation and/or own notes are combined. A single external provider or mandatory documentation set cannot be inferred.",
+      "evidenceRefs": ["p2168"],
+      "ambiguity": true
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2178",
+      "identitySha256": "2688091f412d83a165844161a12ff166882d14d8ecdd169b6a31eeb6ac53aa0f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2178"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2198",
+      "identitySha256": "d697526bac203e869efbb333d4311c45d8713eb2613439f3df5e6666fae4f5c9",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2198"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2208",
+      "identitySha256": "e1f88600a6cd75a9dc27668638cac6680759044f1a9284453270c1a5e96b668f",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2208"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2218",
+      "identitySha256": "77f1c102009dee13062c18baf8eb8a4ab45455c1a5ba96e276f1061af0568972",
+      "type": "guide",
+      "provider": "Original manual",
+      "confidence": "high",
+      "category": "source-instruction",
+      "rationale": "This is original internal study/review guidance, not an external named website. Keep its exact wording and existing destination.",
+      "evidenceRefs": ["p2218"],
+      "ambiguity": false
+    },
+    {
+      "resourceId": "se-26w-v1:unresolved-p2152",
+      "identitySha256": "6d7e00af7dfffbddd99f9560bd105460bcd60aa896833502898500a30dd2d377",
+      "type": "reference",
+      "provider": null,
+      "confidence": "medium",
+      "category": "composite-reference",
+      "rationale": "As-needed documentation and/or own notes are combined. A single external provider or mandatory documentation set cannot be inferred.",
+      "evidenceRefs": ["p2152"],
+      "ambiguity": true
+    }
+  ],
+  "uses": [
+    {
+      "useId": "se-26w-v1:mention:1:0",
+      "identitySha256": "987025dfdf8f4ab17569adcc594002cbe7f0ea593fd9a50722df11af12fbfe8d",
+      "sourceId": "p0274",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0274", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:2:0",
+      "identitySha256": "8b4bc0605a3ead63791908605f8589ffaa8fcb4629b87f6eac94b7b74a057286",
+      "sourceId": "p0285",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0285", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:2:1",
+      "identitySha256": "8c57ab6e69c2cf3ec50bc100d444accfa3ea79c8bab89d9f6dbedf0548cc59c8",
+      "sourceId": "p0285",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0285", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:3:0",
+      "identitySha256": "fe7589573f5b0fd3060a01a57bf029e49e0981d0cc4fce8472530a8bc354b29f",
+      "sourceId": "p0295",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0295", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:3:1",
+      "identitySha256": "2258d86a1d9ad58e66f4794f6491db455326a709413ccc0e8a93fd91f236d632",
+      "sourceId": "p0295",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0295", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:4:0",
+      "identitySha256": "cbc1d03432f703af05fec6d3d377e6cab20e133e6e543c4a035ddf80d9f6aa9e",
+      "sourceId": "p0305",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0305", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:4:1",
+      "identitySha256": "ff67ebaf8230ad044d8758b6dd5fda1c11a19bda818d52d6e94902e88e601a51",
+      "sourceId": "p0305",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0305", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:5:0",
+      "identitySha256": "5ddc0517f3b9d3b12295d4f68e5acd20a84d71f146a017570b4b945f1c793ac9",
+      "sourceId": "p0315",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0315", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:5:1",
+      "identitySha256": "fda837b9858c5db358586dbaa6878a8589ff99383fbfc2176c7e6993863c385e",
+      "sourceId": "p0315",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0315", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:6:0",
+      "identitySha256": "7fabd15c5ae3f2bcb13b4bc74791c84f7d33146382f97c1ed885d656ec54d122",
+      "sourceId": "p0325",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0325"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:7:0",
+      "identitySha256": "f6df5f50461ab882446a3cfdd6c6931557f357142b23247457cb8a8d88b2baa3",
+      "sourceId": "p0335",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0335"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:8:0",
+      "identitySha256": "d8818fdf7c2965e5f55a7bf20bd9957110e94ca75c1f4d7b799fed36b6715d82",
+      "sourceId": "p0350",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0350", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:8:1",
+      "identitySha256": "dcd7fa901298eeaa72382fdc12bc7dc262da543b1f929d4acc873f26c8c3ec8e",
+      "sourceId": "p0350",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0350", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:9:0",
+      "identitySha256": "f24e52e9afadb5d4297fe137a75a18a2cc52a3e85b936986ffc64aab5128fe3d",
+      "sourceId": "p0360",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0360", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:9:1",
+      "identitySha256": "0aba0db04ea5991a113ec35b09acd3f737624af03597fb95fd64dd20bc7856ac",
+      "sourceId": "p0360",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0360", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:10:0",
+      "identitySha256": "49e4a2a325e2078735c0e09638ca8ba87775c41d01b2979d7a73f5b74d5fbada",
+      "sourceId": "p0370",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0370", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:10:1",
+      "identitySha256": "0692f13c61ffd62d0b7c2547a77fac0fc312d702cc227a34a680e843d0f6a18d",
+      "sourceId": "p0370",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0370", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:11:0",
+      "identitySha256": "25c0d27a25bdd6fa191eaa6d62eddf7bb8e5173f220192eb44de952882d64ab4",
+      "sourceId": "p0380",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0380", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:11:1",
+      "identitySha256": "a7084ba48dcb01829ba188d6960718cc7fa7025d833474280a186b113beeef98",
+      "sourceId": "p0380",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0380", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:12:0",
+      "identitySha256": "0948b0c09e07e973fad0cb193f433fcaaa4f6d930e990b7847542ff3d394688c",
+      "sourceId": "p0390",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0390", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:13:0",
+      "identitySha256": "5d151fd0164416468bee039e9dfef37a0f7076e31974ba643eab176302981f3b",
+      "sourceId": "p0400",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0400"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:14:0",
+      "identitySha256": "c388d20c08176777304f5d5e4d4d850295d3bca3592355d14e12e9672d7d935a",
+      "sourceId": "p0410",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0410"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:15:0",
+      "identitySha256": "bfe4ce9675d32edc25e43ce82afc348daf99bdf22ee9d12dc571961090a9268b",
+      "sourceId": "p0425",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0425", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:15:1",
+      "identitySha256": "491df71aa649d5c11b3a2b7a4f5a23ba951fbaeaaafaaa55fa19e8b0a5e159a5",
+      "sourceId": "p0425",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0425", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:16:0",
+      "identitySha256": "8e78b5a5ab2ff27ece93e3e486efdc051579e5ce385385dd2ba3e75846dd55d1",
+      "sourceId": "p0435",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0435", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:16:1",
+      "identitySha256": "e6890da3511cad75b9bf6798ae427ee33ba3f89955d2f94a720f7e11ff289df2",
+      "sourceId": "p0435",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0435", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:17:0",
+      "identitySha256": "2da3b62da9776a9780d7ce54dd5aa3161834f995fe2693b3975739a3197d5134",
+      "sourceId": "p0445",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0445", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:17:1",
+      "identitySha256": "abb9746a39996e11bd3dda0d2c18b18116e0acfe46db73b73046065284a11679",
+      "sourceId": "p0445",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0445", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:18:0",
+      "identitySha256": "5f80f3ea37b4633601d26e704fb0ae92f61d9d39e1c82924a73ec2c337f9c718",
+      "sourceId": "p0455",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0455", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:19:0",
+      "identitySha256": "9374ea56cad782e94fa58b7b4c655bfec1ab64cda8386925ad8116468bb5cc05",
+      "sourceId": "p0465",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0465"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:20:0",
+      "identitySha256": "c2ffb68c89c6ea2a606acc1e0b37c30a08a36134026fd111c5e245a03c606e7a",
+      "sourceId": "p0475",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0475"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:21:0",
+      "identitySha256": "e95da1a32150d42388d27b037869ee188a1ccd7229705094e2f1f4a3821f2d92",
+      "sourceId": "p0485",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0485"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:22:0",
+      "identitySha256": "2355e99dbd5660211b216942259a5a168c640f8275cdcc6edfa6024739385d9a",
+      "sourceId": "p0500",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0500", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:22:1",
+      "identitySha256": "7ccab51ebba92993679b4fe686f467b26ad5c61bca0687aeadaafeb63b138f0a",
+      "sourceId": "p0500",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0500", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:23:0",
+      "identitySha256": "da63cef834bb5a8a126f16cdb0deeed4f2175d8be96f20f111c40e820450f2e5",
+      "sourceId": "p0510",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0510", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:24:0",
+      "identitySha256": "8c61dfb41c49078ba723db8adc710395e9369f5531887d470240d8025b908729",
+      "sourceId": "p0520",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0520", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:24:1",
+      "identitySha256": "6e9ed36f0485d362cb4204ca4b8d6b93c81e40669f7ed8c0b887ee188bf5d449",
+      "sourceId": "p0520",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0520", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:25:0",
+      "identitySha256": "d2f2264a89e35d354f4a53f663ba8e8c2a2d178a64840141b90683023e906488",
+      "sourceId": "p0530",
+      "requirementMode": "conditional",
+      "rule": "alternative-choice",
+      "choiceGroup": "choice:p0530",
+      "evidenceRefs": ["p0530", "p0025"],
+      "caveats": [
+        "The source allows another route; consultation of both sources is not required. Missing alternative mentions are listed separately.",
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:26:0",
+      "identitySha256": "de84a46a6a93bce3c677654af99876c1e646c5868dea96d2c56a98052f1b441a",
+      "sourceId": "p0540",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0540", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:26:1",
+      "identitySha256": "bf93b06e68e85fa9a9ac21e98f0ec7b5a580756d802ef1ea049ddb02dc48c4de",
+      "sourceId": "p0540",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0540", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:27:0",
+      "identitySha256": "da17be7fd3713f80f87f6ad5ddf5891b938ea90d766ff6a27712644d474f7268",
+      "sourceId": "p0550",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0550"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:28:0",
+      "identitySha256": "1d78fc3d264d41bf79e454c83a07594d56490e85c99ddee96b68d2a1b1c49e43",
+      "sourceId": "p0560",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0560"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:29:0",
+      "identitySha256": "541b11d5c1c9e5eea12058a739c6f7294ed79ba747d586838748dd96a2159a15",
+      "sourceId": "p0575",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0575", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:29:1",
+      "identitySha256": "e7985aa785dc30be0234f851fe6b7a807af8bb5c6d31a4f5b502bb4e6efbe982",
+      "sourceId": "p0575",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0575", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:30:0",
+      "identitySha256": "0ee3c0f7f81661e73b91af8a116d80d03a8341d161fc788d9143974756a31897",
+      "sourceId": "p0585",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0585", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:30:1",
+      "identitySha256": "3220204873ca9f1db0c3f6ec08883f7529dc95e195fde425bfeaa8cf8782d9ca",
+      "sourceId": "p0585",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0585", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:31:0",
+      "identitySha256": "bc026db4ea3d03e6748f10b159e28accdd0bfba3adc340dab94610bd6ade73b9",
+      "sourceId": "p0595",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0595", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:32:0",
+      "identitySha256": "ce49a1a8a0ead679eb71b225049f974ec759ab2d5cc441d0d97143483fad8415",
+      "sourceId": "p0605",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0605", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:33:0",
+      "identitySha256": "8c59f15d650ab057e2ede0f5e54310057cdd328ad7236e805677d040d42d9ccd",
+      "sourceId": "p0615",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0615", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:34:0",
+      "identitySha256": "fdb72775fab0f8db6f64f56940981dd4aff89e370ee6a728875dba673b08ecc2",
+      "sourceId": "p0625",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0625"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:35:0",
+      "identitySha256": "acac74f19ced3a4a0c4d4348249a8d2b771cac0cf2567e7ad68a916b993a0149",
+      "sourceId": "p0635",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0635"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:36:0",
+      "identitySha256": "6d6b1c3f00ebeef502edf63354ad18265d5ba10f91411f9204ccd9bcfa1578d1",
+      "sourceId": "p0650",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0650", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:36:1",
+      "identitySha256": "da03764492b7336ab06a81fa3e8eb834310591a362fa4991d045d436070d488e",
+      "sourceId": "p0650",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0650", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:37:0",
+      "identitySha256": "5de0d8c1fce8c83c977393018c072e0c9b069edf65be900a15a54e0bc8af082b",
+      "sourceId": "p0660",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0660", "p0025"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:38:0",
+      "identitySha256": "6a0c28fa14805613988134a2919f4c0db36975bba257134cbf5a68e22728fe87",
+      "sourceId": "p0670",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0670"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:39:0",
+      "identitySha256": "76cc27fea0a0fdc9b6eeb9f84e1ddce2c5d8e605eeefd79ed621b1a540c7908f",
+      "sourceId": "p0680",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0680"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:40:0",
+      "identitySha256": "e544809cafa9bb1fb2fafb2f361c5cc1863a03279e5cedf076917c72b4b7ee5e",
+      "sourceId": "p0690",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0690", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:41:0",
+      "identitySha256": "4cc4f819980356f5239d8c7fb0eddc81500031e221a562229f757e727a7fe227",
+      "sourceId": "p0700",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0700"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:42:0",
+      "identitySha256": "9d4a550d202f28d4a739276bbaf0c3fdc90ce7e62849ba92299408440e30bc54",
+      "sourceId": "p0710",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0710"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:43:0",
+      "identitySha256": "5034f3bd3180b2658099e34b6d8b3d858fc0d26deb2108a3e367eb85c93df48d",
+      "sourceId": "p0727",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0727", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:43:1",
+      "identitySha256": "3ec7fec23bb22c13cd81504dd6bd9f5a7cbdb6ca842cb12875f6a63b445d2579",
+      "sourceId": "p0727",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0727", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:44:0",
+      "identitySha256": "ab9d912c9e1402af04b6cd81e2c8a40e88a8854893e8e88192ccb16da8056d95",
+      "sourceId": "p0737",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0737", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:45:0",
+      "identitySha256": "be92d1e4a4b6513d7763fdc3baebae57a41739e93984778fccb6cc116bbb5f09",
+      "sourceId": "p0747",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0747"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:46:0",
+      "identitySha256": "663745b6aea1a608d3f97a09505a0a2534566afa6065b1ee55102a0d6048d442",
+      "sourceId": "p0757",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0757", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:46:1",
+      "identitySha256": "b15be63cd7068211525b1121b5171ffd50ec5508ea8f75279332cf0f6e12c3dc",
+      "sourceId": "p0757",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0757", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:47:0",
+      "identitySha256": "08898e6857850d1eff77acc4850a6418ab104a155dccdc7f9f2355f2fc945423",
+      "sourceId": "p0767",
+      "requirementMode": "reference",
+      "rule": "as-needed-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0767", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:48:0",
+      "identitySha256": "e9a4432282bebbf0df319015995a797e7c6ca8332ff2b575ab8f0ab4b4ff06e6",
+      "sourceId": "p0777",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0777"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:49:0",
+      "identitySha256": "d6ac67f9eee9f8c28e80abfb965c7d50dac8d7fabbcc531ce5835124533d8728",
+      "sourceId": "p0787",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0787"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:50:0",
+      "identitySha256": "9dc31436688565ca8b43decab9bdda285f9e55cb578d00012648bf5e41327a69",
+      "sourceId": "p0802",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0802", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:51:0",
+      "identitySha256": "5e489afdad63b57387cbf1164f3a8b7a7504dca5712d473bac5ff77384c228ef",
+      "sourceId": "p0812",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0812"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:52:0",
+      "identitySha256": "dbc383b9c7a080f7350954e1308c4f893c8dad6cb06ff40e9b9e2095294852ce",
+      "sourceId": "p0822",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0822", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:52:1",
+      "identitySha256": "715b94a7991712a1080ae688aa6f80d3f9048cf1efbd83c3836f70dc8aeef65b",
+      "sourceId": "p0822",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0822", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:52:2",
+      "identitySha256": "0fe5136f6426494d0305083c3c8a28ad43c19773d4e0fcda5bd90c58730d7628",
+      "sourceId": "p0822",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0822", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:53:0",
+      "identitySha256": "fd3f33e1f2b9537eb312a3aac13f92755c08c2a96fc9dc9cfb3178a11b5076cd",
+      "sourceId": "p0832",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0832", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:53:1",
+      "identitySha256": "6ecda5a7fabcf67a446158503d914da1d538808c27dcd6a2f02d538184851a8a",
+      "sourceId": "p0832",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0832", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:54:0",
+      "identitySha256": "aa7be9dba8e66117648a78f4ee38f9d82e5ab91217c6f6a5741f0fd6b40e1b4a",
+      "sourceId": "p0842",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0842", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:55:0",
+      "identitySha256": "29a43721f8ac4541cb0b9b132a652f47bd87661a247c3af40c5e465f0337e25a",
+      "sourceId": "p0852",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0852"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:56:0",
+      "identitySha256": "51a2e74da6ae379c513cae5b748caddac0877a1c0700c07d301806e963fc2808",
+      "sourceId": "p0862",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0862"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:57:0",
+      "identitySha256": "36f18790618388e869afdeb4be67ea017367bf0dd8921f13dc9d967e9bfe0696",
+      "sourceId": "p0877",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0877", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:58:0",
+      "identitySha256": "695e6d0956e362c1dbd7070d8af3e6f15a20290bca4842552017b2de3b5f5b16",
+      "sourceId": "p0887",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0887", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:59:0",
+      "identitySha256": "1c20d16a641073f3e10ff2114f54babe2a806ab279ba07fdd616d764aba554f5",
+      "sourceId": "p0897",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0897"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:60:0",
+      "identitySha256": "aa0b5281f85b9d3cbf68588bfbf5337d5828021d2a754f330f1fd6aa90eea7ef",
+      "sourceId": "p0907",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0907", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:60:1",
+      "identitySha256": "6e77719358c87e5cd794fe5146bb5da8d85f36126c1b38dd1afc285ba2a2005c",
+      "sourceId": "p0907",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0907", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:61:0",
+      "identitySha256": "441a2a689dc532cf3fa559da4163bea13ab5918ebc6448bdd4c18ae3f5a43f27",
+      "sourceId": "p0917",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0917", "p0025"],
+      "caveats": [
+        "TOP is the assigned course; the separate ESLint getting-started mention is only po potrebi."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:62:0",
+      "identitySha256": "7f3b65ef9554585e4b00f019baa200e8c5ad35f69399d63d41a0b0c27ae78003",
+      "sourceId": "p0927",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0927"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:63:0",
+      "identitySha256": "ce9764fab6db89052290bc43c867a913ae6b0fd8b5897f97939823f57c794838",
+      "sourceId": "p0937",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0937"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:64:0",
+      "identitySha256": "e4bc96227849bc7cbe5cc48106b1168562336683c1ff44e8ef85fa2b014a1e1c",
+      "sourceId": "p0952",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0952", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:65:0",
+      "identitySha256": "1f8f092bc2fd727d21da10285a3bcbd7e18eb48d19f99800d944132d0c265b8e",
+      "sourceId": "p0962",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0962"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:66:0",
+      "identitySha256": "a5642e16e23f752473890ef4a163830a4b0b84053623a424cafb0aca714218ae",
+      "sourceId": "p0972",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0972"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:67:0",
+      "identitySha256": "11b7c580e9157d6abfcdbef80134fca80f98ddfe40d19970be39ed43afc86acc",
+      "sourceId": "p0982",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0982", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:68:0",
+      "identitySha256": "8085db2754008ac9fd2cac0b733ca59fa93fc69f6928ee32c78dbeb206e940d6",
+      "sourceId": "p0992",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0992", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:69:0",
+      "identitySha256": "b769d4cef2c70b879d88d7c9f89ce898128919b24f57aa990dd58e43e1741319",
+      "sourceId": "p1002",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1002", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:70:0",
+      "identitySha256": "53901ea6f7ece907fd3e3f27edfee7920b9b13e1a37318f44fc5d3d0019dc798",
+      "sourceId": "p1012",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1012"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:71:0",
+      "identitySha256": "512ed00791b6ebef2df9aab424a4a11ac16b7e9a6c02872d18f3addbd25c9512",
+      "sourceId": "p1027",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1027", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:71:1",
+      "identitySha256": "827d3a6d49bce144773c28da8aad23b55c4ec6efd63ff5c33752785f40770835",
+      "sourceId": "p1027",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1027", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:72:0",
+      "identitySha256": "1dcbacc3ac66153daea02a2801add6732b7f9ffe1cdaa40178ba6478669ca9f3",
+      "sourceId": "p1037",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1037", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:72:1",
+      "identitySha256": "cbcf7c0b83c636c5af338d32f35bc20d72e051522c1bc9fe253e27384b1f17c0",
+      "sourceId": "p1037",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1037", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:73:0",
+      "identitySha256": "28f2bd79d4bd7ae1c684aeba1a6e9e291526d782e72815b6b1980a1d801b7d80",
+      "sourceId": "p1047",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1047", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:73:1",
+      "identitySha256": "5c3a524cf83965b8b5e10f548761b3f8dcc96d1fb8bd2c6d12a4867cdc99ee82",
+      "sourceId": "p1047",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1047", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:74:0",
+      "identitySha256": "22003f52cb40724457e4744dde74d69e250a04ef93799c6556ffd980deb833b4",
+      "sourceId": "p1057",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1057", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:74:1",
+      "identitySha256": "71458497fc32d495d74194ccd28f36878232ac07e80dd5c6dccb19ab9efdde6c",
+      "sourceId": "p1057",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1057", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:75:0",
+      "identitySha256": "a2622983cf7b661e83f1ca87f2ef257752ce4f22f882e5c6b8215c3b0ec16ae5",
+      "sourceId": "p1067",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1067", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:76:0",
+      "identitySha256": "3e8e7b8ed799d7eaa4921aafad887595e2b4689e16de869c42ebdcc4ea6f7c6b",
+      "sourceId": "p1077",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1077"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:77:0",
+      "identitySha256": "446b10119c6a7f6b225725f41eaa2ecc71c800dc79a172f9ccc820333f650f3c",
+      "sourceId": "p1087",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1087"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:78:0",
+      "identitySha256": "a8119b8ab6a73d55e81531035dcd6dabab889dd1c4a3991e31c98132b805356f",
+      "sourceId": "p1102",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1102", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:79:0",
+      "identitySha256": "bfd071820c09d047ba2bf69e6e3040d7ad106530e4b6b7fa8c822c241a797351",
+      "sourceId": "p1112",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1112", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:80:0",
+      "identitySha256": "2df592ceb172b7572bab07f02ed600dea1e6e502d6e5088a6df881bd7b14190c",
+      "sourceId": "p1122",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1122", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:80:1",
+      "identitySha256": "f3d9a3ee47e8e6b62f12a0cbd21d7bd05436462348ed302b05aa3ee73e271543",
+      "sourceId": "p1122",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1122", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:81:0",
+      "identitySha256": "6b9eb9b07c5d6f258eedcc073b952b30f3fda72b65c7b5a85f1fb59ed8097aba",
+      "sourceId": "p1132",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1132", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:82:0",
+      "identitySha256": "1f3b12a1d3f8eccad000cf6789a5811aeff24c10ff4dd5a13b2686a0ffa95f12",
+      "sourceId": "p1142",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1142", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:83:0",
+      "identitySha256": "1a2c1c0fd28c1493709782c09dac55f876c63eeb0ed17ecacf948efd1d50b251",
+      "sourceId": "p1152",
+      "requirementMode": "conditional",
+      "rule": "alternative-choice",
+      "choiceGroup": "choice:p1152",
+      "evidenceRefs": ["p1152", "p0025"],
+      "caveats": [
+        "The source allows another route; consultation of both sources is not required. Missing alternative mentions are listed separately."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:84:0",
+      "identitySha256": "02f5aa60a647e877de75c57b3754d7381a32bb209c8158ad453d121992b37c9d",
+      "sourceId": "p1162",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1162"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:85:0",
+      "identitySha256": "f5e81d8fb2049cdd2cbf2801e79111f099895301d2515e21289742de0eb8a83d",
+      "sourceId": "p1179",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1179", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:86:0",
+      "identitySha256": "5e01b389060e5c55fb2166a9c1a2b18fbb1b3cc2021b25460e918aee6c27edce",
+      "sourceId": "p1189",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1189", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:87:0",
+      "identitySha256": "67eb8340c77dfae10490d2c39c32aaf7a9917372d4eb987b5fbbf0a8ab94876a",
+      "sourceId": "p1199",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1199", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:88:0",
+      "identitySha256": "4d289f38df1abb2762715f200e0154f4d677bc5973772db18962871e7917098c",
+      "sourceId": "p1209",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1209", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:89:0",
+      "identitySha256": "e2cc0ae1085e9197d282a1cd29b5e78cf0b4248192e8fde397ef37e8ffd0cb60",
+      "sourceId": "p1219",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1219", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:90:0",
+      "identitySha256": "0da94805cf0faffcdefd5239be050c8dde49d570d170ef0d89a72f1b4cde2c6a",
+      "sourceId": "p1229",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1229", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:91:0",
+      "identitySha256": "e4516b92ccf70e5ed3ace432af5bfeafbac67bad1c3352b09b0eae6e487d4831",
+      "sourceId": "p1239",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1239", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:92:0",
+      "identitySha256": "8b4ed20de883e483de834078d76dcfe08243f7d193d3a1f7fcdcdc75309cc038",
+      "sourceId": "p1254",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1254", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:93:0",
+      "identitySha256": "225102a13d820efa8005072a116fd2664d6e60b3f27596b32d73929145b22f90",
+      "sourceId": "p1264",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1264", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:94:0",
+      "identitySha256": "c4b7977667f4c35e17582dfdfa52cd23a56c89e4ea0c8b66a45ee2e509814fac",
+      "sourceId": "p1274",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1274", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:95:0",
+      "identitySha256": "42acd1192d495a3f28e00b164cc7f89223140e1372c4830597e5bff4ca60c653",
+      "sourceId": "p1284",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1284", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:96:0",
+      "identitySha256": "6d3f6ad7370678c0223b653136f84cc38a73888cd74c13de1efbd70a26c7addb",
+      "sourceId": "p1294",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1294", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:96:1",
+      "identitySha256": "bb4e48786131bf46584c9d8948cd86437bd56bb2c414f0b24597a74ff2f81b83",
+      "sourceId": "p1294",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1294", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:97:0",
+      "identitySha256": "b9830fe9490cb9622da9ebcf00b9b90839fc82f0c213794ad8551223b85fa8c1",
+      "sourceId": "p1304",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1304", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:98:0",
+      "identitySha256": "b77bcce0bc888cde33e13df631234bd26600a0da35ac349235dee05ce17c8300",
+      "sourceId": "p1314",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1314"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:99:0",
+      "identitySha256": "89fda58dd1974183b29f6185add0ec06974d26d36d19b622d215b045e1090091",
+      "sourceId": "p1329",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1329", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:100:0",
+      "identitySha256": "16cfd5cedc69796ca1aa27142abb93b31539418ed6a077b6479d7b7e4d03b935",
+      "sourceId": "p1339",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1339", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:101:0",
+      "identitySha256": "1a76ab564db14777b50d597c45027baf0b89c719379a16b86e3e62feb21a429b",
+      "sourceId": "p1349",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1349", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:101:1",
+      "identitySha256": "78e5a8618802c9d4f5ec2e31f42cc66ab1767098b22dd90a2f24580149069627",
+      "sourceId": "p1349",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1349", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:102:0",
+      "identitySha256": "c37a90364abb0caa624ff6f1a4ae21086ed30d0ba2faf98524352ce16be4d123",
+      "sourceId": "p1359",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1359", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:103:0",
+      "identitySha256": "0de8f41b33887103ed92d309cd730a99e91f667d965d7379d9d8722535ca2b83",
+      "sourceId": "p1369",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1369", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:103:1",
+      "identitySha256": "009cac9bed7e24046b4bec3b9ebf5f573c2c8cc3b0f874f95b6b20b5306e5cac",
+      "sourceId": "p1369",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1369", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:104:0",
+      "identitySha256": "75e97f70a4c4c22502bce3aa717a9d5bc8ff961df17e7baeea486fe77c49e51a",
+      "sourceId": "p1379",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1379", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:105:0",
+      "identitySha256": "003970e2c81c1be4bc4062de65d4e022963cbf813dd6bc6bc5fb973b4a0c4f5b",
+      "sourceId": "p1389",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1389"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:106:0",
+      "identitySha256": "62ac96763fa07e095c6b54e489c66bd683fd03d0ddb5f0c9ea220aa7e2b367aa",
+      "sourceId": "p1404",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1404", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:107:0",
+      "identitySha256": "0dafeeafd6637f55ca2ae3678eda2e0968d6ba21de8e9805099a97839eae721e",
+      "sourceId": "p1414",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1414", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:108:0",
+      "identitySha256": "5b7f0557e09626efc25b70fa542959a5679056a45d9ee71731557bcc72c84f74",
+      "sourceId": "p1424",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1424", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:109:0",
+      "identitySha256": "a0837dc5e2074b046125d8452a3805911c2d14072bc2f759341db6e69743df75",
+      "sourceId": "p1434",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1434", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:110:0",
+      "identitySha256": "f61072e797b4a9bbc1ce939d4e611eb8085be355701ad521a7d0ae803e1cb705",
+      "sourceId": "p1444",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1444", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:110:1",
+      "identitySha256": "11015810c414636c5b750c0a3a66a3ecdec5e993db3b4af20788fe0214c5f107",
+      "sourceId": "p1444",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1444", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:111:0",
+      "identitySha256": "1e8fb50ac2e30ba6f11cb53f56558d407c05185530d9666ca1c131a9ce76e2ad",
+      "sourceId": "p1454",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1454", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:112:0",
+      "identitySha256": "c24b661671f27af5e850fd3c4a84ab4c221cd16027a92f201d75abf6b49614f0",
+      "sourceId": "p1464",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1464"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:113:0",
+      "identitySha256": "a85997fbdca12960b647d3046bbbcb81616ceccbf9948179f8e2b3ded3926043",
+      "sourceId": "p1479",
+      "requirementMode": "optional",
+      "rule": "explicit-optional",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1479", "p0025", "p1475"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:113:1",
+      "identitySha256": "a573e8d2256c04c5d818e1c985d2d1a7b4eb2348c9b7a1bc9b1f87b001056026",
+      "sourceId": "p1479",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1479", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:114:0",
+      "identitySha256": "5dd075ff8e3f0eed883910fb15b654e803dd41ef689dd1220edc23a551f276b1",
+      "sourceId": "p1489",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1489", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:115:0",
+      "identitySha256": "24b498257f91281ff4e10f6012203e04dd052d54889a8f127e2632a35a5c16f9",
+      "sourceId": "p1499",
+      "requirementMode": "optional",
+      "rule": "explicit-optional",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1499", "p0025", "p1475"],
+      "caveats": [
+        "Optional status is inherited only for the TOP data-structure supplement from this week; CS50 remains assigned."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:115:1",
+      "identitySha256": "b7e31552cbb771b2040fbb95a16bb22b222a4d53bf7d492043911ed269abb31d",
+      "sourceId": "p1499",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1499", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:116:0",
+      "identitySha256": "4a63513eb0a015f051a2278b160d6b639653653f17a578aaf73b00e5006dcaba",
+      "sourceId": "p1509",
+      "requirementMode": "optional",
+      "rule": "explicit-optional",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1509", "p0025", "p1475"],
+      "caveats": [
+        "Optional status is inherited only for the TOP data-structure supplement from this week; CS50 remains assigned."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:116:1",
+      "identitySha256": "b51014b9ae187c93e4e1f8e05c9ec4ee5de45ba97c80cdcafa02af26e7f4b4fd",
+      "sourceId": "p1509",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1509", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:117:0",
+      "identitySha256": "8af0564d596e8d035c4b29dce75d728e4b393ddfe45cea088fd6433e4f6c2e59",
+      "sourceId": "p1519",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1519", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:117:1",
+      "identitySha256": "9fff6fdc9a6df4775a8c3e47fd3505ba00f631f59d06bab8e51e6c69e7d78ccf",
+      "sourceId": "p1519",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1519", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:118:0",
+      "identitySha256": "eaf6f2bc0c86fe5a4fd3a0d500bf53444127080f69c4ad447cede7eccfb707fb",
+      "sourceId": "p1529",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1529"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:119:0",
+      "identitySha256": "b17779be70f9bb683cf8526ca99e0a25979fecd7be6adc00b2b9ff3b6f165b5e",
+      "sourceId": "p1539",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1539"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:120:0",
+      "identitySha256": "e6a38205763e685172741e24a1dcb912b51c2ec8a485b2c7bbfd27c8f466a1a1",
+      "sourceId": "p1554",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1554", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:121:0",
+      "identitySha256": "704858d15358e7f2fbf5fd8f62664793a41999d7624777bd480b013c08b7f5e8",
+      "sourceId": "p1564",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1564", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:122:0",
+      "identitySha256": "355685b3b334ff2edd9f9bc53b6c36c2ce075bb47be6054e392c0b1eac0b9728",
+      "sourceId": "p1574",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1574", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:123:0",
+      "identitySha256": "774afae918a6059b70264be03277c3df0dcb7325aa477b05fd0d2fd6c87b397d",
+      "sourceId": "p1584",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1584", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:123:1",
+      "identitySha256": "44f8184a2f25f4048e634a163bee321167a37fd82a6a49fd0a520a9bfd6e0f26",
+      "sourceId": "p1584",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1584", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:124:0",
+      "identitySha256": "2c1995dadf7f60110b74e065c5cdc74d9fb019eef0adeb3b9a4851120c09ca11",
+      "sourceId": "p1594",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1594"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:125:0",
+      "identitySha256": "964418080a20f15f44db1d59d0d6b8768f47e4acc98caddd26ec4dd44d2b7ac8",
+      "sourceId": "p1604",
+      "requirementMode": "required",
+      "rule": "unspecified-documentation",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1604"],
+      "caveats": [
+        "Assigned documentation/concept work, but no external library/provider or full documentation set is prescribed. Preserve learner choice."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:126:0",
+      "identitySha256": "a3c6f9060f925baf34c41fff48758a5b14e253d1d686e11c7f924261e2d40e3d",
+      "sourceId": "p1614",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1614"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:127:0",
+      "identitySha256": "77581f04c1882ff3386f0d31ecfda312d58c0b76f632a49b40cd58181ce7e403",
+      "sourceId": "p1629",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1629", "p0025"],
+      "caveats": [
+        "Do not apply the PostgreSQL/SQLite po potrebi clause to the CS50 lecture. SQLite has no supplied URL."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:127:1",
+      "identitySha256": "376da758fecdb3f4765ffdc758e51b49119f377831090d8159e1365e600968f5",
+      "sourceId": "p1629",
+      "requirementMode": "reference",
+      "rule": "as-needed-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1629", "p0025"],
+      "caveats": [
+        "Do not apply the PostgreSQL/SQLite po potrebi clause to the CS50 lecture. SQLite has no supplied URL."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:128:0",
+      "identitySha256": "43ea8dfb2acda3120bb8befcad38181caaa8114ca1d05f2678d9fa64e8d99880",
+      "sourceId": "p1639",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1639", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:129:0",
+      "identitySha256": "e023ddae256c10bd4688d3ab3e8ba46a3b1f74abc499935ea2a4d2bce7993e19",
+      "sourceId": "p1649",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1649", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:130:0",
+      "identitySha256": "06c4defad3deb19af4aaa1b007270f67ebddf8d2198c8ceeb42fc794ddf3f9da",
+      "sourceId": "p1659",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1659", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:131:0",
+      "identitySha256": "e7a46d5040eb982048c9d6573e1e44bd229ee3d4418d25eb31c1ff74a9fedd22",
+      "sourceId": "p1669",
+      "requirementMode": "reference",
+      "rule": "problem-set-primary",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1669", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:131:1",
+      "identitySha256": "3c3428d969d52d277d86d03ad3698bb8195a0892b330ffb827ae7df29bb0f286",
+      "sourceId": "p1669",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1669", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:132:0",
+      "identitySha256": "0fed0359a7840aab9001165d9296a9e81bae7d0c2f670409226b9f9bf943b45e",
+      "sourceId": "p1679",
+      "requirementMode": "required",
+      "rule": "unspecified-documentation",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1679"],
+      "caveats": [
+        "Assigned documentation/concept work, but no external library/provider or full documentation set is prescribed. Preserve learner choice."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:133:0",
+      "identitySha256": "50f3e9cb32b997205f6c5b2e99549ee76974492f40a804c64fb1481f929c6e45",
+      "sourceId": "p1689",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1689", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:134:0",
+      "identitySha256": "634371e14517610d46dda4d8f6053fb2af3f3ddd946cbe75f5940864c9b3c4cd",
+      "sourceId": "p1706",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1706", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:135:0",
+      "identitySha256": "b10198d3e4745f68956dbbad53a9550941a17010343524db4600b6db3f0985a0",
+      "sourceId": "p1716",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1716", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:136:0",
+      "identitySha256": "f3c49c62949a3f07d7547db4fb8e9e66f4a636264579cdeddecfcdf689ebc274",
+      "sourceId": "p1726",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1726", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:137:0",
+      "identitySha256": "9ec292c1345a20bcadf9ff05b81ca01829211ad640ecb70a1188b5fec7023cc7",
+      "sourceId": "p1736",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1736", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:138:0",
+      "identitySha256": "06937d883ec5b98c6e3e0916205fd46a4f7ffd18e463c7e31adadf8465998de5",
+      "sourceId": "p1746",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1746", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:139:0",
+      "identitySha256": "bc33dae2c5d80fadaaebd5c42a7a5769f7b1797fc7b004c44169d5e9b53a6d75",
+      "sourceId": "p1756",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1756", "p0025", "p1700"],
+      "caveats": [
+        "The FSO scope follows the original weekly course context and selected core exercises, not a newly invented complete-course requirement."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:140:0",
+      "identitySha256": "b875da43297fd809eaf685236869a17141428fb46e15f05cdcf39ecb3f746fad",
+      "sourceId": "p1766",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1766"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:141:0",
+      "identitySha256": "60f92b13f35ad0ac2e9294da606264fc8adb0422afe865a185fc7f7a8f06ea6c",
+      "sourceId": "p1781",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1781", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:142:0",
+      "identitySha256": "78863c274f3ea50521c0d6734f76494bfbd8b2c946cb16f962f223762ce7a818",
+      "sourceId": "p1791",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1791", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:143:0",
+      "identitySha256": "e8579b3f09132469e9cf7986ac09f7716701a6de6f2ecc785dd2149b8f166fb5",
+      "sourceId": "p1801",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1801", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:144:0",
+      "identitySha256": "dd8373ffff131cb9723d68bc05506c878d09a372e59116fcc1750903c82f3cde",
+      "sourceId": "p1811",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1811", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:145:0",
+      "identitySha256": "942107bc8d280d123f6f85d6ab8c02b654a01892f7d74f82f0098df00d2033be",
+      "sourceId": "p1821",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1821"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:146:0",
+      "identitySha256": "3e246dabd07e31c9d22f61000a830960cb46dd31b8556588f81a9aefbda9adf6",
+      "sourceId": "p1831",
+      "requirementMode": "conditional",
+      "rule": "used-topics-condition",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1831", "p0025"],
+      "caveats": [],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:146:1",
+      "identitySha256": "9b9fce882a8b9458aada5edebc9f23e4377fdbcb582540934ecb5aff590c31de",
+      "sourceId": "p1831",
+      "requirementMode": "conditional",
+      "rule": "used-topics-condition",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1831", "p0025"],
+      "caveats": [],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:147:0",
+      "identitySha256": "c2a5ee53d0164f1451f8b0e74f6746d5427478fcb7e51ea67906dd2ca539f30c",
+      "sourceId": "p1841",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1841"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:148:0",
+      "identitySha256": "89b9e0d22451585c8129a7c315afdbfe2c5a18df28eae2424960343fa3ef88c8",
+      "sourceId": "p1856",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1856", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:149:0",
+      "identitySha256": "ae8e75cdccfeaa52acc79404f8bfff07ced33a26bb2ac1cbe0e2e5e81835bfc5",
+      "sourceId": "p1866",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1866", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:149:1",
+      "identitySha256": "7164d76d527b5b367a28cb19e4a39c8f58abe1ca1f25f65dbfddb4f0e146d4cb",
+      "sourceId": "p1866",
+      "requirementMode": "reference",
+      "rule": "as-needed-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1866", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:150:0",
+      "identitySha256": "d33c7fe0b22c8391fef1d41ecbbf4d5dc99d4226a15ae1688d2713ceb0d6312b",
+      "sourceId": "p1876",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1876", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:151:0",
+      "identitySha256": "3c67d1fd17d43d7c6d8fc5694b59a5fb48329d71acaba72d1e82cdacd733c171",
+      "sourceId": "p1886",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1886", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:152:0",
+      "identitySha256": "292027ff1a014757049955d6049a5c4151640ed9006718773aa5bd9cc7758f7e",
+      "sourceId": "p1896",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1896", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:153:0",
+      "identitySha256": "e5c3f295db06a9244fbf5b4c800a6ff0ab0ac51cdb7a32c63215f0acec8ce43e",
+      "sourceId": "p1906",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1906", "p0025", "p1852"],
+      "caveats": [
+        "The FSO scope follows the original weekly course context and selected core exercises, not a newly invented complete-course requirement."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:154:0",
+      "identitySha256": "85c0a8117f79a37fdb684d35b5e9bf8f4b5d56992597f07401f718a2b389b377",
+      "sourceId": "p1916",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1916"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:155:0",
+      "identitySha256": "8d2e74b5fcd045bc43fce69c1b7dfa590f6f8708199303f659a8f1963d69ee6c",
+      "sourceId": "p1931",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1931", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:156:0",
+      "identitySha256": "18ed560056aa8d8f4c4e2f26b870138b58ad524d50be0c092b905b43bf0b1dff",
+      "sourceId": "p1941",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1941", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:157:0",
+      "identitySha256": "d73346f58c2a9ffc2d806d0692ba1b91d986314162d46a8bdc45c10d2abf2c16",
+      "sourceId": "p1951",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1951", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:158:0",
+      "identitySha256": "5c93f6553a40c94dc95330bb2206e323b3468fa12dbc8b765152aa531ba37531",
+      "sourceId": "p1961",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1961", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:159:0",
+      "identitySha256": "48e37b044e93d20eb646ad4c97ec829e9c2331f5d25fa997e07cbfae6764124d",
+      "sourceId": "p1971",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1971", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:160:0",
+      "identitySha256": "eaa1bfd63f06fc689e6dd8e8dbca7d02d1492c6cac31a47b71b64b0258c8b88d",
+      "sourceId": "p1981",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1981", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:161:0",
+      "identitySha256": "7f0602c6f5d1b96fe6be962f1e8f89c61479f868f7eb88c45b4823ec772c5c4b",
+      "sourceId": "p1991",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1991"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:162:0",
+      "identitySha256": "a6302b6bcd4197f6d62c02cd5d431ee135770989686fb4569a106379ce25f106",
+      "sourceId": "p2006",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2006", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:163:0",
+      "identitySha256": "8f899d9e79f9f651cf3c4a3463ae5adb2aa84544690616a950f401ba75856fb9",
+      "sourceId": "p2016",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2016", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:164:0",
+      "identitySha256": "a49be14a105566b52f5a09ee39abbb9c6620171fde6c2ca77ad907226fef10e2",
+      "sourceId": "p2026",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2026", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:165:0",
+      "identitySha256": "41630e42728900693c16e65ceb186f8550a472b0c7eec31a2636bfcbe87b6b10",
+      "sourceId": "p2036",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2036", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:166:0",
+      "identitySha256": "d9019d29963708be9a05cdab4e3e3fee7ffc48bf9eb4415c10b9dea395b97778",
+      "sourceId": "p2046",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2046", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:167:0",
+      "identitySha256": "d2d8d4d69594c1a71e5be3870e33cb44bc834cdf2084eff35112369956839a60",
+      "sourceId": "p2056",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2056", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:168:0",
+      "identitySha256": "39872d0b16f335eeeb6ecd0f16c92084b20462cea9678ff0c9e70ef100631083",
+      "sourceId": "p2066",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2066"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:169:0",
+      "identitySha256": "7923cb8635f451f1e7a3773bac70a0ee64877d12970c3716da38eecaa6ffc544",
+      "sourceId": "p2081",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2081", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:170:0",
+      "identitySha256": "a57c05c069db31109bd7dc80ddbaa9902a03b15ea142780d84dedbd07215582d",
+      "sourceId": "p2091",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2091", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:171:0",
+      "identitySha256": "7acf92cd37c5a09b555050ce4f58f37a7c51d5d4f524333318afcb44c09e6d79",
+      "sourceId": "p2101",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2101", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:172:0",
+      "identitySha256": "694ee7505a25915b9595e3a8299f56fd05f63186b918e2498079eebb3fd18cd0",
+      "sourceId": "p2111",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2111", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:173:0",
+      "identitySha256": "a77544c2a6087a78fca67778a74a72d0bcdbb934956a2793392f864581d301a0",
+      "sourceId": "p2121",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2121"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:174:0",
+      "identitySha256": "e9ae91fb23144281bccf7209c52b80e25e008387b3e8bbbe8550fa930541db60",
+      "sourceId": "p2131",
+      "requirementMode": "required",
+      "rule": "daily-assignment",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2131", "p0025", "p2077"],
+      "caveats": [
+        "The FSO scope follows the original weekly course context and selected core exercises, not a newly invented complete-course requirement."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:175:0",
+      "identitySha256": "91df657780e63dde69c0dbc21b6182f79c820cddb07640bbbd9ccd3b2bbe7192",
+      "sourceId": "p2141",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2141"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:176:0",
+      "identitySha256": "25009955517450efb30a03c6e0d2eb6dad1bba8bd240bf817ca4ce8570dabf1b",
+      "sourceId": "p2158",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2158"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:177:0",
+      "identitySha256": "0dac11e35a9785a21a24dd2269a7714bdd8dd934c5ba94ba57dffe96c0342dee",
+      "sourceId": "p2168",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2168"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:178:0",
+      "identitySha256": "9b1fcf4f5c6fb6f720002fa9442b2e6c577606f8ff07e6126a70efd72206d02d",
+      "sourceId": "p2178",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2178"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:179:0",
+      "identitySha256": "34d4742ac53b3a8ccb957bfa86b449700cf2c8ee31378745a2537a7b24752428",
+      "sourceId": "p2188",
+      "requirementMode": "reference",
+      "rule": "as-needed-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2188", "p0025"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:180:0",
+      "identitySha256": "9c95e71e502c3613645b52b0646ef2a555561037d29c956020ccc801e59653fe",
+      "sourceId": "p2198",
+      "requirementMode": "reference",
+      "rule": "manual-instruction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2198"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:181:0",
+      "identitySha256": "7d7c76a3d79919e33165db5e098d18ec01fd0f93492dc27ac552cd19d1d8dd43",
+      "sourceId": "p2208",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2208"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:182:0",
+      "identitySha256": "2968bd5585cf1684e01255419a01b4926f4830f9f23c92c11c2edd679acea988",
+      "sourceId": "p2218",
+      "requirementMode": "reference",
+      "rule": "resource-restriction",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2218"],
+      "caveats": [
+        "Source restriction is retained; this label does not remove the independently required study/review unit."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:183:0",
+      "identitySha256": "3e0efab6caf9348196fe7a0ee4f0078a22931eb144b71075b324af35e538e779",
+      "sourceId": "p0268",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0268"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:183:1",
+      "identitySha256": "d31626acbe3f0cac55ece7e5b1718cc07f5041f526b803177176cc34f2f318de",
+      "sourceId": "p0268",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0268"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:183:2",
+      "identitySha256": "b68997906a43f98ca94e62e8aeac5b106d673073bd9460118cd351b54aa61d91",
+      "sourceId": "p0268",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0268"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:183:3",
+      "identitySha256": "79070f8d90798d7090a593f93cf3d35433e103f8a359296a9e58e76af686d09f",
+      "sourceId": "p0268",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0268"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:184:0",
+      "identitySha256": "3e4b0e73415e82f7f477019f9357cbe3843f94d6e1261ed7e6e591acc629199c",
+      "sourceId": "p0346",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0346"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:184:1",
+      "identitySha256": "b02a94f0c633d3f90090727cc7b0e4a72e869612b9b643a2907ec0da1aad435f",
+      "sourceId": "p0346",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0346"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:184:2",
+      "identitySha256": "0f5ca10dc1ea5f5b7521c761bdcae94149c4fe2311db8e93951e73f4937e58d7",
+      "sourceId": "p0346",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0346"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:185:0",
+      "identitySha256": "517bafed0effac612e2eadbd452a3e8cf67984a0b74f0b04eec0029927395720",
+      "sourceId": "p0421",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0421"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:185:1",
+      "identitySha256": "20a690e5de528e21018abe6c96a6a6d53f8f34e814115794784726afaae79bf2",
+      "sourceId": "p0421",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0421"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:185:2",
+      "identitySha256": "4113ea8423111d700b91b650d9df841af22611c55f1ae798463e3e41835af47f",
+      "sourceId": "p0421",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0421"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:186:0",
+      "identitySha256": "d47d630106998c0ef7d725a665a6f903f5e13de9764626bd03085d6271020c6c",
+      "sourceId": "p0496",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0496"],
+      "caveats": [
+        "Parent binding correction proposed separately; no runtime relationship has changed."
+      ],
+      "ambiguity": true
+    },
+    {
+      "useId": "se-26w-v1:mention:186:1",
+      "identitySha256": "c044fc01c6429bba0a2ec94c08e2c14d259e6d81778773aae9af1688360a779f",
+      "sourceId": "p0496",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0496"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:186:2",
+      "identitySha256": "af131b622d7d64a4078a8da0cefe79252b9f5b84718a002ffa33b869400b27b0",
+      "sourceId": "p0496",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0496"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:187:0",
+      "identitySha256": "c327a1e82e02be456729431997727e68cf07888cda2c434fe191d6cbf7b7c97d",
+      "sourceId": "p0571",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0571"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:187:1",
+      "identitySha256": "23bf27b8b0adb7967401c8e73997057a3f09c41c5c0c2e49455306892a3e6894",
+      "sourceId": "p0571",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0571"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:188:0",
+      "identitySha256": "ffdaff3ee82e636ec1537c5d12c9655a77bf27a65f935d90f48bafb7e5d208a8",
+      "sourceId": "p0646",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0646"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:188:1",
+      "identitySha256": "188ebd9c2273903bff52d783319867f5e07372ce81a13c848d9257eed1026acd",
+      "sourceId": "p0646",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0646"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:189:0",
+      "identitySha256": "de736ececcf4669ced52b93a28a92f9b2828c8ab1ffe760ce55a343ca852621b",
+      "sourceId": "p0721",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0721"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:189:1",
+      "identitySha256": "0d329fb561649a1f6a4cd44248c13ba509caa69fbdff978291545eb96125b661",
+      "sourceId": "p0721",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0721"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:190:0",
+      "identitySha256": "7263fca780f9a6fa624b0e93a9b8bfe996211c5b01e298fc4db04faccaca91c9",
+      "sourceId": "p0798",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0798"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:190:1",
+      "identitySha256": "34d5fe24d2f7a20bb54783391d839ae94c8bcfa054b0bcfa1e5c7768f915d56b",
+      "sourceId": "p0798",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0798"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:191:0",
+      "identitySha256": "afb079ba162ede3b7a31147661a3ff51787e9e81032d09432a25ccf18f599647",
+      "sourceId": "p0873",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0873"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:192:0",
+      "identitySha256": "ac359919d9a0795845ccf0ef15efe7aed119147eba7028bb1d72fb4b65f093b3",
+      "sourceId": "p0948",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0948"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:192:1",
+      "identitySha256": "d81f3eb10d11a0b377f0081520ef30bcd5878f7e74f53fc2a2d3659d82466f57",
+      "sourceId": "p0948",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0948"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:193:0",
+      "identitySha256": "ac6b687f68321bf162e4ab6b5f92ce0a7adf10ce01f84e9dfbc1a6dc3dceec6d",
+      "sourceId": "p1023",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1023"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:193:1",
+      "identitySha256": "69224be24d713be2384788448e52668a6df03abbcee8a46e2b12fa24f60e1654",
+      "sourceId": "p1023",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1023"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:193:2",
+      "identitySha256": "4ed016430a4630cd85822e54f3a48c297b3f0534ac21ed270c8ade1ffa0286e7",
+      "sourceId": "p1023",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1023"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:194:0",
+      "identitySha256": "3462964e9baaff53429ad2812b42b2004e79385e756422438cc64a4d90404cb1",
+      "sourceId": "p1098",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1098"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:194:1",
+      "identitySha256": "e3d579955d718c6d55b97eca3c6ff08cea50dc87ad976020d364fe30dcf8ea58",
+      "sourceId": "p1098",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1098"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:194:2",
+      "identitySha256": "00b3eeac0482ab3c13f15eed1af2a54b692028e2dcfcf28f9ef5466db90288b1",
+      "sourceId": "p1098",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1098"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:195:0",
+      "identitySha256": "7dfb2a778bd84f2e15d40703d58b699123a87a19291597fefa238974d765c7b3",
+      "sourceId": "p1173",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1173"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:196:0",
+      "identitySha256": "71b43f14a5c95a79bc75131874888c2db4d1b615047ec27f8e91d5946acd0002",
+      "sourceId": "p1250",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1250"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:197:0",
+      "identitySha256": "92ca541b0cab274df0a5362ae3d4f7a9a38cbfef7afa3cd41707d8a7829748ec",
+      "sourceId": "p1325",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1325"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:197:1",
+      "identitySha256": "ee1148da93ab01ce12a05723e7c8066a40957877f0c65f342f6f93727a9a9f8e",
+      "sourceId": "p1325",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1325"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:198:0",
+      "identitySha256": "c6978ba6f95879277654ddab434484b0d2857b4a695e1bb308ed8af055ac05ad",
+      "sourceId": "p1400",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1400"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:198:1",
+      "identitySha256": "66531186b28e6556a385ba2ee824d828bb64419dc45d7950a6ea05002ccae827",
+      "sourceId": "p1400",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1400"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:199:0",
+      "identitySha256": "c593f341243a01fbbb8bd748b23bd87b4c9848898a85ccb5b881e82228760bec",
+      "sourceId": "p1475",
+      "requirementMode": "optional",
+      "rule": "explicit-optional",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1475"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:199:1",
+      "identitySha256": "7d684659acfb295bdad3b79d5af1a39988e221bd814c439dfadb46fe1446ea6d",
+      "sourceId": "p1475",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1475"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:200:0",
+      "identitySha256": "3872ad8cbb02486242d04ce5bc376b5aed945a49e0a17477880f5f7d406c941c",
+      "sourceId": "p1550",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1550"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:201:0",
+      "identitySha256": "d6f219c45ac40c87cc5a1a008cfe6a95821b0a2336e82cea2e14c46fa00d8373",
+      "sourceId": "p1625",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1625"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:202:0",
+      "identitySha256": "b3f44a239759ced2e2d092c3b225de6202025d3768c3831ec9e03d3166002211",
+      "sourceId": "p1700",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1700"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:203:0",
+      "identitySha256": "b382381a55b30fb527319f9c971086a84f5fe9653812f0e1fd44d3854e6afd21",
+      "sourceId": "p1777",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1777"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:203:1",
+      "identitySha256": "eb4415490f33601d818ea84e4ec50aeea1087aa6f35ef1dfdd8588fabb994d8a",
+      "sourceId": "p1777",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1777"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:204:0",
+      "identitySha256": "cf9f9822a450a52e8503196621b535152864cd7c2c3b3db112a146ccdafc9b0f",
+      "sourceId": "p1852",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1852"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:205:0",
+      "identitySha256": "6070f336087a69242f8ece08360c76b009fbbb8e8e9c2febf8cdc96911f5a3d8",
+      "sourceId": "p1927",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p1927"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:206:0",
+      "identitySha256": "3552d338c56a77a5fc99e88238fa9f66c430b103c7f4448e49e25ec4576ddc0f",
+      "sourceId": "p2002",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2002"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:207:0",
+      "identitySha256": "f04ba6b7e832ba85e02d4c70e80380ef181578fba7e950bce1cb6eec8156fa44",
+      "sourceId": "p2077",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2077"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:mention:208:0",
+      "identitySha256": "e6991e05494fb62101a99cc12160c9237b2b980f3888c4df45dbec8649c9dc64",
+      "sourceId": "p2152",
+      "requirementMode": "reference",
+      "rule": "weekly-overview",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2152"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0083:0",
+      "identitySha256": "2c007d5900b6412939c107f97fc01c112ef5b7ec4d5d0452dace12286d00136f",
+      "sourceId": "p0083",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0083"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0086:0",
+      "identitySha256": "8f3607880466ae26961f40dca56cc0de38c4573f173570408b0a610f1f2397b2",
+      "sourceId": "p0086",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0086"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0089:0",
+      "identitySha256": "19c9697cc02d28b12b483b24aa3637879ac7da9112bfc3a8f8ef25968089ba43",
+      "sourceId": "p0089",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0089"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0092:0",
+      "identitySha256": "926186772a3795c6d6487f01b03192c06413090fef4dc9709882e40280112104",
+      "sourceId": "p0092",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0092"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0095:0",
+      "identitySha256": "b75d332017b996dac41035cf4942ffac268b1a4a8c17bbea68f0e958bee9f0ee",
+      "sourceId": "p0095",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0095"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0098:0",
+      "identitySha256": "b2a6c4cd5f34b0c85e2653b077258f9eb2cddb523dd283cc457adacef2f7afda",
+      "sourceId": "p0098",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0098"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0101:0",
+      "identitySha256": "b272dc14fdfec87f17b0449911e7b33a10c827b5d96e25b2240dce5ed45bb613",
+      "sourceId": "p0101",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0101"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0104:0",
+      "identitySha256": "7d275d5eca94acf599d9f52f1b856e2d2b4b78c7f39ecba64e0f564d3df5d2b6",
+      "sourceId": "p0104",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0104"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0107:0",
+      "identitySha256": "ff36fdc6274e1ae3b8eda3b9d2b1c1331d575dfc55b749fc32dd0fa58b20c4ca",
+      "sourceId": "p0107",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0107"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0110:0",
+      "identitySha256": "98a96a754aae39a36a60e24aec8fa2eb8843751b5bc1d20766d049686a12410f",
+      "sourceId": "p0110",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0110"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0113:0",
+      "identitySha256": "be1088d1ff40e9a709adf07688842e107636ca3b96378c3da8e80c95bc9d4a04",
+      "sourceId": "p0113",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0113"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p0116:0",
+      "identitySha256": "d495388312ad3c22df5b4216c16a68731355d2ca5fbf4b2a4ad45e22ef3217b9",
+      "sourceId": "p0116",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p0116"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2357:0",
+      "identitySha256": "0adae0f5779c5f41a75600ed49f2c4cc25ecb8a78279b5f5630fae2d9ed3e43f",
+      "sourceId": "p2357",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2357"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2358:0",
+      "identitySha256": "d532c1ba5bbc1dd4d6f700b66de0f323576e101c09551a901442b1471661646a",
+      "sourceId": "p2358",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2358"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2359:0",
+      "identitySha256": "222587b5f1cc79e13aa88ed900ce2ddea219cda15de7cc1246b4e3697cd298bf",
+      "sourceId": "p2359",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2359"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2360:0",
+      "identitySha256": "b0e22025dee781460383f0c697837020a44b91a91d4199a59e69e9679585f3b8",
+      "sourceId": "p2360",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2360"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2361:0",
+      "identitySha256": "cd13d9e9aa9099b6d53ac08f7cabff9ffad58be81129f6dabb4c2f760e6dacbf",
+      "sourceId": "p2361",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2361"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2362:0",
+      "identitySha256": "7cb9358be22b3e9396ee301f314d6e142b55df285e3aa1522fb674d15be3cb11",
+      "sourceId": "p2362",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2362"],
+      "caveats": [],
+      "ambiguity": false
+    },
+    {
+      "useId": "se-26w-v1:hyperlink:p2363:0",
+      "identitySha256": "9915bad420d0f3c621021932cf1a49d2c56575d23959f023a79f0dbfd5d652dc",
+      "sourceId": "p2363",
+      "requirementMode": "reference",
+      "rule": "catalog-reference",
+      "choiceGroup": null,
+      "evidenceRefs": ["p2363"],
+      "caveats": [],
+      "ambiguity": false
+    }
+  ],
+  "evidence": [
+    {
+      "sourceId": "p0025",
+      "sha256": "7428ab08e6c10895b4ca6836a0f748b6996ee19c14a6cb1708fd4cdc210c6cea",
+      "table": 2,
+      "row": 3,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0082",
+      "sha256": "7821a37bc984383905251aacaf9241a2b55e87dae37aa41b7d94461b73c685ae",
+      "table": 5,
+      "row": 2,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0083",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 2,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0084",
+      "sha256": "700889b5de715202be7b5bdea8f72867c45a435f1c74332a92d008f01029d897",
+      "table": 5,
+      "row": 2,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0085",
+      "sha256": "09c381e51a45cc031e955272f7aecc5a2cae2aa2fcd35b8a1edb5d943030111e",
+      "table": 5,
+      "row": 3,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0086",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 3,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0087",
+      "sha256": "96b9ca36eff63e77d62ab9aef69e823e967669e0a63a7117c8f5b8930db038a1",
+      "table": 5,
+      "row": 3,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0088",
+      "sha256": "6cc4a753bc7477c21983a07fc1debbe42e94d23e69b28266a018b264b92f8424",
+      "table": 5,
+      "row": 4,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0089",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 4,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0090",
+      "sha256": "4d219e6f2b22b5511349f5aa9793847f9de29fbd329702f192cc2a358913ecfd",
+      "table": 5,
+      "row": 4,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0091",
+      "sha256": "ebd0819fb558253c27487882129ad9300d6566d0d8b979adad99d28206e89b34",
+      "table": 5,
+      "row": 5,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0092",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 5,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0093",
+      "sha256": "fa2d3fbad78aab6b6e7bb0dd5b4a22381999d720c9f614246314ad84572070dd",
+      "table": 5,
+      "row": 5,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0094",
+      "sha256": "32007ee438ae2ca3ee8a449c228db4848eeb0248b76e2bec1340db5c7070131c",
+      "table": 5,
+      "row": 6,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0095",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 6,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0096",
+      "sha256": "e2cc84521f1275d52a5333552091caa6bad75c2260a5f8112388f58f5f7e6a89",
+      "table": 5,
+      "row": 6,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0097",
+      "sha256": "31853068a401c100cab30cda046d8a09e16b6cf7a919b283a7fe9b701237de6f",
+      "table": 5,
+      "row": 7,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0098",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 7,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0099",
+      "sha256": "9042177aeed6d3b4a9f4bb2bffacc6fd942a79c24c270823a74bea79e9cea07c",
+      "table": 5,
+      "row": 7,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0100",
+      "sha256": "405f5421b6dca1a867816c0080fa348d27767d2d5f092a9af8cd69bde82239b7",
+      "table": 5,
+      "row": 8,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0101",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 8,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0102",
+      "sha256": "232051e85f2d9fd59555187de5bbd78d8d6ef7a82ef0c011f8e4edf8a6b7dafd",
+      "table": 5,
+      "row": 8,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0103",
+      "sha256": "1dc42b22ef19af5a11a5de581ab1f20d78cf604f202dec21cf716e780ff99adb",
+      "table": 5,
+      "row": 9,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0104",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 9,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0105",
+      "sha256": "ad2efc8e339f951be171590203650ccf1d6f4f0a04ab51b0970c8cfc24ada849",
+      "table": 5,
+      "row": 9,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0106",
+      "sha256": "1e2c6733d80e562647a11db641c50025277fc40967b49b8468da252116284fd6",
+      "table": 5,
+      "row": 10,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0107",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 10,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0108",
+      "sha256": "c461117bc64c1177a32f5fadd262782bec38e1e8d46ef818cb7d2fd0f33e2990",
+      "table": 5,
+      "row": 10,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0109",
+      "sha256": "2294d3ae3e604df3ed0b17327a0ef07d2117f5cdd44329940220b0e28db7de64",
+      "table": 5,
+      "row": 11,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0110",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 11,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0111",
+      "sha256": "cbd1d6f1563efd6bb01a4e0a221acc20d4171a9daf24fcc93a42ff76992f1014",
+      "table": 5,
+      "row": 11,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0112",
+      "sha256": "a6690ee774082de7c0823a41e193a4e1fe4c722a383e0a7972acd9f1e69cdce5",
+      "table": 5,
+      "row": 12,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0113",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 12,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0114",
+      "sha256": "da6192ac7238b995f0c82de8bf06402ae88a4cd6b6229628c208560cd9addbf1",
+      "table": 5,
+      "row": 12,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0115",
+      "sha256": "58b7d7c034b693fac9d90bf785b03ad052b6d397fd76e6eef5cb2b6eef1a2fad",
+      "table": 5,
+      "row": 13,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0116",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 13,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0117",
+      "sha256": "a0fbb92ef901553cff9f34715d67f743b5109ab6b3c74a1a4c75639ef418ac5b",
+      "table": 5,
+      "row": 13,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0268",
+      "sha256": "389512fac70005b4cd97c3cf6b7b21823e553db98baa10a183aa487da3a7cdf0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0274",
+      "sha256": "4188d4792dcaa926e02cf87461a72b834235e92abbbfcdb117cd19633e712a15",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0285",
+      "sha256": "e9bd6bb4350b901d84591b3c58a275a3e6e0011d4af1d7dfeeacc8bbaeb4151e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0295",
+      "sha256": "ed9dd14039db8effc9772449bb96eb7b31a30c00aa3bb5ba759a251e69bfc9c4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0305",
+      "sha256": "107ffd237e383574133619ff9354122f42f7687d39362cfef56bf91d30bd1790",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0315",
+      "sha256": "68e7d0cfee6edf72e69e3139259a479d913bd604f40a3510fe6973dc037a9a3f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0325",
+      "sha256": "5a7283707c836c7d662756f88d062dbd360050189cc89a8e3a541b8a9d2f6ff4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0335",
+      "sha256": "3719439fbf0c22e68eaec95fab92cedd51c536fd1ba123e9647744ace21ffdaf",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0346",
+      "sha256": "4d427f9ae7fe3d6af1465646259fc0c91fe56dc0bd34ae1c7d23cdfa48f40861",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0350",
+      "sha256": "bbd82922bf9ee58aee7c60f717d89dd432531c0abfdac3ce5208a9fcc18ded9b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0360",
+      "sha256": "591babca452bebaaad59b658e96f48fb11955281a1228c2a18afde1a40dc33e6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0370",
+      "sha256": "7aafda020cea44a9e4e74470136555edbaf42b00df0af178debadf2dd3d9e4e4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0380",
+      "sha256": "58565ee8613e071f2fbbc11f2429dcdf32ba6893705897b9621454804862e860",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0390",
+      "sha256": "2afd8bc7ca3cf63b4b0678ce752662bdf57a64a6eb931ebb8c31b5c9356d6b2a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0400",
+      "sha256": "912a5107d6a65d8de27c8c7ec209463ca8073b30490ecf7181f31b88a3c7aab3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0410",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0421",
+      "sha256": "944e8dd973052f4404a0fc21685859e46ca80f6456035ee1105e7dafd1868449",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0425",
+      "sha256": "9e30d8d980556c3efccb3c4cdc32e96cf3042a088a38165419a5f4249fe6f381",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0435",
+      "sha256": "0e653a5482b2c9d18fd6c455930d7c2c9a16a1f1c591b55bf18b5c0af8ae6c42",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0445",
+      "sha256": "26414dd96f62851cf7a07dd00aec60d16e3c3500b9dc8539807aaf06b423ff37",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0455",
+      "sha256": "8d6c4430485dc144895e49801b589f1dad2a14517b25e185b227e04a30cc0685",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0465",
+      "sha256": "78fecd7212b6162fa1b33738a03fcc2e5297210ad6ccb632b39b9e615b06e054",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0475",
+      "sha256": "96649d0f8282577d70f8e4616a00026c4abaf0410e4d05fe97620d399244f4c6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0485",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0496",
+      "sha256": "fb7bda1e0cd47061fd26dbc38bdc3194563483103adad7989aa5d6ce010db0ad",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0500",
+      "sha256": "2006e5e4dfe1e031d3f61bf83f6c208799f31a59f4ba3713f3085dff3662986b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0510",
+      "sha256": "0035574a57e137549836e6728308149db266299f15bd01d9ddf52b053ebc632c",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0520",
+      "sha256": "5f8ffde97171f0266cafecd9c7234e7d007b12e68b66b100fbdc798ae7f7603c",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0530",
+      "sha256": "9a65c38db2dc05b71caf4a4b727ea0e30653b07648d593f5ea7be032b2d647ba",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0540",
+      "sha256": "d4a3cba2e1447ec2b75cbc177adcd1bbd070a7d2f77c44c8dd2c279f314e9ff3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0550",
+      "sha256": "2d5e5391f5d2682bfd1a9a9fe5e8bd0dc4887fb4bcc9cfe2487cd08b9d29ca2d",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0560",
+      "sha256": "71d3093dee2111003e197c44f866a25e0a4e0971b274313395c575ac174b0230",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0571",
+      "sha256": "baaa05fb8d1f688e043435ade4b50ee927318d8f6d4553a554a351fcaff8318b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0575",
+      "sha256": "47321838870ad831f6933424b141f62dd930cdb296882e5a9e8d5843202bd906",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0585",
+      "sha256": "3373f87a6b7a774202be64fd355704637cb7fc14d81cb42b24485e10c46ba455",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0595",
+      "sha256": "37f7577a25b3dd5e3f4c3e1516f86a4d89138a82929f896c471a6913dc1180ea",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0605",
+      "sha256": "3d6e7d5f32be4af67b4088e88158cdcc7e51e2f5bbbce015e37b3b5bfc99963b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0615",
+      "sha256": "e4b945dc9ccf1dceaaaf666c255f288fa10f31cf25419af94b70730a74dea904",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0625",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0635",
+      "sha256": "0a06293b46bfdcf027b270234066b8d2929a9afea1a85ded417d62bb2ed82765",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0646",
+      "sha256": "fecdde0669a6a621493a9fc81f79e2213c8f5f656024bcf404a0cc0eee4068ae",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0650",
+      "sha256": "d213924b9e6ea6216e68b2186bb6b5e0a97bf4b948cc3e3f86a51291b6d931c5",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0660",
+      "sha256": "7802e53617229ae1ad8d6c8c52dfd98935bbfd843e77221d84db031e19a5134a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0670",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0680",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0690",
+      "sha256": "c2f97db8873218951f4af8738fb6098233acc220bd583a443c51be8ec000f3dc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0700",
+      "sha256": "c8471652db420d11403c75e8eb05eeb05cc4348d144d86718f9efde22129a52d",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0710",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0721",
+      "sha256": "1fae9f521cbe73f2667ed4096d7cee0f9e2677bf4aa0725bbb89dcf379c2cddc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0727",
+      "sha256": "3cf5a709d39293e03e4e0772b9534903c068da40faab7a2ac63ed1f0a5849b03",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0737",
+      "sha256": "ffb4f0e51ddd82015dc70febf229e426e522e99cda944191ff951e514659dbfd",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0747",
+      "sha256": "3017fb44398b9b7b51025f69add0da2601beecf983f77ddaf0ebf027c81a440e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0757",
+      "sha256": "4094e5379dc6e5fd83bd0bc3c6396f7e3bab9f3d2534c26ca39d7aee1cfb5a1b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0767",
+      "sha256": "4b80ff60c76209cca74079bac0669b87fb3e64a294c03cf8cec8ac4f33d27f19",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0777",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0787",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0798",
+      "sha256": "de0ff6298b46891027e7d1bb818a8203a491a112afa6fb7428bd619c3ad8e71f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0802",
+      "sha256": "6a510ff359431acd390f468eb724cb74890bade11c9e9a95041de2abe2069032",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0812",
+      "sha256": "e75344b021e731754ac485665c21da2fcd30ee756f18d65ce3869a923ba89622",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0822",
+      "sha256": "2a8a979b7579f03bc649a23f207853e8c4a4805f46b419d8298ec14d54ae38b8",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0832",
+      "sha256": "6b62c33be61396b39ed40090bd93f34da3249e0d1f5ec8fe94d5e6c7482012cb",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0842",
+      "sha256": "bfcfd2bb6375857ebc4c3c921abb809d2396f7855efcbf6fe08bc6dc8b2041ef",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0852",
+      "sha256": "7b06609597bbda7f611e9d884cb4d313fd5fa7ea779d7a2c43c54285462ff4c0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0862",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0873",
+      "sha256": "902ea0e361ad2946ec80299fd66daebddea32013b1e8a8f4d3a5692a3e4d939b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0877",
+      "sha256": "bfaa4b8d4e3a5eb6eca71a4482e5be33c03bf6ed1356fb222a65a34374f85cb4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0887",
+      "sha256": "81a986978c2b1d264d520b878462f45e7dcbb89afae26ca3e68171d0cbccd1fc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0897",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0907",
+      "sha256": "4da347e9fcbf2a45722bce616c4e5a422b28ceb48bf52d1e808a105898cc3353",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0917",
+      "sha256": "19bb346759bff70454571efd28d42a5f2edff9e318985fb69604de14670d5767",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0927",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0937",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0948",
+      "sha256": "dbb642a3ab33a082889babfac510296a0afbee5ee0792a7d886aaf780df844a7",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0952",
+      "sha256": "16e5d577a9870bf8d0eb5eea7729201ef72d4d45a8b695c774e9af781d8b9241",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0962",
+      "sha256": "647cc56226f76f9a371c796958901fcdd24647daefb27c6a4d9cf918c9bff1fa",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0972",
+      "sha256": "afd5c65446bf00b6760744a07fffe378a1d92b2b8f4b670fb4267a11bdf2c73b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0982",
+      "sha256": "9c59129449058f99a518d2d6ef11ef8a786aabb235b87d716463bd98a8b4c1fc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0992",
+      "sha256": "c0d15c2a47f7e0dd82477f4dda86da3cee9cec3d9724d5fc3e208cab9d792937",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1002",
+      "sha256": "049499a14b22e5f16d090cd16511415f97bb34fa2f082a969295edac4c61f4a4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1012",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1023",
+      "sha256": "057b3dff070c15ded7c7442616d15073b45190eabecd4e04bc59aa1e5eaa2eb8",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1027",
+      "sha256": "855c03f0467e32ec5112edd5a93a89e39fa0953e86e3995645272839d45d8e00",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1037",
+      "sha256": "3de2e2dfe3e9d70f8684513ae2cf471944a8c87e2d953817a8fa40168b59a804",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1047",
+      "sha256": "574d2d251d5da3b4b125b729fac559a6a7a823bbed22105c53add13120726f86",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1057",
+      "sha256": "065972680fd647e3f7849aa3cf42736d79baf8f9cf6094480adfbfd5817b2ed6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1067",
+      "sha256": "38c640bc604c359b44f6ae6fa596760659d57e8b23877fb4d9ab6111c6e81ea3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1077",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1087",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1098",
+      "sha256": "272d0af3b0058dae95029446c25b6f3f16213799160c78b73ab9a6ade747c5b3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1102",
+      "sha256": "ec71544f01483b61587353ec85e4146af6f70112955c788cdcda37caad508cbe",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1112",
+      "sha256": "c4778b2f7e36bf56baf5f843be6a85e66974fcae2c2c8c7e0c26c02260aeb124",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1122",
+      "sha256": "e18df8d04afab8a91535d397f939917e1ae29cf9386dd5d746d4aa163aaacc49",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1132",
+      "sha256": "712d3751a88bed56f74a6cdfc9d5a1a775c772420e5151db03cd53b3995fb109",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1142",
+      "sha256": "9a458f277d6c14075911e83e532c30f01d98eb8449a06f0ca79eff03d5514755",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1152",
+      "sha256": "23db405c0c503cb5770c7dc4567a9f564025fa303493d0eaf70b93c8085a0ac3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1162",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1173",
+      "sha256": "ffa66e93e97ad434bbf2388ea2e1e0af04083eac0f4ba8b677943fbcce3fa32b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1179",
+      "sha256": "7a4a09177cc2af6978f7a9eff8bd27f10397d7c877a793f6cb50b9575a653052",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1189",
+      "sha256": "0f586fa376db6747a22917591cb833e3007950c17f73e1a4bffda96fd0b6a5d8",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1199",
+      "sha256": "4297f6616442860bd4c1c643cf0841766b6cacd6c9f1071a96454eb1ef947d1d",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1209",
+      "sha256": "c8039fe30b1e81c744801fd7d31877fac640ed3a80c02aadffa03a6b8c753318",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1219",
+      "sha256": "57d7d753f25c5ca25f77aa85da05942fbab92a1b55393d0df0b99c60156349cc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1229",
+      "sha256": "0fefb573e0f228e9cd1a75264ddd0734b207dece7cf60bcc98a3967153593c67",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1239",
+      "sha256": "63d5d12feb5c402f3839cfcb9459892e2b2c352af0fc38cedb87414a4ddc64d2",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1250",
+      "sha256": "78ceac0a78a1a595777855ccf7bc7bd1f168e51bad29854b7eae29bf126fef16",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1254",
+      "sha256": "3c03a96a95cd3ab023b4ff1e5192137fd68845a07db6a5649ea067cc3609ee8e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1264",
+      "sha256": "4aa15df33dabb30373657949d12dec28321b960b568221132c730b5b4cfb7881",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1274",
+      "sha256": "1b74dcaa5fb440e5e9103328a0eebbd647948e218acacca032ca2129db7d8b82",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1284",
+      "sha256": "2ad4b6e8bdfc8326a494ed6702f7188b010ccb9c000a6ae19be84e3ce4760d0d",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1294",
+      "sha256": "66e870243e46cb173800d5120785f31221fa8548ffe54df4eac596bcb112381b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1304",
+      "sha256": "136f60d58bbd4f9fecb2997666532e2371be4a1c9507951dae827c234af29117",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1314",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1325",
+      "sha256": "57c50d21ff468fdaff10c8cc05a5c2345fd6e853c439ea8bf8710d655aa770e0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1329",
+      "sha256": "858479095ea25f4fac50b749bff7f8f0608f1af47dead0c094217384844092ae",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1339",
+      "sha256": "9951ab763c55c27cc4fd5adb7f80dd3d726cff33f7e57fae72d5a6f4baf037c1",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1349",
+      "sha256": "8717d2789ab4cf4d56366112e0dad130f7d3114a8345e2fcc17d057a9708cab7",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1359",
+      "sha256": "174339cc58e5107f08510caf2e33fd783ab7ba08321e4dd9997509fa3889b30e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1369",
+      "sha256": "cd0a04e15810fc81755cb1c041e74d3294c2173b3cd95f8b870d3958650013de",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1379",
+      "sha256": "70e71a69f2371ff6162e534c2c9cba551475fe709de2bf239e29486cd08320bc",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1389",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1400",
+      "sha256": "ecdae07c96169ffeb07b96f95d6c81753da785dc655c8f6446d5a19c666666d1",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1404",
+      "sha256": "123f8f6bbe0083f04c0ce3411e38e9dcb22ade0054e86469e49d18b0b90ed6f0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1414",
+      "sha256": "3ac8c3e99c8c342a3c2c175fc2e71ab36e605bb8a2d699209cdbe13a65d8d20a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1424",
+      "sha256": "b39ce9012845c445913aa185a878fad330e57321c4aaa997e25b5e3b97b5bbaa",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1434",
+      "sha256": "70cdffb015720e264b7cbf8969906a1b366d71870bb0302980c6cdf5a0887116",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1444",
+      "sha256": "cd6dc8921d3e8fde742dae5d04063ee0cf5563be310d42429038088b7e5922f1",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1454",
+      "sha256": "f51d27d5ee6b066ef404a7c14e8de136f12e532ec4afd8432115ecb2317182b5",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1464",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1475",
+      "sha256": "c748022bc35f16bb755639f8f7adf8e5d335819d3d3ffeab2c745f481e282947",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1479",
+      "sha256": "ae5450b08883b5b898de3829b79a64ca1e3286fce4e8954590c022255ec964b3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1489",
+      "sha256": "b6e10d904773ef4ee2522374b7a4ef0f0fe6e67ed5cee535c0070bbea1d2a0a4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1499",
+      "sha256": "f254a8db084769a61e046024d15ee6b50e9d34b9a914d97dbe8b5e04df7db7db",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1509",
+      "sha256": "a5a13b57e96816dc44a5847b310c15def45df88dc812102966803e0ef4bf311f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1519",
+      "sha256": "422d4aa2e306c454c30c98e50c726f8d0f282112221e25034b1b152a26b7c4c1",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1529",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1539",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1550",
+      "sha256": "e65d454200230c64ae825d837ba31305e67a6e780ef7b040454c98cd85deec56",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1554",
+      "sha256": "4b9b2c58a414eebd3308b7ae2fb92dad585781a4168fb031f5e41f77069e7976",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1564",
+      "sha256": "5f71bc04de4ddd599f59d581a3dda824e88cb04225721c08cfbe254a949cd40f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1574",
+      "sha256": "5f71bc04de4ddd599f59d581a3dda824e88cb04225721c08cfbe254a949cd40f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1584",
+      "sha256": "aa6643deca8b8f0523d5be8bce5b4e5d011ca930f558554ff11b8e3fe2a177ef",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1594",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1604",
+      "sha256": "1340006fe57fc5620bc5aec486a9084583884dc47c4f7871c72207e132cb208b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1614",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1625",
+      "sha256": "80a71e682e3e98dbd7c59f5fb7dc271c7c3166fc71610b18ff688f20d9bf4103",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1629",
+      "sha256": "f28ff7559b433819468be8c1a3a8bfa935da4c36b9298d4f337fa8bda722016b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1639",
+      "sha256": "28b2ec84240ec48e115d7d546e216d3827e6c019fb130813e125bd1ceb4acda4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1649",
+      "sha256": "7c9320de5883432a2643dcd862ee715def40d58c8da126a78613b420dc26e0b0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1659",
+      "sha256": "42e64cb97cc32cf408dde808ce35efb7919ea33772ec330c2986e22603e0605e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1669",
+      "sha256": "457821eb29a980cf60bafd9ec853f06593c16d2debb7985adaadde3e87ba9663",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1679",
+      "sha256": "73e386ca6bfe63be4e2bd2211518be21c0612c96fc9ab57d989b30fcd7e17200",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1689",
+      "sha256": "35584dd209a6d407188c4824df48fa3c014f46a8d8b0182be182a51b34a6f781",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1700",
+      "sha256": "fa373508711713002773032ef5162d4f496aba3b7137a87ad4dfa9ec1cff1da9",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1706",
+      "sha256": "cf47740d58ab4238084186433552ae600b078dc814f60c128343dd1c2f17a2f4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1716",
+      "sha256": "4c32e6536616c20fa1a46cb7ece5f0cc6b02cb528932da41045dd5944ddc9c21",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1726",
+      "sha256": "c4aa9ebe9bcef516445394d296adf97eb1bf3122502fc56124cd35010494fd1e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1736",
+      "sha256": "1e89dea0ae1df8607a771a9f9238313a9c7c6100e6e31b0d0c87793d1f03e785",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1746",
+      "sha256": "dc60237493ccefd045b82de53a3a60afec2bedba83d4b2fe6bc371081285ff5a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1756",
+      "sha256": "0037816a87a00f8dd2ce6fb30f2d7a58e1840bebc346187a9271ad52774e9142",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1766",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1777",
+      "sha256": "196d4b0b23198539501607815c0b788cbc0015dc540ea0e6d0906492d5ac18b9",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1781",
+      "sha256": "30ddaa08390cb517b1bb67455f23d5b63c1dfa755ba9d3d17efc79232ec723be",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1791",
+      "sha256": "25b26b6daa0c07a0437234ef6e6a76586f8fd629e6d6a77431b05ae05a4ea433",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1801",
+      "sha256": "eacc216e7357724b140316d0185e56c9003138ca3fb4dfc40b80c70eabb8be9e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1811",
+      "sha256": "6894acfa662a37299932a7d3574d3a4580abb939ad909fafc0df3e82e632af8b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1821",
+      "sha256": "299d9f8a9d6a0a3c218d2eb08727e78d791f9101b71dcd631a39e1ab5688bd5b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1831",
+      "sha256": "7627102c385feb562250131443de646af89a0a296f1e4df6c9811ef4e9a9a93a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1841",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1852",
+      "sha256": "978a350891a721723fa54ff1f75a837f3d95d4a0359e5a0059de7f7b3c1c9db5",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1856",
+      "sha256": "817d19146e8bfe1a6a74495abeafed7a655a33b92176e7196e15cd54c3efdcd0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1866",
+      "sha256": "0ef3cc606bc379242341390f91518785192cec945af2034f90591715428d7b2e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1876",
+      "sha256": "5119cbd26bfdc79ce97d5af5ce38d1a2e8e49a4d8e2e2372d1f4a1857cc625b0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1886",
+      "sha256": "bd5048db7f3ace6ac8ebee22a037f6964879f2348252f4935359656e09efdf3a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1896",
+      "sha256": "3309e288d479d8d90a3f6655e1dc496a3d2b97aa349d0723ce6f779936dbba46",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1906",
+      "sha256": "0092eb8069f262a9d666a3d87538ccc677f9c3666032c8860e688582ade1bb6f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1916",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1927",
+      "sha256": "d71f0951deb3195992f8f3c89fcc11be9b807eda2f47b2a9f0c2633c3bf8dbc4",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1931",
+      "sha256": "017c2444f6130df5bacdd83713f0ad1fa60fcb1e96c7f635ad0362d634b52526",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1941",
+      "sha256": "0ccd45e5035b3558360762871719814962b46794281c3399d0c2cf55cd639fed",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1951",
+      "sha256": "0b2d76666d2c4fcfbb0568c866cf0c192f43d5c366e150bfda50b7566e69d6f3",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1961",
+      "sha256": "ee65c0d6b3ea45cc292008c181705d0be2f6cd9a93917d131c0caf4d927ecdc8",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1971",
+      "sha256": "c466746ab343c847ee432d0a9ef7c810b2e082b42434d29f1175304e9b9db093",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1981",
+      "sha256": "77e66053065d144e21d4204338b4ccfef3f21ebc1a1863d000b19fd636712701",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1991",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2002",
+      "sha256": "1775d718ada25a4ea4e02372bb5ac73560225c67329bd07ce738ecd42c463ef1",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2006",
+      "sha256": "610bb11344129d0bf3cec579ad5bbb8979373f4347ebc1fd283d465018f9b8d7",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2016",
+      "sha256": "30d0c90e8fa3c9d513dc26b9f173a095ab666dc6b04deec72a8985ecc44397a0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2026",
+      "sha256": "76f9505aead210b8dbeecf124ff5313412488f792e0687b01aedef94eab5b854",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2036",
+      "sha256": "e2acadfe145fdfa9a0eae28f5325f0056370645b2af8dc8cdcb2822acda46de6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2046",
+      "sha256": "26e503a4d39e657a2c20cc2fb5c2d89e2c6e451fc0d20f5d9e1e2687d82b54a2",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2056",
+      "sha256": "9f805ee2c7619c124b1294250f018f1bc08aa70819a4cd34b22cafd61031281c",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2066",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2077",
+      "sha256": "66cd038926046a35eac850036bea7c3a460b47b1e70e50f1c3d64d34a17b94a6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2081",
+      "sha256": "2d66f11cb875d316be5b5c2351155d48e7f07ccf615552a794f3c1fa5a24d390",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2091",
+      "sha256": "79a96775bddf7bf22bac14fa76b0d30f33a4720bfe80be454dbe54bffe5e0491",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2101",
+      "sha256": "37fec6865524cea745bd9c0ba138a1f5e9c587f936bd23aefd4e86b005df0d85",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2111",
+      "sha256": "83aa1a6411c6cc5a333bb5b1970b1d06fe9e15f8f3aae83dc793b05653402d69",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2121",
+      "sha256": "77255970303750600a188d6ae5a1f5a382a836613ec39d306c926f24e4f037c9",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2131",
+      "sha256": "78d1e1d4c087a65531800729260291cad979c052a1fdee83eba9faf06481e5a0",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2141",
+      "sha256": "0dda0fbe538b2857950be763af3b196a2b630d2ba2db1341824aed0ad391e63a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2152",
+      "sha256": "ab89619edf93989b50e76362e82c36b4e98ac9afb6148726e8c18df10ecd907e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2158",
+      "sha256": "617f0da71a96b703245133b648c07a25fc36705913bb5a5fb0e1d18fb9f6bd2e",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2168",
+      "sha256": "0986f00c8bb1f6cc4c613fd7b55408ca7ba66931ff000da0bddcece2e9819a9b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2178",
+      "sha256": "897fa2786766d6917b97cc8a92e1c930611c1fb3d3510661e2eff169b7339c3a",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2188",
+      "sha256": "ca750a6f700dc3193a0300da3f6664ee3efd698a10ab760b74a06ca87f924517",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2198",
+      "sha256": "728e0fa0b6f5162b74b45377e2a6b991ff07268aae2058df834ddcc3029f93ec",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2208",
+      "sha256": "c3e8f028c21cc4db11d9504c053197f30d15d64abe9ef07b25937f762253f591",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2218",
+      "sha256": "0c713716816c29eee9e765868e334115b107825d01045759a5dacf342d96ce10",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2357",
+      "sha256": "52bc8f355a60c05edc0586189092cae21aab8c3e1f56d8c2daf6284bec2c1ddb",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2358",
+      "sha256": "a50d76111ecfeae35b57361fd64f4bbd69838220829ecdfb86783d706f77d67f",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2359",
+      "sha256": "e80c64ca793e017e7e7ba5cc6239fe8a11caeb0eb6e1deb3b02ee6c60fa70ac2",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2360",
+      "sha256": "b601a69aba9ccdab16812331d3fb4d5fe16e4ab7331bb88ccac3f38c1084e9f6",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2361",
+      "sha256": "c49927407a93ca358962ef273f12c1d9048333e0812436d948746f84fc68ff86",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2362",
+      "sha256": "0136556af2ad898eea39b13da0a72dd02e8fb4464bbba952017fdbb18eebf6e7",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p2363",
+      "sha256": "c6c016667172e7da0cb2136994d5d082ddb6e72d9255871a6a3696222aae46b9",
+      "table": null,
+      "row": null,
+      "cell": null
+    }
+  ]
+}

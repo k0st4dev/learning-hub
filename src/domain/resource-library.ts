@@ -17,6 +17,13 @@ export const resourceRequirements = [
   'reference',
   'conditional',
 ] as const;
+
+// Reviewed providers use a distinct namespace; unknown choices never acquire a fabricated name.
+export function resourceProviderKey(provider: string | null) {
+  return provider === null
+    ? 'provider-unspecified'
+    : 'provider/' + encodeURIComponent(provider);
+}
 export const resourceQuerySchema = z
   .strictObject({
     q: searchQuerySchema.shape.q,
