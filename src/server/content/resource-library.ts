@@ -11,6 +11,7 @@ import { ensureSearchIndex } from './search-index.ts';
 import { readCatalog, type Catalog } from './read.ts';
 import { courseNavigation } from './navigation.ts';
 import { catalogScopeOptions } from './scope-options.ts';
+import { resourceBindingPresentation } from './resource-bindings.ts';
 import {
   resourceLabelPresentation,
   type ResourceUsePresentation,
@@ -293,3 +294,53 @@ export function readResourceLibrary(
   })();
 }
 export type ResourceLibrary = ReturnType<typeof readResourceLibrary>;
+
+// Candidate corrected grouping, kept separate until library/detail/search integration.
+export function readResourceBindings(
+  store: Store,
+  token: string | undefined,
+  expectedStudentId?: string,
+) {
+  const enrollment = resourceEnrollment(store, token, expectedStudentId);
+  return store.native.transaction(() => {
+    const catalog = readCatalog(store, enrollment.releaseId);
+    if (!catalog)
+      throw new AppError(
+        503,
+        'CONTENT_UNAVAILABLE',
+        'Your enrolled resources are unavailable.',
+      );
+    const bindings = resourceBindingPresentation(catalog);
+    const labels = resourceLabelPresentation(catalog);
+    const uses = [...resourceContexts(catalog, labels).values()]
+      .flat()
+      .sort((a, b) => a.orderIndex - b.orderIndex || compare(a.id, b.id))
+      .map((use) => {
+        const binding = bindings.uses.get(use.id)!;
+        return {
+          ...use,
+          effective: {
+            ...use.effective,
+            resourceId: binding.effectiveResourceId,
+          },
+          binding,
+        };
+      });
+    return {
+      releaseId: enrollment.releaseId,
+      metadataBindingInterpretation: bindings.status,
+      resources: catalog.resources.map((resource) => ({
+        ...resource,
+        ...labels.resources.get(resource.id)!,
+        href: '/resources/' + resource.stableKey,
+        originalUseIds: uses
+          .filter((use) => use.resourceId === resource.id)
+          .map((use) => use.id),
+        effectiveUseIds: uses
+          .filter((use) => use.effective.resourceId === resource.id)
+          .map((use) => use.id),
+      })),
+      uses,
+    };
+  })();
+}

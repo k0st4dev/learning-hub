@@ -19,17 +19,25 @@ import {
 import {
   readResourceLibrary,
   readResourceDetail,
+  readResourceBindings,
   type ResourceLibrary,
 } from '../../src/server/content/resource-library';
 import {
   resourceQuerySchema,
   resourceProviderKey,
+  resourceUseMatches,
 } from '../../src/domain/resource-library';
 import { register, login, requireStudent } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { saveNote } from '../../src/server/learning/notes';
 import { AppError } from '../../src/server/errors';
 import frozen from '../../content/interpretations/se-26w-v1-resource-labels-v1.json';
+import frozenBindings from '../../content/interpretations/se-26w-v1-resource-bindings-v1.json';
+import {
+  resourceBindingSha256,
+  resourceBindingPresentation,
+  validateResourceBindings,
+} from '../../src/server/content/resource-bindings';
 import { readCatalog, type Catalog } from '../../src/server/content/read';
 import {
   resourceLabelPresentation,
@@ -1019,6 +1027,344 @@ describe('owned resource library read model', () => {
     store = openDatabase(path.join(directory, 'learning.sqlite'));
     expect(readResourceDetail(store, token, 'res-02')).toEqual(expected);
     expect(readResourceDetail(store, other, 'res-02')).toEqual(expected);
+    expect(fingerprint()).toBe(before);
+  });
+  it('projects exactly the approved 18 parents while preserving all 69 raw resources and 290 use identities', () => {
+    const before = fingerprint();
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const projection = readResourceBindings(
+      store,
+      token,
+      requireStudent(store, token).id,
+    );
+    expect(projection.metadataBindingInterpretation).toEqual({
+      origin: 'added-product-interpretation',
+      version: 'se-26w-v1-resource-bindings-v1',
+      sha256: resourceBindingSha256,
+      changedUses: 18,
+    });
+    expect(projection.resources).toHaveLength(69);
+    expect(projection.uses).toHaveLength(290);
+    expect(new Set(projection.uses.map((use) => use.id)).size).toBe(290);
+    expect(
+      projection.resources
+        .flatMap((resource) => resource.effectiveUseIds)
+        .sort(),
+    ).toEqual(catalog.uses.map((use) => use.id).sort());
+    for (const original of catalog.resources) {
+      const projected = projection.resources.find(
+        (row) => row.id === original.id,
+      )!;
+      expect(
+        Object.fromEntries(
+          Object.keys(original).map((key) => [
+            key,
+            projected[key as keyof typeof projected],
+          ]),
+        ),
+      ).toEqual(original);
+      expect(projected.originalUseIds.sort()).toEqual(
+        catalog.uses
+          .filter((use) => use.resourceId === original.id)
+          .map((use) => use.id)
+          .sort(),
+      );
+    }
+    const corrections = new Map(
+      frozenBindings.corrections.map((row) => [row.useId, row]),
+    );
+    for (const original of catalog.uses) {
+      const projected = projection.uses.find((row) => row.id === original.id)!;
+      expect(
+        Object.fromEntries(
+          Object.keys(original).map((key) => [
+            key,
+            projected[key as keyof typeof projected],
+          ]),
+        ),
+      ).toEqual(original);
+      const correction = corrections.get(original.id);
+      expect(projected.binding.originalResourceId).toBe(original.resourceId);
+      expect(projected.effective.resourceId).toBe(
+        correction?.effectiveResourceId ?? original.resourceId,
+      );
+      expect(projected.binding.changed).toBe(!!correction);
+      if (correction) {
+        expect(
+          projected.binding.interpretation.evidence.map(
+            (block) => block.sourceId,
+          ),
+        ).toEqual(correction.evidenceRefs);
+        expect(
+          projected.binding.interpretation.evidence.find(
+            (block) => block.sourceId === correction.sourceId,
+          )!.exactText,
+        ).toContain(original.assignedText);
+      }
+    }
+    expect(projection.uses.filter((use) => use.binding.changed)).toHaveLength(
+      18,
+    );
+    for (const [key, difference] of [
+      ['res-01', 15],
+      ['res-02', -15],
+      ['res-05', 3],
+    ] as const) {
+      const resource = projection.resources.find(
+        (row) => row.stableKey === key,
+      )!;
+      expect(
+        resource.effectiveUseIds.length - resource.originalUseIds.length,
+      ).toBe(difference);
+    }
+    for (const key of [
+      'unresolved-p1756',
+      'unresolved-p1906',
+      'unresolved-p2131',
+    ]) {
+      const resource = projection.resources.find(
+        (row) => row.stableKey === key,
+      )!;
+      expect(resource.originalUseIds).toHaveLength(1);
+      expect(resource.effectiveUseIds).toHaveLength(0);
+      expect(resource.originalUrl).toBeNull();
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('retains exact contextual modes and alternative choices with corrected parents', () => {
+    const projection = readResourceBindings(store, token);
+    const matching = (
+      day: string,
+      requirement: 'required' | 'conditional' | 'optional',
+    ) => {
+      const query = resourceQuerySchema.parse({
+        day: [day],
+        requirement: [requirement],
+      });
+      return projection.uses.filter((use) =>
+        resourceUseMatches(query, {
+          ...use,
+          requirementMode: use.effective.requirementMode,
+        }),
+      );
+    };
+    expect(
+      matching('d003', 'required').some((use) =>
+        use.effective.resourceId.endsWith(':res-01'),
+      ),
+    ).toBe(true);
+    const top = matching('d025', 'conditional').find((use) =>
+      use.effective.resourceId.endsWith(':res-01'),
+    )!;
+    expect(top.interpretation.choiceGroup).not.toBeNull();
+    expect(top.assignedText).toContain('ili Jest');
+    expect(
+      matching('d025', 'required').some((use) =>
+        use.effective.resourceId.endsWith(':res-01'),
+      ),
+    ).toBe(false);
+    for (const day of ['d139', 'd153', 'd174']) {
+      const fso = matching(day, 'required').find((use) => use.binding.changed)!;
+      expect(fso.effective.resourceId).toBe('se-26w-v1:res-05');
+      expect(fso.resourceId).toContain('unresolved-');
+      expect(
+        fso.interpretation.caveats.some((text) =>
+          text.includes('weekly course context'),
+        ),
+      ).toBe(true);
+    }
+    const optional = matching('d113', 'optional').find((use) =>
+      use.effective.resourceId.endsWith(':res-02'),
+    )!;
+    expect(optional.binding.changed).toBe(false);
+  });
+  it('keeps current library/detail reads unchanged until coordinated UI and search integration', () => {
+    const library = pages().all;
+    const detail = readResourceDetail(store, token, 'res-02');
+    const before = fingerprint();
+    readResourceBindings(store, token);
+    expect(pages().all).toEqual(library);
+    expect(readResourceDetail(store, token, 'res-02')).toEqual(detail);
+    expect(detail.resource.uses).toHaveLength(51);
+    expect(fingerprint()).toBe(before);
+  });
+  it('owns the binding projection and preserves unsupported-release raw fallback', () => {
+    const before = fingerprint();
+    expect(() => readResourceBindings(store, undefined)).toThrowError(
+      expect.objectContaining({ status: 401 }),
+    );
+    expect(() => readResourceBindings(store, 'invalid')).toThrowError(
+      expect.objectContaining({ status: 401 }),
+    );
+    expect(() => readResourceBindings(store, unenrolled)).toThrowError(
+      expect.objectContaining({ status: 404 }),
+    );
+    expect(() =>
+      readResourceBindings(store, token, requireStudent(store, other).id),
+    ).toThrowError(expect.objectContaining({ status: 403 }));
+    const projection = readResourceBindings(store, token);
+    expect(readResourceBindings(store, other)).toEqual(projection);
+    expect(projection.releaseId).toBe('se-26w-v1');
+    const fallback = readResourceBindings(store, fixtureToken);
+    expect(fallback.metadataBindingInterpretation).toEqual({
+      origin: 'imported-metadata',
+      version: null,
+      sha256: null,
+      changedUses: 0,
+    });
+    expect(
+      fallback.uses.every(
+        (use) =>
+          !use.binding.changed &&
+          use.effective.resourceId === use.resourceId &&
+          use.binding.interpretation.evidence.length === 0,
+      ),
+    ).toBe(true);
+    expect(fingerprint()).toBe(before);
+  });
+  it('rejects changed binding versions, evidence, parents, scope, inventory and base trust pins', () => {
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    expect(labelDigest(frozenBindings)).toBe(resourceBindingSha256);
+    expect(
+      validateResourceBindings(catalog, frozenBindings, resourceBindingSha256)
+        .corrections.size,
+    ).toBe(18);
+    expect(() =>
+      validateResourceBindings(catalog, null, resourceBindingSha256),
+    ).toThrowError(AppError);
+    const tampered = structuredClone(frozenBindings);
+    tampered.corrections[0]!.reason += ' changed';
+    expect(() =>
+      validateResourceBindings(catalog, tampered, resourceBindingSha256),
+    ).toThrowError(AppError);
+    const cases: ((copy: typeof frozenBindings) => void)[] = [
+      (copy) => {
+        copy.interpretationId += '-stale';
+      },
+      (copy) => {
+        copy.corrections.pop();
+      },
+      (copy) => {
+        copy.corrections[0] = copy.corrections[1]!;
+      },
+      (copy) => {
+        copy.corrections[0]!.useId = 'foreign:use';
+      },
+      (copy) => {
+        copy.corrections[0]!.originalResourceId = 'se-26w-v1:res-07';
+      },
+      (copy) => {
+        copy.corrections[0]!.effectiveResourceId = 'se-26w-v1:res-05';
+      },
+      (copy) => {
+        copy.corrections[0]!.identitySha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.corrections[0]!.sourceId = 'p0084';
+      },
+      (copy) => {
+        copy.corrections[0]!.evidenceRefs = ['p0295', 'p9999'];
+      },
+      (copy) => {
+        copy.corrections[0]!.evidenceRefs = ['p0295', 'p0295'];
+      },
+      (copy) => {
+        copy.corrections[0]!.scope.week = 'w07';
+      },
+      (copy) => {
+        copy.corrections[0]!.ancestors.reverse();
+      },
+      (copy) => {
+        copy.corrections[0]!.ancestors[0]!.identitySha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.labelSha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.proposalSha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.manifestSha256 = '0'.repeat(64);
+      },
+      (copy) => {
+        copy.wordSha256 = '0'.repeat(64);
+      },
+    ];
+    for (const change of cases) {
+      const copy = structuredClone(frozenBindings);
+      change(copy);
+      expect(() =>
+        validateResourceBindings(catalog, copy, labelDigest(copy)),
+      ).toThrowError(expect.objectContaining({ status: 503 }));
+    }
+  });
+  it('binds the complete affected ancestry and rejects changed published catalog references without edits', () => {
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const before = JSON.stringify(catalog);
+    for (const change of [
+      (copy: Catalog) => {
+        copy.items.find((row) => row.stableKey === 'd003-learn')!.parentId =
+          'foreign:day';
+      },
+      (copy: Catalog) => {
+        copy.items.find((row) => row.stableKey === 'w01')!.parentId =
+          'se-26w-v1:w01';
+      },
+      (copy: Catalog) => {
+        copy.items.find((row) => row.stableKey === 'w01')!.metadataJson =
+          JSON.stringify({ route: '//evil.test' });
+      },
+      (copy: Catalog) => {
+        copy.items.find((row) => row.stableKey === 'f1')!.title += ' changed';
+      },
+      (copy: Catalog) => {
+        copy.resources.find((row) => row.stableKey === 'res-01')!.originalUrl =
+          'https://example.test/changed';
+      },
+      (copy: Catalog) => {
+        copy.uses.find(
+          (row) => row.id === frozenBindings.corrections[0]!.useId,
+        )!.resourceId = 'se-26w-v1:res-07';
+      },
+      (copy: Catalog) => {
+        copy.blocks.find((row) => row.sourceLocator === 'p0295')!.exactText +=
+          ' changed';
+      },
+    ]) {
+      const copy = structuredClone(catalog);
+      change(copy);
+      expect(() => resourceBindingPresentation(copy)).toThrowError(
+        expect.objectContaining({ status: 503 }),
+      );
+    }
+    expect(JSON.stringify(catalog)).toBe(before);
+  });
+  it('fails the owned binding read on context drift and recovers without touching private records', () => {
+    const before = fingerprint();
+    const expected = readResourceBindings(store, token);
+    const catalog = structuredClone(readCatalog(store, 'se-26w-v1')!);
+    catalog.items.find((row) => row.stableKey === 'w01')!.title += ' changed';
+    const stub = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(catalog);
+    try {
+      expect(() => readResourceBindings(store, token)).toThrowError(
+        expect.objectContaining({ code: 'RESOURCE_BINDINGS_UNAVAILABLE' }),
+      );
+    } finally {
+      stub.mockRestore();
+    }
+    expect(readResourceBindings(store, token)).toEqual(expected);
+    expect(fingerprint()).toBe(before);
+  });
+  it('preserves corrected projections and learner records through no-op reseed and database restart', () => {
+    const before = fingerprint();
+    const expected = readResourceBindings(store, token);
+    importCurriculum(store, plan.source);
+    expect(readResourceBindings(store, token)).toEqual(expected);
+    store.native.close();
+    expect(() => readResourceBindings(store, token)).toThrow();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(readResourceBindings(store, token)).toEqual(expected);
+    expect(readResourceBindings(store, other)).toEqual(expected);
     expect(fingerprint()).toBe(before);
   });
   it('rebuilds derived search after reopening the same database and rejects unavailable pinned content', () => {

@@ -1,0 +1,518 @@
+{
+  "formatVersion": 1,
+  "interpretationId": "se-26w-v1-resource-bindings-v1",
+  "releaseId": "se-26w-v1",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "proposalSha256": "d36d4e53073d8773b306a89d8533e987a3be15f7688e059eb91d7972356c0536",
+  "labelInterpretationId": "se-26w-v1-resource-labels-v1",
+  "labelSha256": "c326c2b849fc4e41eaae4d7a27bdba09e0ccad49c31cde73e119af9be754cee3",
+  "corrections": [
+    {
+      "useId": "se-26w-v1:mention:3:0",
+      "identitySha256": "fe7589573f5b0fd3060a01a57bf029e49e0981d0cc4fce8472530a8bc354b29f",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0295",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w01", "day": "d003" },
+      "evidenceRefs": ["p0295", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d003-learn",
+          "identitySha256": "50aaf8dc80f2f339a0f8d575cef3e5654a4f7c916da669ca497689dfd3773a44"
+        },
+        {
+          "itemId": "se-26w-v1:d003",
+          "identitySha256": "81ed6c6bd696a3c83be4a6e72ebfc7215b8a8c7ee9b694b0bea0687ebb895422"
+        },
+        {
+          "itemId": "se-26w-v1:w01",
+          "identitySha256": "6334a2f76798606933314ce8d1160688dc2fc7add40a4144a11a733870e362eb"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:8:0",
+      "identitySha256": "d8818fdf7c2965e5f55a7bf20bd9957110e94ca75c1f4d7b799fed36b6715d82",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0350",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w02", "day": "d008" },
+      "evidenceRefs": ["p0350", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d008-learn",
+          "identitySha256": "a789187ef14400b423239a47d0101a31a37c4b70c05a1848bb4357cb57022dce"
+        },
+        {
+          "itemId": "se-26w-v1:d008",
+          "identitySha256": "eb0e0ffc7d73ae90524487988efd09d3546262364342e426234f151ce2d9fc7a"
+        },
+        {
+          "itemId": "se-26w-v1:w02",
+          "identitySha256": "aa488038a1d41b5ab5f8bc0039851d3b6bff46d3b12ef2cddf4d03476fa00b07"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:10:0",
+      "identitySha256": "49e4a2a325e2078735c0e09638ca8ba87775c41d01b2979d7a73f5b74d5fbada",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0370",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w02", "day": "d010" },
+      "evidenceRefs": ["p0370", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d010-learn",
+          "identitySha256": "c1d74299878ed8e4b328231250814ceb230979d1c0bdb6ff277d18e0d0d2632a"
+        },
+        {
+          "itemId": "se-26w-v1:d010",
+          "identitySha256": "e5651d529b7522f1064ba6386c7f56d8defba811cd45c5252b71a21e8ca75b89"
+        },
+        {
+          "itemId": "se-26w-v1:w02",
+          "identitySha256": "aa488038a1d41b5ab5f8bc0039851d3b6bff46d3b12ef2cddf4d03476fa00b07"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:12:0",
+      "identitySha256": "0948b0c09e07e973fad0cb193f433fcaaa4f6d930e990b7847542ff3d394688c",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0390",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w02", "day": "d012" },
+      "evidenceRefs": ["p0390", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d012-learn",
+          "identitySha256": "f26d8894a266490ee18021a037c9a47194e4ced6bcd5d3746c2f283715557ef2"
+        },
+        {
+          "itemId": "se-26w-v1:d012",
+          "identitySha256": "89989bbdd39f4f444b4374bc509e9a5f9e93eede05355cbb9e7192b9c6faa3cb"
+        },
+        {
+          "itemId": "se-26w-v1:w02",
+          "identitySha256": "aa488038a1d41b5ab5f8bc0039851d3b6bff46d3b12ef2cddf4d03476fa00b07"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:25:0",
+      "identitySha256": "d2f2264a89e35d354f4a53f663ba8e8c2a2d178a64840141b90683023e906488",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0530",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w04", "day": "d025" },
+      "evidenceRefs": ["p0530", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d025-learn",
+          "identitySha256": "15b9fee7d99c040316cf793b06f3bed9137c7b06f0251cd5760a0be7a4879dc3"
+        },
+        {
+          "itemId": "se-26w-v1:d025",
+          "identitySha256": "5c85ef85c944998eb0f7aa52df9e6fde6fdf04fd61aba8e324ba1d3c878af930"
+        },
+        {
+          "itemId": "se-26w-v1:w04",
+          "identitySha256": "8d5ac433bc3fa8e3116fdddf127b4ccdb34f7403a712697015677ffee0ab8ee8"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:26:0",
+      "identitySha256": "de84a46a6a93bce3c677654af99876c1e646c5868dea96d2c56a98052f1b441a",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0540",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w04", "day": "d026" },
+      "evidenceRefs": ["p0540", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d026-learn",
+          "identitySha256": "2e215a54327d931e7587a3325b96fef5542fe586bcb767a4e4a74dcffdced284"
+        },
+        {
+          "itemId": "se-26w-v1:d026",
+          "identitySha256": "21b2311d322e855bace056a436d7f0ad7825f05e59a082d2061475efecaec7fb"
+        },
+        {
+          "itemId": "se-26w-v1:w04",
+          "identitySha256": "8d5ac433bc3fa8e3116fdddf127b4ccdb34f7403a712697015677ffee0ab8ee8"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:29:0",
+      "identitySha256": "541b11d5c1c9e5eea12058a739c6f7294ed79ba747d586838748dd96a2159a15",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0575",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w05", "day": "d029" },
+      "evidenceRefs": ["p0575", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d029-learn",
+          "identitySha256": "a3d2cbc6f4d36d7ce4bf7bed022f66e9776672029addc90ec1fb2c0e8a9498e5"
+        },
+        {
+          "itemId": "se-26w-v1:d029",
+          "identitySha256": "82507db89324bde9cd81471260ac5fce8002051098942a41972ad727ebf7c8fd"
+        },
+        {
+          "itemId": "se-26w-v1:w05",
+          "identitySha256": "f0004b15652a11ca2790e3e52f17bc96ffc5824c874a59fac9fd2eed5b1018d2"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:30:0",
+      "identitySha256": "0ee3c0f7f81661e73b91af8a116d80d03a8341d161fc788d9143974756a31897",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0585",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w05", "day": "d030" },
+      "evidenceRefs": ["p0585", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d030-learn",
+          "identitySha256": "d973170822b5ebaf7eb1febf5fe222b8a83f8f882a4bae572888a116cb748f56"
+        },
+        {
+          "itemId": "se-26w-v1:d030",
+          "identitySha256": "886be0cf1db8867d62ac4e2fb82b719f1a37cd0f79172d85ddb73ddc5f55513e"
+        },
+        {
+          "itemId": "se-26w-v1:w05",
+          "identitySha256": "f0004b15652a11ca2790e3e52f17bc96ffc5824c874a59fac9fd2eed5b1018d2"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:31:0",
+      "identitySha256": "bc026db4ea3d03e6748f10b159e28accdd0bfba3adc340dab94610bd6ade73b9",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0595",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w05", "day": "d031" },
+      "evidenceRefs": ["p0595", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d031-learn",
+          "identitySha256": "1cdc67bab2a2077813d6a17c113db078d0e903a779e0dc2d707b51921b43f259"
+        },
+        {
+          "itemId": "se-26w-v1:d031",
+          "identitySha256": "afb4c567bb85c6d2f5d169f7c407f36146587445e6af8c9b4ac96301e6e6fc9a"
+        },
+        {
+          "itemId": "se-26w-v1:w05",
+          "identitySha256": "f0004b15652a11ca2790e3e52f17bc96ffc5824c874a59fac9fd2eed5b1018d2"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:32:0",
+      "identitySha256": "ce49a1a8a0ead679eb71b225049f974ec759ab2d5cc441d0d97143483fad8415",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0605",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w05", "day": "d032" },
+      "evidenceRefs": ["p0605", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d032-learn",
+          "identitySha256": "964db99f4035973cc228c295d7466cf0828854756b4b92570b25a1ae76b56d92"
+        },
+        {
+          "itemId": "se-26w-v1:d032",
+          "identitySha256": "e57900f8c5b652c6f683d454078487d0e0aeeaffc5539fe78023bd05df62de67"
+        },
+        {
+          "itemId": "se-26w-v1:w05",
+          "identitySha256": "f0004b15652a11ca2790e3e52f17bc96ffc5824c874a59fac9fd2eed5b1018d2"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:33:0",
+      "identitySha256": "8c59f15d650ab057e2ede0f5e54310057cdd328ad7236e805677d040d42d9ccd",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0615",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w05", "day": "d033" },
+      "evidenceRefs": ["p0615", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d033-learn",
+          "identitySha256": "e9cab26d82d917f2215c2b4143bd4de981fe605dcbcdda586d4f57f5d6a8d0fa"
+        },
+        {
+          "itemId": "se-26w-v1:d033",
+          "identitySha256": "ec48f3d3320c25bec303a66a7091e4ceaf37186d8013d57d752362f8b6ba810f"
+        },
+        {
+          "itemId": "se-26w-v1:w05",
+          "identitySha256": "f0004b15652a11ca2790e3e52f17bc96ffc5824c874a59fac9fd2eed5b1018d2"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:36:0",
+      "identitySha256": "6d6b1c3f00ebeef502edf63354ad18265d5ba10f91411f9204ccd9bcfa1578d1",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0650",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w06", "day": "d036" },
+      "evidenceRefs": ["p0650", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d036-learn",
+          "identitySha256": "ba8b3570a53fbb388daaf6c87239987ca1f8c87c092739e2ff375e95b6f20f84"
+        },
+        {
+          "itemId": "se-26w-v1:d036",
+          "identitySha256": "5f1852595082abc769246b8bc7391fd9a49a1f14712151c738cecb149e793686"
+        },
+        {
+          "itemId": "se-26w-v1:w06",
+          "identitySha256": "a58417e4f81cb604646d6c350eeab4d01a81039a030bd814ebac74278ddeddf4"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:37:0",
+      "identitySha256": "5de0d8c1fce8c83c977393018c072e0c9b069edf65be900a15a54e0bc8af082b",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0660",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f2", "week": "w06", "day": "d037" },
+      "evidenceRefs": ["p0660", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d037-learn",
+          "identitySha256": "70c562a4ba82e4df26bb0c90cb7e33a4abf059e8c8e4059bd26f9d171396e94d"
+        },
+        {
+          "itemId": "se-26w-v1:d037",
+          "identitySha256": "ef53705d592c8fee6e11155bb26f849adb0a31aaddc3a93d991b12f55340a2fd"
+        },
+        {
+          "itemId": "se-26w-v1:w06",
+          "identitySha256": "a58417e4f81cb604646d6c350eeab4d01a81039a030bd814ebac74278ddeddf4"
+        },
+        {
+          "itemId": "se-26w-v1:f2",
+          "identitySha256": "b6c08bf3178a91287a7c963db43b57392496f0674641087b484884693de8f3c8"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:139:0",
+      "identitySha256": "bc33dae2c5d80fadaaebd5c42a7a5769f7b1797fc7b004c44169d5e9b53a6d75",
+      "originalResourceId": "se-26w-v1:unresolved-p1756",
+      "effectiveResourceId": "se-26w-v1:res-05",
+      "sourceId": "p1756",
+      "kind": "fso-week-context",
+      "reason": "Implicit Part/core-exercise instruction belongs to the explicit FSO weekly context. Preserve the raw instruction record as well.",
+      "scope": { "module": "f5", "week": "w20", "day": "d139" },
+      "evidenceRefs": ["p1756", "p0025", "p1700"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d139-learn",
+          "identitySha256": "ea65de015380040e2e5ac322787540894394bc49cebe950e3fa285120682f333"
+        },
+        {
+          "itemId": "se-26w-v1:d139",
+          "identitySha256": "6c262031a4e1e64d4442aa67a2d8480770b151fea03a7e1f13dd87201ffb187b"
+        },
+        {
+          "itemId": "se-26w-v1:w20",
+          "identitySha256": "879b87f07ead05560d352305b9014cb2c7c4db385f48586063ac7d582f6fac0a"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:153:0",
+      "identitySha256": "e5c3f295db06a9244fbf5b4c800a6ff0ab0ac51cdb7a32c63215f0acec8ce43e",
+      "originalResourceId": "se-26w-v1:unresolved-p1906",
+      "effectiveResourceId": "se-26w-v1:res-05",
+      "sourceId": "p1906",
+      "kind": "fso-week-context",
+      "reason": "Implicit Part/core-exercise instruction belongs to the explicit FSO weekly context. Preserve the raw instruction record as well.",
+      "scope": { "module": "f5", "week": "w22", "day": "d153" },
+      "evidenceRefs": ["p1906", "p0025", "p1852"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d153-learn",
+          "identitySha256": "6d7c8540b156bb557726a17c7078d53f84bcdb8bda3cbf81bfc4d8b25dfb06d8"
+        },
+        {
+          "itemId": "se-26w-v1:d153",
+          "identitySha256": "710a0afbc36de0fd102e3bdeef876343bfe4da9876dfab31c1bece3e5cc4b237"
+        },
+        {
+          "itemId": "se-26w-v1:w22",
+          "identitySha256": "cc180f90d56cb0cbaf253d920cf1bba2f2ec7c1ac37e3b4af4c990f455ee20bb"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:174:0",
+      "identitySha256": "e9ae91fb23144281bccf7209c52b80e25e008387b3e8bbbe8550fa930541db60",
+      "originalResourceId": "se-26w-v1:unresolved-p2131",
+      "effectiveResourceId": "se-26w-v1:res-05",
+      "sourceId": "p2131",
+      "kind": "fso-week-context",
+      "reason": "Implicit Part/core-exercise instruction belongs to the explicit FSO weekly context. Preserve the raw instruction record as well.",
+      "scope": { "module": "f5", "week": "w25", "day": "d174" },
+      "evidenceRefs": ["p2131", "p0025", "p2077"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d174-learn",
+          "identitySha256": "e237d238a0068fc4e6c282d61767a096a26e0fc390f5b9d1f70826447c657d93"
+        },
+        {
+          "itemId": "se-26w-v1:d174",
+          "identitySha256": "87afc9e908a995f08abd47f125c1cdff27b67101d50e6620c22c1a65a4b74b3a"
+        },
+        {
+          "itemId": "se-26w-v1:w25",
+          "identitySha256": "3b2031bbd57230beaab291e8ee3f7ad952197a9bf5b697b1a43c068e6bc70151"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:184:0",
+      "identitySha256": "3e4b0e73415e82f7f477019f9357cbe3843f94d6e1261ed7e6e591acc629199c",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0346",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w02", "day": null },
+      "evidenceRefs": ["p0346", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w02",
+          "identitySha256": "aa488038a1d41b5ab5f8bc0039851d3b6bff46d3b12ef2cddf4d03476fa00b07"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    },
+    {
+      "useId": "se-26w-v1:mention:186:0",
+      "identitySha256": "d47d630106998c0ef7d725a665a6f903f5e13de9764626bd03085d6271020c6c",
+      "originalResourceId": "se-26w-v1:res-02",
+      "effectiveResourceId": "se-26w-v1:res-01",
+      "sourceId": "p0496",
+      "kind": "top-foundations-context",
+      "reason": "Generic TOP assignment in Foundations weeks 1–6; the importer literal-parent heuristic currently uses the later JavaScript course.",
+      "scope": { "module": "f1", "week": "w04", "day": null },
+      "evidenceRefs": ["p0496", "p0084", "p0087"],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w04",
+          "identitySha256": "8d5ac433bc3fa8e3116fdddf127b4ccdb34f7403a712697015677ffee0ab8ee8"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ]
+    }
+  ]
+}

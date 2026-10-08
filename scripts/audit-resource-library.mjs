@@ -11,7 +11,8 @@ import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const detailUi = process.argv[2] === '--details';
+const bindingsRegression = process.argv[2] === '--bindings-regression';
+const detailUi = process.argv[2] === '--details' || bindingsRegression;
 const ui = process.argv[2] === '--ui' || detailUi;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Only existing synthetic preview accounts. Never print credentials or write them into reports.
@@ -525,15 +526,23 @@ try {
       (ui ? ' and server-rendered library' : '') +
       (detailUi ? '/details' : '') +
       ' with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
+    ...(bindingsRegression
+      ? {
+          bindingScope:
+            'Existing published API/library/detail regression only. Candidate corrected binding projection is verified by real SQLite tests and remains disabled in public routes.',
+        }
+      : {}),
   };
   await writeFile(
     path.join(
       root,
-      detailUi
-        ? 'docs/m6-step13-http-audit.json'
-        : ui
-          ? 'docs/m6-step12-http-audit.json'
-          : 'docs/m6-step11-http-audit.json',
+      bindingsRegression
+        ? 'docs/m6-step14-http-regression.json'
+        : detailUi
+          ? 'docs/m6-step13-http-audit.json'
+          : ui
+            ? 'docs/m6-step12-http-audit.json'
+            : 'docs/m6-step11-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );
