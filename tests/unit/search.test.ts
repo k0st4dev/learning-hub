@@ -5,9 +5,66 @@ import {
   searchQuerySchema,
   searchSnippet,
   searchTokens,
+  searchInput,
+  searchHref,
+  searchHighlights,
+  searchResponseSchema,
 } from '../../src/domain/search';
 
 describe('literal Unicode curriculum search', () => {
+  it('roundtrips repeated filters and paging without losing technical punctuation', () => {
+    const query = searchQuerySchema.parse({
+      q: 'C++ ČĆ',
+      kind: ['lesson', 'exercise'],
+      week: ['w04', 'w08'],
+      page: 2,
+    });
+    expect(
+      searchQuerySchema.parse(
+        searchInput(
+          new URL(searchHref(query), 'http://localhost').searchParams,
+        ),
+      ),
+    ).toEqual(query);
+    expect(
+      searchQuerySchema.safeParse(
+        searchInput(new URLSearchParams('__proto__=foreign')),
+      ).success,
+    ).toBe(false);
+    expect(
+      searchQuerySchema.safeParse(searchInput(new URLSearchParams('q=a&q=b')))
+        .success,
+    ).toBe(false);
+  });
+  it('maps overlapping/decomposed matches back to exact original text', () => {
+    const text = 'ČĆ c\u030c JavaScript <b>literal</b>';
+    const parts = searchHighlights(text, ['c', 'cc', 'javascript']);
+    expect(parts.map((part) => part.text).join('')).toBe(text);
+    expect(parts.filter((part) => part.match).map((part) => part.text)).toEqual(
+      ['ČĆ', 'c\u030c', 'JavaScript'],
+    );
+    expect(searchHighlights('😀', [])).toEqual([{ text: '😀', match: false }]);
+  });
+  it('rejects unsafe result links rather than producing executable markup', () => {
+    expect(
+      searchResponseSchema.safeParse({
+        releaseId: 'release',
+        query: {},
+        total: 1,
+        pageSize: 20,
+        results: [
+          {
+            id: 'one',
+            kind: 'guide',
+            title: '<script>text</script>',
+            href: 'javascript:evil()',
+            snippet: '',
+            breadcrumbs: [],
+          },
+        ],
+      }).success,
+    ).toBe(false);
+  });
   it('normalizes Serbian Latin, decomposed accents and English technical terms', () => {
     expect(
       normalizeSearch('ČĆŽŠĐ čćžšđ JavaScript TypeScript Node.js C++ C#'),

@@ -23,7 +23,10 @@ export function StudentNavigation({
     { href: '/course/software-engineer', label: en.courseLabel },
     { href: '/course/software-engineer/progress', label: en.learning.progress },
     ...(fullCourse
-      ? [{ href: '/resources', label: en.curriculum.references }]
+      ? [
+          { href: '/resources', label: en.curriculum.references },
+          { href: '/search', label: 'Search' },
+        ]
       : []),
   ];
   useEffect(() => {

@@ -25,6 +25,9 @@ export default function RootLayout({
             <Link className="brand" href="/">
               {en.appName}
             </Link>
+            <Link href="/search" prefetch={false}>
+              Search
+            </Link>
             <span className="local-label">Local learning</span>
           </div>
         </header>

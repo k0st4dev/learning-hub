@@ -23,6 +23,59 @@
 .scorecard-editor fieldset {
   min-inline-size: 0;
 }
+.search-query-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.search-query-row input {
+  flex: 1;
+  min-width: 160px;
+}
+.search-kind-grid,
+.search-scope-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.search-kind-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.search-workspace fieldset {
+  min-inline-size: 0;
+}
+.search-workspace select {
+  width: 100%;
+  max-width: 100%;
+}
+.search-result-list {
+  display: grid;
+  gap: 16px;
+  padding-left: 28px;
+}
+.search-result-list li,
+.search-scope-grid > *,
+.search-breadcrumbs {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.search-result-list h3 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+mark {
+  background: #fef08a;
+  color: #0f172a;
+}
+@media (max-width: 767px) {
+  .search-kind-grid,
+  .search-scope-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .scorecard-editor legend {
   max-width: 100%;
   font-weight: 650;

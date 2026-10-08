@@ -24,6 +24,7 @@ export function searchCurriculum(
   store: Store,
   token: string | undefined,
   input: unknown,
+  expectedStudentId?: string,
 ): SearchResponse {
   const enrollment = ownedEnrollment(store, token);
   if (!enrollment)
@@ -31,6 +32,15 @@ export function searchCurriculum(
       404,
       'ENROLLMENT_REQUIRED',
       'Start the course before searching its content.',
+    );
+  if (
+    expectedStudentId !== undefined &&
+    expectedStudentId !== enrollment.userId
+  )
+    throw new AppError(
+      403,
+      'ACCOUNT_CHANGED',
+      'The signed-in account changed. Reload search for the current account.',
     );
   const query = searchQuerySchema.parse(input);
   return store.native

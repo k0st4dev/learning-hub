@@ -4,12 +4,14 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { performance } from 'node:perf_hooks';
+import { JSDOM } from 'jsdom';
 import { environment, root } from './environment.mjs';
 import { openDatabase } from '../src/server/db/connection.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-assert.equal(process.argv.length, 2);
+const ui = process.argv[2] === '--ui';
+assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Reuse only existing synthetic preview credentials; never print or copy them to reports.
 const fixture = JSON.parse(
   await readFile(
@@ -47,7 +49,7 @@ function client() {
       cookies.set(pair.slice(0, at), pair.slice(at + 1));
     }
   }
-  return async (url, method = 'GET', body, status = 200) => {
+  return async (url, method = 'GET', body, status = 200, headers = {}) => {
     let csrf;
     if (method !== 'GET') {
       const response = await fetch(config.origin + '/api/auth/csrf', {
@@ -65,6 +67,7 @@ function client() {
         origin: config.origin,
         'content-type': 'application/json',
         ...(csrf ? { 'x-csrf-token': csrf } : {}),
+        ...headers,
       },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
@@ -89,6 +92,41 @@ try {
       email: account.email,
       password: account.password,
     });
+    if (ui) {
+      const id = store.native
+        .prepare('SELECT id FROM app_user WHERE email = ?')
+        .get(account.email).id;
+      await call('/api/search?q=Git', 'GET', undefined, 200, {
+        'x-expected-student': id,
+      });
+      await call('/api/search?q=Git', 'GET', undefined, 403, {
+        'x-expected-student': 'foreign-student',
+      });
+      const page = new JSDOM(await call('/search?q=Git&page=2')).window
+        .document;
+      assert.equal(page.querySelector('h1').textContent, 'Search the course');
+      assert.equal(page.querySelector('input[name=q]').value, 'Git');
+      for (const [name, count] of [
+        ['module', 6],
+        ['week', 26],
+        ['day', 182],
+      ])
+        assert.equal(
+          page.querySelectorAll('select[name=' + name + '] option').length,
+          count,
+        );
+      assert.equal(page.querySelectorAll('input[name=kind]').length, 9);
+      assert.ok(page.querySelector('header a[href="/search"]'));
+      const resources = new JSDOM(await call('/resources')).window.document;
+      assert.ok(
+        resources.querySelector('form[action="/search"] input[name=q]'),
+      );
+      assert.equal(
+        resources.querySelector('form[action="/search"] input[name=kind]')
+          .value,
+        'resource',
+      );
+    }
     const first = (await call('/api/search?q=Git')).data;
     assert.equal(first.releaseId, 'se-26w-v1');
     assert.equal(first.pageSize, 20);
@@ -183,11 +221,22 @@ try {
       architecture: os.arch(),
       cpu: os.cpus()[0]?.model ?? 'unavailable',
     },
+    ...(ui
+      ? {
+          servedSearchAndResourceForms: 'passed',
+          accountSwitchHeaderGuard: 'passed',
+        }
+      : {}),
     scope:
-      'Existing synthetic preview accounts; backend/served content only. Development timings are observations, not production A19/performance or search UI acceptance.',
+      'Existing synthetic preview accounts; backend and served content' +
+      (ui ? '/search forms' : '') +
+      ' only. Development timings are observations, not production A19/performance or browser UI acceptance.',
   };
   await writeFile(
-    path.join(root, 'docs/m6-step6-http-audit.json'),
+    path.join(
+      root,
+      ui ? 'docs/m6-step7-http-audit.json' : 'docs/m6-step6-http-audit.json',
+    ),
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(report);

@@ -9,6 +9,7 @@ import {
   importCurriculum,
 } from '../../src/server/content/import';
 import { searchCurriculum } from '../../src/server/content/search';
+import { searchPageContext } from '../../src/server/content/search-page';
 import { register, login, requireStudent } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { snapshot } from '../../src/server/learning/read';
@@ -85,6 +86,43 @@ function fingerprint() {
   });
 }
 describe('owned complete curriculum search', () => {
+  it('provides owned source filter choices and only the actual saved recent reference without writes', () => {
+    const context = searchPageContext(store, token)!;
+    expect(context.options.module).toHaveLength(6);
+    expect(context.options.week).toHaveLength(26);
+    expect(context.options.day).toHaveLength(182);
+    expect(context.recent).toEqual([]);
+    const ownerId = requireStudent(store, token).id;
+    store.native
+      .prepare('UPDATE enrollment SET last_opened_item_id=? WHERE user_id=?')
+      .run('se-26w-v1:d002-learn', ownerId);
+    try {
+      const before = fingerprint();
+      expect(searchPageContext(store, token)!.recent).toEqual([
+        {
+          title: plan.source.days[1]!.title,
+          href: '/course/software-engineer/days/d002/lessons/d002-learn',
+        },
+      ]);
+      expect(searchPageContext(store, other)!.recent).toEqual([]);
+      expect(fingerprint()).toBe(before);
+    } finally {
+      store.native
+        .prepare(
+          'UPDATE enrollment SET last_opened_item_id=NULL WHERE user_id=?',
+        )
+        .run(ownerId);
+    }
+  });
+  it('rejects a stale search page account header without selecting that account', async () => {
+    const before = fingerprint();
+    const original = request('q=Git');
+    original.headers.set('x-expected-student', requireStudent(store, other).id);
+    const response = await GET(original);
+    expect(response.status).toBe(403);
+    expect((await response.json()).error.code).toBe('ACCOUNT_CHANGED');
+    expect(fingerprint()).toBe(before);
+  });
   it('indexes every curriculum item and all original/unresolved resources on import without altering reseed', () => {
     const count = store.native
       .prepare('SELECT count(*) AS n FROM temp.curriculum_search')

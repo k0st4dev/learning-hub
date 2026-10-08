@@ -88,3 +88,106 @@ export type SearchResponse = {
   pageSize: 20;
   results: SearchResult[];
 };
+
+export function searchInput(params: URLSearchParams): Record<string, unknown> {
+  return Object.fromEntries(
+    [...new Set(params.keys())].map((key) => [
+      key,
+      ['kind', 'module', 'week', 'day'].includes(key) ||
+      params.getAll(key).length !== 1
+        ? params.getAll(key)
+        : params.get(key),
+    ]),
+  );
+}
+export function searchHref(query: SearchQuery) {
+  const params = new URLSearchParams();
+  if (query.q) params.set('q', query.q);
+  for (const key of ['kind', 'module', 'week', 'day'] as const)
+    for (const value of query[key]) params.append(key, value);
+  if (query.page > 1) params.set('page', String(query.page));
+  return '/search' + (params.size ? '?' + params : '');
+}
+const localHref = z
+  .string()
+  .regex(
+    /^\/(?:course\/software-engineer(?:[\/#]|$)|resources(?:[\/#]|$)|progress\/scorecard$)/,
+  );
+export const searchResponseSchema = z.object({
+  releaseId: z.string().min(1),
+  query: searchQuerySchema,
+  total: z.number().int().nonnegative(),
+  pageSize: z.literal(20),
+  results: z
+    .array(
+      z.object({
+        id: z.string(),
+        kind: z.enum(searchKinds),
+        title: z.string(),
+        href: localHref,
+        snippet: z.string(),
+        breadcrumbs: z.array(z.object({ title: z.string(), href: localHref })),
+      }),
+    )
+    .max(20),
+});
+export const searchKindLabels: Record<SearchResult['kind'], string> = {
+  module: 'Phases',
+  week: 'Weeks',
+  day: 'Days',
+  lesson: 'Study lessons',
+  exercise: 'Exercises',
+  task: 'Tasks',
+  guide: 'Handbook',
+  preparation: 'Preparation',
+  resource: 'Resources',
+};
+export type SearchOptions = Record<
+  'module' | 'week' | 'day',
+  { value: string; label: string }[]
+>;
+/** Map normalized matches back to original Unicode ranges for escaped React text markup. */
+export function searchHighlights(text: string, tokens: readonly string[]) {
+  let normalized = '';
+  const offsets: { start: number; end: number }[] = [];
+  let offset = 0;
+  for (const character of text) {
+    const folded = normalizeSearch(character);
+    for (let i = 0; i < folded.length; i++)
+      offsets.push({ start: offset, end: offset + character.length });
+    if (!folded && offsets.length)
+      offsets[offsets.length - 1]!.end = offset + character.length;
+    normalized += folded;
+    offset += character.length;
+  }
+  const ranges: { start: number; end: number }[] = [];
+  for (const token of tokens.filter(Boolean)) {
+    let position = normalized.indexOf(token);
+    while (position >= 0) {
+      ranges.push({
+        start: offsets[position]!.start,
+        end: offsets[position + token.length - 1]!.end,
+      });
+      position = normalized.indexOf(token, position + 1);
+    }
+  }
+  ranges.sort((a, b) => a.start - b.start || a.end - b.end);
+  const merged: typeof ranges = [];
+  for (const range of ranges) {
+    const last = merged.at(-1);
+    if (last && range.start <= last.end)
+      last.end = Math.max(last.end, range.end);
+    else merged.push({ ...range });
+  }
+  const parts: { text: string; match: boolean }[] = [];
+  let cursor = 0;
+  for (const range of merged) {
+    if (range.start > cursor)
+      parts.push({ text: text.slice(cursor, range.start), match: false });
+    parts.push({ text: text.slice(range.start, range.end), match: true });
+    cursor = range.end;
+  }
+  if (cursor < text.length)
+    parts.push({ text: text.slice(cursor), match: false });
+  return parts;
+}
