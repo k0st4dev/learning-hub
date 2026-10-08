@@ -29,7 +29,7 @@ export function searchCurriculum(
   token: string | undefined,
   input: unknown,
   expectedStudentId?: string,
-  projection: ResourceProjection = 'original',
+  projection: ResourceProjection = 'reviewed-bindings',
 ): SearchResponse {
   const enrollment = ownedEnrollment(store, token);
   if (!enrollment)

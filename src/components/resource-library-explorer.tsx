@@ -256,7 +256,9 @@ export function ResourceLibraryExplorer({
       <h2 id="resource-library-title">Browse resources</h2>
       <p>
         Find original learning references and instructions. Assignment labels
-        apply to specific lessons; they add no course credit.
+        apply to specific lessons; they add no course credit. Reviewed
+        connections preserve the original resource records and assignment
+        wording.
       </p>
       <form
         action="/resources"

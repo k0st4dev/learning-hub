@@ -292,7 +292,11 @@ export function CurriculumPreview({
                 />
               }
               resources={
-                <ResourceCards catalog={catalog} uses={workspace.uses} />
+                <ResourceCards
+                  catalog={catalog}
+                  uses={workspace.uses}
+                  retryHref={page.item.route}
+                />
               }
             />
           ) : page.item.kind === 'exercise' ? (
@@ -331,7 +335,11 @@ export function CurriculumPreview({
           {rule && <p>{rule.requirementMode}</p>}
           {noteEditor}
           {page.item.kind !== 'day' && (
-            <ResourceCards catalog={catalog} uses={page.uses} />
+            <ResourceCards
+              catalog={catalog}
+              uses={page.uses}
+              retryHref={page.item.route}
+            />
           )}
           {page.item.stableKey === 'resource-catalog' && (
             <section className="section">

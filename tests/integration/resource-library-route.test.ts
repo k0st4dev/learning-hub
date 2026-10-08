@@ -207,7 +207,7 @@ describe('protected resource library route with real SQLite', () => {
         'day=d113&requirement=required&requirement=optional',
         ['res-02', 'res-03'],
       ],
-      ['day=d025&requirement=conditional', ['res-02']],
+      ['day=d025&requirement=conditional', ['res-01']],
       ['day=d025&requirement=required', []],
       ['day=d127&requirement=required', ['res-03']],
       ['day=d127&requirement=reference', ['res-12']],

@@ -11,10 +11,12 @@ import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
+const connections = process.argv[2] === '--connections';
 const projectionRegression = process.argv[2] === '--projection-regression';
 const bindingsRegression =
   process.argv[2] === '--bindings-regression' || projectionRegression;
-const detailUi = process.argv[2] === '--details' || bindingsRegression;
+const detailUi =
+  process.argv[2] === '--details' || bindingsRegression || connections;
 const ui = process.argv[2] === '--ui' || detailUi;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Only existing synthetic preview accounts. Never print credentials or write them into reports.
@@ -112,6 +114,19 @@ let sourceBlocksChecked = 0;
 let sourceLinksChecked = 0;
 let servedDetailPages = 0;
 let detailAssignmentsChecked = 0;
+let connectionPagesChecked = 0;
+const correctionRows = JSON.parse(
+  await readFile(
+    path.join(
+      root,
+      'content/interpretations/se-26w-v1-resource-bindings-v1.json',
+    ),
+    'utf8',
+  ),
+).corrections;
+const correctionParents = new Map(
+  correctionRows.map((row) => [row.useId, row.effectiveResourceId]),
+);
 let deferredDetailSegments = 0;
 let deferredDetailBoundaries = 0;
 function detailDocument(html) {
@@ -228,6 +243,63 @@ try {
         Object.fromEntries(Object.keys(original).map((key) => [key, row[key]])),
         original,
       );
+    }
+    if (connections) {
+      assert.equal(all.flatMap((row) => row.originalUses).length, 290);
+      for (const resource of all) {
+        for (const use of resource.uses) {
+          assert.equal(use.effective.resourceId, resource.id);
+          assert.equal(
+            use.effective.resourceId,
+            correctionParents.get(use.id) ?? use.resourceId,
+          );
+          assert.equal(use.binding.originalResourceId, use.resourceId);
+        }
+        for (const use of resource.originalUses)
+          assert.equal(use.resourceId, resource.id);
+      }
+      for (const correction of correctionRows) {
+        const use = catalog.uses.find((row) => row.id === correction.useId);
+        const item = catalog.items.find((row) => row.id === use.contentItemId);
+        const target = catalog.resources.find(
+          (row) => row.id === correction.effectiveResourceId,
+        );
+        const original = catalog.resources.find(
+          (row) => row.id === use.resourceId,
+        );
+        const document = detailDocument(await call(item.route));
+        const article = document.querySelector(
+          '[data-learning-resource-use="' + use.id + '"]',
+        );
+        assert.ok(article, item.route);
+        assert.equal(
+          article.querySelector('h3 a').getAttribute('href'),
+          '/resources/' + target.stableKey,
+        );
+        assert.equal(
+          article.querySelector('p.source').textContent,
+          use.assignedText,
+        );
+        const explanation = article.querySelector('.resource-connection');
+        assert.ok(
+          explanation.querySelector(
+            'a[href="/resources/' + original.stableKey + '"]',
+          ),
+        );
+        assert.ok(
+          explanation.querySelector(
+            'a[href="/resources/' + target.stableKey + '"]',
+          ),
+        );
+        for (const ref of correction.evidenceRefs)
+          assert.ok(
+            explanation.textContent.includes(
+              catalog.blocks.find((block) => block.sourceLocator === ref)
+                .exactText,
+            ),
+          );
+        connectionPagesChecked++;
+      }
     }
     if (ui) {
       const pageSource = catalogPage(catalog, '/resources');
@@ -392,15 +464,24 @@ try {
           );
           for (const evidence of use.interpretation.evidence)
             assert.ok(entry.textContent.includes(evidence.exactText));
+          if (use.binding.changed) {
+            assert.ok(entry.querySelector('.resource-connection'));
+            for (const evidence of use.binding.interpretation.evidence)
+              assert.ok(entry.textContent.includes(evidence.exactText));
+          }
           detailAssignmentsChecked++;
         }
         for (const evidence of resource.interpretation.evidence)
           assert.ok(labels.textContent.includes(evidence.exactText));
         const originalContexts = [...document.querySelectorAll('h2')].find(
-          (heading) => heading.textContent === 'Related learning contexts',
+          (heading) =>
+            heading.textContent === 'Original imported learning contexts',
         ).nextElementSibling;
-        assert.equal(originalContexts.children.length, resource.uses.length);
-        for (const use of resource.uses) {
+        assert.equal(
+          originalContexts.children.length,
+          resource.originalUses.length,
+        );
+        for (const use of resource.originalUses) {
           const item = catalog.items.find(
             (row) => row.id === use.contentItemId,
           );
@@ -432,7 +513,7 @@ try {
         'day=d113&requirement=optional&requirement=required',
         ['res-02', 'res-03'],
       ],
-      ['day=d025&requirement=conditional', ['res-02']],
+      ['day=d025&requirement=conditional', ['res-01']],
       ['day=d025&requirement=required', []],
       ['day=d127&requirement=reference', ['res-12']],
       ['day=d001&week=w26', []],
@@ -528,6 +609,13 @@ try {
       (ui ? ' and server-rendered library' : '') +
       (detailUi ? '/details' : '') +
       ' with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
+    ...(connections
+      ? {
+          correctedParentBindings: 'passed',
+          correctedDailyAndWeeklyPages: connectionPagesChecked,
+          originalUseInventoryPreserved: 'passed',
+        }
+      : {}),
     ...(bindingsRegression
       ? {
           bindingScope: projectionRegression
@@ -539,15 +627,17 @@ try {
   await writeFile(
     path.join(
       root,
-      projectionRegression
-        ? 'docs/m6-step15-http-regression.json'
-        : bindingsRegression
-          ? 'docs/m6-step14-http-regression.json'
-          : detailUi
-            ? 'docs/m6-step13-http-audit.json'
-            : ui
-              ? 'docs/m6-step12-http-audit.json'
-              : 'docs/m6-step11-http-audit.json',
+      connections
+        ? 'docs/m6-step16-http-audit.json'
+        : projectionRegression
+          ? 'docs/m6-step15-http-regression.json'
+          : bindingsRegression
+            ? 'docs/m6-step14-http-regression.json'
+            : detailUi
+              ? 'docs/m6-step13-http-audit.json'
+              : ui
+                ? 'docs/m6-step12-http-audit.json'
+                : 'docs/m6-step11-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

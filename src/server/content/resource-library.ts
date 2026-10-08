@@ -158,7 +158,7 @@ export function readResourceDetail(
   token: string | undefined,
   key: unknown,
   expectedStudentId?: string,
-  projection: ResourceProjection = 'original',
+  projection: ResourceProjection = 'reviewed-bindings',
 ) {
   const enrollment = resourceEnrollment(store, token, expectedStudentId);
   const stableKey = resourceDetailKeySchema.parse(key);
@@ -209,7 +209,7 @@ export function readResourceLibrary(
   token: string | undefined,
   input: unknown,
   expectedStudentId?: string,
-  projection: ResourceProjection = 'original',
+  projection: ResourceProjection = 'reviewed-bindings',
 ) {
   const enrollment = resourceEnrollment(store, token, expectedStudentId);
   const query = resourceQuerySchema.parse(input);
@@ -347,7 +347,7 @@ export function readResourceLibrary(
 }
 export type ResourceLibrary = ReturnType<typeof readResourceLibrary>;
 
-// Candidate corrected grouping, kept separate until library/detail/search integration.
+// Complete original/effective inventory for audits and shared learning context.
 export function readResourceBindings(
   store: Store,
   token: string | undefined,

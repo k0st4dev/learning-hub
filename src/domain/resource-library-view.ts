@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import {
+  resourceBindingViewSchema,
+  resourceEvidenceSchema,
+} from './resource-binding-view';
+import {
   resourceQuerySchema,
   resourceRequirements,
   resourceTypes,
@@ -33,14 +37,7 @@ const localHref = z
 const externalHref = z
   .url()
   .refine((value) => ['https:', 'http:'].includes(new URL(value).protocol));
-const sourceEvidence = z.object({
-  sourceId: z.string(),
-  exactText: z.string(),
-  sha256: z.string(),
-  table: z.number().nullable(),
-  row: z.number().nullable(),
-  cell: z.number().nullable(),
-});
+const sourceEvidence = resourceEvidenceSchema;
 const interpretation = z.object({
   origin: z.enum(['added-product-interpretation', 'imported-metadata']),
   version: z.string().nullable(),
@@ -49,6 +46,8 @@ const interpretation = z.object({
 });
 const use = z.object({
   id: z.string(),
+  resourceId: z.string(),
+  binding: resourceBindingViewSchema,
   assignedText: z.string(),
   sectionLocator: z.string().nullable(),
   requirementMode: z.enum(resourceRequirements),
@@ -57,7 +56,10 @@ const use = z.object({
   day: z.string().nullable(),
   dayNumber: z.number().nullable(),
   breadcrumbs: z.array(z.object({ title: z.string(), href: localHref })),
-  effective: z.object({ requirementMode: z.enum(resourceRequirements) }),
+  effective: z.object({
+    requirementMode: z.enum(resourceRequirements),
+    resourceId: z.string(),
+  }),
   interpretation: interpretation.extend({
     sourceId: z.string().nullable(),
     ruleDescription: z.string().nullable(),
@@ -80,38 +82,63 @@ export const resourceLibraryViewSchema = z.object({
   }),
   results: z
     .array(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        href: localHref,
-        descriptionMarkdown: z.string(),
-        originalUrl: externalHref.nullable(),
-        resolvedUrl: externalHref.nullable(),
-        sourceName: z.string(),
-        type: z.enum(resourceTypes),
-        linkOrigin: z.enum(['source', 'supplemental', 'unresolved']),
-        linkStatus: z.string(),
-        checkedAt: z.number().nullable(),
-        effective: z.object({
+      z
+        .object({
+          id: z.string(),
+          title: z.string(),
+          href: localHref,
+          descriptionMarkdown: z.string(),
+          originalUrl: externalHref.nullable(),
+          resolvedUrl: externalHref.nullable(),
+          sourceName: z.string(),
           type: z.enum(resourceTypes),
-          provider: z.string().nullable(),
-          sourceFilterKey: z.string(),
-        }),
-        interpretation: interpretation.extend({
-          confidence: z.string().nullable(),
-          rationale: z.string().nullable(),
-          category: z.string().nullable(),
-        }),
-        uses: z.array(use),
-        matchingUseIds: z.array(z.string()),
-        relatedDays: z.array(
-          z.object({
-            title: z.string(),
-            href: localHref,
-            dayNumber: z.number(),
+          linkOrigin: z.enum(['source', 'supplemental', 'unresolved']),
+          linkStatus: z.string(),
+          checkedAt: z.number().nullable(),
+          effective: z.object({
+            type: z.enum(resourceTypes),
+            provider: z.string().nullable(),
+            sourceFilterKey: z.string(),
           }),
+          interpretation: interpretation.extend({
+            confidence: z.string().nullable(),
+            rationale: z.string().nullable(),
+            category: z.string().nullable(),
+          }),
+          uses: z.array(use),
+          originalUses: z.array(use).default([]),
+          matchingUseIds: z.array(z.string()),
+          relatedDays: z.array(
+            z.object({
+              title: z.string(),
+              href: localHref,
+              dayNumber: z.number(),
+            }),
+          ),
+        })
+        .refine(
+          (resource) =>
+            resource.uses.every(
+              (use) =>
+                use.effective.resourceId === resource.id &&
+                use.binding.originalResourceId === use.resourceId &&
+                use.binding.effectiveResourceId === use.effective.resourceId,
+            ) &&
+            resource.originalUses.every(
+              (use) =>
+                use.resourceId === resource.id &&
+                use.binding.originalResourceId === use.resourceId &&
+                use.binding.effectiveResourceId === use.effective.resourceId,
+            ) &&
+            new Set(resource.uses.map((use) => use.id)).size ===
+              resource.uses.length &&
+            new Set(resource.originalUses.map((use) => use.id)).size ===
+              resource.originalUses.length &&
+            resource.matchingUseIds.every((id) =>
+              resource.uses.some((use) => use.id === id),
+            ),
+          'Resource assignment grouping disagrees',
         ),
-      }),
     )
     .max(25),
 });

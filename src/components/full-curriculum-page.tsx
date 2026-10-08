@@ -52,7 +52,7 @@ export function FullCurriculumPage({
           </a>
         )}
         {learnerTool}
-        <h2 className="section">{en.curriculum.contexts}</h2>
+        <h2 className="section">Original imported learning contexts</h2>
         <ul className="curriculum-links">
           {uses.map((use) => {
             const item = catalog.items.find(

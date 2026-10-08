@@ -89,6 +89,7 @@ const resource: ResourceLibraryView['results'][number] = {
     category: 'named-resource',
   },
   uses: [],
+  originalUses: [],
   matchingUseIds: [],
   relatedDays: [],
 };

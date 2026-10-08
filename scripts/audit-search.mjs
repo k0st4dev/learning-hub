@@ -10,8 +10,9 @@ import { openDatabase } from '../src/server/db/connection.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
+const connections = process.argv[2] === '--connections';
 const projectionRegression = process.argv[2] === '--projection-regression';
-const ui = process.argv[2] === '--ui' || projectionRegression;
+const ui = process.argv[2] === '--ui' || projectionRegression || connections;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Reuse only existing synthetic preview credentials; never print or copy them to reports.
 const fixture = JSON.parse(
@@ -128,6 +129,38 @@ try {
         'resource',
       );
     }
+    if (connections) {
+      const foundations = (
+        await call('/api/search?q=Odin&kind=resource&day=d003')
+      ).data.results.map((row) => row.id);
+      assert.ok(foundations.includes('se-26w-v1:res-01'));
+      assert.ok(!foundations.includes('se-26w-v1:res-02'));
+      for (const [day, paragraph] of [
+        ['d139', 'p1756'],
+        ['d153', 'p1906'],
+        ['d174', 'p2131'],
+      ]) {
+        const results = (
+          await call('/api/search?q=exercises&kind=resource&day=' + day)
+        ).data.results;
+        assert.ok(results.some((row) => row.id === 'se-26w-v1:res-05'));
+        assert.ok(
+          !results.some(
+            (row) => row.id === 'se-26w-v1:unresolved-' + paragraph,
+          ),
+        );
+        const page = new JSDOM(
+          await call('/search?q=exercises&kind=resource&day=' + day),
+        ).window.document;
+        // Search results are fetched on hydration. HTTP verifies the preserved form,
+        // while the API and actual browser separately verify corrected results.
+        assert.equal(page.querySelector('input[name=q]').value, 'exercises');
+        assert.equal(page.querySelector('select[name=day]').value, day);
+        assert.ok(
+          page.querySelector('input[name=kind][value=resource]').checked,
+        );
+      }
+    }
     const first = (await call('/api/search?q=Git')).data;
     assert.equal(first.releaseId, 'se-26w-v1');
     assert.equal(first.pageSize, 20);
@@ -212,6 +245,9 @@ try {
     originalTargetsAndBreadcrumbs: 'passed',
     filtersAndAuth: 'passed',
     allLearningAndPrivateRecordsUnchanged: 'passed',
+    ...(connections
+      ? { correctedResourceContexts: 'passed', servedFsoSearchForms: 6 }
+      : {}),
     measurements: {
       samples: elapsed.length,
       warmHttpMedianMs: Number(
@@ -236,11 +272,13 @@ try {
   await writeFile(
     path.join(
       root,
-      projectionRegression
-        ? 'docs/m6-step15-search-regression.json'
-        : ui
-          ? 'docs/m6-step7-http-audit.json'
-          : 'docs/m6-step6-http-audit.json',
+      connections
+        ? 'docs/m6-step16-search-audit.json'
+        : projectionRegression
+          ? 'docs/m6-step15-search-regression.json'
+          : ui
+            ? 'docs/m6-step7-http-audit.json'
+            : 'docs/m6-step6-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

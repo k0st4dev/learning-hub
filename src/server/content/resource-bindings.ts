@@ -152,12 +152,24 @@ export function validateResourceBindings(
   return { artifact, corrections: validated };
 }
 
-// A separate read projection for the next integration; existing UI/search do not enable it yet.
+// Validated effective associations, with original records retained for provenance.
 export function resourceBindingPresentation(catalog: Catalog) {
   const approved =
     catalog.release.id === resourceLabelRelease
       ? validateResourceBindings(catalog, frozen, resourceBindingSha256)
       : null;
+  const resources = new Map(
+    catalog.resources.map((resource) => [resource.id, resource]),
+  );
+  function reference(id: string) {
+    const resource = resources.get(id);
+    if (!resource) unavailable();
+    return {
+      id,
+      title: resource.title,
+      href: '/resources/' + resource.stableKey,
+    };
+  }
   return {
     status: {
       origin: approved
@@ -173,6 +185,10 @@ export function resourceBindingPresentation(catalog: Catalog) {
         return [
           raw.id,
           {
+            originalResource: reference(raw.resourceId),
+            effectiveResource: reference(
+              correction?.effectiveResourceId ?? raw.resourceId,
+            ),
             originalResourceId: raw.resourceId,
             effectiveResourceId:
               correction?.effectiveResourceId ?? raw.resourceId,

@@ -23,7 +23,8 @@ export function ResourceDetailView({
         Type and provider labels are explained separately from the original
         manual. Assignment labels depend on the exact lesson and add no course
         credit. Open the assignments below to see each label and its source
-        evidence.
+        evidence. Reviewed connections are shown separately; the original
+        imported context list remains below.
       </p>
       <ResourceLibraryCard resource={detail.resource} detail />
     </section>

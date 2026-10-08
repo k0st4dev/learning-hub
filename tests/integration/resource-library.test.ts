@@ -4,6 +4,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { FullCurriculumPage } from '../../src/components/full-curriculum-page';
+import { ResourceCards } from '../../src/components/resource-cards';
 import { ResourceDetailView } from '../../src/components/resource-detail-view';
 import { resourceDetailViewSchema } from '../../src/domain/resource-library-view';
 import * as contentRead from '../../src/server/content/read';
@@ -637,7 +638,7 @@ describe('owned resource library read model', () => {
         .results.map((row) => row.stableKey)
         .sort();
     for (const [day, key, choice] of [
-      ['d025', 'res-02', 'choice:p0530'],
+      ['d025', 'res-01', 'choice:p0530'],
       ['d083', 'res-06', 'choice:p1152'],
     ]) {
       expect(keys(day!, 'conditional')).toEqual([key]);
@@ -659,7 +660,7 @@ describe('owned resource library read model', () => {
         .assignedText,
     ).toContain('120');
   });
-  it('scopes optional and as-needed clauses to the same provider/use without altering parents', () => {
+  it('scopes optional and as-needed clauses to the same provider/use while retaining raw associations', () => {
     const keys = (input: unknown) =>
       readResourceLibrary(store, token, input)
         .results.map((row) => row.stableKey)
@@ -690,8 +691,8 @@ describe('owned resource library read model', () => {
       'res-09',
     ]);
     expect(keys({ day: ['d179'], requirement: ['required'] })).toEqual([]);
-    // Parent regrouping is separately reviewed; early generic TOP and implicit FSO keep original IDs.
-    expect(keys({ day: ['d025'] })).toEqual(['res-02']);
+    // Reviewed parents now apply; imported associations still retain every original ID.
+    expect(keys({ day: ['d025'] })).toEqual(['res-01']);
     expect(
       pages()
         .all.flatMap((row) => row.uses)
@@ -1180,14 +1181,15 @@ describe('owned resource library read model', () => {
     )!;
     expect(optional.binding.changed).toBe(false);
   });
-  it('keeps current library/detail reads unchanged until coordinated UI and search integration', () => {
+  it('keeps public corrected library/detail reads stable while retaining original contexts', () => {
     const library = pages().all;
     const detail = readResourceDetail(store, token, 'res-02');
     const before = fingerprint();
     readResourceBindings(store, token);
     expect(pages().all).toEqual(library);
     expect(readResourceDetail(store, token, 'res-02')).toEqual(detail);
-    expect(detail.resource.uses).toHaveLength(51);
+    expect(detail.resource.uses).toHaveLength(36);
+    expect(detail.resource.originalUses).toHaveLength(51);
     expect(fingerprint()).toBe(before);
   });
   it('owns the binding projection and preserves unsupported-release raw fallback', () => {
@@ -1393,6 +1395,7 @@ describe('owned resource library read model', () => {
     }
   });
   it('keeps candidate library, detail and indexed scope consistent for all original records and effective uses', () => {
+    ensureSearchIndex(store, 'se-26w-v1', 'original');
     const before = fingerprint();
     const oldLibrary = pages();
     const originalIndex = store.native
@@ -1575,11 +1578,13 @@ describe('owned resource library read model', () => {
   });
   it('uses corrected searchable assignment text and scope without changing content rows or default search', () => {
     const before = fingerprint();
-    const original = searchCurriculum(store, token, {
-      q: 'Odin',
-      kind: ['resource'],
-      day: ['d003'],
-    });
+    const original = searchCurriculum(
+      store,
+      token,
+      { q: 'Odin', kind: ['resource'], day: ['d003'] },
+      undefined,
+      'original',
+    );
     const corrected = searchCurriculum(
       store,
       token,
@@ -1632,7 +1637,7 @@ describe('owned resource library read model', () => {
         kind: ['resource'],
         day: ['d003'],
       }),
-    ).toEqual(original);
+    ).toEqual(corrected);
     expect(
       searchCurriculum(
         store,
@@ -1728,6 +1733,7 @@ describe('owned resource library read model', () => {
     expect(fingerprint()).toBe(before);
   });
   it('rejects warm candidate search and read drift, recovers and leaves the original index intact', () => {
+    ensureSearchIndex(store, 'se-26w-v1', 'original');
     const before = fingerprint();
     const expected = searchCurriculum(
       store,
@@ -1789,6 +1795,7 @@ describe('owned resource library read model', () => {
     expect(fingerprint()).toBe(before);
   });
   it('rebuilds a candidate index after outer rollback or missing rows without corrupting the original index', () => {
+    ensureSearchIndex(store, 'se-26w-v1', 'original');
     const before = fingerprint();
     const original = store.native
       .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
@@ -1912,5 +1919,173 @@ describe('owned resource library read model', () => {
       ),
     ).toEqual(search);
     expect(fingerprint()).toBe(before);
+  });
+  it('renders every corrected daily assignment and its exact origin/evidence without changing learner data', () => {
+    const before = fingerprint();
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const projection = readResourceBindings(store, token);
+    for (const use of projection.uses.filter((use) => use.binding.changed)) {
+      const original = catalog.uses.find((row) => row.id === use.id)!;
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(ResourceCards, {
+            catalog,
+            uses: [original],
+            retryHref: use.href,
+          }),
+        ),
+        'text/html',
+      );
+      const article = doc.querySelector('[data-learning-resource-use]')!;
+      expect(article.querySelector('h3 a')!.getAttribute('href')).toBe(
+        use.binding.effectiveResource.href,
+      );
+      expect(article.querySelector('p.source')!.textContent).toBe(
+        use.assignedText,
+      );
+      const evidence = article.querySelector('.resource-connection')!;
+      expect(evidence.textContent).not.toContain('importer');
+      expect(evidence.textContent).toContain(
+        use.binding.interpretation.kind === 'top-foundations-context'
+          ? 'Foundations weeks 1–6'
+          : 'surrounding weekly material',
+      );
+      expect(
+        [...evidence.querySelectorAll('a')].map((a) => a.getAttribute('href')),
+      ).toEqual([
+        use.binding.originalResource.href,
+        use.binding.effectiveResource.href,
+      ]);
+      for (const block of use.binding.interpretation.evidence)
+        expect(evidence.textContent).toContain(block.exactText);
+      const target = catalog.resources.find(
+        (row) => row.id === use.effective.resourceId,
+      )!;
+      const link = article.querySelector('a[target="_blank"]')!;
+      expect(link.getAttribute('href')).toBe(target.originalUrl);
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+      expect(link.textContent).toContain('new tab');
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('retains daily originals and a same-page retry when binding evidence is unavailable', () => {
+    const catalog = structuredClone(readCatalog(store, 'se-26w-v1')!);
+    const use = catalog.uses.find(
+      (row) => row.id === frozenBindings.corrections[0]!.useId,
+    )!;
+    const original = catalog.resources.find(
+      (row) => row.id === use.resourceId,
+    )!;
+    catalog.items.find((row) => row.stableKey === 'w01')!.title += ' drift';
+    const route = '/course/software-engineer/days/d003';
+    const doc = new DOMParser().parseFromString(
+      renderToStaticMarkup(
+        createElement(ResourceCards, {
+          catalog,
+          uses: [use],
+          retryHref: route,
+        }),
+      ),
+      'text/html',
+    );
+    expect(doc.querySelector('[role="alert"]')!.textContent).toContain(
+      'Original instructions and links remain',
+    );
+    expect(doc.querySelector('[role="alert"] a')!.getAttribute('href')).toBe(
+      route,
+    );
+    expect(doc.querySelector('h3 a')!.getAttribute('href')).toBe(
+      '/resources/' + original.stableKey,
+    );
+    expect(doc.querySelector('p.source')!.textContent).toBe(use.assignedText);
+    expect(doc.querySelector('.resource-connection')).toBeNull();
+  });
+  it('shows original FSO instruction links and marks superseded TOP caveats as historical', () => {
+    const before = fingerprint();
+    for (const key of [
+      'res-01',
+      'res-02',
+      'res-05',
+      'unresolved-p1756',
+      'unresolved-p1906',
+      'unresolved-p2131',
+    ]) {
+      const detail = readResourceDetail(store, token, key);
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(ResourceDetailView, {
+            data: detail,
+            releaseId: 'se-26w-v1',
+          }),
+        ),
+        'text/html',
+      );
+      expect(doc.querySelectorAll('[data-resource-use]')).toHaveLength(
+        detail.resource.uses.length,
+      );
+      for (const use of detail.resource.uses.filter(
+        (use) => use.binding!.changed,
+      )) {
+        const entry = doc.querySelector(
+          '[data-resource-use="' + use.id + '"]',
+        )!;
+        expect(entry.querySelector('.resource-connection')).not.toBeNull();
+        const historical = [...entry.querySelectorAll('details')].find((item) =>
+          item
+            .querySelector('summary')
+            ?.textContent?.includes('Earlier label review note'),
+        );
+        if (
+          use.interpretation.caveats.includes(
+            'Parent binding correction proposed separately; no runtime relationship has changed.',
+          )
+        )
+          expect(historical).toBeDefined();
+      }
+      if (key.startsWith('unresolved-')) {
+        expect(
+          doc.querySelectorAll('[data-resource-original-use]'),
+        ).toHaveLength(1);
+        expect(
+          doc.querySelector(
+            '[data-resource-original-use] .resource-connection a[href="/resources/res-05"]',
+          ),
+        ).not.toBeNull();
+        expect(doc.body.textContent).toContain(
+          'No direct link supplied in the manual.',
+        );
+      }
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('rejects inconsistent or unsafe rendered resource connection fields', () => {
+    const data = readResourceDetail(store, token, 'res-01');
+    expect(resourceDetailViewSchema.safeParse(data).success).toBe(true);
+    const mutations = [
+      (copy: typeof data) => {
+        copy.resource.uses[0]!.binding!.originalResource.href =
+          'https://evil.test';
+      },
+      (copy: typeof data) => {
+        copy.resource.uses[0]!.binding!.effectiveResource.id = 'foreign';
+      },
+      (copy: typeof data) => {
+        copy.resource.uses[0]!.effective.resourceId = 'foreign';
+      },
+      (copy: typeof data) => {
+        copy.resource.originalUses![0]!.resourceId = 'foreign';
+      },
+      (copy: typeof data) => {
+        copy.resource.uses.push(copy.resource.uses[0]!);
+      },
+      (copy: typeof data) => {
+        copy.resource.matchingUseIds.push('foreign');
+      },
+    ];
+    for (const mutate of mutations) {
+      const copy = structuredClone(data);
+      mutate(copy);
+      expect(resourceDetailViewSchema.safeParse(copy).success).toBe(false);
+    }
   });
 });

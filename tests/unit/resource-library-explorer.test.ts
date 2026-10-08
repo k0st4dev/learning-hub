@@ -62,6 +62,30 @@ const row: ResourceLibraryView['results'][number] = {
   uses: [
     {
       id: 'use1',
+      resourceId: 'resource1',
+      binding: {
+        originalResourceId: 'resource1',
+        effectiveResourceId: 'resource1',
+        changed: false,
+        originalResource: {
+          id: 'resource1',
+          title: 'Odin original',
+          href: '/resources/res-02',
+        },
+        effectiveResource: {
+          id: 'resource1',
+          title: 'Odin original',
+          href: '/resources/res-02',
+        },
+        interpretation: {
+          origin: 'imported-metadata',
+          version: null,
+          sourceId: null,
+          kind: null,
+          reason: null,
+          evidence: [],
+        },
+      },
       assignedText: 'TOP optional; CS50 assigned.',
       sectionLocator: null,
       requirementMode: 'reference',
@@ -70,7 +94,7 @@ const row: ResourceLibraryView['results'][number] = {
       day: 'd113',
       dayNumber: 113,
       breadcrumbs: [],
-      effective: { requirementMode: 'optional' },
+      effective: { requirementMode: 'optional', resourceId: 'resource1' },
       interpretation: {
         ...interpretation,
         sourceId: 'p1475',
@@ -80,6 +104,7 @@ const row: ResourceLibraryView['results'][number] = {
       },
     },
   ],
+  originalUses: [],
   matchingUseIds: ['use1'],
   relatedDays: [
     {

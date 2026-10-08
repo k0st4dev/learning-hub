@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { ResourceConnection } from './resource-connection';
+import { isHistoricalBindingCaveat } from '@/domain/resource-binding-view';
 import type { ResourceLibraryView } from '@/domain/resource-library-view';
 import {
   resourceTypeLabels,
@@ -153,7 +155,7 @@ export function ResourceLibraryCard({
       </details>
       <details>
         <summary>
-          All assignments and source evidence ({resource.uses.length})
+          Current assignments and source evidence ({resource.uses.length})
         </summary>
         <ul className="curriculum-links">
           {resource.uses.map((use) => (
@@ -180,6 +182,7 @@ export function ResourceLibraryCard({
                     Section: {use.sectionLocator}
                   </p>
                 )}
+              <ResourceConnection binding={use.binding} />
               <details>
                 <summary>Why this assignment has this label</summary>
                 <p>
@@ -192,9 +195,18 @@ export function ResourceLibraryCard({
                     do not require both.
                   </p>
                 )}
-                {use.interpretation.caveats.map((text, index) => (
-                  <p key={index}>{text}</p>
-                ))}
+                {use.interpretation.caveats.map((text, index) =>
+                  isHistoricalBindingCaveat(use.binding, text) ? (
+                    <details key={index}>
+                      <summary>
+                        Earlier label review note — connection now corrected
+                      </summary>
+                      <p>{text}</p>
+                    </details>
+                  ) : (
+                    <p key={index}>{text}</p>
+                  ),
+                )}
                 {use.interpretation.evidence.map((evidence) => (
                   <blockquote key={evidence.sourceId}>
                     <span>{evidence.sourceId}</span>
@@ -209,6 +221,30 @@ export function ResourceLibraryCard({
           <p>No assigned lesson context in this release.</p>
         )}
       </details>
+      {resource.originalUses.some((use) => use.binding.changed) && (
+        <details>
+          <summary>
+            Original imported assignments ({resource.originalUses.length})
+          </summary>
+          <p>
+            These are the preserved original associations. Current assignments
+            use the reviewed connections above.
+          </p>
+          <ul className="curriculum-links">
+            {resource.originalUses.map((use) => (
+              <li key={use.id} data-resource-original-use={use.id}>
+                <Link prefetch={false} href={use.href}>
+                  <span lang="sr-Latn">{use.title}</span>
+                </Link>
+                <p className="source" lang="sr-Latn">
+                  {use.assignedText}
+                </p>
+                <ResourceConnection binding={use.binding} />
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </Container>
   );
 }
