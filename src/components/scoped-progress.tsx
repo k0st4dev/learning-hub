@@ -9,6 +9,8 @@ import {
 } from '@/domain/progress-presentation';
 import { ProgressSummary, SavedTime } from './progress-summary';
 import { progressText as t } from '@/i18n/progress';
+import { scorecardReviewMilestones } from '@/domain/scorecard-review';
+import { ScorecardReviewReminders } from './scorecard-review-reminders';
 export function ScopedProgress({
   state,
   itemId,
@@ -73,6 +75,12 @@ export function ScopedProgress({
           );
         })}
       </ul>
+      <ScorecardReviewReminders
+        milestones={scorecardReviewMilestones(state, scopes).filter(
+          (milestone) =>
+            units.some((unit) => unit.id === milestone.assessmentId),
+        )}
+      />
     </section>
   );
 }

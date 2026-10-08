@@ -359,120 +359,141 @@ describe('complete immutable curriculum', () => {
       plan.manifestSha256,
     );
   });
-  it('renders every mapped source paragraph, table coordinate, original hyperlink and target anchor', async () => {
-    importCurriculum(store, plan.source);
-    const catalog = readCatalog(store, 'se-26w-v1')!;
-    let links = 0;
-    let checkedMappings = 0;
-    const blocksById = new Map(
-      catalog.blocks.map((block) => [block.id, block]),
-    );
-    const mappingsByRoute = Map.groupBy(
-      catalog.mappings,
-      (mapping) => mapping.websiteLocation.split('#')[0]!,
-    );
-    const unitRoutes = plan.source.days.flatMap((day) => [
-      `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
-      `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
-    ]);
-    for (const [route, mappings] of mappingsByRoute) {
-      const page = catalogPage(catalog, route);
-      expect(page, route).not.toBeNull();
-      const dom = new DOMParser().parseFromString(
-        renderToStaticMarkup(
-          createElement(CurriculumPreview, { catalog, page: page! }),
-        ),
-        'text/html',
+  it.each([0, 1, 2])(
+    'renders every mapped source paragraph, table coordinate, original hyperlink and target anchor (route batch %i)',
+    async (batch) => {
+      importCurriculum(store, plan.source);
+      const catalog = readCatalog(store, 'se-26w-v1')!;
+      let links = 0;
+      let checkedMappings = 0;
+      const blocksById = new Map(
+        catalog.blocks.map((block) => [block.id, block]),
       );
-      const outline = dom.querySelector('nav[aria-label="Course outline"]');
-      expect(outline, route).not.toBeNull();
-      const elementsByLocator = new Map<string | null, Element>();
-      for (const element of dom.querySelectorAll('[data-source-id]')) {
-        const locator = element.getAttribute('data-source-id');
-        if (!elementsByLocator.has(locator))
-          elementsByLocator.set(locator, element);
-      }
-      for (const mapping of mappings) {
-        const anchor = mapping.websiteLocation.split('#')[1];
-        const block = blocksById.get(mapping.sourceBlockId)!;
-        const element = elementsByLocator.get(block.sourceLocator);
-        expect(
-          element?.querySelector('[data-source-text]')?.textContent,
-          block.sourceLocator,
-        ).toBe(block.exactText);
-        if (anchor)
-          expect(
-            dom.getElementById(anchor),
-            mapping.websiteLocation,
-          ).not.toBeNull();
-        if (block.tableNumber !== null) {
-          expect(
-            element?.closest('table')?.getAttribute('data-source-table'),
-          ).toBe(String(block.tableNumber));
-          expect(element?.closest('tr')?.getAttribute('data-source-row')).toBe(
-            String(block.rowNumber),
-          );
-          expect(element?.closest('td')?.getAttribute('data-source-cell')).toBe(
-            String(block.cellNumber),
-          );
+      const mappingsByRoute = Map.groupBy(
+        catalog.mappings,
+        (mapping) => mapping.websiteLocation.split('#')[0]!,
+      );
+      // Each route belongs to exactly one bounded batch; no source destination is omitted.
+      const routesForBatch = [...mappingsByRoute].filter(
+        (_, index) => index % 3 === batch,
+      );
+      const batchMappings = routesForBatch.flatMap(([, mappings]) => mappings);
+      const countLinks = (mappings: typeof catalog.mappings) =>
+        mappings.reduce(
+          (total, mapping) =>
+            total +
+            JSON.parse(blocksById.get(mapping.sourceBlockId)!.linksJson).length,
+          0,
+        );
+      const allMappings = [...mappingsByRoute.values()].flat();
+      expect(allMappings).toHaveLength(2329);
+      expect(countLinks(allMappings)).toBe(19);
+      const unitRoutes = plan.source.days.flatMap((day) => [
+        `/course/software-engineer/days/${day.id}/lessons/${day.lesson_id}`,
+        `/course/software-engineer/days/${day.id}/exercises/${day.exercise_id}`,
+      ]);
+      for (const [route, mappings] of routesForBatch) {
+        const page = catalogPage(catalog, route);
+        expect(page, route).not.toBeNull();
+        const dom = new DOMParser().parseFromString(
+          renderToStaticMarkup(
+            createElement(CurriculumPreview, { catalog, page: page! }),
+          ),
+          'text/html',
+        );
+        const outline = dom.querySelector('nav[aria-label="Course outline"]');
+        expect(outline, route).not.toBeNull();
+        const elementsByLocator = new Map<string | null, Element>();
+        for (const element of dom.querySelectorAll('[data-source-id]')) {
+          const locator = element.getAttribute('data-source-id');
+          if (!elementsByLocator.has(locator))
+            elementsByLocator.set(locator, element);
         }
-        const expected = JSON.parse(block.linksJson) as {
-          url: string;
-          label: string;
-        }[];
-        const actual = Array.from(
-          element!.querySelectorAll('[data-source-link]'),
-        );
-        expect(actual.map((a) => a.getAttribute('href'))).toEqual(
-          expected.map((l) => l.url),
-        );
-        links += expected.length;
-        checkedMappings++;
-      }
-      const index = unitRoutes.indexOf(route);
-      if (index >= 0) {
-        const keys =
-          page!.item.kind === 'lesson'
-            ? ['study', 'ai', 'criterion']
-            : [
-                'tasks',
-                'ai',
-                'criterion',
-                ...page!.children
-                  .filter((item) => item.kind === 'task')
-                  .map((item) => item.stableKey),
-              ];
-        for (const key of keys) {
+        for (const mapping of mappings) {
+          const anchor = mapping.websiteLocation.split('#')[1];
+          const block = blocksById.get(mapping.sourceBlockId)!;
+          const element = elementsByLocator.get(block.sourceLocator);
           expect(
-            dom.querySelectorAll(`[id="${key}"]`),
-            `${route}#${key}`,
+            element?.querySelector('[data-source-text]')?.textContent,
+            block.sourceLocator,
+          ).toBe(block.exactText);
+          if (anchor)
+            expect(
+              dom.getElementById(anchor),
+              mapping.websiteLocation,
+            ).not.toBeNull();
+          if (block.tableNumber !== null) {
+            expect(
+              element?.closest('table')?.getAttribute('data-source-table'),
+            ).toBe(String(block.tableNumber));
+            expect(
+              element?.closest('tr')?.getAttribute('data-source-row'),
+            ).toBe(String(block.rowNumber));
+            expect(
+              element?.closest('td')?.getAttribute('data-source-cell'),
+            ).toBe(String(block.cellNumber));
+          }
+          const expected = JSON.parse(block.linksJson) as {
+            url: string;
+            label: string;
+          }[];
+          const actual = Array.from(
+            element!.querySelectorAll('[data-source-link]'),
+          );
+          expect(actual.map((a) => a.getAttribute('href'))).toEqual(
+            expected.map((l) => l.url),
+          );
+          links += expected.length;
+          checkedMappings++;
+        }
+        const index = unitRoutes.indexOf(route);
+        if (index >= 0) {
+          const keys =
+            page!.item.kind === 'lesson'
+              ? ['study', 'ai', 'criterion']
+              : [
+                  'tasks',
+                  'ai',
+                  'criterion',
+                  ...page!.children
+                    .filter((item) => item.kind === 'task')
+                    .map((item) => item.stableKey),
+                ];
+          for (const key of keys) {
+            expect(
+              dom.querySelectorAll(`[id="${key}"]`),
+              `${route}#${key}`,
+            ).toHaveLength(1);
+            expect(
+              dom.getElementById(key)?.getAttribute('data-study-anchor'),
+            ).toBe(key);
+          }
+          const sequence = dom.querySelector(
+            'nav[aria-label="Study sequence"]',
+          );
+          expect(
+            sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),
+          ).toBe(
+            unitRoutes[index - 1] ?? '/course/software-engineer/preparation',
+          );
+          expect(
+            sequence?.querySelector('a[rel="next"]')?.getAttribute('href'),
+          ).toBe(unitRoutes[index + 1] ?? '/course/software-engineer/progress');
+          expect(
+            dom
+              .querySelector('nav[aria-label="Location"]')
+              ?.querySelectorAll('[aria-current="page"]'),
           ).toHaveLength(1);
-          expect(
-            dom.getElementById(key)?.getAttribute('data-study-anchor'),
-          ).toBe(key);
         }
-        const sequence = dom.querySelector('nav[aria-label="Study sequence"]');
-        expect(
-          sequence?.querySelector('a[rel="prev"]')?.getAttribute('href'),
-        ).toBe(
-          unitRoutes[index - 1] ?? '/course/software-engineer/preparation',
-        );
-        expect(
-          sequence?.querySelector('a[rel="next"]')?.getAttribute('href'),
-        ).toBe(unitRoutes[index + 1] ?? '/course/software-engineer/progress');
-        expect(
-          dom
-            .querySelector('nav[aria-label="Location"]')
-            ?.querySelectorAll('[aria-current="page"]'),
-        ).toHaveLength(1);
+        dom.replaceChildren();
+        // Native details toggle events must settle before releasing this document.
+        await yieldTasks();
       }
-      dom.replaceChildren();
-      // Native details toggle events must settle before releasing this document.
-      await yieldTasks();
-    }
-    expect(links).toBe(19);
-    expect(checkedMappings).toBe(2329);
-    for (const route of plan.report.routes)
-      expect(catalogPage(catalog, route), route).not.toBeNull();
-  }, 60000);
+      expect(links).toBe(countLinks(batchMappings));
+      expect(checkedMappings).toBe(batchMappings.length);
+      for (const route of plan.report.routes)
+        expect(catalogPage(catalog, route), route).not.toBeNull();
+    },
+    60000,
+  );
 });

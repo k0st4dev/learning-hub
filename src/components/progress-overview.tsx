@@ -14,6 +14,8 @@ import {
 import { progressText as t } from '@/i18n/progress';
 import { ProgressSummary, SavedTime } from './progress-summary';
 import { AssessmentReviewLinks } from './assessment-guidance';
+import { scorecardReviewMilestones } from '@/domain/scorecard-review';
+import { ScorecardReviewReminders } from './scorecard-review-reminders';
 const base = '/course/software-engineer';
 export function ProgressOverview({
   state,
@@ -257,6 +259,9 @@ export function ProgressOverview({
           )}
         </section>
       )}
+      <ScorecardReviewReminders
+        milestones={scorecardReviewMilestones(state, model.scopes)}
+      />
       {view !== 'dashboard' && (
         <section className="stack" aria-label={t.modules}>
           <h2>{t.modules}</h2>

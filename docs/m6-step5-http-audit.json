@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-08T06:13:06.399Z",
+  "server": "development",
+  "accounts": 2,
+  "servedReviewPages": 7,
+  "completedUnits": 15,
+  "requiredUnits": 364,
+  "percent": 4,
+  "newStudentAbsent": "passed",
+  "weekAndFinalPrompts": "passed",
+  "repeatedReadsAndExistingMonthPreserved": "passed",
+  "learningAndSecondAccountUnchanged": "passed",
+  "scope": "Synthetic preview accounts; week 4 and final exam completed through protected APIs, with earlier gaps; all six week triggers covered by unit tests"
+}

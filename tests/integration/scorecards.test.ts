@@ -24,7 +24,8 @@ import {
   requireStudent,
 } from '../../src/server/auth/service';
 import { createCsrf } from '../../src/server/auth/csrf';
-import { startCourse } from '../../src/server/learning/mutate';
+import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
+import { scorecardReviewMilestones } from '../../src/domain/scorecard-review';
 import { snapshot, continuePath } from '../../src/server/learning/read';
 import {
   readScorecard,
@@ -126,6 +127,62 @@ function request(
 }
 const ctx = () => ({ params: Promise.resolve({ periodKey }) });
 describe('owned monthly scorecards', () => {
+  it('offers an owned week review while repeated reads preserve the existing month and learning records', async () => {
+    const confirmed = saveScorecard(store, token, input());
+    const secondToken = await account('review-other');
+    startCourse(store, secondToken);
+    const otherBefore = snapshot(store, secondToken);
+    for (const day of plan.source.days.filter(
+      (d) => d.number >= 22 && d.number <= 28,
+    )) {
+      mutateLearning(store, token, {
+        kind: 'lesson',
+        itemId: 'se-26w-v1:' + day.lesson_id,
+        completed: true,
+        mutationId: randomUUID(),
+        expectedRevision: snapshot(store, token)!.revision,
+      });
+      mutateLearning(store, token, {
+        kind: 'exercise',
+        itemId: 'se-26w-v1:' + day.exercise_id,
+        completed: true,
+        mutationId: randomUUID(),
+        expectedRevision: snapshot(store, token)!.revision,
+        submission: {
+          tasks: day.tasks.map((task) => ({
+            taskId: task.id,
+            status: 'done',
+            reason: '',
+            choice: '',
+          })),
+          evidence: 'Synthetic week 4 review evidence',
+          selectedScope: '',
+          attested: true,
+          result: 'passed',
+        },
+      });
+    }
+    const learning = snapshot(store, token)!;
+    expect(learning).toMatchObject({ completed: 14, total: 364, percent: 3 });
+    const before = counters();
+    for (let visit = 0; visit < 2; visit++) {
+      expect(scorecardReviewMilestones(snapshot(store, token)!)).toEqual([
+        {
+          key: 'week:4',
+          label: 'Week 4',
+          assessmentId: 'se-26w-v1:d028-practice',
+        },
+      ]);
+      expect(readScorecard(store, token, periodKey)).toEqual(confirmed);
+    }
+    expect(snapshot(store, token)).toEqual(learning);
+    expect(snapshot(store, secondToken)).toEqual(otherBefore);
+    expect(scorecardReviewMilestones(snapshot(store, secondToken)!)).toEqual(
+      [],
+    );
+    expect(readScorecard(store, secondToken, periodKey).revision).toBe(0);
+    expect(counters()).toEqual(before);
+  });
   it('reads without writes and preserves original definitions, absent ratings versus zero, all fourteen values and exact evidence', () => {
     const absent = readScorecard(store, token, periodKey);
     expect(absent).toEqual({

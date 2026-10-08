@@ -24,6 +24,8 @@ import { ActivityHistory } from '@/components/activity-history';
 import type { ReactNode } from 'react';
 import { NoteEditor } from '@/components/note-editor';
 import { readNote } from '@/server/learning/notes';
+import { scorecardReviewMilestones } from '@/domain/scorecard-review';
+import { ScorecardReviewReminders } from '@/components/scorecard-review-reminders';
 export default async function Course({
   params,
   searchParams,
@@ -174,6 +176,15 @@ export default async function Course({
             exerciseEditor={exerciseEditor}
             exerciseWorkAvailable={!!state && !!exercise}
             studyEditor={studyEditor}
+            learnerTool={
+              state && exercise ? (
+                <ScorecardReviewReminders
+                  milestones={scorecardReviewMilestones(state).filter(
+                    (milestone) => milestone.assessmentId === exercise.id,
+                  )}
+                />
+              ) : undefined
+            }
             noteEditor={
               state &&
               currentItem &&
