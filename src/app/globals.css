@@ -66,6 +66,20 @@
   font-size: 1.15rem;
   margin-bottom: 8px;
 }
+.resource-library-card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.resource-library-card summary {
+  cursor: pointer;
+  padding: 10px 0;
+  min-height: 44px;
+}
+.resource-library-card blockquote {
+  margin: 12px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--border);
+}
 mark {
   background: #fef08a;
   color: #0f172a;

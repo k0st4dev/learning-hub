@@ -6,10 +6,13 @@ import { environment, root } from './environment.mjs';
 import { openDatabase } from '../src/server/db/connection.ts';
 import { readCatalog } from '../src/server/content/read.ts';
 import { resourceProviderKey } from '../src/domain/resource-library.ts';
+import { JSDOM } from 'jsdom';
+import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-assert.equal(process.argv.length, 2);
+const ui = process.argv[2] === '--ui';
+assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Only existing synthetic preview accounts. Never print credentials or write them into reports.
 const fixture = JSON.parse(
   await readFile(
@@ -88,14 +91,21 @@ function client() {
     });
     remember(response);
     assert.equal(response.status, status, method + ' ' + url);
-    assert.equal(response.headers.get('cache-control'), 'no-store');
+    // Next development HTML uses its own revalidation header; API responses must remain no-store.
+    if (url.startsWith('/api/'))
+      assert.equal(response.headers.get('cache-control'), 'no-store');
     return method === 'HEAD' || status === 204 || status === 405
       ? null
-      : response.json();
+      : url.startsWith('/api/')
+        ? response.json()
+        : response.text();
   };
 }
 const before = fingerprint();
 let resourceReads = 0;
+let servedLibraryPages = 0;
+let sourceBlocksChecked = 0;
+let sourceLinksChecked = 0;
 try {
   const expected = [];
   for (const account of fixture.accounts) {
@@ -148,6 +158,92 @@ try {
         Object.fromEntries(Object.keys(original).map((key) => [key, row[key]])),
         original,
       );
+    }
+    if (ui) {
+      const pageSource = catalogPage(catalog, '/resources');
+      const visibleResources = new Set();
+      const visibleUses = new Set();
+      for (const page of [1, 2, 3]) {
+        const document = new JSDOM(await call('/resources?page=' + page)).window
+          .document;
+        assert.ok(document.querySelector('#resource-library-title'));
+        const cards = [...document.querySelectorAll('.resource-library-card')];
+        assert.equal(cards.length, page === 3 ? 19 : 25);
+        for (const card of cards)
+          visibleResources.add(card.querySelector('h3 a').getAttribute('href'));
+        for (const entry of document.querySelectorAll('[data-resource-use]')) {
+          const id = entry.getAttribute('data-resource-use');
+          const original = catalog.uses.find((use) => use.id === id);
+          assert.equal(
+            entry.querySelector('p.source').textContent,
+            original.assignedText,
+          );
+          visibleUses.add(id);
+        }
+        for (const block of pageSource.blocks) {
+          const source = document.querySelector(
+            '[data-source-id="' + block.sourceLocator + '"]',
+          );
+          assert.equal(
+            source.querySelector('[data-source-text]').textContent,
+            block.exactText,
+          );
+          sourceBlocksChecked++;
+          for (const link of JSON.parse(block.linksJson)) {
+            const anchor = [
+              ...source.querySelectorAll('[data-source-link]'),
+            ].find((a) => a.getAttribute('href') === link.url);
+            assert.ok(anchor);
+            assert.equal(anchor.target, '_blank');
+            assert.equal(anchor.rel, 'noopener noreferrer');
+            sourceLinksChecked++;
+          }
+        }
+        for (const [key, count] of [
+          ['source', 12],
+          ['module', 6],
+          ['week', 26],
+          ['day', 182],
+        ])
+          assert.equal(
+            document.querySelectorAll('select[name=' + key + '] option').length,
+            count,
+          );
+        assert.equal(document.querySelectorAll('input[name=type]').length, 8);
+        assert.equal(
+          document.querySelectorAll('input[name=requirement]').length,
+          4,
+        );
+        servedLibraryPages++;
+      }
+      assert.equal(visibleResources.size, 69);
+      assert.equal(visibleUses.size, 290);
+      const filtered = new JSDOM(
+        await call('/resources?day=d113&requirement=optional'),
+      ).window.document;
+      assert.equal(
+        filtered
+          .querySelector('.resource-library-card h3 a')
+          .getAttribute('href'),
+        '/resources/res-02',
+      );
+      assert.ok(
+        filtered.querySelector('input[name=requirement][value=optional]')
+          .checked,
+      );
+      assert.equal(filtered.querySelector('select[name=day]').value, 'd113');
+      const empty = new JSDOM(await call('/resources?day=d001&week=w26')).window
+        .document;
+      assert.equal(empty.querySelectorAll('.resource-library-card').length, 0);
+      assert.match(
+        empty.querySelector('.resource-library').textContent,
+        /No matching resources/,
+      );
+      const invalid = new JSDOM(await call('/resources?q=a&q=b')).window
+        .document;
+      assert.ok(invalid.querySelector('#resource-error'));
+      assert.ok(invalid.querySelector('[data-source-id="p0078"]'));
+      servedLibraryPages += 3;
     }
     expected.push(
       createHash('sha256').update(JSON.stringify(all)).digest('hex'),
@@ -230,11 +326,26 @@ try {
     loginLogout: 'passed',
     publicCurriculumEqualAcrossAccounts: 'passed',
     allLearnerPrivateAndContentRecordsUnchanged: 'passed',
+    ...(ui
+      ? {
+          servedLibraryPages,
+          sourceBlocksChecked,
+          sourceLinksChecked,
+          all69ResourcesAnd290AssignmentsInServedHtml: 'passed',
+          originalManualMappingAndLinks: 'passed',
+          initialFilteredEmptyInvalidStates: 'passed',
+        }
+      : {}),
     scope:
-      'Real local HTTP API with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
+      'Real local HTTP API' +
+      (ui ? ' and server-rendered library' : '') +
+      ' with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
   };
   await writeFile(
-    path.join(root, 'docs/m6-step11-http-audit.json'),
+    path.join(
+      root,
+      ui ? 'docs/m6-step12-http-audit.json' : 'docs/m6-step11-http-audit.json',
+    ),
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(report);

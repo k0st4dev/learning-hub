@@ -25,6 +25,7 @@ import {
   type ResourceLibrary,
 } from '../../src/server/content/resource-library';
 import * as contentRead from '../../src/server/content/read';
+import { resourceLibraryViewSchema } from '../../src/domain/resource-library-view';
 
 vi.mock('../../src/server/db/current', () => ({ getStore: () => store }));
 const root = process.cwd();
@@ -163,6 +164,7 @@ describe('protected resource library route with real SQLite', () => {
     for (const page of [1, 2, 3]) {
       const result = await read('page=' + page);
       expect(result).toEqual(readResourceLibrary(store, token, { page }));
+      expect(resourceLibraryViewSchema.safeParse(result).success).toBe(true);
       expect(result.results).toHaveLength(page === 3 ? 19 : 25);
       expect(result.metadataInterpretation.origin).toBe(
         'added-product-interpretation',
