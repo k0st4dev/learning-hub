@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-08T06:56:09.868Z",
+  "server": "development",
+  "accounts": 2,
+  "servedTargets": 10,
+  "unicodeAndPagination": "passed",
+  "emptyAndInvalidQueries": "passed",
+  "originalTargetsAndBreadcrumbs": "passed",
+  "filtersAndAuth": "passed",
+  "allLearningAndPrivateRecordsUnchanged": "passed",
+  "measurements": {
+    "samples": 16,
+    "warmHttpMedianMs": 22.3,
+    "warmHttpMaxMs": 30.48,
+    "platform": "win32",
+    "architecture": "x64",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700"
+  },
+  "scope": "Existing synthetic preview accounts; backend/served content only. Development timings are observations, not production A19/performance or search UI acceptance."
+}

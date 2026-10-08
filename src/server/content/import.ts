@@ -5,6 +5,7 @@ import { z } from 'zod';
 import type { Store } from '../db/connection.ts';
 import * as s from '../db/schema.ts';
 import { normalizeCurriculum, contentDigest } from './normalize.ts';
+import { ensureSearchIndex } from './search-index.ts';
 
 const manifestSchema = z.object({
   formatVersion: z.literal(1),
@@ -73,6 +74,7 @@ export function importCurriculum(store: Store, input: unknown) {
           throw new Error(
             'Immutable release differs. Create a reviewed new release; existing student records were not changed.',
           );
+        ensureSearchIndex(store, plan.releaseId);
         return { imported: false, report: plan.report };
       }
       const now = Date.now();
@@ -146,6 +148,8 @@ export function importCurriculum(store: Store, input: unknown) {
         .set({ status: 'published', publishedAt: now })
         .where(eq(s.courseRelease.id, plan.releaseId))
         .run();
+      // Rebuild derived TEMP content within the publication transaction; failed derivation rolls back.
+      ensureSearchIndex(store, plan.releaseId);
       return { imported: true, report: plan.report };
     })
     .immediate();
