@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-08T11:25:30.808Z",
+  "server": "development",
+  "accounts": 2,
+  "resourceReads": 30,
+  "resourcesPerAccount": 69,
+  "usesPerAccount": 290,
+  "originalHyperlinkUsesPerAccount": 19,
+  "unchangedRawMetadata": "passed",
+  "effectiveLabelsAndSameUseFilters": "passed",
+  "unicodeAndPagination": "passed",
+  "validationAndAccountGuard": "passed",
+  "headAndRejectedPost": "passed",
+  "loginLogout": "passed",
+  "publicCurriculumEqualAcrossAccounts": "passed",
+  "allLearnerPrivateAndContentRecordsUnchanged": "passed",
+  "scope": "Real local HTTP API with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed."
+}
