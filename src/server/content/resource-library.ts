@@ -7,7 +7,11 @@ import { escapeLike, searchTokens } from '../../domain/search.ts';
 import type { Store } from '../db/connection.ts';
 import { ownedEnrollment } from '../learning/read';
 import { AppError } from '../errors.ts';
-import { ensureSearchIndex } from './search-index.ts';
+import {
+  ensureSearchIndex,
+  searchIndexTable,
+  type ResourceProjection,
+} from './search-index.ts';
 import { readCatalog, type Catalog } from './read.ts';
 import { courseNavigation } from './navigation.ts';
 import { catalogScopeOptions } from './scope-options.ts';
@@ -22,6 +26,7 @@ const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 function resourceContexts(
   catalog: Catalog,
   labels: ReturnType<typeof resourceLabelPresentation>,
+  bindings?: ReturnType<typeof resourceBindingPresentation>,
 ) {
   const navigation = courseNavigation(catalog);
   const keys = new Map(catalog.items.map((item) => [item.id, item.stableKey]));
@@ -29,6 +34,14 @@ function resourceContexts(
     string,
     (Catalog['uses'][number] &
       ResourceUsePresentation & {
+        binding?: NonNullable<
+          ReturnType<
+            ReturnType<typeof resourceBindingPresentation>['uses']['get']
+          >
+        >;
+        effective: ResourceUsePresentation['effective'] & {
+          resourceId?: string;
+        };
         href: string;
         title: string;
         module: string | null;
@@ -46,9 +59,19 @@ function resourceContexts(
         'INVALID_CONTENT',
         'Resource context is unavailable.',
       );
+    const binding = bindings?.uses.get(use.id);
     const context = {
       ...use,
       ...labels.uses.get(use.id)!,
+      ...(binding
+        ? {
+            binding,
+            effective: {
+              ...labels.uses.get(use.id)!.effective,
+              resourceId: binding.effectiveResourceId,
+            },
+          }
+        : {}),
       href: page.current.route,
       title: page.current.title,
       module:
@@ -69,9 +92,10 @@ function resourceContexts(
         href: item.route,
       })),
     };
-    const uses = grouped.get(use.resourceId) ?? [];
+    const resourceId = binding?.effectiveResourceId ?? use.resourceId;
+    const uses = grouped.get(resourceId) ?? [];
     uses.push(context);
-    grouped.set(use.resourceId, uses);
+    grouped.set(resourceId, uses);
   }
   for (const uses of grouped.values())
     uses.sort((a, b) => a.orderIndex - b.orderIndex || compare(a.id, b.id));
@@ -107,6 +131,7 @@ function presentResource(
   uses: NonNullable<ReturnType<ReturnType<typeof resourceContexts>['get']>>,
   labels: ReturnType<typeof resourceLabelPresentation>,
   matchesUse: (use: (typeof uses)[number]) => boolean = () => true,
+  originalUses?: typeof uses,
 ) {
   const days = new Map<
     string,
@@ -122,6 +147,7 @@ function presentResource(
     ...labels.resources.get(resource.id)!,
     href: '/resources/' + resource.stableKey,
     uses,
+    ...(originalUses ? { originalUses } : {}),
     matchingUseIds: uses.filter(matchesUse).map((use) => use.id),
     relatedDays: [...days.values()].sort((a, b) => a.dayNumber - b.dayNumber),
   };
@@ -132,6 +158,7 @@ export function readResourceDetail(
   token: string | undefined,
   key: unknown,
   expectedStudentId?: string,
+  projection: ResourceProjection = 'original',
 ) {
   const enrollment = resourceEnrollment(store, token, expectedStudentId);
   const stableKey = resourceDetailKeySchema.parse(key);
@@ -153,14 +180,25 @@ export function readResourceDetail(
         'This resource is not in your enrolled course.',
       );
     const labels = resourceLabelPresentation(catalog);
-    const contexts = resourceContexts(catalog, labels);
+    const bindings =
+      projection === 'reviewed-bindings'
+        ? resourceBindingPresentation(catalog)
+        : undefined;
+    const contexts = resourceContexts(catalog, labels, bindings);
     return {
       releaseId: enrollment.releaseId,
       resource: presentResource(
         resource,
         contexts.get(resource.id) ?? [],
         labels,
+        undefined,
+        bindings
+          ? [...contexts.values()]
+              .flat()
+              .filter((use) => use.resourceId === resource.id)
+          : undefined,
       ),
+      ...(bindings ? { metadataBindingInterpretation: bindings.status } : {}),
       metadataInterpretation: labels.status,
     };
   })();
@@ -171,11 +209,13 @@ export function readResourceLibrary(
   token: string | undefined,
   input: unknown,
   expectedStudentId?: string,
+  projection: ResourceProjection = 'original',
 ) {
   const enrollment = resourceEnrollment(store, token, expectedStudentId);
   const query = resourceQuerySchema.parse(input);
   return store.native.transaction(() => {
-    ensureSearchIndex(store, enrollment.releaseId);
+    ensureSearchIndex(store, enrollment.releaseId, projection);
+    const table = searchIndexTable(projection);
     const catalog = readCatalog(store, enrollment.releaseId);
     if (!catalog)
       throw new AppError(
@@ -189,7 +229,9 @@ export function readResourceLibrary(
       (
         store.native
           .prepare(
-            "SELECT id FROM temp.curriculum_search WHERE release_id=? AND kind='resource'" +
+            'SELECT id FROM temp.' +
+              table +
+              " WHERE release_id=? AND kind='resource'" +
               tokens
                 .map(() => " AND normalized_text LIKE ? ESCAPE '\\'")
                 .join(''),
@@ -200,7 +242,11 @@ export function readResourceLibrary(
           ) as { id: string }[]
       ).map((row) => row.id),
     );
-    const contexts = resourceContexts(catalog, labels);
+    const bindings =
+      projection === 'reviewed-bindings'
+        ? resourceBindingPresentation(catalog)
+        : undefined;
+    const contexts = resourceContexts(catalog, labels, bindings);
     const matchesUse = (
       use: (typeof catalog.uses)[number] & {
         effective: { requirementMode: string };
@@ -243,6 +289,11 @@ export function readResourceLibrary(
           contexts.get(resource.id) ?? [],
           labels,
           matchesUse,
+          bindings
+            ? [...contexts.values()]
+                .flat()
+                .filter((use) => use.resourceId === resource.id)
+            : undefined,
         ),
       );
     return {
@@ -252,6 +303,7 @@ export function readResourceLibrary(
       total: resources.length,
       results,
       metadataInterpretation: labels.status,
+      ...(bindings ? { metadataBindingInterpretation: bindings.status } : {}),
       options: {
         ...catalogScopeOptions(catalog),
         source: [
@@ -312,18 +364,18 @@ export function readResourceBindings(
       );
     const bindings = resourceBindingPresentation(catalog);
     const labels = resourceLabelPresentation(catalog);
-    const uses = [...resourceContexts(catalog, labels).values()]
+    const uses = [...resourceContexts(catalog, labels, bindings).values()]
       .flat()
       .sort((a, b) => a.orderIndex - b.orderIndex || compare(a.id, b.id))
       .map((use) => {
         const binding = bindings.uses.get(use.id)!;
         return {
           ...use,
+          binding,
           effective: {
             ...use.effective,
             resourceId: binding.effectiveResourceId,
           },
-          binding,
         };
       });
     return {

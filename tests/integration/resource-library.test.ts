@@ -31,6 +31,8 @@ import { register, login, requireStudent } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { saveNote } from '../../src/server/learning/notes';
 import { AppError } from '../../src/server/errors';
+import { searchCurriculum } from '../../src/server/content/search';
+import { ensureSearchIndex } from '../../src/server/content/search-index';
 import frozen from '../../content/interpretations/se-26w-v1-resource-labels-v1.json';
 import frozenBindings from '../../content/interpretations/se-26w-v1-resource-bindings-v1.json';
 import {
@@ -1389,5 +1391,526 @@ describe('owned resource library read model', () => {
         .prepare("UPDATE course_release SET status='published' WHERE id=?")
         .run(synthetic);
     }
+  });
+  it('keeps candidate library, detail and indexed scope consistent for all original records and effective uses', () => {
+    const before = fingerprint();
+    const oldLibrary = pages();
+    const originalIndex = store.native
+      .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+      .all();
+    const first = readResourceLibrary(
+      store,
+      token,
+      {},
+      undefined,
+      'reviewed-bindings',
+    );
+    expect(first.total).toBe(69);
+    expect(first.metadataBindingInterpretation?.changedUses).toBe(18);
+    const all = [1, 2, 3].flatMap(
+      (page) =>
+        readResourceLibrary(
+          store,
+          token,
+          { page },
+          undefined,
+          'reviewed-bindings',
+        ).results,
+    );
+    expect(new Set(all.map((row) => row.id)).size).toBe(69);
+    expect(
+      all
+        .flatMap((row) => row.uses)
+        .map((row) => row.id)
+        .sort(),
+    ).toEqual(plan.uses.map((row) => row.id).sort());
+    expect(
+      all
+        .flatMap((row) => row.originalUses ?? [])
+        .map((row) => row.id)
+        .sort(),
+    ).toEqual(plan.uses.map((row) => row.id).sort());
+    for (const resource of all) {
+      const detail = readResourceDetail(
+        store,
+        token,
+        resource.stableKey,
+        undefined,
+        'reviewed-bindings',
+      );
+      expect(detail.resource).toEqual(resource);
+      for (const raw of plan.resources.filter((row) => row.id === resource.id))
+        for (const [key, value] of Object.entries(raw))
+          expect(resource[key as keyof typeof resource]).toEqual(value);
+      const indexed = store.native
+        .prepare(
+          'SELECT body,modules,weeks,days FROM temp.curriculum_search_bindings WHERE id=?',
+        )
+        .get(resource.id) as {
+        body: string;
+        modules: string;
+        weeks: string;
+        days: string;
+      };
+      for (const [field, column] of [
+        ['module', 'modules'],
+        ['week', 'weeks'],
+        ['day', 'days'],
+      ] as const)
+        expect(JSON.parse(indexed[column]).sort()).toEqual(
+          [
+            ...new Set(resource.uses.map((use) => use[field]).filter(Boolean)),
+          ].sort(),
+        );
+      for (const use of resource.uses)
+        expect(indexed.body).toContain(use.assignedText);
+      expect(indexed.body).toContain(resource.descriptionMarkdown);
+      if (resource.originalUrl)
+        expect(indexed.body).toContain(resource.originalUrl);
+    }
+    expect(all.find((row) => row.stableKey === 'res-02')!.uses).toHaveLength(
+      36,
+    );
+    for (const key of [
+      'unresolved-p1756',
+      'unresolved-p1906',
+      'unresolved-p2131',
+    ]) {
+      const raw = all.find((row) => row.stableKey === key)!;
+      expect(raw.uses).toEqual([]);
+      expect(raw.originalUses).toHaveLength(1);
+      expect(raw.originalUses![0]!.effective.resourceId).toBe(
+        'se-26w-v1:res-05',
+      );
+      expect(raw.originalUrl).toBeNull();
+    }
+    expect(
+      store.native
+        .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+        .all(),
+    ).toEqual(originalIndex);
+    expect(pages()).toEqual(oldLibrary);
+    expect(fingerprint()).toBe(before);
+  });
+  it('matches each approved correction on the same use and keeps alternatives and optional contexts intact', () => {
+    const projection = readResourceBindings(store, token);
+    for (const correction of projection.uses.filter(
+      (use) => use.binding.changed,
+    )) {
+      const input = {
+        ...(correction.day
+          ? { day: [correction.day] }
+          : { week: [correction.week!] }),
+        requirement: [correction.effective.requirementMode],
+      };
+      const library = readResourceLibrary(
+        store,
+        token,
+        input,
+        undefined,
+        'reviewed-bindings',
+      );
+      const parent = library.results.find(
+        (row) => row.id === correction.effective.resourceId,
+      )!;
+      expect(parent.matchingUseIds, correction.id).toContain(correction.id);
+      expect(
+        parent.uses.find((use) => use.id === correction.id)!.assignedText,
+      ).toBe(correction.assignedText);
+      expect(
+        parent.uses.find((use) => use.id === correction.id)!.interpretation,
+      ).toEqual(correction.interpretation);
+    }
+    const one = (day: string, requirement: string) =>
+      readResourceLibrary(
+        store,
+        token,
+        { day: [day], requirement: [requirement] },
+        undefined,
+        'reviewed-bindings',
+      );
+    expect(
+      one('d003', 'required').results.map((row) => row.stableKey),
+    ).toContain('res-01');
+    expect(
+      one('d003', 'required').results.map((row) => row.stableKey),
+    ).not.toContain('res-02');
+    expect(
+      one('d025', 'conditional')
+        .results.find((row) => row.stableKey === 'res-01')!
+        .uses.some((use) => use.interpretation.choiceGroup),
+    ).toBe(true);
+    expect(
+      one('d025', 'required').results.map((row) => row.stableKey),
+    ).not.toContain('res-01');
+    expect(
+      one('d113', 'optional').results.map((row) => row.stableKey),
+    ).toContain('res-02');
+    expect(
+      one('d113', 'required').results.map((row) => row.stableKey),
+    ).not.toContain('res-02');
+    expect(
+      readResourceLibrary(
+        store,
+        token,
+        { day: ['d003'], week: ['w26'] },
+        undefined,
+        'reviewed-bindings',
+      ).total,
+    ).toBe(0);
+    const filtered = readResourceLibrary(
+      store,
+      token,
+      {
+        q: 'Odin',
+        day: ['d003'],
+        type: ['course'],
+        source: ['provider/The%20Odin%20Project'],
+        requirement: ['required'],
+      },
+      undefined,
+      'reviewed-bindings',
+    );
+    expect(filtered.results.map((row) => row.stableKey)).toEqual(['res-01']);
+  });
+  it('uses corrected searchable assignment text and scope without changing content rows or default search', () => {
+    const before = fingerprint();
+    const original = searchCurriculum(store, token, {
+      q: 'Odin',
+      kind: ['resource'],
+      day: ['d003'],
+    });
+    const corrected = searchCurriculum(
+      store,
+      token,
+      { q: 'Odin', kind: ['resource'], day: ['d003'] },
+      undefined,
+      'reviewed-bindings',
+    );
+    expect(original.results.map((row) => row.id)).toContain('se-26w-v1:res-02');
+    expect(corrected.results.map((row) => row.id)).toContain(
+      'se-26w-v1:res-01',
+    );
+    expect(corrected.results.map((row) => row.id)).not.toContain(
+      'se-26w-v1:res-02',
+    );
+    for (const [day, sourceId] of [
+      ['d139', 'p1756'],
+      ['d153', 'p1906'],
+      ['d174', 'p2131'],
+    ]) {
+      const result = searchCurriculum(
+        store,
+        token,
+        { q: 'exercises', kind: ['resource'], day: [day!] },
+        undefined,
+        'reviewed-bindings',
+      );
+      expect(result.results.map((row) => row.id)).toContain('se-26w-v1:res-05');
+      expect(result.results.map((row) => row.id)).not.toContain(
+        'se-26w-v1:unresolved-' + sourceId,
+      );
+    }
+    expect(
+      searchCurriculum(
+        store,
+        token,
+        { q: 'JavaScript', kind: ['lesson', 'exercise'], page: 2 },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(
+      searchCurriculum(store, token, {
+        q: 'JavaScript',
+        kind: ['lesson', 'exercise'],
+        page: 2,
+      }),
+    );
+    expect(
+      searchCurriculum(store, token, {
+        q: 'Odin',
+        kind: ['resource'],
+        day: ['d003'],
+      }),
+    ).toEqual(original);
+    expect(
+      searchCurriculum(
+        store,
+        other,
+        { q: 'Odin', kind: ['resource'], day: ['d003'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(corrected);
+    expect(fingerprint()).toBe(before);
+  });
+  it('keeps candidate ownership and unsupported release fallback across library, detail and search', () => {
+    const before = fingerprint();
+    for (const session of [undefined, 'invalid', unenrolled]) {
+      expect(() =>
+        readResourceLibrary(store, session, {}, undefined, 'reviewed-bindings'),
+      ).toThrowError(AppError);
+      expect(() =>
+        readResourceDetail(
+          store,
+          session,
+          'res-01',
+          undefined,
+          'reviewed-bindings',
+        ),
+      ).toThrowError(AppError);
+      expect(() =>
+        searchCurriculum(
+          store,
+          session,
+          { q: 'Odin' },
+          undefined,
+          'reviewed-bindings',
+        ),
+      ).toThrowError(AppError);
+    }
+    const owner = requireStudent(store, token).id;
+    for (const operation of [
+      () => readResourceLibrary(store, other, {}, owner, 'reviewed-bindings'),
+      () =>
+        readResourceDetail(store, other, 'res-01', owner, 'reviewed-bindings'),
+      () =>
+        searchCurriculum(
+          store,
+          other,
+          { q: 'Odin' },
+          owner,
+          'reviewed-bindings',
+        ),
+    ])
+      expect(operation).toThrowError(
+        expect.objectContaining({ code: 'ACCOUNT_CHANGED' }),
+      );
+    const raw = pages(fixtureToken).all;
+    const reviewed = readResourceLibrary(
+      store,
+      fixtureToken,
+      {},
+      undefined,
+      'reviewed-bindings',
+    );
+    expect(reviewed.metadataBindingInterpretation?.version).toBeNull();
+    for (const resource of reviewed.results) {
+      const original = raw.find((row) => row.id === resource.id)!;
+      expect(resource.uses.map((use) => use.id)).toEqual(
+        original.uses.map((use) => use.id),
+      );
+      expect(resource.originalUses).toEqual(resource.uses);
+      expect(
+        readResourceDetail(
+          store,
+          fixtureToken,
+          resource.stableKey,
+          undefined,
+          'reviewed-bindings',
+        ).resource,
+      ).toEqual(resource);
+    }
+    expect(
+      searchCurriculum(
+        store,
+        fixtureToken,
+        { q: 'Original', kind: ['resource'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(
+      searchCurriculum(store, fixtureToken, {
+        q: 'Original',
+        kind: ['resource'],
+      }),
+    );
+    expect(fingerprint()).toBe(before);
+  });
+  it('rejects warm candidate search and read drift, recovers and leaves the original index intact', () => {
+    const before = fingerprint();
+    const expected = searchCurriculum(
+      store,
+      token,
+      { q: 'Odin' },
+      undefined,
+      'reviewed-bindings',
+    );
+    const rows = store.native
+      .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+      .all();
+    const catalog = structuredClone(readCatalog(store, 'se-26w-v1')!);
+    catalog.items.find((row) => row.stableKey === 'w01')!.title += ' changed';
+    const stub = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(catalog);
+    try {
+      for (const operation of [
+        () =>
+          readResourceLibrary(store, token, {}, undefined, 'reviewed-bindings'),
+        () =>
+          readResourceDetail(
+            store,
+            token,
+            'res-01',
+            undefined,
+            'reviewed-bindings',
+          ),
+        () =>
+          searchCurriculum(
+            store,
+            token,
+            { q: 'Odin' },
+            undefined,
+            'reviewed-bindings',
+          ),
+      ])
+        expect(operation).toThrowError(
+          expect.objectContaining({
+            status: 503,
+            code: 'RESOURCE_BINDINGS_UNAVAILABLE',
+          }),
+        );
+    } finally {
+      stub.mockRestore();
+    }
+    expect(
+      searchCurriculum(
+        store,
+        token,
+        { q: 'Odin' },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(expected);
+    expect(
+      store.native
+        .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+        .all(),
+    ).toEqual(rows);
+    expect(fingerprint()).toBe(before);
+  });
+  it('rebuilds a candidate index after outer rollback or missing rows without corrupting the original index', () => {
+    const before = fingerprint();
+    const original = store.native
+      .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+      .all();
+    store.native.exec('DROP TABLE IF EXISTS temp.curriculum_search_bindings');
+    expect(() =>
+      store.native.transaction(() => {
+        ensureSearchIndex(store, 'se-26w-v1', 'reviewed-bindings');
+        throw new Error('candidate outer rollback');
+      })(),
+    ).toThrow('candidate outer rollback');
+    expect(
+      store.native
+        .prepare(
+          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_bindings'",
+        )
+        .get(),
+    ).toBeUndefined();
+    const expected = searchCurriculum(
+      store,
+      token,
+      { q: 'Odin', day: ['d003'] },
+      undefined,
+      'reviewed-bindings',
+    );
+    store.native
+      .prepare('DELETE FROM temp.curriculum_search_bindings WHERE id=?')
+      .run('se-26w-v1:res-01');
+    expect(
+      searchCurriculum(
+        store,
+        token,
+        { q: 'Odin', day: ['d003'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(expected);
+    expect(
+      store.native
+        .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+        .all(),
+    ).toEqual(original);
+    expect(fingerprint()).toBe(before);
+  });
+  it('preserves reviewed library, detail and search after no-op reseed and reopening the same database', () => {
+    const before = fingerprint();
+    const library = readResourceLibrary(
+      store,
+      token,
+      { q: 'Odin', day: ['d003'] },
+      undefined,
+      'reviewed-bindings',
+    );
+    const detail = readResourceDetail(
+      store,
+      token,
+      'res-05',
+      undefined,
+      'reviewed-bindings',
+    );
+    const search = searchCurriculum(
+      store,
+      token,
+      { q: 'Odin', day: ['d003'] },
+      undefined,
+      'reviewed-bindings',
+    );
+    importCurriculum(store, plan.source);
+    expect(
+      readResourceLibrary(
+        store,
+        token,
+        { q: 'Odin', day: ['d003'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(library);
+    store.native.close();
+    expect(() =>
+      searchCurriculum(
+        store,
+        token,
+        { q: 'Odin' },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toThrow();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(
+      store.native
+        .prepare(
+          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_bindings'",
+        )
+        .get(),
+    ).toBeUndefined();
+    expect(
+      readResourceLibrary(
+        store,
+        other,
+        { q: 'Odin', day: ['d003'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(library);
+    expect(
+      readResourceDetail(
+        store,
+        other,
+        'res-05',
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(detail);
+    expect(
+      searchCurriculum(
+        store,
+        other,
+        { q: 'Odin', day: ['d003'] },
+        undefined,
+        'reviewed-bindings',
+      ),
+    ).toEqual(search);
+    expect(fingerprint()).toBe(before);
   });
 });

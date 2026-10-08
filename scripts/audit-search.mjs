@@ -10,7 +10,8 @@ import { openDatabase } from '../src/server/db/connection.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const ui = process.argv[2] === '--ui';
+const projectionRegression = process.argv[2] === '--projection-regression';
+const ui = process.argv[2] === '--ui' || projectionRegression;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Reuse only existing synthetic preview credentials; never print or copy them to reports.
 const fixture = JSON.parse(
@@ -235,7 +236,11 @@ try {
   await writeFile(
     path.join(
       root,
-      ui ? 'docs/m6-step7-http-audit.json' : 'docs/m6-step6-http-audit.json',
+      projectionRegression
+        ? 'docs/m6-step15-search-regression.json'
+        : ui
+          ? 'docs/m6-step7-http-audit.json'
+          : 'docs/m6-step6-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

@@ -1,4 +1,4 @@
-import frozen from '../../../content/interpretations/se-26w-v1-resource-labels-v1.json';
+import frozen from '../../../content/interpretations/se-26w-v1-resource-labels-v1.json' with { type: 'json' };
 import { resourceProviderKey } from '../../domain/resource-library.ts';
 import { AppError } from '../errors.ts';
 import type { Catalog } from './read.ts';

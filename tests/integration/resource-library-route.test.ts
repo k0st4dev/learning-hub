@@ -282,6 +282,7 @@ describe('protected resource library route with real SQLite', () => {
       Array(9).fill('day=d001').join('&'),
       Array(5).fill('requirement=required').join('&'),
       'releaseId=another-release',
+      'projection=reviewed-bindings',
       'userId=other',
       'expectedStudentId=other',
       '__proto__=x',

@@ -9,13 +9,28 @@ import * as s from '../db/schema.ts';
 import { AppError } from '../errors.ts';
 import { readCatalog, type Catalog } from './read.ts';
 import { courseNavigation } from './navigation.ts';
+import { resourceBindingPresentation } from './resource-bindings.ts';
+
+// Internal staging choice only; no request parameter or persistent feature flag.
+export type ResourceProjection = 'original' | 'reviewed-bindings';
+export function searchIndexTable(projection: ResourceProjection = 'original') {
+  return projection === 'reviewed-bindings'
+    ? 'curriculum_search_bindings'
+    : 'curriculum_search';
+}
 
 // Connection-local derived content only: no student data and no persistent schema change.
 const indexed = new WeakMap<
   Store,
   Map<string, { manifest: string; count: number }>
 >();
-export function ensureSearchIndex(store: Store, releaseId: string) {
+export function ensureSearchIndex(
+  store: Store,
+  releaseId: string,
+  projection: ResourceProjection = 'original',
+) {
+  const table = searchIndexTable(projection);
+  const cacheKey = releaseId + ':' + projection;
   const release = store.orm
     .select()
     .from(s.courseRelease)
@@ -31,42 +46,57 @@ export function ensureSearchIndex(store: Store, releaseId: string) {
       'CONTENT_UNAVAILABLE',
       'Your enrolled curriculum is unavailable. Preserve your data and retry.',
     );
-  const cached = indexed.get(store)?.get(releaseId);
+  // Revalidate reviewed bindings even on a warm connection before returning indexed text.
+  const reviewedCatalog =
+    projection === 'reviewed-bindings' ? readCatalog(store, releaseId) : null;
+  if (projection === 'reviewed-bindings' && !reviewedCatalog)
+    throw new AppError(
+      503,
+      'CONTENT_UNAVAILABLE',
+      'Your enrolled resources are unavailable.',
+    );
+  const bindings = reviewedCatalog
+    ? resourceBindingPresentation(reviewedCatalog)
+    : undefined;
+  const cached = indexed.get(store)?.get(cacheKey);
   // A caller's outer transaction may have rolled back TEMP writes after derivation.
   if (
     cached?.manifest === release.manifestSha256 &&
     store.native
-      .prepare(
-        "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search'",
-      )
-      .get() &&
+      .prepare('SELECT name FROM sqlite_temp_master WHERE name=?')
+      .get(table) &&
     (
       store.native
         .prepare(
-          'SELECT count(*) AS n FROM temp.curriculum_search WHERE release_id=?',
+          'SELECT count(*) AS n FROM temp.' + table + ' WHERE release_id=?',
         )
         .get(releaseId) as { n: number }
     ).n === cached.count
   )
     return;
-  const catalog = readCatalog(store, releaseId);
+  const catalog = reviewedCatalog ?? readCatalog(store, releaseId);
   if (!catalog)
     throw new AppError(
       503,
       'CONTENT_UNAVAILABLE',
       'Your enrolled curriculum is unavailable.',
     );
-  populate(store, catalog);
+  populate(store, catalog, table, bindings);
   const releases =
     indexed.get(store) ??
     new Map<string, { manifest: string; count: number }>();
-  releases.set(releaseId, {
+  releases.set(cacheKey, {
     manifest: release.manifestSha256,
     count: catalog.items.length + catalog.resources.length,
   });
   indexed.set(store, releases);
 }
-function populate(store: Store, catalog: Catalog) {
+function populate(
+  store: Store,
+  catalog: Catalog,
+  table: ReturnType<typeof searchIndexTable>,
+  bindings?: ReturnType<typeof resourceBindingPresentation>,
+) {
   const navigation = courseNavigation(catalog);
   const byId = new Map(catalog.items.map((item) => [item.id, item]));
   const blocks = new Map(
@@ -125,7 +155,7 @@ function populate(store: Store, catalog: Catalog) {
   }
   visit(null);
   const order = new Map(ordered.map((id, index) => [id, index]));
-  store.native.exec(`CREATE TEMP TABLE IF NOT EXISTS curriculum_search (
+  store.native.exec(`CREATE TEMP TABLE IF NOT EXISTS ${table} (
     release_id TEXT NOT NULL, id TEXT NOT NULL, kind TEXT NOT NULL,
     title TEXT NOT NULL, body TEXT NOT NULL, normalized_title TEXT NOT NULL,
     normalized_text TEXT NOT NULL, href TEXT NOT NULL, order_index INTEGER NOT NULL,
@@ -134,10 +164,12 @@ function populate(store: Store, catalog: Catalog) {
   )`);
   store.native.transaction(() => {
     store.native
-      .prepare('DELETE FROM temp.curriculum_search WHERE release_id = ?')
+      .prepare('DELETE FROM temp.' + table + ' WHERE release_id = ?')
       .run(catalog.release.id);
     const insert = store.native.prepare(
-      'INSERT INTO temp.curriculum_search VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO temp.' +
+        table +
+        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     );
     function add(
       id: string,
@@ -185,7 +217,11 @@ function populate(store: Store, catalog: Catalog) {
       );
     }
     for (const resource of catalog.resources) {
-      const uses = catalog.uses.filter((use) => use.resourceId === resource.id);
+      const uses = catalog.uses.filter(
+        (use) =>
+          (bindings?.uses.get(use.id)?.effectiveResourceId ??
+            use.resourceId) === resource.id,
+      );
       const parents = [...new Set(uses.map((use) => use.contentItemId))];
       const body = [
         ...new Set([

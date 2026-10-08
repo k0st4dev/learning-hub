@@ -11,7 +11,9 @@ import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const bindingsRegression = process.argv[2] === '--bindings-regression';
+const projectionRegression = process.argv[2] === '--projection-regression';
+const bindingsRegression =
+  process.argv[2] === '--bindings-regression' || projectionRegression;
 const detailUi = process.argv[2] === '--details' || bindingsRegression;
 const ui = process.argv[2] === '--ui' || detailUi;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
@@ -528,21 +530,24 @@ try {
       ' with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
     ...(bindingsRegression
       ? {
-          bindingScope:
-            'Existing published API/library/detail regression only. Candidate corrected binding projection is verified by real SQLite tests and remains disabled in public routes.',
+          bindingScope: projectionRegression
+            ? 'Existing public routes only. Corrected library/detail/filter/search service projection is tested separately in SQLite and remains disabled in public routes.'
+            : 'Existing published API/library/detail regression only. Candidate corrected binding projection is verified by real SQLite tests and remains disabled in public routes.',
         }
       : {}),
   };
   await writeFile(
     path.join(
       root,
-      bindingsRegression
-        ? 'docs/m6-step14-http-regression.json'
-        : detailUi
-          ? 'docs/m6-step13-http-audit.json'
-          : ui
-            ? 'docs/m6-step12-http-audit.json'
-            : 'docs/m6-step11-http-audit.json',
+      projectionRegression
+        ? 'docs/m6-step15-http-regression.json'
+        : bindingsRegression
+          ? 'docs/m6-step14-http-regression.json'
+          : detailUi
+            ? 'docs/m6-step13-http-audit.json'
+            : ui
+              ? 'docs/m6-step12-http-audit.json'
+              : 'docs/m6-step11-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

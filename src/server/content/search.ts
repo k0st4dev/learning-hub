@@ -10,7 +10,11 @@ import {
 import type { Store } from '../db/connection';
 import { ownedEnrollment } from '../learning/read';
 import { AppError } from '../errors';
-import { ensureSearchIndex } from './search-index';
+import {
+  ensureSearchIndex,
+  searchIndexTable,
+  type ResourceProjection,
+} from './search-index';
 
 type Row = {
   id: string;
@@ -25,6 +29,7 @@ export function searchCurriculum(
   token: string | undefined,
   input: unknown,
   expectedStudentId?: string,
+  projection: ResourceProjection = 'original',
 ): SearchResponse {
   const enrollment = ownedEnrollment(store, token);
   if (!enrollment)
@@ -45,7 +50,8 @@ export function searchCurriculum(
   const query = searchQuerySchema.parse(input);
   return store.native
     .transaction((): SearchResponse => {
-      ensureSearchIndex(store, enrollment.releaseId);
+      ensureSearchIndex(store, enrollment.releaseId, projection);
+      const table = searchIndexTable(projection);
       const tokens = searchTokens(query.q);
       const params: (string | number)[] = [enrollment.releaseId];
       const clauses = ['release_id = ?'];
@@ -84,7 +90,7 @@ export function searchCurriculum(
       const total = (
         store.native
           .prepare(
-            'SELECT count(*) AS n FROM temp.curriculum_search WHERE ' + where,
+            'SELECT count(*) AS n FROM temp.' + table + ' WHERE ' + where,
           )
           .get(...params) as { n: number }
       ).n;
@@ -97,7 +103,9 @@ export function searchCurriculum(
       WHEN ${tokens.map(() => "normalized_title LIKE ? ESCAPE '\\'").join(' AND ')} THEN 2 ELSE 3 END`;
       const rows = store.native
         .prepare(
-          'SELECT id, kind, title, body, href, breadcrumbs FROM temp.curriculum_search WHERE ' +
+          'SELECT id, kind, title, body, href, breadcrumbs FROM temp.' +
+            table +
+            ' WHERE ' +
             where +
             ' ORDER BY ' +
             ranking +
