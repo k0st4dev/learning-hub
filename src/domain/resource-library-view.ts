@@ -116,3 +116,7 @@ export const resourceLibraryViewSchema = z.object({
     .max(25),
 });
 export type ResourceLibraryView = z.infer<typeof resourceLibraryViewSchema>;
+export const resourceDetailViewSchema = z.object({
+  releaseId: z.string(),
+  resource: resourceLibraryViewSchema.shape.results.element,
+});

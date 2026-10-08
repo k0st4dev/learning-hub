@@ -1,5 +1,6 @@
 import {
   resourceQuerySchema,
+  resourceDetailKeySchema,
   resourceUseMatches,
 } from '../../domain/resource-library.ts';
 import { escapeLike, searchTokens } from '../../domain/search.ts';
@@ -76,10 +77,9 @@ function resourceContexts(
   return grouped;
 }
 
-export function readResourceLibrary(
+function resourceEnrollment(
   store: Store,
   token: string | undefined,
-  input: unknown,
   expectedStudentId?: string,
 ) {
   const enrollment = ownedEnrollment(store, token);
@@ -98,6 +98,80 @@ export function readResourceLibrary(
       'ACCOUNT_CHANGED',
       'The signed-in account changed. Reload resources for the current account.',
     );
+  return enrollment;
+}
+
+function presentResource(
+  resource: Catalog['resources'][number],
+  uses: NonNullable<ReturnType<ReturnType<typeof resourceContexts>['get']>>,
+  labels: ReturnType<typeof resourceLabelPresentation>,
+  matchesUse: (use: (typeof uses)[number]) => boolean = () => true,
+) {
+  const days = new Map<
+    string,
+    { title: string; href: string; dayNumber: number }
+  >();
+  for (const use of uses) {
+    if (!use.day || use.dayNumber === null) continue;
+    const day = use.breadcrumbs.find((item) => /\/days\/d\d+$/.test(item.href));
+    if (day) days.set(use.day, { ...day, dayNumber: use.dayNumber });
+  }
+  return {
+    ...resource,
+    ...labels.resources.get(resource.id)!,
+    href: '/resources/' + resource.stableKey,
+    uses,
+    matchingUseIds: uses.filter(matchesUse).map((use) => use.id),
+    relatedDays: [...days.values()].sort((a, b) => a.dayNumber - b.dayNumber),
+  };
+}
+
+export function readResourceDetail(
+  store: Store,
+  token: string | undefined,
+  key: unknown,
+  expectedStudentId?: string,
+) {
+  const enrollment = resourceEnrollment(store, token, expectedStudentId);
+  const stableKey = resourceDetailKeySchema.parse(key);
+  return store.native.transaction(() => {
+    const catalog = readCatalog(store, enrollment.releaseId);
+    if (!catalog)
+      throw new AppError(
+        503,
+        'CONTENT_UNAVAILABLE',
+        'Your enrolled resources are unavailable.',
+      );
+    const resource = catalog.resources.find(
+      (row) => row.stableKey === stableKey,
+    );
+    if (!resource)
+      throw new AppError(
+        404,
+        'RESOURCE_NOT_FOUND',
+        'This resource is not in your enrolled course.',
+      );
+    const labels = resourceLabelPresentation(catalog);
+    const contexts = resourceContexts(catalog, labels);
+    return {
+      releaseId: enrollment.releaseId,
+      resource: presentResource(
+        resource,
+        contexts.get(resource.id) ?? [],
+        labels,
+      ),
+      metadataInterpretation: labels.status,
+    };
+  })();
+}
+
+export function readResourceLibrary(
+  store: Store,
+  token: string | undefined,
+  input: unknown,
+  expectedStudentId?: string,
+) {
+  const enrollment = resourceEnrollment(store, token, expectedStudentId);
   const query = resourceQuerySchema.parse(input);
   return store.native.transaction(() => {
     ensureSearchIndex(store, enrollment.releaseId);
@@ -162,30 +236,14 @@ export function readResourceLibrary(
       .sort((a, b) => compare(a.title, b.title) || compare(a.id, b.id));
     const results = resources
       .slice((query.page - 1) * 25, query.page * 25)
-      .map((resource) => {
-        const uses = contexts.get(resource.id) ?? [];
-        const days = new Map<
-          string,
-          { title: string; href: string; dayNumber: number }
-        >();
-        for (const use of uses) {
-          if (!use.day || use.dayNumber === null) continue;
-          const day = use.breadcrumbs.find((item) =>
-            /\/days\/d\d+$/.test(item.href),
-          );
-          if (day) days.set(use.day, { ...day, dayNumber: use.dayNumber });
-        }
-        return {
-          ...resource,
-          ...labels.resources.get(resource.id)!,
-          href: '/resources/' + resource.stableKey,
-          uses,
-          matchingUseIds: uses.filter(matchesUse).map((use) => use.id),
-          relatedDays: [...days.values()].sort(
-            (a, b) => a.dayNumber - b.dayNumber,
-          ),
-        };
-      });
+      .map((resource) =>
+        presentResource(
+          resource,
+          contexts.get(resource.id) ?? [],
+          labels,
+          matchesUse,
+        ),
+      );
     return {
       releaseId: enrollment.releaseId,
       query,

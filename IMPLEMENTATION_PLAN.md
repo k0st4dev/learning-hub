@@ -1,6 +1,6 @@
 # Programming learning platform — proposed implementation plan
 
-Status: agreed by the user on 2026-09-29. M0-M5 implemented and verified in the available local development/service scope. M6 steps 1-12 notes, scorecards, review reminders, Search API/UI and resource library API/UI with approved versioned labels are verified. Resource detail label/provenance integration is the next separately approved step. Separate parent/mention proposals, handbook tools and final MVP acceptance remain open. See PROJECT_STATUS.md and docs/M6-STEP12-VERIFICATION.md for the exact next task and release limits.
+Status: agreed by the user on 2026-09-29. M0-M5 implemented and verified in the available local development/service scope. M6 steps 1-13 notes, scorecards, review reminders, Search API/UI and resource library/detail UI with approved versioned labels are verified. The eighteen reviewed parent-binding corrections are the next separately approved scope; new named mentions, handbook tools and final MVP acceptance remain open. See PROJECT_STATUS.md and docs/M6-STEP13-VERIFICATION.md for the exact next task and release limits.
 
 Execution preference updated by the user on 2026-10-06: prioritize desktop use. Preserve the existing responsive UI and basic mobile regression, but do not repeat extended mobile/viewport sessions at each increment. Desktop, keyboard, data integrity and required learning behavior remain primary gates. Keep approval after each focused step.
 

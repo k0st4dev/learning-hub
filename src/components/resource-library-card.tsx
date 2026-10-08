@@ -8,27 +8,37 @@ import {
 export function ResourceLibraryCard({
   resource,
   rank,
+  detail = false,
 }: {
   resource: ResourceLibraryView['results'][number];
-  rank: number;
+  rank?: number;
+  detail?: boolean;
 }) {
   const matching = resource.uses.filter((use) =>
     resource.matchingUseIds.includes(use.id),
   );
+  const Container = detail ? 'article' : 'li';
   return (
-    <li className="card resource-library-card stack" value={rank}>
-      <h3>
-        <Link prefetch={false} href={resource.href}>
-          {resource.title}
-        </Link>
-      </h3>
+    <Container
+      className="card resource-library-card stack"
+      {...(detail ? {} : { value: rank })}
+    >
+      {!detail && (
+        <h3>
+          <Link prefetch={false} href={resource.href}>
+            {resource.title}
+          </Link>
+        </h3>
+      )}
       <p>
         <strong>{resourceTypeLabels[resource.effective.type]}</strong> ·{' '}
         {resource.effective.provider ?? 'Provider not specified in manual'}
       </p>
-      <p className="source" lang="sr-Latn">
-        {resource.descriptionMarkdown}
-      </p>
+      {!detail && (
+        <p className="source" lang="sr-Latn">
+          {resource.descriptionMarkdown}
+        </p>
+      )}
       {resource.originalUrl ? (
         <a
           href={resource.originalUrl}
@@ -60,7 +70,7 @@ export function ResourceLibraryCard({
                 new Date(resource.checkedAt).toISOString().slice(0, 10)
               : '')}
       </p>
-      {matching.length > 0 && (
+      {!detail && matching.length > 0 && (
         <div>
           <h4>Matching assignments</h4>
           <ul className="curriculum-links">
@@ -158,7 +168,7 @@ export function ResourceLibraryCard({
               <strong>
                 {resourceRequirementLabels[use.effective.requirementMode]}
               </strong>
-              {resource.matchingUseIds.includes(use.id) && (
+              {!detail && resource.matchingUseIds.includes(use.id) && (
                 <span> · Matches current filters</span>
               )}
               <p className="source" lang="sr-Latn">
@@ -199,6 +209,6 @@ export function ResourceLibraryCard({
           <p>No assigned lesson context in this release.</p>
         )}
       </details>
-    </li>
+    </Container>
   );
 }

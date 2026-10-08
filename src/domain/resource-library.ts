@@ -1,6 +1,12 @@
 import { z } from 'zod';
 import { searchQuerySchema } from './search.ts';
 
+export const resourceDetailKeySchema = z
+  .string()
+  .min(1)
+  .max(200)
+  .regex(/^[a-zA-Z0-9_-]+$/);
+
 export const resourceTypes = [
   'documentation',
   'article',

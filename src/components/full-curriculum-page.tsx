@@ -51,6 +51,7 @@ export function FullCurriculumPage({
             {resource.originalUrl} {en.curriculum.newTab}
           </a>
         )}
+        {learnerTool}
         <h2 className="section">{en.curriculum.contexts}</h2>
         <ul className="curriculum-links">
           {uses.map((use) => {

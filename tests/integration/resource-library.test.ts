@@ -1,4 +1,12 @@
-import { beforeAll, afterAll, describe, expect, it } from 'vitest';
+// @vitest-environment jsdom
+import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+
+import { FullCurriculumPage } from '../../src/components/full-curriculum-page';
+import { ResourceDetailView } from '../../src/components/resource-detail-view';
+import { resourceDetailViewSchema } from '../../src/domain/resource-library-view';
+import * as contentRead from '../../src/server/content/read';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
@@ -10,6 +18,7 @@ import {
 } from '../../src/server/content/import';
 import {
   readResourceLibrary,
+  readResourceDetail,
   type ResourceLibrary,
 } from '../../src/server/content/resource-library';
 import {
@@ -854,6 +863,162 @@ describe('owned resource library read model', () => {
         requirement: ['optional'],
       }).results,
     ).toEqual(expected.results);
+    expect(fingerprint()).toBe(before);
+  });
+  it('projects all 69 detail records exactly like the library and preserves original rendered contexts', () => {
+    const before = fingerprint();
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const library = pages().all;
+    let visibleUses = 0;
+    for (const resource of library) {
+      const detail = readResourceDetail(
+        store,
+        token,
+        resource.stableKey,
+        requireStudent(store, token).id,
+      );
+      expect(detail.resource).toEqual(resource);
+      expect(readResourceDetail(store, other, resource.stableKey)).toEqual(
+        detail,
+      );
+      expect(resourceDetailViewSchema.safeParse(detail).success).toBe(true);
+      const original = renderToStaticMarkup(
+        createElement(FullCurriculumPage, { catalog, route: resource.href }),
+      );
+      const updated = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(FullCurriculumPage, {
+            catalog,
+            route: resource.href,
+            learnerTool: createElement(ResourceDetailView, {
+              data: detail,
+              releaseId: catalog.release.id,
+            }),
+          }),
+        ),
+        'text/html',
+      );
+      expect(updated.querySelectorAll('h1')).toHaveLength(1);
+      const labels = updated.querySelector(
+        '[aria-labelledby="resource-detail-labels"]',
+      )!;
+      expect(labels.textContent).toContain(
+        resource.effective.provider ?? 'Provider not specified in manual',
+      );
+      expect(labels.querySelectorAll('[data-resource-use]')).toHaveLength(
+        resource.uses.length,
+      );
+      visibleUses += resource.uses.length;
+      for (const use of resource.uses) {
+        const row = labels.querySelector(
+          '[data-resource-use="' + use.id + '"]',
+        )!;
+        expect(row.querySelector('p.source')!.textContent).toBe(
+          use.assignedText,
+        );
+        expect(row.querySelector('a')!.getAttribute('href')).toBe(use.href);
+      }
+      // Removing only the new presentation section must reproduce the entire legacy detail DOM.
+      labels.remove();
+      expect(updated.body.innerHTML).toBe(
+        new DOMParser().parseFromString(original, 'text/html').body.innerHTML,
+      );
+    }
+    expect(visibleUses).toBe(290);
+    expect(fingerprint()).toBe(before);
+  });
+  it('guards detail reads by session, enrollment, pinned resource key and expected account', () => {
+    const before = fingerprint();
+    for (const session of [undefined, 'invalid'])
+      expect(() => readResourceDetail(store, session, 'res-01')).toThrowError(
+        expect.objectContaining({ status: 401 }),
+      );
+    expect(() => readResourceDetail(store, unenrolled, 'res-01')).toThrowError(
+      expect.objectContaining({ code: 'ENROLLMENT_REQUIRED' }),
+    );
+    expect(() =>
+      readResourceDetail(
+        store,
+        token,
+        'res-01',
+        requireStudent(store, other).id,
+      ),
+    ).toThrowError(expect.objectContaining({ status: 403 }));
+    for (const key of ['missing', 'r1', 'se-26w-v1:res-01']) {
+      if (key.includes(':'))
+        expect(() => readResourceDetail(store, token, key)).toThrow();
+      else
+        expect(() => readResourceDetail(store, token, key)).toThrowError(
+          expect.objectContaining({ code: 'RESOURCE_NOT_FOUND' }),
+        );
+    }
+    expect(() =>
+      readResourceDetail(store, fixtureToken, 'res-01'),
+    ).toThrowError(expect.objectContaining({ code: 'RESOURCE_NOT_FOUND' }));
+    for (const key of [
+      '',
+      '../res-01',
+      'a'.repeat(201),
+      { userId: requireStudent(store, other).id },
+    ])
+      expect(() => readResourceDetail(store, token, key)).toThrow();
+    store.native
+      .prepare("UPDATE course_release SET status='retired' WHERE id=?")
+      .run(synthetic);
+    try {
+      expect(() => readResourceDetail(store, fixtureToken, 'r1')).toThrowError(
+        AppError,
+      );
+    } finally {
+      store.native
+        .prepare("UPDATE course_release SET status='published' WHERE id=?")
+        .run(synthetic);
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('retains explicit raw fallback, unavailable reviewed URLs and unresolved detail records', () => {
+    const expected = pages(fixtureToken).all;
+    for (const row of expected) {
+      const detail = readResourceDetail(store, fixtureToken, row.stableKey);
+      expect(detail.resource).toEqual(row);
+      expect(detail.metadataInterpretation.origin).toBe('imported-metadata');
+      expect(detail.resource.interpretation.evidence).toEqual([]);
+    }
+    const unavailable = readResourceDetail(store, fixtureToken, 'r1').resource;
+    expect(unavailable.originalUrl).toBe('https://example.test/original');
+    expect(unavailable.resolvedUrl).toBe('https://example.test/reviewed');
+    expect(unavailable.linkStatus).toBe('unavailable');
+    const unresolved = readResourceDetail(store, fixtureToken, 'r2').resource;
+    expect(unresolved.originalUrl).toBeNull();
+    expect(unresolved.resolvedUrl).toBeNull();
+  });
+  it('rejects label drift in detail reads and recovers without editing the published catalog', () => {
+    const before = fingerprint();
+    const expected = readResourceDetail(store, token, 'res-02');
+    const catalog = structuredClone(readCatalog(store, 'se-26w-v1')!);
+    catalog.resources[0]!.title += ' forged';
+    const stub = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(catalog);
+    try {
+      expect(() => readResourceDetail(store, token, 'res-02')).toThrowError(
+        expect.objectContaining({
+          status: 503,
+          code: 'RESOURCE_LABELS_UNAVAILABLE',
+        }),
+      );
+    } finally {
+      stub.mockRestore();
+    }
+    expect(readResourceDetail(store, token, 'res-02')).toEqual(expected);
+    expect(fingerprint()).toBe(before);
+  });
+  it('retains detail labels and source evidence across database close/reopen with no learner writes', () => {
+    const before = fingerprint();
+    const expected = readResourceDetail(store, token, 'res-02');
+    store.native.close();
+    expect(() => readResourceDetail(store, token, 'res-02')).toThrow();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(readResourceDetail(store, token, 'res-02')).toEqual(expected);
+    expect(readResourceDetail(store, other, 'res-02')).toEqual(expected);
     expect(fingerprint()).toBe(before);
   });
   it('rebuilds derived search after reopening the same database and rejects unavailable pinned content', () => {

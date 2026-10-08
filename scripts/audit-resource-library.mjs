@@ -11,7 +11,8 @@ import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const ui = process.argv[2] === '--ui';
+const detailUi = process.argv[2] === '--details';
+const ui = process.argv[2] === '--ui' || detailUi;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
 // Only existing synthetic preview accounts. Never print credentials or write them into reports.
 const fixture = JSON.parse(
@@ -106,6 +107,72 @@ let resourceReads = 0;
 let servedLibraryPages = 0;
 let sourceBlocksChecked = 0;
 let sourceLinksChecked = 0;
+let servedDetailPages = 0;
+let detailAssignmentsChecked = 0;
+let deferredDetailSegments = 0;
+let deferredDetailBoundaries = 0;
+function detailDocument(html) {
+  const document = new JSDOM(html).window.document;
+  // React streams large lists into S:/P: segments. Reproduce only its literal
+  // $RS insertion operation; never execute scripts or load external assets.
+  // Operation verified against the installed React server renderer.
+  for (const script of document.querySelectorAll('script')) {
+    for (const [, segmentId, placeholderId] of script.textContent.matchAll(
+      /\$RS\("(S:[0-9a-f]+)","(P:[0-9a-f]+)"\)/g,
+    )) {
+      const segment = document.getElementById(segmentId);
+      const placeholder = document.getElementById(placeholderId);
+      assert.ok(
+        segment?.hidden && placeholder?.parentNode,
+        'Missing deferred detail segment',
+      );
+      segment.remove();
+      while (segment.firstChild)
+        placeholder.parentNode.insertBefore(segment.firstChild, placeholder);
+      placeholder.remove();
+      deferredDetailSegments++;
+    }
+  }
+  // Complete literal $RC suspense boundaries after synchronous $RS insertions,
+  // matching the installed renderer's queued $RV operation without evaluating JS.
+  for (const script of document.querySelectorAll('script')) {
+    for (const [, placeholderId, segmentId] of script.textContent.matchAll(
+      /\$RC\("(B:[0-9a-f]+)","(S:[0-9a-f]+)"\)/g,
+    )) {
+      const segment = document.getElementById(segmentId);
+      const placeholder = document.getElementById(placeholderId);
+      assert.ok(segment?.hidden, 'Missing deferred boundary content');
+      if (!placeholder) {
+        segment.remove();
+        continue;
+      }
+      const parent = placeholder.parentNode;
+      const start = placeholder.previousSibling;
+      assert.equal(start?.nodeType, 8);
+      let current = placeholder;
+      let depth = 0;
+      while (current) {
+        if (current.nodeType === 8) {
+          if (['/$', '/&'].includes(current.data)) {
+            if (!depth) break;
+            depth--;
+          } else if (['$', '$?', '$~', '$!', '&'].includes(current.data))
+            depth++;
+        }
+        const next = current.nextSibling;
+        current.remove();
+        current = next;
+      }
+      assert.ok(current, 'Missing deferred boundary end');
+      segment.remove();
+      while (segment.firstChild)
+        parent.insertBefore(segment.firstChild, current);
+      start.data = '$';
+      deferredDetailBoundaries++;
+    }
+  }
+  return document;
+}
 try {
   const expected = [];
   for (const account of fixture.accounts) {
@@ -245,6 +312,113 @@ try {
       assert.ok(invalid.querySelector('[data-source-id="p0078"]'));
       servedLibraryPages += 3;
     }
+    if (detailUi) {
+      const typeLabels = {
+        documentation: 'Documentation',
+        article: 'Article / tutorial',
+        video: 'Video',
+        course: 'Course',
+        tool: 'Tool',
+        reference: 'Reference',
+        practice: 'Practice website',
+        guide: 'Internal guide',
+      };
+      const modeLabels = {
+        required: 'Required section',
+        optional: 'Optional supplement',
+        reference: 'Reference',
+        conditional: 'Conditional',
+      };
+      for (const resource of all) {
+        const document = detailDocument(await call(resource.href));
+        assert.equal(document.querySelectorAll('h1').length, 1);
+        assert.equal(document.querySelector('h1').textContent, resource.title);
+        assert.equal(
+          document.querySelector('.page-shell > p.source').textContent,
+          resource.descriptionMarkdown,
+        );
+        const labels = document.querySelector(
+          '[aria-labelledby=resource-detail-labels]',
+        );
+        assert.ok(labels.querySelector('article.resource-library-card'));
+        assert.equal(
+          labels.querySelector('strong').textContent,
+          typeLabels[resource.effective.type],
+        );
+        assert.ok(
+          labels.textContent.includes(
+            resource.effective.provider ?? 'Provider not specified in manual',
+          ),
+        );
+        assert.ok(
+          labels.textContent.includes('Imported type label: ' + resource.type),
+        );
+        if (resource.originalUrl) {
+          const anchor = [...labels.querySelectorAll('a')].find(
+            (a) => a.getAttribute('href') === resource.originalUrl,
+          );
+          assert.ok(anchor);
+          assert.equal(anchor.target, '_blank');
+          assert.equal(anchor.rel, 'noopener noreferrer');
+        } else
+          assert.ok(
+            labels.textContent.includes(
+              'No direct link supplied in the manual.',
+            ),
+          );
+        assert.equal(
+          labels.querySelectorAll('[data-resource-use]').length,
+          resource.uses.length,
+          resource.href +
+            ' (global assignment count: ' +
+            document.querySelectorAll('[data-resource-use]').length +
+            ')',
+        );
+        for (const use of resource.uses) {
+          const entry = labels.querySelector(
+            '[data-resource-use="' + use.id + '"]',
+          );
+          assert.equal(
+            entry.querySelector('p.source').textContent,
+            use.assignedText,
+          );
+          assert.equal(entry.querySelector('a').getAttribute('href'), use.href);
+          assert.equal(
+            entry.querySelector('strong').textContent,
+            modeLabels[use.effective.requirementMode],
+          );
+          for (const evidence of use.interpretation.evidence)
+            assert.ok(entry.textContent.includes(evidence.exactText));
+          detailAssignmentsChecked++;
+        }
+        for (const evidence of resource.interpretation.evidence)
+          assert.ok(labels.textContent.includes(evidence.exactText));
+        const originalContexts = [...document.querySelectorAll('h2')].find(
+          (heading) => heading.textContent === 'Related learning contexts',
+        ).nextElementSibling;
+        assert.equal(originalContexts.children.length, resource.uses.length);
+        for (const use of resource.uses) {
+          const item = catalog.items.find(
+            (row) => row.id === use.contentItemId,
+          );
+          assert.ok(
+            [...originalContexts.children].some(
+              (entry) =>
+                entry.querySelector('a').getAttribute('href') === item.route &&
+                entry.querySelector('p.source').textContent ===
+                  use.assignedText,
+            ),
+          );
+        }
+        servedDetailPages++;
+      }
+      assert.equal(
+        (
+          await call('/resources/not-a-resource', 'GET', undefined, 404)
+        ).includes('Resource labels and source evidence'),
+        false,
+      );
+    }
     expected.push(
       createHash('sha256').update(JSON.stringify(all)).digest('hex'),
     );
@@ -336,15 +510,30 @@ try {
           initialFilteredEmptyInvalidStates: 'passed',
         }
       : {}),
+    ...(detailUi
+      ? {
+          servedDetailPages,
+          detailAssignmentsChecked,
+          deferredDetailSegments,
+          deferredDetailBoundaries,
+          all69OriginalDetailsAndContextualLabels: 'passed',
+          detailSourceEvidenceAndMissingPage: 'passed',
+        }
+      : {}),
     scope:
       'Real local HTTP API' +
       (ui ? ' and server-rendered library' : '') +
+      (detailUi ? '/details' : '') +
       ' with existing synthetic preview accounts. No browser UI, link availability, production performance or final MVP acceptance claimed.',
   };
   await writeFile(
     path.join(
       root,
-      ui ? 'docs/m6-step12-http-audit.json' : 'docs/m6-step11-http-audit.json',
+      detailUi
+        ? 'docs/m6-step13-http-audit.json'
+        : ui
+          ? 'docs/m6-step12-http-audit.json'
+          : 'docs/m6-step11-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

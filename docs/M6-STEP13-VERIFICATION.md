@@ -1,0 +1,42 @@
+# M6 step 13 — resource detail labels and source evidence
+
+Date: 2026-10-08. Adds the reviewed presentation to individual resource detail pages. Original detail wording, URLs and learning contexts remain intact; final MVP acceptance is still open.
+
+## Implementation and boundaries
+
+`readResourceDetail` authenticates the session, requires the student's pinned enrollment, checks an optional expected owner and validates a bounded stable resource key. Reads only that release in a SQLite transaction; missing resources are explicit 404s, unavailable content/official label drift fail visibly, and unsupported releases retain their explicit raw metadata fallback. It does not fall back to another release or resource, create learning events, or prepare a search index just to read a detail. Shared enrollment guards and the resource/context projection are extracted from the existing library service to keep library and detail output identical.
+
+The existing resource route supplies the owned server read. The shared rendered-field Zod schema validates detail links/provenance and the expected release. `ResourceLibraryCard` supports a semantic article mode: no self-link heading, repeated description, filter-only preview or “matches current filters” copy. The section provides type/provider, original/reviewed links and availability, related days, imported versus added metadata, exact source evidence/rationale/confidence/ambiguity and every contextual assignment label/caveat/alternative. Native disclosures retain keyboard operation. Assignment labels add no completion units.
+
+The original detail renderer changes only by inserting the learner-tool slot before its original context list. Existing title, description, original URL and exact context text/links are preserved. Unenrolled readers retain originals and a Start course link. Unavailable added labels show an alert and full-document Retry link without partial tags; expired sessions return to login with the detail destination. Account changes and unexpected failures use existing route recovery. Unknown/nested resource destinations retain missing-page handling. Existing navigation/draft protection is reused.
+
+No source/importer/schema/frozen artifact/dependency/private records/completion behavior changes. The eighteen parent-binding and fifteen new named-mention proposals remain unapplied. Existing original source assignments are curriculum content, not platform execution instructions.
+
+## Verification
+
+- **453 unit/integration tests / 38 files pass in 133.28 seconds**. Twelve new cases: five real SQLite detail/projection/security/persistence checks and seven page-wiring/recovery/escaping checks. Focused service/library/API/interface gate: 44 tests / 3 files; final detail/page gate: 29 tests / 2 files. Both original Search/navigation/security coverage and library behavior remain green.
+- All 69 real detail projections equal their unfiltered library counterparts for both synthetic accounts. Every exact original assignment/local context URL and all 290 uses are verified. Removing only the new section from the rendered detail must reproduce the complete original detail DOM exactly. One H1 and semantic article mode are checked. No learner/private/published-content fingerprints change.
+- Guard cases include absent/invalid session, unenrolled student, changed expected account, foreign/missing/full-ID/invalid/oversized keys, retired pinned content, raw fallback, unavailable original/reviewed links, unresolved links, cloned label drift and database close/reopen. Drift/error tests restore their isolated fixture and valid reads recover. Server-page tests cover login destination, 404/503/403/unexpected recovery, escaped source text, unsafe URLs and foreign projection release. No other student's private text is exposed.
+- Strict TypeScript, full lint, formatting/diff checks, production build, original archive integrity, frozen-label reproduction and licence/notice checks pass. The build retains the two previously tracked filesystem-tracing warnings. The existing development Gzip drain-listener warning remains tracked for runtime integration; it is not suppressed. No paid/new dependency.
+- [Real HTTP audit](m6-step13-http-audit.json) uses two existing synthetic accounts and the same preview database. It verifies 30 resource API reads, 12 library pages and **138 detail pages**, including **580 contextual assignments** (290 per user), exact original text/links, effective modes/providers/types, cited evidence, original context lists, missing-page handling and unchanged durable fingerprints. Library regression rechecks all 69/290 records, 240 original manual blocks and 72 original links. Credential fixtures stay ignored and are never printed or committed.
+- Large React server-rendered detail lists arrive in hidden deferred segments. The initial inert HTML audit saw only part of a scoped list although the complete response contained all IDs. The audit now reproduces only the installed renderer's literal `$RS` insertion and queued `$RC` boundary operations, with validated marker IDs and structural assertions; it never executes scripts or fetches assets. Hexadecimal marker IDs are supported. All scoped checks remain strict. The final report records segment/boundary counts; the actual browser independently confirms all 47 CS50 assignments within the labels section.
+- Actual browser: filtered Day 113/optional → Odin detail; Enter opens imported/added metadata with exact table evidence. Back restores the filtered library. Switching to Required section shows CS50; its detail has all 47 assignments in the final labels section. Enter opens all assignments; Day 113 retains exact “CS50x Week 5 linked lists + TOP Linked Lists optional.” wording with CS50's Required section label. Original contexts remain visible beneath the added section. [Desktop evidence](m6-resource-detail-ui.png).
+- Measured desktop 1440×900 CSS viewport, document scroll/client widths both 1428; basic narrow 360×800 CSS viewport, widths both 348. No horizontal overflow; native disclosure keyboard operation passes. Host zoom requires viewport capability 1800×1125/450×1000 to achieve those measured dimensions. Temporary override reset; resource tab retained, user tabs preserved.
+- Preview launcher/server runtime paths and start times were checked before stopping only those processes for the build. Restart uses hidden portable-Node launcher PID **55276**, the same `.tmp/m2-preview` database and ignored logs. Reloaded browser/HTTP checks run after restart; no setup/reset or normal-data change. Generated Next declarations excluded.
+
+Direct jsdom imports initially lacked TypeScript declarations. Tests now use the existing configured jsdom environment and typed DOMParser, adding no dependency or permissive declaration. Final typing and tests pass.
+
+No production browser/axe, external availability, physical reboot/offline/screen-reader/target-OS or final A01–A26 completion is claimed. GitHub publication remains the existing normal-PowerShell operator action.
+
+Reproduce the normal test/type/lint/format/build/source/licence commands in README. With the existing synthetic preview running, set `APP_DATA_DIR` to absolute `<repository>/.tmp/m2-preview`, then:
+
+```sh
+node scripts/audit-resource-library.mjs --details
+node scripts/freeze-resource-labels.mjs --check
+```
+
+This option preserves the earlier audit modes/reports and verifies both library and details without resetting accounts.
+
+## Exact next task
+
+Ask before M6 step 14: apply the **18 reviewed parent-binding corrections** from [the concrete source-backed proposal](RESOURCE-METADATA-REVIEW.md) as a separately versioned presentation interpretation. Preserve original IDs, raw associations, exact wording, URLs, release identity and learner records; expose original versus effective associations explicitly. Validate release/Word/record/source evidence before deriving corrected resource contexts, and verify same-use filters and library/detail/search consistency with complete 69-resource/290-use coverage. Do not rewrite the immutable archive/importer/database or silently create named-mention resources. If this scope needs multiple small increments, start with the frozen binding contract and owned service projection, recording the exact subsequent interface/search task before asking again. The fifteen named-mention proposals, handbook tools and final M6/MVP acceptance remain separate.
