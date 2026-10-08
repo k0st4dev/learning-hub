@@ -1,0 +1,14 @@
+{
+  "status": "original-word-and-proposal-verified",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "exactBodyParagraphs": 2365,
+  "exactTableCoordinates": 2365,
+  "tables": 197,
+  "exactResourceMentions": 208,
+  "existingResources": 69,
+  "exactExistingUses": 290,
+  "originalHyperlinkUses": 19,
+  "originalUrls": 12,
+  "proposalEvidenceBlocks": 252,
+  "runtimeChanges": false
+}
