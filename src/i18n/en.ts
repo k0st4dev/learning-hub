@@ -1,6 +1,12 @@
 export const en = {
   handbook: {
     gitReview: 'Temporary Git review',
+    stuckReview: 'Temporary troubleshooting review',
+    stuckReviewHelp:
+      "Review the steps in their original order; any check can be revisited. Step 5 requires steps 1–4 first, an independent attempt of at least 20 minutes for a small problem or 30 minutes for a serious algorithm/project bug, a record of what you tried, expected and where it failed, and permission under the day's and external assignment's AI rules. Marks do not grant AI permission or course credit.",
+    relatedReviewGuidance: 'Related troubleshooting guidance',
+    reviewAiProtocol: 'AI protocol and attempt rule',
+    reviewHintLadder: 'Original hint ladder',
     conceptReview: 'Temporary concept review',
     conceptReviewHelp:
       'Review one concept at a time. These self-checks do not certify mastery or grant AI permission. Daily AI restrictions take priority. Unmarked checks do not block learning.',

@@ -32,6 +32,52 @@ afterEach(() => {
 });
 
 describe('temporary advisory review', () => {
+  it('keeps supporting source links and freely revisitable later checks available independently of marks', () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const view = render(
+      createElement(TemporaryChecklist, {
+        ...props,
+        links: [
+          {
+            href: '/course/software-engineer/guide/ai-protocol#original-hints',
+            label: 'Original hint ladder',
+          },
+        ],
+      }),
+    );
+    const guidance = within(
+      view.getByRole('navigation', {
+        name: 'Related troubleshooting guidance',
+      }),
+    );
+    expect(
+      guidance
+        .getByRole('link', { name: 'Original hint ladder' })
+        .getAttribute('href'),
+    ).toBe('/course/software-engineer/guide/ai-protocol#original-hints');
+    expect(view.queryByRole('textbox')).toBeNull();
+    expect(view.container.querySelector('form')).toBeNull();
+    expect(
+      view
+        .getAllByRole('checkbox')
+        .every((box) => !(box as HTMLInputElement).disabled),
+    ).toBe(true);
+    fireEvent.click(view.getAllByRole('checkbox')[1]!);
+    expect((view.getAllByRole('checkbox')[0] as HTMLInputElement).checked).toBe(
+      false,
+    );
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 1 / 2',
+    );
+    fireEvent.click(view.getAllByRole('checkbox')[1]!);
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 2',
+    );
+    expect(guidance.getByRole('link').getAttribute('href')).toBe(
+      '/course/software-engineer/guide/ai-protocol#original-hints',
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
   it('reviews one optional concept and clears marks on every label edit without saving or claiming mastery', () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch');
     const storageSpies = (

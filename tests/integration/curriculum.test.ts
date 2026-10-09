@@ -42,6 +42,8 @@ import { register, login, requireStudent } from '../../src/server/auth/service';
 import {
   gitReviewItems,
   conceptReviewItems,
+  stuckReviewItems,
+  stuckReviewLinks,
 } from '../../src/server/content/handbook-checklist';
 import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
@@ -83,6 +85,220 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('offers exact ordered troubleshooting checks without AI gates, broken source links or learner writes', async () => {
+    importCurriculum(store, plan.source);
+    const accounts = [];
+    for (const email of ['stuck-a@example.test', 'stuck-b@example.test']) {
+      const credentials = {
+        email,
+        password: 'Local stuck workflow review test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      accounts.push({
+        token,
+        studentId: requireStudent(store, token).id,
+        before: snapshot(store, token),
+      });
+    }
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const original = JSON.stringify(catalog);
+    const page = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-e',
+    )!;
+    const protocol = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/ai-protocol',
+    )!;
+    const items = stuckReviewItems(page)!;
+    expect(page.blocks).toHaveLength(8);
+    expect(items.map((item) => item.id)).toEqual([
+      'p2335',
+      'p2336',
+      'p2337',
+      'p2338',
+      'p2339',
+      'p2340',
+      'p2341',
+    ]);
+    expect(items.map((item) => item.text)).toEqual(
+      items.map(
+        (item) =>
+          plan.source.source_blocks.find(
+            (block) => block.source_id === item.id,
+          )!.text,
+      ),
+    );
+    const hints = handbookNavigation(protocol)!.sections.find(
+      (section) => section.sourceId === 'p0062',
+    )!;
+    expect(stuckReviewLinks(protocol)).toEqual([
+      { kind: 'protocol', href: protocol.item.route },
+      {
+        kind: 'hints',
+        href: protocol.item.route + '#' + encodeURIComponent(hints.anchor),
+      },
+    ]);
+    expect(stuckReviewLinks(null)).toEqual([]);
+    expect(stuckReviewLinks(page)).toEqual([]);
+    expect(
+      stuckReviewLinks({
+        ...protocol,
+        blocks: protocol.blocks.filter(
+          (block) => block.sourceLocator !== 'p0062',
+        ),
+      }),
+    ).toEqual([{ kind: 'protocol', href: protocol.item.route }]);
+    expect(stuckReviewLinks({ ...protocol, blocks: [] })).toEqual([]);
+    const element = (studentId: string) =>
+      createElement(CurriculumPreview, { catalog, page, studentId });
+    const view = render(element(accounts[0]!.studentId));
+    const region = () =>
+      within(
+        view.getByRole('region', { name: 'Temporary troubleshooting review' }),
+      );
+    expect(region().getAllByRole('checkbox')).toHaveLength(7);
+    for (const [index, item] of items.entries()) {
+      const box = region().getAllByRole('checkbox')[index]! as HTMLInputElement;
+      expect(box.closest('label')!.textContent).toBe(item.text);
+      expect(box.disabled || box.required).toBe(false);
+      expect(item.text.startsWith(`${index + 1}. `)).toBe(true);
+    }
+    expect(region().queryByRole('textbox')).toBeNull();
+    expect(region().getByText(/Step 5 requires steps 1–4 first/)).toBeTruthy();
+    expect(
+      region().getByText(/20 minutes.*30 minutes.*record of what you tried/),
+    ).toBeTruthy();
+    expect(
+      region().getByText(/Marks do not grant AI permission or course credit/),
+    ).toBeTruthy();
+    expect(
+      region()
+        .getByRole('link', { name: 'Original hint ladder' })
+        .getAttribute('href'),
+    ).toBe(protocol.item.route + '#' + hints.anchor);
+    expect(
+      region()
+        .getByRole('link', { name: 'AI protocol and attempt rule' })
+        .getAttribute('href'),
+    ).toBe(protocol.item.route);
+    fireEvent.click(region().getAllByRole('checkbox')[4]!);
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 1 / 7',
+    );
+    expect(
+      (region().getAllByRole('checkbox')[0] as HTMLInputElement).checked,
+    ).toBe(false);
+    fireEvent.click(region().getAllByRole('checkbox')[4]!);
+    for (const box of region().getAllByRole('checkbox')) fireEvent.click(box);
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 7 / 7',
+    );
+    for (const block of page.blocks)
+      expect(
+        view.container.querySelector(
+          '[data-source-id="' + block.sourceLocator + '"] [data-source-text]',
+        )!.textContent,
+      ).toBe(block.exactText);
+    view.rerender(element(accounts[1]!.studentId));
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 7',
+    );
+    fireEvent.click(region().getAllByRole('checkbox')[6]!);
+    fireEvent.click(
+      region().getByRole('button', { name: 'Clear this review' }),
+    );
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 7',
+    );
+    for (const blocks of [
+      page.blocks.filter((block) => block.sourceLocator !== 'p2339'),
+      [...page.blocks, page.blocks[1]!],
+      page.blocks.map((block) =>
+        block.sourceLocator === 'p2340'
+          ? { ...block, exactText: '9. Altered sequence' }
+          : block,
+      ),
+    ]) {
+      const invalid = { ...page, blocks };
+      expect(stuckReviewItems(invalid)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: invalid,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', {
+          name: 'Temporary troubleshooting review',
+        }),
+      ).toBeNull();
+      expect(
+        view.getByText(
+          'The review tool is unavailable. All available original guidance remains below.',
+        ),
+      ).toBeTruthy();
+      expect(
+        view.container.querySelector(
+          '[data-source-id="p2334"] [data-source-text]',
+        )!.textContent,
+      ).toBe(page.blocks[0]!.exactText);
+    }
+    const withoutProtocol = {
+      ...catalog,
+      items: catalog.items.filter((item) => item.id !== protocol.item.id),
+    };
+    view.rerender(
+      createElement(CurriculumPreview, {
+        catalog: withoutProtocol,
+        page,
+        studentId: accounts[0]!.studentId,
+      }),
+    );
+    expect(
+      region().queryByRole('navigation', {
+        name: 'Related troubleshooting guidance',
+      }),
+    ).toBeNull();
+    expect(region().getAllByRole('checkbox')).toHaveLength(7);
+    for (const slug of [
+      'appendix-a',
+      'appendix-b',
+      'appendix-c',
+      'ai-protocol',
+    ]) {
+      const other = catalogPage(
+        catalog,
+        '/course/software-engineer/guide/' + slug,
+      )!;
+      expect(stuckReviewItems(other)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: other,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', {
+          name: 'Temporary troubleshooting review',
+        }),
+      ).toBeNull();
+    }
+    expect(JSON.stringify(catalog)).toBe(original);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+  });
   it('offers seven exact concept self-checks with temporary labels and no learner or source mutation', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];

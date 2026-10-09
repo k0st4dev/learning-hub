@@ -3,7 +3,11 @@ import { dayWorkspace } from '@/server/content/day-workspace';
 import { DailyContext, DailyWorkspace } from './daily-workspace';
 import { ResourceCards } from './resource-cards';
 import { z } from 'zod';
-import type { Catalog, CatalogPage } from '@/server/content/read';
+import {
+  catalogPage,
+  type Catalog,
+  type CatalogPage,
+} from '@/server/content/read';
 import { sourceLinkSchema } from '@/server/content/source-schema';
 import { en } from '@/i18n/en';
 import { courseNavigation, courseOutline } from '@/server/content/navigation';
@@ -13,8 +17,11 @@ import { handbookNavigation } from '@/server/content/handbook-navigation';
 import {
   gitReviewItems,
   conceptReviewItems,
+  stuckReviewItems,
+  stuckReviewLinks,
 } from '@/server/content/handbook-checklist';
 import { TemporaryChecklist } from './temporary-checklist';
+import { HandbookFragmentFocus } from './handbook-fragment-focus';
 import {
   appendixATemplate,
   aiPromptTemplates,
@@ -214,6 +221,7 @@ export function CurriculumPreview({
           title: en.handbook.gitReview,
           help: en.handbook.gitReviewHelp,
           conceptReview: false,
+          stuckWorkflow: false,
         }
       : page.item.stableKey === 'guide-appendix-c'
         ? {
@@ -221,8 +229,17 @@ export function CurriculumPreview({
             title: en.handbook.conceptReview,
             help: en.handbook.conceptReviewHelp,
             conceptReview: true,
+            stuckWorkflow: false,
           }
-        : null;
+        : page.item.stableKey === 'guide-appendix-e'
+          ? {
+              items: stuckReviewItems(page),
+              title: en.handbook.stuckReview,
+              help: en.handbook.stuckReviewHelp,
+              conceptReview: false,
+              stuckWorkflow: true,
+            }
+          : null;
   const sourceBlocks = (handbook?.blocks ?? page.blocks).map((block) => {
     const copy =
       block.sourceLocator === template?.sourceId
@@ -326,6 +343,11 @@ export function CurriculumPreview({
               )}
             </nav>
           )}
+          {handbook && (
+            <HandbookFragmentFocus
+              anchors={handbook.sections.map((section) => section.anchor)}
+            />
+          )}
           {review &&
             studentId &&
             (review.items && handbook?.sections[0] ? (
@@ -339,6 +361,19 @@ export function CurriculumPreview({
                 help={review.help}
                 items={review.items}
                 conceptReview={review.conceptReview}
+                links={
+                  review.stuckWorkflow
+                    ? stuckReviewLinks(
+                        catalogPage(catalog, base + '/guide/ai-protocol'),
+                      ).map((link) => ({
+                        href: link.href,
+                        label:
+                          link.kind === 'protocol'
+                            ? en.handbook.reviewAiProtocol
+                            : en.handbook.reviewHintLadder,
+                      }))
+                    : undefined
+                }
                 sourceHref={
                   '#' + encodeURIComponent(handbook.sections[0].anchor)
                 }

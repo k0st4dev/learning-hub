@@ -6,6 +6,7 @@ import { environment, root } from './environment.mjs';
 import { openDatabase } from '../src/server/db/connection.ts';
 import { readCatalog, catalogPage } from '../src/server/content/read.ts';
 import { servedDocument } from './served-document.mjs';
+import { handbookNavigation } from '../src/server/content/handbook-navigation.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
@@ -17,9 +18,11 @@ assert.ok(
         '--navigation',
         '--git-review',
         '--concept-review',
+        '--stuck-workflow',
       ].includes(process.argv[2])),
 );
-const checkConcept = process.argv[2] === '--concept-review';
+const checkStuck = process.argv[2] === '--stuck-workflow';
+const checkConcept = checkStuck || process.argv[2] === '--concept-review';
 const checkGit = checkConcept || process.argv[2] === '--git-review';
 const checkNavigation = checkGit || process.argv[2] === '--navigation';
 const checkPrompts = checkNavigation || process.argv[2] === '--prompts';
@@ -74,6 +77,7 @@ let guideSectionsChecked = 0;
 let guideBlocksChecked = 0;
 let gitChecksChecked = 0;
 let conceptChecksChecked = 0;
+let stuckChecksChecked = 0;
 const continueTargets = [];
 const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
@@ -277,7 +281,8 @@ try {
             decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
           );
           assert.equal(target?.getAttribute('data-source-id'), 'p2229');
-        } else if (!url.endsWith('/appendix-c')) assert.equal(tool, null);
+        } else if (!url.endsWith('/appendix-c') && !url.endsWith('/appendix-e'))
+          assert.equal(tool, null);
       }
       if (checkConcept && url.endsWith('/appendix-c')) {
         const tool = document.querySelector('.temporary-review');
@@ -345,6 +350,99 @@ try {
           decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
         );
         assert.equal(target?.getAttribute('data-source-id'), 'p2235');
+      }
+      if (checkStuck && url.endsWith('/appendix-e')) {
+        const tool = document.querySelector('.temporary-review');
+        assert.ok(tool);
+        assert.equal(document.querySelectorAll('.temporary-review').length, 1);
+        assert.equal(
+          tool.querySelector('h2')?.textContent,
+          'Temporary troubleshooting review',
+        );
+        assert.equal(original.blocks.length, 8);
+        assert.equal(tool.querySelectorAll('input').length, 7);
+        assert.equal(
+          tool.querySelector(
+            'form, input[type="text"], [data-learning-unit], [data-study-anchor]',
+          ),
+          null,
+        );
+        assert.ok(
+          tool.textContent.includes(
+            'Temporary review. Marks reset when you leave or reload. This does not save course progress.',
+          ),
+        );
+        assert.ok(tool.textContent.includes('Step 5 requires steps 1–4 first'));
+        assert.ok(
+          tool.textContent.includes(
+            'at least 20 minutes for a small problem or 30 minutes for a serious algorithm/project bug',
+          ),
+        );
+        assert.ok(
+          tool.textContent.includes(
+            "permission under the day's and external assignment's AI rules",
+          ),
+        );
+        assert.ok(
+          tool.textContent.includes(
+            'Marks do not grant AI permission or course credit.',
+          ),
+        );
+        assert.equal(
+          tool.querySelector('[role="status"]')?.textContent,
+          'Marks for this review: 0 / 7',
+        );
+        assert.equal(
+          tool.querySelector('button')?.textContent,
+          'Clear this review',
+        );
+        assert.equal(tool.querySelector('button')?.type, 'button');
+        for (let number = 2335; number <= 2341; number++) {
+          const ref = 'p' + number;
+          const box = tool.querySelectorAll('input')[number - 2335];
+          assert.equal(box.getAttribute('data-review-source'), ref);
+          assert.equal(box.type, 'checkbox');
+          assert.equal(box.checked || box.required || box.disabled, false);
+          assert.equal(box.labels.length, 1);
+          const text = original.blocks.find(
+            (block) => block.sourceLocator === ref,
+          )?.exactText;
+          assert.equal(box.labels[0].querySelector('span')?.textContent, text);
+          assert.ok(text.startsWith(String(number - 2334) + '. '));
+          stuckChecksChecked++;
+        }
+        const protocol = catalogPage(
+          catalog,
+          '/course/software-engineer/guide/ai-protocol',
+        );
+        assert.ok(protocol);
+        const hints = handbookNavigation(protocol).sections.find(
+          (section) => section.sourceId === 'p0062',
+        );
+        assert.ok(hints);
+        const nav = tool.querySelector(
+          'nav[aria-label="Related troubleshooting guidance"]',
+        );
+        assert.deepEqual(
+          [...nav.querySelectorAll('a')].map((link) => [
+            link.textContent,
+            link.getAttribute('href'),
+          ]),
+          [
+            ['AI protocol and attempt rule', protocol.item.route],
+            [
+              'Original hint ladder',
+              protocol.item.route + '#' + encodeURIComponent(hints.anchor),
+            ],
+          ],
+        );
+        const sourceLink = [...tool.querySelectorAll('a')].find(
+          (link) => link.textContent === 'Read the original guidance',
+        );
+        const target = document.getElementById(
+          decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
+        );
+        assert.equal(target?.getAttribute('data-source-id'), 'p2334');
       }
       if (url === route) {
         const field = document.querySelector('#problem-file-template');
@@ -436,6 +534,16 @@ try {
     date: new Date().toISOString(),
     server: 'development',
     accounts: 2,
+    ...(checkStuck
+      ? {
+          stuckChecksPerAccount: 7,
+          exactStuckChecks: stuckChecksChecked,
+          stuckOriginalBlocksPerAccount: 8,
+          numberedOrderAndAiConditions: 'passed',
+          sourceBackedProtocolAndHintLinks: 'passed',
+          noTimerGateOrNewCourseTask: true,
+        }
+      : {}),
     ...(checkConcept
       ? {
           conceptChecksPerAccount: 7,
@@ -485,15 +593,17 @@ try {
   await writeFile(
     path.join(
       root,
-      checkConcept
-        ? 'docs/m6-step25-http-audit.json'
-        : checkGit
-          ? 'docs/m6-step24-http-audit.json'
-          : checkNavigation
-            ? 'docs/m6-step22-http-audit.json'
-            : checkPrompts
-              ? 'docs/m6-step21-http-audit.json'
-              : 'docs/m6-step20-http-audit.json',
+      checkStuck
+        ? 'docs/m6-step26-http-audit.json'
+        : checkConcept
+          ? 'docs/m6-step25-http-audit.json'
+          : checkGit
+            ? 'docs/m6-step24-http-audit.json'
+            : checkNavigation
+              ? 'docs/m6-step22-http-audit.json'
+              : checkPrompts
+                ? 'docs/m6-step21-http-audit.json'
+                : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

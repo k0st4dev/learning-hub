@@ -11,6 +11,7 @@ type Props = {
   items: readonly { id: string; text: string }[];
   sourceHref: string;
   conceptReview?: boolean;
+  links?: readonly { href: string; label: string }[];
 };
 
 export function TemporaryChecklist(props: Props) {
@@ -24,6 +25,7 @@ function Review({
   items,
   sourceHref,
   conceptReview = false,
+  links = [],
 }: Props) {
   const id = useId();
   const [marked, setMarked] = useState<string[]>([]);
@@ -48,6 +50,15 @@ function Review({
       <h2 id={id + '-title'}>{title}</h2>
       <p id={id + '-notice'}>{en.handbook.temporaryNotice}</p>
       <p id={id + '-help'}>{help}</p>
+      {links.length > 0 && (
+        <nav className="actions" aria-label={en.handbook.relatedReviewGuidance}>
+          {links.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      )}
       {conceptReview && (
         <div className="stack">
           <label htmlFor={id + '-concept'}>{en.handbook.conceptLabel}</label>
