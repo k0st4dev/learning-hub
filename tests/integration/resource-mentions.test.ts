@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, describe, expect, it } from 'vitest';
+import { beforeAll, afterAll, describe, expect, it, vi } from 'vitest';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
@@ -12,12 +12,15 @@ import { register, login, requireStudent } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { saveNote } from '../../src/server/learning/notes';
 import { readCatalog, type Catalog } from '../../src/server/content/read';
+import * as contentRead from '../../src/server/content/read';
 import {
   readResourceBindings,
   readResourceLibrary,
   readResourceDetail,
 } from '../../src/server/content/resource-library';
 import { searchCurriculum } from '../../src/server/content/search';
+import { ensureSearchIndex } from '../../src/server/content/search-index';
+import { searchResponseSchema } from '../../src/domain/search';
 import {
   readResourceMentionProjection,
   readResourceMentionLibrary,
@@ -539,6 +542,381 @@ describe('frozen approved named-resource candidate', () => {
     expect(
       searchCurriculum(store, token, { q: 'Express', kind: ['resource'] }),
     ).toEqual(search);
+    expect(fingerprint()).toBe(before);
+  });
+});
+
+function namedSearch(
+  input: unknown,
+  session: string | undefined = token,
+  expectedStudentId?: string,
+) {
+  return searchCurriculum(
+    store,
+    session,
+    input,
+    expectedStudentId,
+    'reviewed-mentions',
+  );
+}
+function namedIndexRows(releaseId: string = plan.releaseId) {
+  return store.native
+    .prepare(
+      'SELECT * FROM temp.curriculum_search_mentions WHERE release_id=? ORDER BY id',
+    )
+    .all(releaseId) as {
+    id: string;
+    kind: string;
+    title: string;
+    body: string;
+    href: string;
+    breadcrumbs: string;
+    scope_contexts: string;
+  }[];
+}
+
+describe('staged owned named-resource Search', () => {
+  it('indexes the same 79 identities and all thirteen exact contexts without changing public indexes', () => {
+    ensureSearchIndex(store, plan.releaseId, 'original');
+    ensureSearchIndex(store, plan.releaseId, 'reviewed-bindings');
+    const before = fingerprint();
+    const publicRows = store.native
+      .prepare('SELECT * FROM temp.curriculum_search_bindings ORDER BY id')
+      .all();
+    const originalRows = store.native
+      .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+      .all();
+    ensureSearchIndex(store, plan.releaseId, 'reviewed-mentions');
+    const rows = namedIndexRows();
+    const candidate = readResourceMentionProjection(store, token);
+    expect(rows).toHaveLength(plan.items.length + 79);
+    expect(
+      rows.filter((row) => row.kind === 'resource').map((row) => row.id),
+    ).toEqual(candidate.resources.map((row) => row.id).sort());
+    for (const item of catalog.items)
+      expect(rows.find((row) => row.id === item.id)).toMatchObject({
+        title: item.title,
+        href: item.route,
+      });
+    for (const resource of candidate.resources) {
+      const row = rows.find((row) => row.id === resource.id)!;
+      expect(row.href).toBe(resource.href);
+      expect(row.title).toBe(resource.title);
+      for (const use of resource.uses)
+        expect(row.body).toContain(use.assignedText);
+      for (const mention of resource.derivedMentions) {
+        expect(row.body).toContain(mention.exactInstruction);
+        expect(JSON.parse(row.scope_contexts)).toContainEqual(mention.scope);
+      }
+      if (!resource.originalResource) {
+        // Added search snippets contain full original instructions, never a
+        // fabricated direct URL or a source description for the added record.
+        expect(row.body).toBe(
+          [
+            ...new Set(
+              resource.derivedMentions.map(
+                (mention) => mention.exactInstruction,
+              ),
+            ),
+          ].join('\n\n'),
+        );
+      }
+    }
+    expect(
+      store.native
+        .prepare('SELECT * FROM temp.curriculum_search_bindings ORDER BY id')
+        .all(),
+    ).toEqual(publicRows);
+    expect(
+      store.native
+        .prepare('SELECT * FROM temp.curriculum_search ORDER BY id')
+        .all(),
+    ).toEqual(originalRows);
+    expect(
+      store.native
+        .prepare(
+          "SELECT name FROM main.sqlite_master WHERE name LIKE 'curriculum_search%'",
+        )
+        .all(),
+    ).toEqual([]);
+    expect(fingerprint()).toBe(before);
+  });
+  it('finds every approved mention in its actual scope and reuses canonical and Practice identities once', () => {
+    const candidate = readResourceMentionProjection(store, token);
+    for (const mention of candidate.derivedMentions) {
+      const resource = candidate.resources.find(
+        (row) => row.id === mention.resourceId,
+      )!;
+      const query = {
+        q: resource.title,
+        kind: ['resource'],
+        module: [mention.scope.module!],
+        week: [mention.scope.week!],
+        ...(mention.scope.day ? { day: [mention.scope.day] } : {}),
+      };
+      const result = namedSearch(query);
+      expect(searchResponseSchema.safeParse(result).success).toBe(true);
+      const found = result.results.filter((row) => row.id === resource.id);
+      expect(found, mention.key).toHaveLength(1);
+      expect(found[0]!.href).toBe(resource.href);
+      expect(found[0]!.breadcrumbs).toEqual(
+        JSON.parse(
+          namedIndexRows().find((row) => row.id === resource.id)!.breadcrumbs,
+        ),
+      );
+      const library = readResourceMentionLibrary(store, token, {
+        q: query.q,
+        module: query.module,
+        week: query.week,
+        ...(mention.scope.day ? { day: [mention.scope.day] } : {}),
+      });
+      expect(library.results.some((row) => row.id === resource.id)).toBe(true);
+    }
+    const practice = namedSearch({
+      q: 'CS50 Practice',
+      kind: ['resource'],
+      week: ['w13', 'w14'],
+    });
+    expect(
+      practice.results.filter(
+        (row) => row.id === 'se-26w-v1:named-cs50-practice',
+      ),
+    ).toHaveLength(1);
+    expect(
+      namedIndexRows().filter((row) => row.id === 'se-26w-v1:res-10'),
+    ).toHaveLength(1);
+    expect(
+      namedIndexRows().filter((row) => row.id === 'se-26w-v1:res-04'),
+    ).toHaveLength(1);
+    expect(
+      namedIndexRows().some(
+        (row) =>
+          row.id.endsWith(':named-pg-library-docs') ||
+          row.id.endsWith(':named-sqlite-library-docs'),
+      ),
+    ).toBe(false);
+  });
+  it('does not spread week-only references to days or combine unrelated source scopes', () => {
+    for (const query of [
+      { q: 'CS50 Practice', week: ['w13'], day: ['d085'] },
+      { q: 'Express docs', week: ['w23'], day: ['d155'] },
+      { q: 'Jest Getting Started', week: ['w23'], day: ['d025'] },
+      { q: 'React DevTools', module: ['f1'], day: ['d144'] },
+      { q: 'Git', week: ['w26'], day: ['d001'] },
+    ]) {
+      const result = namedSearch({ ...query, kind: ['resource'] });
+      expect(
+        result.results.filter((row) => row.id.includes(':named-')),
+        JSON.stringify(query),
+      ).toEqual([]);
+    }
+    expect(
+      namedSearch({
+        q: 'Node.js Docs',
+        kind: ['resource'],
+        week: ['w23'],
+        day: ['d001'],
+      }).results.some((row) => row.id === 'se-26w-v1:res-10'),
+    ).toBe(false);
+  });
+  it('retains Unicode/literal matching, input validation, stable pagination and account/private-data guards', () => {
+    const before = fingerprint();
+    const accented = namedSearch({
+      q: 'pročitati',
+      kind: ['resource'],
+      day: ['d001'],
+    });
+    expect(
+      namedSearch({ q: 'procitati', kind: ['resource'], day: ['d001'] }),
+    ).toMatchObject({
+      results: accented.results,
+      total: accented.total,
+    });
+    expect(
+      accented.results.filter((row) => row.id.includes(':named-')),
+    ).toHaveLength(4);
+    for (const q of [
+      "zzzz' OR 1=1 --",
+      'JavaScript absentNamedNeedle',
+      'first-private-named-sentinel',
+      'second-private-named-sentinel',
+    ])
+      for (const session of [token, other])
+        expect(namedSearch({ q }, session).total).toBe(0);
+    for (const q of ['%', '_', '\\'])
+      expect(namedSearch({ q }).total).toBeLessThan(plan.items.length);
+    for (const input of [
+      { projection: 'reviewed-mentions' },
+      { q: 'x'.repeat(101) },
+      { page: 0 },
+      { kind: ['private'] },
+    ])
+      expect(() => namedSearch(input)).toThrow();
+    for (const session of ['', 'invalid'])
+      expect(() => namedSearch({ q: 'Git' }, session)).toThrowError(
+        expect.objectContaining({ status: 401 }),
+      );
+    expect(() =>
+      searchCurriculum(store, undefined, {}, undefined, 'reviewed-mentions'),
+    ).toThrowError(expect.objectContaining({ status: 401 }));
+    expect(() => namedSearch({ q: 'Git' }, unenrolled)).toThrowError(
+      expect.objectContaining({ status: 404 }),
+    );
+    expect(() =>
+      namedSearch({ q: 'Git' }, token, requireStudent(store, other).id),
+    ).toThrowError(expect.objectContaining({ status: 403 }));
+    const first = namedSearch({ q: 'Git' });
+    const pages = Array.from(
+      { length: Math.ceil(first.total / 20) },
+      (_, index) => namedSearch({ q: 'Git', page: index + 1 }).results,
+    ).flat();
+    expect(pages).toHaveLength(first.total);
+    expect(new Set(pages.map((row) => row.id)).size).toBe(pages.length);
+    expect(namedSearch({ q: 'Git' })).toEqual(first);
+    expect(namedSearch({ q: 'Git' }, other)).toEqual(first);
+    expect(namedSearch({ q: 'Git', page: 10000 }).results).toEqual([]);
+    expect(namedSearch({}).results).toEqual([]);
+    expect(fingerprint()).toBe(before);
+  });
+  it('validates frozen source, origins, ancestors and parent identities before returning a warm index', () => {
+    const before = fingerprint();
+    const expected = namedSearch({ q: 'Jest', kind: ['resource'] });
+    const rows = namedIndexRows();
+    for (const change of [
+      (copy: Catalog) => {
+        copy.blocks.find((row) => row.sourceLocator === 'p0274')!.exactText +=
+          ' changed';
+      },
+      (copy: Catalog) => {
+        copy.uses.find(
+          (row) => row.id === frozen.mentions[0]!.origins[0]!.useId,
+        )!.assignedText += ' changed';
+      },
+      (copy: Catalog) => {
+        copy.items.find((row) => row.stableKey === 'w01')!.title += ' changed';
+      },
+      (copy: Catalog) => {
+        copy.mappings.find(
+          (row) =>
+            row.websiteLocation === frozen.mentions[0]!.sourceMappingHref,
+        )!.websiteLocation = '/resources';
+      },
+      (copy: Catalog) => {
+        copy.resources.find((row) => row.stableKey === 'res-10')!.originalUrl =
+          'https://example.test/drift';
+      },
+    ]) {
+      const copy = structuredClone(catalog);
+      change(copy);
+      const stub = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(copy);
+      try {
+        expect(() => namedSearch({ q: 'Jest' })).toThrowError(
+          expect.objectContaining({ status: 503 }),
+        );
+      } finally {
+        stub.mockRestore();
+      }
+      expect(namedSearch({ q: 'Jest', kind: ['resource'] })).toEqual(expected);
+      expect(namedIndexRows()).toEqual(rows);
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('recovers after caller rollback and missing rows and rolls back failed regeneration atomically', () => {
+    const before = fingerprint();
+    const expected = namedSearch({ q: 'Jest', kind: ['resource'] });
+    store.native.exec('DROP TABLE temp.curriculum_search_mentions');
+    expect(() =>
+      store.native.transaction(() => {
+        namedSearch({ q: 'Jest' });
+        throw new Error('Named search caller rollback');
+      })(),
+    ).toThrow('Named search caller rollback');
+    expect(
+      store.native
+        .prepare(
+          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_mentions'",
+        )
+        .get(),
+    ).toBeUndefined();
+    expect(namedSearch({ q: 'Jest', kind: ['resource'] })).toEqual(expected);
+    store.native
+      .prepare('DELETE FROM temp.curriculum_search_mentions WHERE id=?')
+      .run('se-26w-v1:named-jest-getting-started');
+    const incomplete = namedIndexRows();
+    store.native.exec(
+      "CREATE TEMP TRIGGER named_index_failure BEFORE INSERT ON curriculum_search_mentions BEGIN SELECT RAISE(ABORT, 'named index failure'); END",
+    );
+    try {
+      expect(() => namedSearch({ q: 'Jest' })).toThrow('named index failure');
+      expect(namedIndexRows()).toEqual(incomplete);
+    } finally {
+      store.native.exec('DROP TRIGGER temp.named_index_failure');
+    }
+    expect(namedSearch({ q: 'Jest', kind: ['resource'] })).toEqual(expected);
+    expect(namedIndexRows()).toHaveLength(plan.items.length + 79);
+    expect(fingerprint()).toBe(before);
+  });
+  it('retains unsupported-release raw fallback and rejects unavailable or foreign releases', () => {
+    const before = fingerprint();
+    const result = namedSearch(
+      { q: 'Fallback', kind: ['resource'] },
+      fallbackToken,
+    );
+    expect(result.releaseId).toBe(fallbackRelease);
+    expect(result.total).toBe(1);
+    expect(result.results[0]!.id).toBe(fallbackRelease + ':reference');
+    expect(namedIndexRows(fallbackRelease)).toHaveLength(2);
+    expect(namedSearch({ q: 'Fallback' }).total).toBe(0);
+    const stub = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(null);
+    try {
+      expect(() => namedSearch({ q: 'Git' })).toThrowError(
+        expect.objectContaining({ status: 503 }),
+      );
+    } finally {
+      stub.mockRestore();
+    }
+    expect(fingerprint()).toBe(before);
+  });
+  it('rebuilds the exact candidate after reseed/close/reopen while public library and Search stay unchanged', () => {
+    const before = fingerprint();
+    const candidate = namedSearch({
+      q: 'Express docs',
+      kind: ['resource'],
+      week: ['w23'],
+    });
+    const rows = namedIndexRows();
+    const publicSearch = searchCurriculum(store, token, {
+      q: 'Express docs',
+      kind: ['resource'],
+    });
+    const publicLibrary = readResourceLibrary(store, token, {});
+    expect(importCurriculum(store, plan.source).imported).toBe(false);
+    expect(
+      namedSearch(
+        { q: 'Express docs', kind: ['resource'], week: ['w23'] },
+        other,
+      ),
+    ).toEqual(candidate);
+    expect(namedIndexRows()).toEqual(rows);
+    store.native.close();
+    expect(() => namedSearch({ q: 'Express' })).toThrow();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(
+      store.native
+        .prepare(
+          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_mentions'",
+        )
+        .get(),
+    ).toBeUndefined();
+    expect(
+      namedSearch({ q: 'Express docs', kind: ['resource'], week: ['w23'] }),
+    ).toEqual(candidate);
+    expect(namedIndexRows()).toEqual(rows);
+    expect(
+      searchCurriculum(store, token, { q: 'Express docs', kind: ['resource'] }),
+    ).toEqual(publicSearch);
+    expect(readResourceLibrary(store, token, {})).toEqual(publicLibrary);
+    expect(publicLibrary.total).toBe(69);
     expect(fingerprint()).toBe(before);
   });
 });

@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-09T07:14:49.234Z",
+  "server": "development",
+  "accounts": 2,
+  "servedTargets": 10,
+  "unicodeAndPagination": "passed",
+  "emptyAndInvalidQueries": "passed",
+  "originalTargetsAndBreadcrumbs": "passed",
+  "filtersAndAuth": "passed",
+  "allLearningAndPrivateRecordsUnchanged": "passed",
+  "publicNamedMentionsActive": false,
+  "stagedProjectionRequestRejected": "passed",
+  "correctedResourceContexts": "passed",
+  "servedFsoSearchForms": 6,
+  "measurements": {
+    "samples": 16,
+    "warmHttpMedianMs": 25.45,
+    "warmHttpMaxMs": 28.74,
+    "platform": "win32",
+    "architecture": "x64",
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13700"
+  },
+  "servedSearchAndResourceForms": "passed",
+  "accountSwitchHeaderGuard": "passed",
+  "scope": "Existing synthetic preview accounts; backend and served content/search forms only. Development timings are observations, not production A19/performance or browser UI acceptance."
+}

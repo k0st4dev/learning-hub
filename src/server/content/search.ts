@@ -59,20 +59,43 @@ export function searchCurriculum(
         clauses.push('kind IN (' + query.kind.map(() => '?').join(',') + ')');
         params.push(...query.kind);
       }
-      for (const [key, column] of [
+      const scopes = [
         ['module', 'modules'],
         ['week', 'weeks'],
         ['day', 'days'],
-      ] as const) {
-        if (!query[key].length) continue;
-        clauses.push(
-          'EXISTS (SELECT 1 FROM json_each(' +
-            column +
-            ') WHERE value IN (' +
-            query[key].map(() => '?').join(',') +
-            '))',
-        );
-        params.push(...query[key]);
+      ] as const;
+      if (projection === 'reviewed-mentions') {
+        // Combined dimensions must belong to one actual assignment context;
+        // a week-only named reference never becomes an assignment to its days.
+        const filters = scopes.flatMap(([key]) => {
+          if (!query[key].length) return [];
+          params.push(...query[key]);
+          return [
+            "json_extract(scope.value, '$." +
+              key +
+              "') IN (" +
+              query[key].map(() => '?').join(',') +
+              ')',
+          ];
+        });
+        if (filters.length)
+          clauses.push(
+            'EXISTS (SELECT 1 FROM json_each(scope_contexts) AS scope WHERE ' +
+              filters.join(' AND ') +
+              ')',
+          );
+      } else {
+        for (const [key, column] of scopes) {
+          if (!query[key].length) continue;
+          clauses.push(
+            'EXISTS (SELECT 1 FROM json_each(' +
+              column +
+              ') WHERE value IN (' +
+              query[key].map(() => '?').join(',') +
+              '))',
+          );
+          params.push(...query[key]);
+        }
       }
       for (const token of tokens) {
         clauses.push("normalized_text LIKE ? ESCAPE '\\'");

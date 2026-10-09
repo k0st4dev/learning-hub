@@ -461,6 +461,7 @@ describe('owned complete curriculum search', () => {
       'kind=password',
       'releaseId=search-foreign',
       'projection=reviewed-bindings',
+      'projection=reviewed-mentions',
       'userId=other',
       'q=a+b+c+d+e+f+g+h+i',
     ]) {

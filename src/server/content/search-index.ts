@@ -10,10 +10,13 @@ import { AppError } from '../errors.ts';
 import { readCatalog, type Catalog } from './read.ts';
 import { courseNavigation } from './navigation.ts';
 import { resourceBindingPresentation } from './resource-bindings.ts';
+import { resourceMentionPresentation } from './resource-mentions.ts';
 
 // Internal staging choice only; no request parameter or persistent feature flag.
-export type ResourceProjection = 'original' | 'reviewed-bindings';
+export type ResourceProjection =
+  'original' | 'reviewed-bindings' | 'reviewed-mentions';
 export function searchIndexTable(projection: ResourceProjection = 'original') {
+  if (projection === 'reviewed-mentions') return 'curriculum_search_mentions';
   return projection === 'reviewed-bindings'
     ? 'curriculum_search_bindings'
     : 'curriculum_search';
@@ -46,10 +49,10 @@ export function ensureSearchIndex(
       'CONTENT_UNAVAILABLE',
       'Your enrolled curriculum is unavailable. Preserve your data and retry.',
     );
-  // Revalidate reviewed bindings even on a warm connection before returning indexed text.
+  // Revalidate interpretations even on a warm connection before returning indexed text.
   const reviewedCatalog =
-    projection === 'reviewed-bindings' ? readCatalog(store, releaseId) : null;
-  if (projection === 'reviewed-bindings' && !reviewedCatalog)
+    projection !== 'original' ? readCatalog(store, releaseId) : null;
+  if (projection !== 'original' && !reviewedCatalog)
     throw new AppError(
       503,
       'CONTENT_UNAVAILABLE',
@@ -58,6 +61,10 @@ export function ensureSearchIndex(
   const bindings = reviewedCatalog
     ? resourceBindingPresentation(reviewedCatalog)
     : undefined;
+  const mentions =
+    projection === 'reviewed-mentions' && reviewedCatalog
+      ? resourceMentionPresentation(reviewedCatalog)
+      : undefined;
   const cached = indexed.get(store)?.get(cacheKey);
   // A caller's outer transaction may have rolled back TEMP writes after derivation.
   if (
@@ -81,13 +88,17 @@ export function ensureSearchIndex(
       'CONTENT_UNAVAILABLE',
       'Your enrolled curriculum is unavailable.',
     );
-  populate(store, catalog, table, bindings);
+  populate(store, catalog, table, bindings, mentions);
   const releases =
     indexed.get(store) ??
     new Map<string, { manifest: string; count: number }>();
   releases.set(cacheKey, {
     manifest: release.manifestSha256,
-    count: catalog.items.length + catalog.resources.length,
+    count:
+      catalog.items.length +
+      catalog.resources.length +
+      (mentions?.resources.filter((row) => row.action === 'derived-resource')
+        .length ?? 0),
   });
   indexed.set(store, releases);
 }
@@ -96,6 +107,7 @@ function populate(
   catalog: Catalog,
   table: ReturnType<typeof searchIndexTable>,
   bindings?: ReturnType<typeof resourceBindingPresentation>,
+  mentions?: ReturnType<typeof resourceMentionPresentation>,
 ) {
   const navigation = courseNavigation(catalog);
   const byId = new Map(catalog.items.map((item) => [item.id, item]));
@@ -155,11 +167,13 @@ function populate(
   }
   visit(null);
   const order = new Map(ordered.map((id, index) => [id, index]));
+  const namedProjection = table === 'curriculum_search_mentions';
   store.native.exec(`CREATE TEMP TABLE IF NOT EXISTS ${table} (
     release_id TEXT NOT NULL, id TEXT NOT NULL, kind TEXT NOT NULL,
     title TEXT NOT NULL, body TEXT NOT NULL, normalized_title TEXT NOT NULL,
     normalized_text TEXT NOT NULL, href TEXT NOT NULL, order_index INTEGER NOT NULL,
     breadcrumbs TEXT NOT NULL, modules TEXT NOT NULL, weeks TEXT NOT NULL, days TEXT NOT NULL,
+    ${namedProjection ? 'scope_contexts TEXT NOT NULL,' : ''}
     PRIMARY KEY(release_id, id)
   )`);
   store.native.transaction(() => {
@@ -169,7 +183,8 @@ function populate(
     const insert = store.native.prepare(
       'INSERT INTO temp.' +
         table +
-        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?' +
+        (namedProjection ? ', ?)' : ')'),
     );
     function add(
       id: string,
@@ -195,6 +210,17 @@ function populate(
         JSON.stringify(context(parents, 'module')),
         JSON.stringify(context(parents, 'week')),
         JSON.stringify(context(parents, 'day')),
+        ...(namedProjection
+          ? [
+              JSON.stringify(
+                parents.map((id) => ({
+                  module: context([id], 'module')[0] ?? null,
+                  week: context([id], 'week')[0] ?? null,
+                  day: context([id], 'day')[0] ?? null,
+                })),
+              ),
+            ]
+          : []),
       );
     }
     for (const item of catalog.items) {
@@ -216,19 +242,38 @@ function populate(
         breadcrumbs(item.id),
       );
     }
-    for (const resource of catalog.resources) {
+    const originals = new Set(catalog.resources.map((row) => row.id));
+    const resources = [
+      ...catalog.resources,
+      ...(mentions?.resources.filter((row) => !originals.has(row.id)) ?? []),
+    ];
+    for (const resource of resources) {
       const uses = catalog.uses.filter(
         (use) =>
           (bindings?.uses.get(use.id)?.effectiveResourceId ??
             use.resourceId) === resource.id,
       );
-      const parents = [...new Set(uses.map((use) => use.contentItemId))];
+      const named =
+        mentions?.mentions.filter((row) => row.resourceId === resource.id) ??
+        [];
+      const parents = [
+        ...new Set([
+          ...uses.map((use) => use.contentItemId),
+          ...named.map((row) => row.contentItemId),
+        ]),
+      ];
       const body = [
         ...new Set([
-          resource.sourceName,
-          resource.descriptionMarkdown,
-          resource.originalUrl ?? '',
+          ...('sourceName' in resource
+            ? [
+                resource.sourceName,
+                resource.descriptionMarkdown,
+                resource.originalUrl ?? '',
+              ]
+            : []),
           ...uses.map((use) => use.assignedText),
+          // Snippets remain verbatim source instructions. Added titles are separate.
+          ...named.map((row) => row.exactInstruction),
         ]),
       ].join('\n\n');
       const first = parents

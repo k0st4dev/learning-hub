@@ -10,7 +10,10 @@ import { openDatabase } from '../src/server/db/connection.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const mentionsRegression = process.argv[2] === '--mentions-regression';
+const mentionsSearchRegression =
+  process.argv[2] === '--mentions-search-regression';
+const mentionsRegression =
+  process.argv[2] === '--mentions-regression' || mentionsSearchRegression;
 const connections = process.argv[2] === '--connections' || mentionsRegression;
 const projectionRegression = process.argv[2] === '--projection-regression';
 const ui = process.argv[2] === '--ui' || projectionRegression || connections;
@@ -222,6 +225,12 @@ try {
     }
     await call('/api/search?q=a&q=b', 'GET', undefined, 400);
     await call('/api/search?releaseId=foreign', 'GET', undefined, 400);
+    await call(
+      '/api/search?projection=reviewed-mentions',
+      'GET',
+      undefined,
+      400,
+    );
     await call('/api/search?page=0', 'GET', undefined, 400);
     assert.equal(
       (await call('/api/search?q=Git&day=d001&week=w26')).data.total,
@@ -246,6 +255,12 @@ try {
     originalTargetsAndBreadcrumbs: 'passed',
     filtersAndAuth: 'passed',
     allLearningAndPrivateRecordsUnchanged: 'passed',
+    ...(mentionsSearchRegression
+      ? {
+          publicNamedMentionsActive: false,
+          stagedProjectionRequestRejected: 'passed',
+        }
+      : {}),
     ...(connections
       ? { correctedResourceContexts: 'passed', servedFsoSearchForms: 6 }
       : {}),
@@ -273,15 +288,17 @@ try {
   await writeFile(
     path.join(
       root,
-      mentionsRegression
-        ? 'docs/m6-step18-search-regression.json'
-        : connections
-          ? 'docs/m6-step16-search-audit.json'
-          : projectionRegression
-            ? 'docs/m6-step15-search-regression.json'
-            : ui
-              ? 'docs/m6-step7-http-audit.json'
-              : 'docs/m6-step6-http-audit.json',
+      mentionsSearchRegression
+        ? 'docs/m6-step19a-search-regression.json'
+        : mentionsRegression
+          ? 'docs/m6-step18-search-regression.json'
+          : connections
+            ? 'docs/m6-step16-search-audit.json'
+            : projectionRegression
+              ? 'docs/m6-step15-search-regression.json'
+              : ui
+                ? 'docs/m6-step7-http-audit.json'
+                : 'docs/m6-step6-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );
