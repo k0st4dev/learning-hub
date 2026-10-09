@@ -8,6 +8,7 @@ import { en } from '@/i18n/en';
 export function FullCurriculumPage({
   catalog,
   route,
+  studentId,
   exerciseEditor,
   studyEditor,
   noteEditor,
@@ -17,6 +18,7 @@ export function FullCurriculumPage({
 }: {
   catalog: Catalog;
   route: string;
+  studentId?: string;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
   noteEditor?: React.ReactNode;
@@ -80,6 +82,7 @@ export function FullCurriculumPage({
       <CurriculumPreview
         catalog={catalog}
         page={page}
+        studentId={studentId}
         exerciseEditor={exerciseEditor}
         studyEditor={studyEditor}
         noteEditor={noteEditor}

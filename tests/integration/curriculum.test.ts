@@ -38,7 +38,8 @@ import { CurriculumPreview } from '../../src/components/curriculum-preview';
 import { CourseOutline } from '../../src/components/course-outline';
 import { dayWorkspace } from '../../src/server/content/day-workspace';
 import { courseAvailability } from '../../src/server/content/availability';
-import { register, login } from '../../src/server/auth/service';
+import { register, login, requireStudent } from '../../src/server/auth/service';
+import { gitReviewItems } from '../../src/server/content/handbook-checklist';
 import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
 import { handbookNavigation } from '../../src/server/content/handbook-navigation';
@@ -53,6 +54,9 @@ import {
 import { seedDay1Fixture } from '../../src/server/content/day1-fixture.ts';
 import * as s from '../../src/server/db/schema.ts';
 const root = process.cwd();
+vi.mock('next/navigation', () => ({
+  usePathname: () => '/course/software-engineer/guide/appendix-b',
+}));
 let plan: CurriculumPlan;
 let directory: string;
 let store: Store;
@@ -76,6 +80,138 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('offers four exact temporary Git checks without writing either learner or published content', async () => {
+    importCurriculum(store, plan.source);
+    const accounts = [];
+    for (const email of ['git-a@example.test', 'git-b@example.test']) {
+      const credentials = {
+        email,
+        password: 'Local Git advisory review test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      accounts.push({
+        token,
+        studentId: requireStudent(store, token).id,
+        before: snapshot(store, token),
+      });
+    }
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const original = JSON.stringify(catalog);
+    const page = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-b',
+    )!;
+    const items = gitReviewItems(page)!;
+    expect(page.blocks).toHaveLength(6);
+    expect(items.map((item) => item.id)).toEqual([
+      'p2231',
+      'p2232',
+      'p2233',
+      'p2234',
+    ]);
+    expect(items.map((item) => item.text)).toEqual(
+      items.map(
+        (item) =>
+          plan.source.source_blocks.find(
+            (block) => block.source_id === item.id,
+          )!.text,
+      ),
+    );
+    const element = (studentId: string) =>
+      createElement(CurriculumPreview, { catalog, page, studentId });
+    const view = render(element(accounts[0]!.studentId));
+    const region = () =>
+      within(view.getByRole('region', { name: 'Temporary Git review' }));
+    expect(region().getAllByRole('checkbox')).toHaveLength(4);
+    for (const [index, item] of items.entries())
+      expect(
+        region().getAllByRole('checkbox')[index]!.closest('label')!.textContent,
+      ).toBe(item.text);
+    expect(
+      region().queryByRole('checkbox', { name: page.blocks[1]!.exactText }),
+    ).toBeNull();
+    expect(
+      region().getByText(/README check applies to larger projects/),
+    ).toBeTruthy();
+    expect(region().getByText(/Git log review is weekly/)).toBeTruthy();
+    for (const box of region().getAllByRole('checkbox')) fireEvent.click(box);
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 4 / 4',
+    );
+    for (const block of page.blocks)
+      expect(
+        view.container.querySelector(
+          '[data-source-id="' + block.sourceLocator + '"] [data-source-text]',
+        )!.textContent,
+      ).toBe(block.exactText);
+    view.rerender(element(accounts[1]!.studentId));
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 4',
+    );
+    fireEvent.click(region().getAllByRole('checkbox')[0]!);
+    fireEvent.click(
+      region().getByRole('button', { name: 'Clear this review' }),
+    );
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 4',
+    );
+    for (const blocks of [
+      page.blocks.filter((block) => block.sourceLocator !== 'p2232'),
+      [...page.blocks, page.blocks[2]!],
+    ]) {
+      const invalid = { ...page, blocks };
+      expect(gitReviewItems(invalid)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: invalid,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', { name: 'Temporary Git review' }),
+      ).toBeNull();
+      expect(
+        view.getByText(
+          'The review tool is unavailable. All available original guidance remains below.',
+        ),
+      ).toBeTruthy();
+      expect(
+        view.container.querySelector(
+          '[data-source-id="p2230"] [data-source-text]',
+        )!.textContent,
+      ).toBe(page.blocks[1]!.exactText);
+    }
+    for (const slug of ['appendix-a', 'appendix-c', 'ai-protocol']) {
+      const other = catalogPage(
+        catalog,
+        '/course/software-engineer/guide/' + slug,
+      )!;
+      expect(gitReviewItems(other)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: other,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', { name: 'Temporary Git review' }),
+      ).toBeNull();
+    }
+    expect(JSON.stringify(catalog)).toBe(original);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+  });
   it('links every guide to exact source sections without replacing either learner resume target', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];

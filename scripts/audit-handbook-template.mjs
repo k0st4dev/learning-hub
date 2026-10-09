@@ -12,9 +12,10 @@ assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 assert.ok(
   process.argv.length === 2 ||
     (process.argv.length === 3 &&
-      ['--prompts', '--navigation'].includes(process.argv[2])),
+      ['--prompts', '--navigation', '--git-review'].includes(process.argv[2])),
 );
-const checkNavigation = process.argv[2] === '--navigation';
+const checkGit = process.argv[2] === '--git-review';
+const checkNavigation = checkGit || process.argv[2] === '--navigation';
 const checkPrompts = checkNavigation || process.argv[2] === '--prompts';
 const fixture = JSON.parse(
   await readFile(
@@ -65,6 +66,7 @@ let pages = 0;
 let promptsChecked = 0;
 let guideSectionsChecked = 0;
 let guideBlocksChecked = 0;
+let gitChecksChecked = 0;
 const continueTargets = [];
 const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
@@ -207,6 +209,69 @@ try {
         );
         guideBlocksChecked += original.blocks.length;
       }
+      if (checkGit) {
+        const tool = document.querySelector('.temporary-review');
+        if (url.endsWith('/appendix-b')) {
+          assert.ok(tool);
+          assert.equal(
+            document.querySelectorAll('.temporary-review').length,
+            1,
+          );
+          assert.equal(original.blocks.length, 6);
+          assert.equal(tool.querySelectorAll('input').length, 4);
+          assert.equal(
+            tool.querySelector(
+              'form, [data-learning-unit], [data-study-anchor]',
+            ),
+            null,
+          );
+          assert.ok(
+            tool.textContent.includes(
+              'Temporary review. Marks reset when you leave or reload. This does not save course progress.',
+            ),
+          );
+          assert.ok(
+            tool.textContent.includes(
+              'The README check applies to larger projects; Git log review is weekly.',
+            ),
+          );
+          assert.equal(
+            tool.querySelector('[role="status"]')?.textContent,
+            'Marks for this review: 0 / 4',
+          );
+          assert.equal(
+            tool.querySelector('button')?.textContent,
+            'Clear this review',
+          );
+          assert.equal(tool.querySelector('button')?.type, 'button');
+          for (let number = 2231; number <= 2234; number++) {
+            const ref = 'p' + number;
+            const check = tool.querySelector(
+              '[data-review-source="' + ref + '"]',
+            );
+            assert.ok(check);
+            assert.equal(check.type, 'checkbox');
+            assert.equal(check.checked, false);
+            assert.equal(check.required, false);
+            assert.equal(check.labels.length, 1);
+            assert.equal(
+              check.labels[0].querySelector('span')?.textContent,
+              original.blocks.find((block) => block.sourceLocator === ref)
+                ?.exactText,
+            );
+            gitChecksChecked++;
+          }
+          assert.equal(
+            tool.querySelector('[data-review-source="p2230"]'),
+            null,
+          );
+          const sourceLink = tool.querySelector('a');
+          const target = document.getElementById(
+            decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
+          );
+          assert.equal(target?.getAttribute('data-source-id'), 'p2229');
+        } else assert.equal(tool, null);
+      }
       if (url === route) {
         const field = document.querySelector('#problem-file-template');
         assert.ok(field?.readOnly);
@@ -278,6 +343,7 @@ try {
       const response = await request('/course/software-engineer/days/d001');
       assert.equal(response.status, 200);
       const doc = servedDocument(await response.text(), streams);
+      if (checkGit) assert.equal(doc.querySelector('.temporary-review'), null);
       assert.equal(doc.querySelector('[data-copy-prompt]'), null);
       if (checkNavigation)
         assert.equal(
@@ -296,6 +362,14 @@ try {
     date: new Date().toISOString(),
     server: 'development',
     accounts: 2,
+    ...(checkGit
+      ? {
+          gitChecksPerAccount: 4,
+          exactGitChecks: gitChecksChecked,
+          gitOriginalBlocksPerAccount: 6,
+          temporaryUnsavedNoticeAndSourceLink: 'passed',
+        }
+      : {}),
     servedPages: pages,
     ...(checkNavigation
       ? {
@@ -328,11 +402,13 @@ try {
   await writeFile(
     path.join(
       root,
-      checkNavigation
-        ? 'docs/m6-step22-http-audit.json'
-        : checkPrompts
-          ? 'docs/m6-step21-http-audit.json'
-          : 'docs/m6-step20-http-audit.json',
+      checkGit
+        ? 'docs/m6-step24-http-audit.json'
+        : checkNavigation
+          ? 'docs/m6-step22-http-audit.json'
+          : checkPrompts
+            ? 'docs/m6-step21-http-audit.json'
+            : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

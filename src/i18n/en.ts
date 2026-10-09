@@ -1,5 +1,16 @@
 export const en = {
   handbook: {
+    gitReview: 'Temporary Git review',
+    temporaryNotice:
+      'Temporary review. Marks reset when you leave or reload. This does not save course progress.',
+    gitReviewHelp:
+      'The README check applies to larger projects; Git log review is weekly. Use the checks that apply to your current review. Unmarked checks do not block learning.',
+    reviewChecks: 'Review checks · Original source text',
+    markedReview: 'Marks for this review',
+    clearReview: 'Clear this review',
+    readOriginalReview: 'Read the original guidance',
+    reviewUnavailable:
+      'The review tool is unavailable. All available original guidance remains below.',
     navigation: 'Handbook navigation',
     onThisPage: 'On this page',
     originalContent: 'Original content',

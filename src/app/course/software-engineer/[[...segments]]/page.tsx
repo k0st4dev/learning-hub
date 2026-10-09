@@ -172,6 +172,7 @@ export default async function Course({
         ) : (
           <FullCurriculumPage
             catalog={catalog}
+            studentId={student.id}
             route={coursePath + (route ? '/' + route : '')}
             exerciseEditor={exerciseEditor}
             exerciseWorkAvailable={!!state && !!exercise}

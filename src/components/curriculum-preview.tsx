@@ -10,6 +10,8 @@ import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
 import { handbookNavigation } from '@/server/content/handbook-navigation';
+import { gitReviewItems } from '@/server/content/handbook-checklist';
+import { TemporaryChecklist } from './temporary-checklist';
 import {
   appendixATemplate,
   aiPromptTemplates,
@@ -180,6 +182,7 @@ export function SourceBlocks({
 export function CurriculumPreview({
   catalog,
   page,
+  studentId,
   exerciseEditor,
   studyEditor,
   noteEditor,
@@ -189,6 +192,7 @@ export function CurriculumPreview({
 }: {
   catalog: Catalog;
   page: CatalogPage;
+  studentId?: string;
   exerciseEditor?: React.ReactNode;
   studyEditor?: React.ReactNode;
   noteEditor?: React.ReactNode;
@@ -200,6 +204,7 @@ export function CurriculumPreview({
   const template = appendixATemplate(page);
   const prompts = aiPromptTemplates(page);
   const handbook = handbookNavigation(page);
+  const gitItems = gitReviewItems(page);
   const sourceBlocks = (handbook?.blocks ?? page.blocks).map((block) => {
     const copy =
       block.sourceLocator === template?.sourceId
@@ -303,6 +308,27 @@ export function CurriculumPreview({
               )}
             </nav>
           )}
+          {page.item.stableKey === 'guide-appendix-b' &&
+            studentId &&
+            (gitItems && handbook?.sections[0] ? (
+              <TemporaryChecklist
+                identity={JSON.stringify([
+                  studentId,
+                  catalog.release.id,
+                  page.item.id,
+                ])}
+                title={en.handbook.gitReview}
+                help={en.handbook.gitReviewHelp}
+                items={gitItems}
+                sourceHref={
+                  '#' + encodeURIComponent(handbook.sections[0].anchor)
+                }
+              />
+            ) : (
+              <p className="notice" role="status">
+                {en.handbook.reviewUnavailable}
+              </p>
+            ))}
           {prompts === null && (
             <p className="notice" role="status">
               {en.handbook.promptsUnavailable}
