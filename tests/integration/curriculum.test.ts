@@ -39,8 +39,9 @@ import { CourseOutline } from '../../src/components/course-outline';
 import { dayWorkspace } from '../../src/server/content/day-workspace';
 import { courseAvailability } from '../../src/server/content/availability';
 import { register, login } from '../../src/server/auth/service';
-import { startCourse } from '../../src/server/learning/mutate';
-import { snapshot } from '../../src/server/learning/read';
+import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
+import { snapshot, continuePath } from '../../src/server/learning/read';
+import { handbookNavigation } from '../../src/server/content/handbook-navigation';
 import {
   appendixATemplate,
   aiPromptTemplates,
@@ -75,6 +76,151 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('links every guide to exact source sections without replacing either learner resume target', async () => {
+    importCurriculum(store, plan.source);
+    const accounts = [];
+    for (const [index, email] of [
+      'guide-first@example.test',
+      'guide-second@example.test',
+    ].entries()) {
+      const credentials = {
+        email,
+        password: 'Local handbook navigation test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      const save = (change: Record<string, unknown>) =>
+        mutateLearning(store, token, {
+          mutationId: randomUUID(),
+          expectedRevision: snapshot(store, token)!.revision,
+          ...change,
+        });
+      save({ kind: 'orientation', acknowledged: true, deferred: true });
+      const key = index === 0 ? 'd001-practice' : 'd002-learn';
+      save({
+        kind: 'cursor',
+        itemId: plan.releaseId + ':' + key,
+        mode: 'study',
+        anchor: index === 0 ? 'evidence' : 'ai',
+      });
+      const before = snapshot(store, token)!;
+      accounts.push({ token, before, target: continuePath(before) });
+    }
+    expect(accounts[0]!.target).toMatch(/d001-practice#evidence$/);
+    expect(accounts[1]!.target).toMatch(/d002-learn#ai$/);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const original = JSON.stringify(catalog);
+    const guides = catalog.items.filter(
+      (item) => item.kind === 'guide' && item.stableKey.startsWith('guide-'),
+    );
+    expect(guides).toHaveLength(11);
+    for (const guide of guides) {
+      const page = catalogPage(catalog, guide.route)!;
+      const model = handbookNavigation(page)!;
+      const expectedHeadings = page.blocks.filter(
+        (block) =>
+          block.tableNumber === null &&
+          /^Heading[1-6]$/.test(block.sourceStyle) &&
+          block.exactText.trim(),
+      );
+      expect(model.sections.map((section) => section.sourceId)).toEqual(
+        (expectedHeadings.length
+          ? expectedHeadings
+          : page.blocks.slice(0, 1)
+        ).map((block) => block.sourceLocator),
+      );
+      const host = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(CurriculumPreview, { catalog, page }),
+        ),
+        'text/html',
+      );
+      const nav = host.querySelector('nav[aria-label="Handbook navigation"]')!;
+      expect(nav).not.toBeNull();
+      expect(nav.querySelector('a[href="/continue"]')?.textContent).toBe(
+        'Return to learning',
+      );
+      const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+      expect(links).toHaveLength(model.sections.length);
+      for (const [index, link] of links.entries()) {
+        const section = model.sections[index]!;
+        const block = page.blocks.find(
+          (row) => row.sourceLocator === section.sourceId,
+        )!;
+        expect(link.getAttribute('href')).toBe(
+          '#' + encodeURIComponent(section.anchor),
+        );
+        expect(link.textContent).toBe(section.label ?? 'Original content');
+        const target = host.getElementById(section.anchor)!;
+        expect(target.getAttribute('tabindex')).toBe('-1');
+        expect(target.querySelector('[data-source-text]')!.textContent).toBe(
+          block.exactText,
+        );
+        expect(
+          target
+            .querySelector('[data-source-text]')!
+            .getAttribute('aria-level'),
+        ).toBe(section.headingLevel ? String(section.headingLevel) : null);
+      }
+      for (const block of page.blocks)
+        expect(
+          host.querySelector(
+            '[data-source-id="' + block.sourceLocator + '"] [data-source-text]',
+          )!.textContent,
+        ).toBe(block.exactText);
+      const ids = Array.from(host.querySelectorAll('[id]')).map(
+        (node) => node.id,
+      );
+      expect(new Set(ids).size).toBe(ids.length);
+      expect(
+        host.querySelector('[data-learning-unit], [data-study-anchor]'),
+      ).toBeNull();
+      expect(host.querySelectorAll('h1')).toHaveLength(1);
+    }
+    const ai = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/ai-protocol',
+    )!;
+    const changed = {
+      ...ai,
+      blocks: ai.blocks.map((block, index) =>
+        index === 1 ? { ...block, anchor: 'guide-section-1' } : block,
+      ),
+    };
+    expect(handbookNavigation(changed)!.sections[0]!.anchor).toBe(
+      'guide-section-1-2',
+    );
+    expect(
+      handbookNavigation({
+        ...ai,
+        blocks: ai.blocks.map((block, index) =>
+          index === 0 ? { ...block, anchor: 'existing-section' } : block,
+        ),
+      })!.sections[0]!.anchor,
+    ).toBe('existing-section');
+    expect(handbookNavigation({ ...ai, blocks: [] })!.sections).toEqual([]);
+    expect(
+      handbookNavigation(
+        catalogPage(catalog, '/course/software-engineer/days/d001')!,
+      ),
+    ).toBeNull();
+    expect(
+      handbookNavigation(catalogPage(catalog, '/course/software-engineer')!),
+    ).toBeNull();
+    expect(JSON.stringify(catalog)).toBe(original);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    for (const account of accounts) {
+      expect(snapshot(store, account.token)).toEqual(account.before);
+      expect(continuePath(snapshot(store, account.token))).toBe(account.target);
+    }
+  });
   it('exposes and copies all eight whole original prompts only on the AI guide without changing either account', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];

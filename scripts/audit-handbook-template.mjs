@@ -11,9 +11,11 @@ const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 assert.ok(
   process.argv.length === 2 ||
-    (process.argv.length === 3 && process.argv[2] === '--prompts'),
+    (process.argv.length === 3 &&
+      ['--prompts', '--navigation'].includes(process.argv[2])),
 );
-const checkPrompts = process.argv[2] === '--prompts';
+const checkNavigation = process.argv[2] === '--navigation';
+const checkPrompts = checkNavigation || process.argv[2] === '--prompts';
 const fixture = JSON.parse(
   await readFile(
     path.join(root, '.tmp/m6-scorecard-review-http-state.json'),
@@ -61,6 +63,10 @@ const source = catalog.blocks.find((block) => block.sourceLocator === 'p2228');
 assert.ok(source);
 let pages = 0;
 let promptsChecked = 0;
+let guideSectionsChecked = 0;
+let guideBlocksChecked = 0;
+const continueTargets = [];
+const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
 try {
   for (const account of fixture.accounts) {
@@ -100,11 +106,44 @@ try {
       }),
     });
     assert.equal(auth.status, 200);
-    for (const url of [
-      route,
-      route.replace('appendix-a', 'appendix-b'),
-      ...(checkPrompts ? [route.replace('appendix-a', 'ai-protocol')] : []),
-    ]) {
+    const readContinueTarget = async () => {
+      const response = await request('/continue');
+      let target;
+      if (response.status === 307) {
+        target = response.headers.get('location');
+        redirects.http307++;
+      } else {
+        assert.equal(response.status, 200);
+        const doc = servedDocument(await response.text(), streams);
+        const metas = [...doc.querySelectorAll('meta[http-equiv="refresh"]')];
+        assert.equal(metas.length, 1);
+        const content = metas[0].getAttribute('content');
+        assert.ok(content?.startsWith('1;url='));
+        target = content.slice('1;url='.length);
+        redirects.streamedRefresh++;
+      }
+      assert.ok(
+        target === '/course/software-engineer' ||
+          target?.startsWith('/course/software-engineer/'),
+      );
+      return target;
+    };
+    let expectedContinue = null;
+    if (checkNavigation) {
+      expectedContinue = await readContinueTarget();
+    }
+    for (const url of checkNavigation
+      ? catalog.items
+          .filter(
+            (item) =>
+              item.kind === 'guide' && item.stableKey.startsWith('guide-'),
+          )
+          .map((item) => item.route)
+      : [
+          route,
+          route.replace('appendix-a', 'appendix-b'),
+          ...(checkPrompts ? [route.replace('appendix-a', 'ai-protocol')] : []),
+        ]) {
       const response = await request(url);
       assert.equal(response.status, 200);
       const document = servedDocument(await response.text(), streams);
@@ -117,6 +156,57 @@ try {
           block.exactText,
         );
       assert.equal(document.querySelectorAll('h1').length, 1);
+      if (checkNavigation) {
+        const nav = document.querySelector(
+          'nav[aria-label="Handbook navigation"]',
+        );
+        assert.ok(nav);
+        assert.equal(
+          nav.querySelector('a[href="/continue"]')?.textContent,
+          'Return to learning',
+        );
+        const headings = original.blocks.filter(
+          (block) =>
+            block.tableNumber === null &&
+            /^Heading[1-6]$/.test(block.sourceStyle) &&
+            block.exactText.trim(),
+        );
+        const sections = headings.length
+          ? headings
+          : original.blocks.slice(0, 1);
+        const links = [...nav.querySelectorAll('a[href^="#"]')];
+        assert.equal(links.length, sections.length);
+        for (const [index, block] of sections.entries()) {
+          const link = links[index];
+          const target = document.getElementById(
+            decodeURIComponent(link.getAttribute('href').slice(1)),
+          );
+          assert.ok(target);
+          assert.equal(
+            target.getAttribute('data-source-id'),
+            block.sourceLocator,
+          );
+          assert.equal(target.getAttribute('tabindex'), '-1');
+          assert.equal(
+            link.textContent,
+            headings.length ? block.exactText : 'Original content',
+          );
+          assert.equal(
+            target.querySelector('[data-source-text]')?.textContent,
+            block.exactText,
+          );
+          guideSectionsChecked++;
+        }
+        const ids = [...document.querySelectorAll('[id]')].map(
+          (node) => node.id,
+        );
+        assert.equal(new Set(ids).size, ids.length);
+        assert.equal(
+          document.querySelector('[data-learning-unit], [data-study-anchor]'),
+          null,
+        );
+        guideBlocksChecked += original.blocks.length;
+      }
       if (url === route) {
         const field = document.querySelector('#problem-file-template');
         assert.ok(field?.readOnly);
@@ -176,6 +266,10 @@ try {
       } else assert.equal(document.querySelector('.copyable-text'), null);
       pages++;
     }
+    if (checkNavigation) {
+      assert.equal(await readContinueTarget(), expectedContinue);
+      continueTargets.push(expectedContinue);
+    }
     const unknown = await request(
       route.replace('appendix-a', 'unknown-template'),
     );
@@ -185,6 +279,11 @@ try {
       assert.equal(response.status, 200);
       const doc = servedDocument(await response.text(), streams);
       assert.equal(doc.querySelector('[data-copy-prompt]'), null);
+      if (checkNavigation)
+        assert.equal(
+          doc.querySelector('nav[aria-label="Handbook navigation"]'),
+          null,
+        );
       const restriction = catalog.blocks.find(
         (block) => block.sourceLocator === 'p0280',
       );
@@ -198,6 +297,16 @@ try {
     server: 'development',
     accounts: 2,
     servedPages: pages,
+    ...(checkNavigation
+      ? {
+          guidesPerAccount: 11,
+          exactGuideSections: guideSectionsChecked,
+          exactOriginalGuideBlocks: guideBlocksChecked,
+          continueTargets,
+          redirects,
+          centralResumeRedirects: 'passed',
+        }
+      : {}),
     ...(checkPrompts
       ? {
           promptTemplatesPerAccount: 8,
@@ -219,9 +328,11 @@ try {
   await writeFile(
     path.join(
       root,
-      checkPrompts
-        ? 'docs/m6-step21-http-audit.json'
-        : 'docs/m6-step20-http-audit.json',
+      checkNavigation
+        ? 'docs/m6-step22-http-audit.json'
+        : checkPrompts
+          ? 'docs/m6-step21-http-audit.json'
+          : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

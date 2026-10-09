@@ -9,6 +9,7 @@ import { en } from '@/i18n/en';
 import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
+import { handbookNavigation } from '@/server/content/handbook-navigation';
 import {
   appendixATemplate,
   aiPromptTemplates,
@@ -24,24 +25,35 @@ const base = '/course/software-engineer';
 function SourceParagraph({
   block,
   anchors,
+  sections,
   prompt,
 }: {
   block: CatalogPage['blocks'][number];
   anchors: readonly string[];
+  sections: NonNullable<ReturnType<typeof handbookNavigation>>['sections'];
   prompt?: SourcePrompt;
 }) {
   const links = z.array(sourceLinkSchema).parse(JSON.parse(block.linksJson));
+  const section = sections.find((s) => s.sourceId === block.sourceLocator);
   return (
     <div
       id={block.anchor ?? undefined}
       data-study-anchor={
         anchors.includes(block.anchor ?? '') ? block.anchor : undefined
       }
-      tabIndex={anchors.includes(block.anchor ?? '') ? -1 : undefined}
+      tabIndex={
+        section || anchors.includes(block.anchor ?? '') ? -1 : undefined
+      }
       data-source-id={block.sourceLocator}
       className="source-paragraph"
     >
-      <p data-source-text lang="sr-Latn" className="source">
+      <p
+        data-source-text
+        lang="sr-Latn"
+        className="source"
+        role={section?.headingLevel ? 'heading' : undefined}
+        aria-level={section?.headingLevel ?? undefined}
+      >
         {block.exactText}
       </p>
       {prompt && (
@@ -84,10 +96,12 @@ function SourceParagraph({
 export function SourceBlocks({
   blocks,
   anchors = [],
+  sections = [],
   prompts = [],
 }: {
   blocks: CatalogPage['blocks'];
   anchors?: readonly string[];
+  sections?: NonNullable<ReturnType<typeof handbookNavigation>>['sections'];
   prompts?: readonly SourcePrompt[];
 }) {
   const parts: React.ReactNode[] = [];
@@ -99,6 +113,7 @@ export function SourceBlocks({
           key={block.id}
           block={block}
           anchors={anchors}
+          sections={sections}
           prompt={prompts.find(
             (prompt) => prompt.sourceId === block.sourceLocator,
           )}
@@ -148,6 +163,7 @@ export function SourceBlocks({
                             key={b.id}
                             block={b}
                             anchors={anchors}
+                            sections={sections}
                           />
                         ))}
                     </td>
@@ -183,7 +199,8 @@ export function CurriculumPreview({
   const overview = page.item.stableKey === 'overview';
   const template = appendixATemplate(page);
   const prompts = aiPromptTemplates(page);
-  const sourceBlocks = page.blocks.map((block) => {
+  const handbook = handbookNavigation(page);
+  const sourceBlocks = (handbook?.blocks ?? page.blocks).map((block) => {
     const copy =
       block.sourceLocator === template?.sourceId
         ? template
@@ -254,6 +271,38 @@ export function CurriculumPreview({
           )}
           {progressView}
           {learnerTool}
+          {handbook && (
+            <nav
+              className="card mb-8 stack"
+              aria-label={en.handbook.navigation}
+            >
+              <Link
+                className="button primary"
+                href="/continue"
+                prefetch={false}
+              >
+                {en.handbook.returnToLearning}
+              </Link>
+              {handbook.sections.length > 0 && (
+                <>
+                  <h2>{en.handbook.onThisPage}</h2>
+                  <ul className="curriculum-links">
+                    {handbook.sections.map((section) => (
+                      <li key={section.sourceId}>
+                        <a href={'#' + encodeURIComponent(section.anchor)}>
+                          {section.label ? (
+                            <span lang="sr-Latn">{section.label}</span>
+                          ) : (
+                            en.handbook.originalContent
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </nav>
+          )}
           {prompts === null && (
             <p className="notice" role="status">
               {en.handbook.promptsUnavailable}
@@ -381,6 +430,7 @@ export function CurriculumPreview({
             <SourceBlocks
               blocks={sourceBlocks}
               anchors={anchors}
+              sections={handbook?.sections}
               prompts={prompts ?? []}
             />
           )}

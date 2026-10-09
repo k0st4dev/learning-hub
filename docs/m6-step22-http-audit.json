@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-09T08:36:10.649Z",
+  "server": "development",
+  "accounts": 2,
+  "servedPages": 24,
+  "guidesPerAccount": 11,
+  "exactGuideSections": 30,
+  "exactOriginalGuideBlocks": 236,
+  "continueTargets": [
+    "/course/software-engineer/preparation",
+    "/course/software-engineer/preparation"
+  ],
+  "redirects": {
+    "http307": 0,
+    "streamedRefresh": 4
+  },
+  "centralResumeRedirects": "passed",
+  "promptTemplatesPerAccount": 8,
+  "exactPromptControls": 16,
+  "originalProtocolBlocksPerAccount": 24,
+  "dailyRestrictionsPreserved": true,
+  "sourceId": "p2228",
+  "exactCharacters": 266,
+  "textSha256": "b5bf82812a071217e0f98f5205f4361ef08dfb7ca1abaf5d7790f199d0756601",
+  "originalTextAndSelectableFallback": "passed",
+  "sourceAnchorAndUnknownRoute": "passed",
+  "allDurableLearnerPrivateAndContentRecordsUnchanged": true,
+  "streams": {
+    "segments": 1320,
+    "boundaries": 24
+  },
+  "scope": "Focused served HTML, two-account and original source regression. Clipboard interaction is verified separately in unit tests and browser; no final acceptance claim."
+}

@@ -1,5 +1,9 @@
 export const en = {
   handbook: {
+    navigation: 'Handbook navigation',
+    onThisPage: 'On this page',
+    originalContent: 'Original content',
+    returnToLearning: 'Return to learning',
     promptCopy: 'Copy original prompt',
     promptLabel: 'Original prompt · Plain text · Read-only',
     promptSource: 'Read the original prompt',
