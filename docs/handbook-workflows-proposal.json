@@ -1,0 +1,443 @@
+{
+  "formatVersion": 1,
+  "releaseId": "se-26w-v1",
+  "status": "proposal-only",
+  "sourceManifestSha256": "e63abb237ba2f8afd275b900a300d06e7ea4e149892e8442f70cce194b4ebc35",
+  "sourceManifestHashFormat": "raw-file-bytes",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "sourceGuides": [
+    {
+      "key": "guide-appendix-b",
+      "route": "/course/software-engineer/guide/appendix-b",
+      "sourceContent": [
+        {
+          "sourceId": "p2229",
+          "style": "Heading1",
+          "text": "Appendix B — Git standard",
+          "textSha256": "569cb22af5a26bc0e0690f9e3c08074caad70de1bc4c76078216a7d2895f9bf6",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        },
+        {
+          "sourceId": "p2230",
+          "style": "ListBullet",
+          "text": "Jedan repo programming-gym može sadržati manje vežbe; veći projekti mogu biti zasebni repozitorijumi.",
+          "textSha256": "1abb5a9d15e6030f8c6b93e50855f5224b6ce703de9db2770b0f1af0b9f20cc3",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        },
+        {
+          "sourceId": "p2231",
+          "style": "ListBullet",
+          "text": "Commit kada napraviš smislenu jedinicu: “add validation”, “implement winner detection”, “add API error handler” — ne “stuff”.",
+          "textSha256": "3d38e214c12a5789fe97c71845fc919d7924c82f204908927c89ca2f27da1910",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        },
+        {
+          "sourceId": "p2232",
+          "style": "ListBullet",
+          "text": "Pre svakog commit-a: pokreni program/testove, pročitaj git diff, ukloni secrets/debug noise.",
+          "textSha256": "bf5d7e3e80a58bf89b73e489e421b19186c0c7f1ddaed2625b9b00e56c16bc15",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        },
+        {
+          "sourceId": "p2233",
+          "style": "ListBullet",
+          "text": "Za svaki veći projekat README mora odgovoriti: šta radi, kako se pokreće, arhitektura, glavne odluke, known limitations.",
+          "textSha256": "da541dccd94546849cab4f20a24a95b4048a18816e0abdf3df7b357ca6e86785",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        },
+        {
+          "sourceId": "p2234",
+          "style": "ListBullet",
+          "text": "Jednom nedeljno pogledaj git log: cilj nije broj commitova nego vidljiv razvoj rešenja.",
+          "textSha256": "92ab1bb939152e353119c510d3963c241a0c0185d3b968dfbc65bfbbe71ce8df",
+          "websiteLocation": "/course/software-engineer/guide/appendix-b"
+        }
+      ],
+      "proposedInterpretation": {
+        "status": "pending-user-approval",
+        "tool": "temporary-git-review",
+        "controlSourceIds": ["p2231", "p2232", "p2233", "p2234"],
+        "storage": "none",
+        "courseCredit": false,
+        "conditions": {
+          "informationalSourceIds": ["p2230"],
+          "conditionalLargerProjectSourceId": "p2233",
+          "weeklyGuidanceSourceId": "p2234",
+          "compoundPreCommitSourceId": "p2232"
+        }
+      }
+    },
+    {
+      "key": "guide-appendix-c",
+      "route": "/course/software-engineer/guide/appendix-c",
+      "sourceContent": [
+        {
+          "sourceId": "p2235",
+          "style": "Heading1",
+          "text": "Appendix C — definicija “znam koncept”",
+          "textSha256": "cc045a70fa12c942036766ab9ac4066c4102343d702d545c8b83d73bc7212c6e",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2236",
+          "style": "ListBullet",
+          "text": "Mogu da ga objasnim bez definicije napamet.",
+          "textSha256": "9131239bd8c3d152c569da2060b17f0e010153822a23f3b206a45dccdae922f0",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2237",
+          "style": "ListBullet",
+          "text": "Mogu da napišem mali primer bez gledanja.",
+          "textSha256": "ae0ab0315a0c5574b75a0e021bc69eeeaf358c65376574867f69fc6c103dd8d2",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2238",
+          "style": "ListBullet",
+          "text": "Mogu da prepoznam kada mi treba u nepoznatom problemu.",
+          "textSha256": "4b7009f4b91a3f322a7cfcfe57c871a0cece98c0911b8bcb83f4ee7891ef088c",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2239",
+          "style": "ListBullet",
+          "text": "Mogu da debugujem tipičnu grešku vezanu za njega.",
+          "textSha256": "acd3826885002e8def2218fb3c849c7f472bc3870ae908bf6b938ddab4f15d34",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2240",
+          "style": "ListBullet",
+          "text": "Mogu da navedem barem jedan trade-off/ograničenje.",
+          "textSha256": "b8c7a7077f709f332f37fc48e2bc80be13c447a49a5df0bfdf49d26d88ae30a9",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2241",
+          "style": "ListBullet",
+          "text": "Mogu da pročitam tuđ kod koji ga koristi.",
+          "textSha256": "0106da562c7464c6ad07507d3d4dc03af7739d57d125b070638bebbedec5458e",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        },
+        {
+          "sourceId": "p2242",
+          "style": "ListBullet",
+          "text": "Ako AI napiše implementaciju, mogu da je proverim i objasnim red po red.",
+          "textSha256": "d50173cc29ca9cc849c1939782f0e70df38e0c1ca7aaa703d55d458ea31706f0",
+          "websiteLocation": "/course/software-engineer/guide/appendix-c"
+        }
+      ],
+      "proposedInterpretation": {
+        "status": "pending-user-approval",
+        "tool": "temporary-concept-review",
+        "controlSourceIds": [
+          "p2236",
+          "p2237",
+          "p2238",
+          "p2239",
+          "p2240",
+          "p2241",
+          "p2242"
+        ],
+        "storage": "none",
+        "courseCredit": false,
+        "conditions": {
+          "scope": "one-current-concept",
+          "optionalConceptLabel": true,
+          "resetMarksOnConceptChange": true,
+          "noMasteryClaim": true
+        }
+      }
+    },
+    {
+      "key": "guide-appendix-e",
+      "route": "/course/software-engineer/guide/appendix-e",
+      "sourceContent": [
+        {
+          "sourceId": "p2334",
+          "style": "Heading1",
+          "text": "Appendix E — šta radiš kada zapneš",
+          "textSha256": "4b79830d715f79b0a75cb941472ba1cbe952cfe79a1453b8b45c1b09c8b984ed",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2335",
+          "style": "Normal",
+          "text": "1. Reci tačno šta očekuješ i šta dobijaš.",
+          "textSha256": "d0f187d8e02aa58f8b7b88f541e2485c1fdc65674465186933bca45f38f2efcd",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2336",
+          "style": "Normal",
+          "text": "2. Smanji problem na najmanji primer koji puca.",
+          "textSha256": "866b1802a1cbab9e9c2fa6fde9d3481419a38c2585bcef2a10bc7c5da1a4902f",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2337",
+          "style": "Normal",
+          "text": "3. Ručno prati stanje promenljivih / request / DB query.",
+          "textSha256": "eefb96bf32aaf4e754485f97df0ee4cf610e2878ec339945d63ef568e76019a9",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2338",
+          "style": "Normal",
+          "text": "4. Proveri pretpostavku u dokumentaciji.",
+          "textSha256": "9ae08a940877f0b40be9fef4cc6353f34857d8a0ee78f1340286e1a2ff1c3462",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2339",
+          "style": "Normal",
+          "text": "5. Tek sada Hint Level 1 od AI-a.",
+          "textSha256": "f79cfec4f3cea5d3fda493c3fd4035d08915ae1a6213ca4b12e006175a913d4a",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2340",
+          "style": "Normal",
+          "text": "6. Ako dobiješ solution na kraju: zatvori ga, napravi pauzu 10 min i napiši rešenje ponovo bez gledanja.",
+          "textSha256": "41a0e35b7aff2e986f5eda7b3188ccf0719fb9191e11348ad10f15264ac1c0d3",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        },
+        {
+          "sourceId": "p2341",
+          "style": "Normal",
+          "text": "7. Sledećeg dana reši transfer problem istog koncepta.",
+          "textSha256": "d8a452c1292d6f35b27f199a04ad27d09abf89ccf611b1bcadaf1af46099f825",
+          "websiteLocation": "/course/software-engineer/guide/appendix-e"
+        }
+      ],
+      "proposedInterpretation": {
+        "status": "pending-user-approval",
+        "tool": "temporary-stuck-workflow",
+        "controlSourceIds": [
+          "p2335",
+          "p2336",
+          "p2337",
+          "p2338",
+          "p2339",
+          "p2340",
+          "p2341"
+        ],
+        "storage": "none",
+        "courseCredit": false,
+        "conditions": {
+          "preserveNumberedOrder": true,
+          "allowAnyStepReview": true,
+          "aiStepSourceId": "p2339",
+          "rewriteAndTenMinutePauseSourceId": "p2340",
+          "nextDayTransferSourceId": "p2341",
+          "noTimerOrNewScheduledTask": true
+        }
+      }
+    },
+    {
+      "key": "guide-appendix-f",
+      "route": "/course/software-engineer/guide/appendix-f",
+      "sourceContent": [
+        {
+          "sourceId": "p2342",
+          "style": "Heading1",
+          "text": "Appendix F — kada smeš da koristiš AI kao pravi productivity alat",
+          "textSha256": "b82ca00c9c9032b84c048fade444ef33cfa00b1f361cfe43c07770f1611d769f",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2343",
+          "style": "Normal",
+          "text": "Posle mastery-ja\nKada si koncept prošao kroz najmanje dva samostalna zadatka i jedan projekatski kontekst, AI sme da generiše boilerplate, test skeleton, repetitive CRUD, config ili refactor predlog — ali pre merge-a moraš da razumeš behavior, rizike i testove. Cilj nije ručno kucanje radi kucanja; cilj je da budeš sposoban da preuzmeš kontrolu kada AI pogreši.",
+          "textSha256": "71a0be9036a423a898787deb847d3473ade3c96cea4161926ce63cf9aafeaf0c",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2345",
+          "style": "ListBullet",
+          "text": "AI generiše 80 linija rutinskog mapper/DTO koda → dozvoljeno ako proveriš tipove, edge cases i testove.",
+          "textSha256": "ef703b6af7c9d0c5df94c7dde029046f30bd57cb4911d3fd36e686d8b5e2f2c2",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2346",
+          "style": "ListBullet",
+          "text": "AI bira data model/auth strategiju umesto tebe → nije dozvoljeno dok učiš arhitekturu.",
+          "textSha256": "a034729b60ba698e4296149fc4dc131a833920c55b2d66d62e9103090b7aac92",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2347",
+          "style": "ListBullet",
+          "text": "AI napiše testove → pročitaj da li testovi stvarno dokazuju requirement; loš test može potvrditi loš kod.",
+          "textSha256": "f4d6aa11768f5c58691431335bbf40de5d82bfa58d091a87b372c33d7f91557b",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2348",
+          "style": "ListBullet",
+          "text": "AI refactor → prvo traži diff/obrazloženje; ne prihvataj veliku rewrite promenu bez testova.",
+          "textSha256": "f4aaa00bd48918180b36b00fbac544e7df66c1a4c4b9e3888f8eae9a99be0582",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        },
+        {
+          "sourceId": "p2349",
+          "style": "ListBullet",
+          "text": "AI debugging → daj logove i hipotezu; traži da proveri hipotezu, ne “fix everything”.",
+          "textSha256": "b8919327bd4e2abf50e844bf79040f99647398f2fef068f1af2dab4360d3146e",
+          "websiteLocation": "/course/software-engineer/guide/appendix-f"
+        }
+      ],
+      "proposedInterpretation": {
+        "status": "pending-user-approval",
+        "tool": "read-only-ai-after-mastery",
+        "controlSourceIds": [],
+        "storage": "none",
+        "courseCredit": false,
+        "conditions": {
+          "masteryConditionSourceId": "p2343",
+          "independentTasksMinimum": 2,
+          "projectContextsMinimum": 1,
+          "requiresBehaviorRisksAndTestsReview": true,
+          "relatedGuideKeys": ["guide-appendix-c", "guide-ai-protocol"]
+        }
+      }
+    },
+    {
+      "key": "guide-appendix-g",
+      "route": "/course/software-engineer/guide/appendix-g",
+      "sourceContent": [
+        {
+          "sourceId": "p2350",
+          "style": "Heading1",
+          "text": "Appendix G — posle 28.02.2027: sledeća odluka",
+          "textSha256": "99a3260d37f42656bcaba6d02db7c2868a8f3813d61473ba5a0a8b8f30194843",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        },
+        {
+          "sourceId": "p2351",
+          "style": "ListBullet",
+          "text": "Ako želiš web/backend: nastavi Full Stack Open Part 6–7, zatim TypeScript/containers/relational DB delove koji odgovaraju cilju.",
+          "textSha256": "f74a3b0222f2199c2637a433a05a501c3324fd24fb3e328514809a488a1ba791",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        },
+        {
+          "sourceId": "p2352",
+          "style": "ListBullet",
+          "text": "Ako želiš jači CS/algorithms: završi preostale Odin data-structure projekte i radi strukturisan DS&A program; LeetCode koristi kao trening, ne kao curriculum.",
+          "textSha256": "320ed61b4b29506865ab0621a64720887e74ac475d752069e1a75784101127b9",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        },
+        {
+          "sourceId": "p2353",
+          "style": "ListBullet",
+          "text": "Ako želiš systems: produbi C, operating systems, networking i computer architecture.",
+          "textSha256": "df6f80ecfa460dc7029b69066481f735c1928e391a46c7059ad3b89b131bdf9d",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        },
+        {
+          "sourceId": "p2354",
+          "style": "ListBullet",
+          "text": "Ako želiš profesionalni portfolio: napravi još 2 capstone projekta sa različitim problemima, bez build-along tutorijala.",
+          "textSha256": "42fcb2241cd53c61f97699c83306b8693b698b337e3e9ac252f1d15c13ba7927",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        },
+        {
+          "sourceId": "p2355",
+          "style": "ListBullet",
+          "text": "U svakoj grani zadrži isti loop: spec → plan → implementacija → tests → review → rewrite/transfer.",
+          "textSha256": "ef49b1c58c545c1dbb99064a7592ed4cc7d647633c4c2aacf823e702314fe3d6",
+          "websiteLocation": "/course/software-engineer/guide/appendix-g"
+        }
+      ],
+      "proposedInterpretation": {
+        "status": "pending-user-approval",
+        "tool": "read-only-postcourse-branches",
+        "controlSourceIds": [],
+        "storage": "none",
+        "courseCredit": false,
+        "conditions": {
+          "branchSourceIds": ["p2351", "p2352", "p2353", "p2354"],
+          "commonLoopSourceId": "p2355",
+          "noSavedBranchChoice": true,
+          "keepExistingCompletedProgressLink": true
+        }
+      }
+    }
+  ],
+  "supportingSource": [
+    {
+      "sourceId": "p0054",
+      "style": "Normal",
+      "text": "Pravilo 20/30 minuta\nZa mali problem pokušavaj minimum 20 min; za ozbiljniji algoritam/projekatski bug 30 min. Pre AI-a moraš imati zapis šta si pokušao, šta očekuješ i gde tačno puca.",
+      "textSha256": "8e6656fda729e555e2aee6935f408a543c80629f1a3d4e62871c74444c7ed12d",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0062",
+      "style": "Heading2",
+      "text": "Hint ladder",
+      "textSha256": "1ca77249e3603753deaf6b5ec935a61730a0e90e227e67b01cb66cf07d95cca2",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0063",
+      "style": "ListBullet",
+      "text": "Level 0: nema pomoći.",
+      "textSha256": "a4edd7610ed74e75f2d67195a5f8e32c208a8a38e05900c92f4e66d303145457",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0064",
+      "style": "ListBullet",
+      "text": "Level 1: AI postavlja jedno pitanje koje te usmerava.",
+      "textSha256": "4dbfc5fcb72f2b48b4d84fede8ffc7c54e58a686d6e661ed4fb2cabe47692d69",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0065",
+      "style": "ListBullet",
+      "text": "Level 2: mali konceptualni hint.",
+      "textSha256": "ec368e903db285a650435af06d9f976ac7bc76f7b74500139e47159933379496",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0066",
+      "style": "ListBullet",
+      "text": "Level 3: kaže koji koncept/strukturu da razmotriš.",
+      "textSha256": "72c6161ba83be34c827af87185fe229201d344feee5dcc0c994222ba4028d47d",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0067",
+      "style": "ListBullet",
+      "text": "Level 4: pseudocode bez koda.",
+      "textSha256": "dc75b62fc6513abb40685a3ff89b90d5157eb2d27bf5032ab089f0f60114bfdc",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    },
+    {
+      "sourceId": "p0068",
+      "style": "ListBullet",
+      "text": "Level 5: solution — samo ako si iscrpeo prethodne nivoe; zatim zatvori solution i napiši ponovo od nule.",
+      "textSha256": "0dd31b7e50e6bc014462eef6dd17498f841cb79329e6a669796ae127649ddd11",
+      "websiteLocation": "/course/software-engineer/guide/ai-protocol"
+    }
+  ],
+  "proposedPolicy": {
+    "storage": "component-memory-only",
+    "noBrowserStorage": true,
+    "noApiOrDatabaseWrites": true,
+    "resetOnLeaveReloadAccountChange": true,
+    "reusePreparationOrExerciseProgress": false,
+    "reuseNoteBodyAsStructuredState": false,
+    "progressDenominator": 364,
+    "confirmedProgressUnchanged": true,
+    "dailyAiRestrictionsTakePriority": true,
+    "noAutomaticMasteryOrAiUnlock": true,
+    "noTimerDateLocksOrAddedTasks": true,
+    "noExternalAiOrPaidDependencies": true,
+    "proposedUiNotice": "Temporary review. Marks reset when you leave or reload. This does not save course progress.",
+    "alternative": "If durable tool state is requested, agree a separate owned/revisioned SQLite contract and reviewed migration before implementation."
+  }
+}

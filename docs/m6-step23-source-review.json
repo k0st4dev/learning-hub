@@ -1,0 +1,20 @@
+{
+  "releaseId": "se-26w-v1",
+  "sourceManifestSha256": "e63abb237ba2f8afd275b900a300d06e7ea4e149892e8442f70cce194b4ebc35",
+  "sourceManifestHashFormat": "raw-file-bytes",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "proposalFileSha256": "d61ab6d84ab219456303bb46c2e5697e6edd0a328c4f434e96edb70b2cea6886",
+  "guides": 5,
+  "exactGuideBlocks": 35,
+  "exactSupportingBlocks": 8,
+  "proposedAdvisoryControls": 18,
+  "originalBodyParagraphs": 2365,
+  "originalMappings": 2329,
+  "exactWordTextStyleAndCsv": true,
+  "stuckOrderPreserved": true,
+  "fBlankParagraphRetainedInArchive": true,
+  "sourceFilesVerified": 10,
+  "databaseAccess": false,
+  "networkAccess": false,
+  "runtimeActivation": false
+}
