@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { dayWorkspace } from '@/server/content/day-workspace';
 import { DailyContext, DailyWorkspace } from './daily-workspace';
+import { DailyHandbookHelp } from './daily-handbook-help';
+import { dailyHandbookLinks } from '@/server/content/daily-handbook';
 import { ResourceCards } from './resource-cards';
 import { z } from 'zod';
 import {
@@ -308,6 +310,16 @@ export function CurriculumPreview({
           </p>
           {workspace && (
             <DailyContext workspace={workspace} currentId={page.item.id} />
+          )}
+          {workspace && (
+            <DailyHandbookHelp
+              key={JSON.stringify([
+                studentId,
+                catalog.release.id,
+                page.item.id,
+              ])}
+              {...dailyHandbookLinks(catalog)}
+            />
           )}
           {progressView}
           {learnerTool}

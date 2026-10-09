@@ -37,6 +37,7 @@ import { readCatalog, catalogPage } from '../../src/server/content/read.ts';
 import { CurriculumPreview } from '../../src/components/curriculum-preview';
 import { CourseOutline } from '../../src/components/course-outline';
 import { dayWorkspace } from '../../src/server/content/day-workspace';
+import { dailyHandbookLinks } from '../../src/server/content/daily-handbook';
 import { courseAvailability } from '../../src/server/content/availability';
 import { register, login, requireStudent } from '../../src/server/auth/service';
 import {
@@ -85,6 +86,63 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('uses five unique original guide titles from the published release and safely omits unavailable shortcuts', () => {
+    importCurriculum(store, plan.source);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const before = JSON.stringify(catalog);
+    const expectedKeys = [
+      'guide-how-to-study',
+      'guide-ai-protocol',
+      'guide-appendix-b',
+      'guide-appendix-c',
+      'guide-appendix-e',
+    ];
+    const model = dailyHandbookLinks(catalog);
+    expect(model.unavailable).toBe(false);
+    expect(model.links.map((link) => link.key)).toEqual(expectedKeys);
+    for (const link of model.links) {
+      const page = catalogPage(catalog, link.href)!;
+      expect(page.item.stableKey).toBe(link.key);
+      expect(link.title).toBe(page.item.title);
+      expect(page.blocks.length).toBeGreaterThan(0);
+    }
+    const guide = catalog.items.find(
+      (item) => item.stableKey === expectedKeys[0],
+    )!;
+    for (const items of [
+      catalog.items.filter((item) => item.id !== guide.id),
+      [...catalog.items, { ...guide, id: 'duplicate' }],
+      [
+        ...catalog.items,
+        { ...guide, id: 'route-collision', stableKey: 'other' },
+      ],
+      catalog.items.map((item) =>
+        item.id === guide.id ? { ...item, releaseId: 'another-release' } : item,
+      ),
+      catalog.items.map((item) =>
+        item.id === guide.id ? { ...item, kind: 'lesson' as const } : item,
+      ),
+      catalog.items.map((item) =>
+        item.id === guide.id ? { ...item, title: ' ' } : item,
+      ),
+      catalog.items.map((item) =>
+        item.id === guide.id
+          ? { ...item, route: 'https://example.test/guide' }
+          : item,
+      ),
+    ]) {
+      const fallback = dailyHandbookLinks({ ...catalog, items });
+      expect(fallback.unavailable).toBe(true);
+      expect(fallback.links.map((link) => link.key)).toEqual(
+        expectedKeys.slice(1),
+      );
+    }
+    expect(dailyHandbookLinks({ ...catalog, items: [] })).toEqual({
+      links: [],
+      unavailable: true,
+    });
+    expect(JSON.stringify(catalog)).toBe(before);
+  });
   it('offers exact ordered troubleshooting checks without AI gates, broken source links or learner writes', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];
@@ -574,7 +632,7 @@ describe('complete immutable curriculum', () => {
     for (const account of accounts)
       expect(snapshot(store, account.token)).toEqual(account.before);
   });
-  it('links every guide to exact source sections without replacing either learner resume target', async () => {
+  it('links daily help and every guide to exact source sections without replacing either learner resume target', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];
     for (const [index, email] of [
@@ -616,6 +674,28 @@ describe('complete immutable curriculum', () => {
       (item) => item.kind === 'guide' && item.stableKey.startsWith('guide-'),
     );
     expect(guides).toHaveLength(11);
+    for (const account of accounts) {
+      for (const key of ['d001', 'd001-learn', 'd001-practice', 'd002-learn']) {
+        const item = catalog.items.find((item) => item.stableKey === key)!;
+        const host = new DOMParser().parseFromString(
+          renderToStaticMarkup(
+            createElement(CurriculumPreview, {
+              catalog,
+              page: catalogPage(catalog, item.route)!,
+              studentId: requireStudent(store, account.token).id,
+            }),
+          ),
+          'text/html',
+        );
+        expect(
+          host.querySelectorAll('[data-daily-handbook-help] a'),
+        ).toHaveLength(5);
+      }
+      expect(snapshot(store, account.token)).toEqual(account.before);
+      expect(continuePath(snapshot(store, account.token)!)).toBe(
+        account.target,
+      );
+    }
     for (const guide of guides) {
       const page = catalogPage(catalog, guide.route)!;
       const model = handbookNavigation(page)!;
@@ -1310,6 +1390,33 @@ describe('complete immutable curriculum', () => {
         );
         const outline = dom.querySelector('nav[aria-label="Course outline"]');
         expect(outline, route).not.toBeNull();
+        const help = dom.querySelector('details[data-daily-handbook-help]');
+        if (['day', 'lesson', 'exercise'].includes(page!.item.kind)) {
+          expect(help, route).not.toBeNull();
+          expect(help!.hasAttribute('open'), route).toBe(false);
+          expect(
+            [...help!.querySelectorAll('a')].map((link) => ({
+              href: link.getAttribute('href'),
+              title: link.textContent,
+            })),
+            route,
+          ).toEqual(
+            dailyHandbookLinks(catalog).links.map(({ href, title }) => ({
+              href,
+              title,
+            })),
+          );
+          expect(
+            help!.querySelector('[data-study-anchor], form, input, button'),
+          ).toBeNull();
+          for (const anchor of page!.item.kind === 'day'
+            ? ['ai-policy', 'completion']
+            : ['ai', 'criterion'])
+            expect(
+              dom.getElementById(anchor)!.closest('details'),
+              route,
+            ).toBeNull();
+        } else expect(help, route).toBeNull();
         const elementsByLocator = new Map<string | null, Element>();
         for (const element of dom.querySelectorAll('[data-source-id]')) {
           const locator = element.getAttribute('data-source-id');

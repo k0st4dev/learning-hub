@@ -7,6 +7,8 @@ import { openDatabase } from '../src/server/db/connection.ts';
 import { readCatalog, catalogPage } from '../src/server/content/read.ts';
 import { servedDocument } from './served-document.mjs';
 import { handbookNavigation } from '../src/server/content/handbook-navigation.ts';
+import { dailyHandbookLinks } from '../src/server/content/daily-handbook.ts';
+import { dayWorkspace } from '../src/server/content/day-workspace.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
@@ -19,9 +21,11 @@ assert.ok(
         '--git-review',
         '--concept-review',
         '--stuck-workflow',
+        '--daily-help',
       ].includes(process.argv[2])),
 );
-const checkStuck = process.argv[2] === '--stuck-workflow';
+const checkDailyHelp = process.argv[2] === '--daily-help';
+const checkStuck = checkDailyHelp || process.argv[2] === '--stuck-workflow';
 const checkConcept = checkStuck || process.argv[2] === '--concept-review';
 const checkGit = checkConcept || process.argv[2] === '--git-review';
 const checkNavigation = checkGit || process.argv[2] === '--navigation';
@@ -78,6 +82,8 @@ let guideBlocksChecked = 0;
 let gitChecksChecked = 0;
 let conceptChecksChecked = 0;
 let stuckChecksChecked = 0;
+let dailyHelpViewsChecked = 0;
+let dailyHelpLinksChecked = 0;
 const continueTargets = [];
 const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
@@ -160,6 +166,11 @@ try {
       const response = await request(url);
       assert.equal(response.status, 200);
       const document = servedDocument(await response.text(), streams);
+      if (checkDailyHelp)
+        assert.equal(
+          document.querySelector('[data-daily-handbook-help]'),
+          null,
+        );
       const original = catalogPage(catalog, url);
       for (const block of original.blocks)
         assert.equal(
@@ -503,6 +514,83 @@ try {
       } else assert.equal(document.querySelector('.copyable-text'), null);
       pages++;
     }
+    if (checkDailyHelp) {
+      const expectedLinks = dailyHandbookLinks(catalog);
+      assert.equal(expectedLinks.unavailable, false);
+      assert.equal(expectedLinks.links.length, 5);
+      for (const dayKey of ['d001', 'd007', 'd028', 'd125', 'd182']) {
+        const day = catalog.items.find((item) => item.stableKey === dayKey);
+        assert.ok(day);
+        const workspace = dayWorkspace(catalog, day.id);
+        assert.ok(workspace);
+        const views = [day, workspace.lesson, workspace.exercise];
+        assert.equal(views.length, 3);
+        for (const item of views) {
+          const response = await request(item.route);
+          assert.equal(response.status, 200);
+          const doc = servedDocument(await response.text(), streams);
+          assert.equal(
+            doc.querySelectorAll('[data-daily-handbook-help]').length,
+            1,
+          );
+          const panel = doc.querySelector('details[data-daily-handbook-help]');
+          assert.ok(panel);
+          assert.equal(panel.open, false);
+          assert.equal(
+            panel.querySelector('summary')?.textContent,
+            'Handbook help (optional)',
+          );
+          assert.ok(
+            panel.textContent.includes(
+              'Added navigation to original handbook guidance.',
+            ),
+          );
+          assert.ok(
+            panel.textContent.includes(
+              'Daily AI restrictions and completion criteria still apply.',
+            ),
+          );
+          assert.equal(
+            panel.querySelector('form, input, button, [data-study-anchor]'),
+            null,
+          );
+          const links = [
+            ...panel.querySelectorAll(
+              'nav[aria-label="Daily handbook shortcuts"] a',
+            ),
+          ];
+          assert.equal(links.length, 5);
+          for (const [index, link] of links.entries()) {
+            const expected = expectedLinks.links[index];
+            assert.equal(link.getAttribute('href'), expected.href);
+            assert.equal(link.textContent, expected.title);
+            assert.equal(link.lang, 'sr-Latn');
+            assert.equal(link.getAttribute('target'), null);
+            assert.ok(catalogPage(catalog, expected.href));
+            dailyHelpLinksChecked++;
+          }
+          for (const anchor of item.kind === 'day'
+            ? ['ai-policy', 'completion']
+            : ['ai', 'criterion']) {
+            const original = doc.getElementById(anchor);
+            assert.ok(original);
+            assert.equal(original.closest('details'), null);
+          }
+          const originalPage = catalogPage(catalog, item.route);
+          for (const block of originalPage.blocks)
+            assert.equal(
+              doc.querySelector(
+                '[data-source-id="' +
+                  block.sourceLocator +
+                  '"] [data-source-text]',
+              )?.textContent,
+              block.exactText,
+            );
+          dailyHelpViewsChecked++;
+          pages++;
+        }
+      }
+    }
     if (checkNavigation) {
       assert.equal(await readContinueTarget(), expectedContinue);
       continueTargets.push(expectedContinue);
@@ -534,6 +622,15 @@ try {
     date: new Date().toISOString(),
     server: 'development',
     accounts: 2,
+    ...(checkDailyHelp
+      ? {
+          dailyHelpViews: dailyHelpViewsChecked,
+          exactDailyHelpLinks: dailyHelpLinksChecked,
+          defaultClosedNativeDisclosure: 'passed',
+          dailyAiCriteriaAndSourceRemainExpanded: 'passed',
+          handbookGuidesHaveNoDailyHelp: 'passed',
+        }
+      : {}),
     ...(checkStuck
       ? {
           stuckChecksPerAccount: 7,
@@ -593,17 +690,19 @@ try {
   await writeFile(
     path.join(
       root,
-      checkStuck
-        ? 'docs/m6-step26-http-audit.json'
-        : checkConcept
-          ? 'docs/m6-step25-http-audit.json'
-          : checkGit
-            ? 'docs/m6-step24-http-audit.json'
-            : checkNavigation
-              ? 'docs/m6-step22-http-audit.json'
-              : checkPrompts
-                ? 'docs/m6-step21-http-audit.json'
-                : 'docs/m6-step20-http-audit.json',
+      checkDailyHelp
+        ? 'docs/m6-step27a-http-audit.json'
+        : checkStuck
+          ? 'docs/m6-step26-http-audit.json'
+          : checkConcept
+            ? 'docs/m6-step25-http-audit.json'
+            : checkGit
+              ? 'docs/m6-step24-http-audit.json'
+              : checkNavigation
+                ? 'docs/m6-step22-http-audit.json'
+                : checkPrompts
+                  ? 'docs/m6-step21-http-audit.json'
+                  : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

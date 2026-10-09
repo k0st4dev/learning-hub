@@ -148,6 +148,12 @@ export const en = {
       'Local password recovery is being added in the operations milestone. Do not delete the database to reset an account.',
   },
   daily: {
+    handbookHelp: 'Handbook help (optional)',
+    handbookLinks: 'Daily handbook shortcuts',
+    handbookNotice:
+      'Added navigation to original handbook guidance. Daily AI restrictions and completion criteria still apply. Opening help does not complete work or grant AI permission.',
+    handbookUnavailable:
+      'Some handbook shortcuts are unavailable in this course version. Continue with the original daily instructions below.',
     orient: 'Day orientation',
     plan: 'Original daily plan',
     minutes: 'minutes',
