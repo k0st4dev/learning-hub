@@ -13,7 +13,7 @@ import sys
 import zipfile
 import xml.etree.ElementTree as ET
 
-assert sys.argv[1:] in ([], ['--report'])
+assert sys.argv[1:] in ([], ['--report'], ['--frozen'], ['--frozen', '--report'])
 root = Path(__file__).resolve().parents[1]
 directory = root / 'content/se-26w-v1/source'
 source = json.loads((directory / 'curriculum-source.json').read_text(encoding='utf-8'))
@@ -157,6 +157,71 @@ assert {row['sourceId'] for row in review['mentions'] if row['displayName'] == '
 assert len({row['resourceId'] for row in review['mentions'] if row['displayName'] == 'CS50 Practice'}) == 1
 assert review['summary'] == {'originalResources': 69, 'originalUses': 290, 'originalSourceMentions': 208, 'originalMappings': 2329, 'candidates': 15, 'distinctCandidateResourceIdentities': 14, 'reusedExistingResources': 2, 'proposedNewDerivedResources': 12, 'recommendedMentions': 13, 'deferredMentions': 2, 'recommendedNewDerivedResources': 10, 'originalRequiredUnits': 364}
 report = {'date': '2026-10-09', 'status': 'named-mention-review-word-and-csv-verified', 'reviewSha256': digest((root / 'docs/resource-named-mentions-proposal.json').read_bytes()), 'wordSha256': review['wordSha256'], 'exactWordEvidenceBlocks': len(evidence), 'exactSourceContexts': len({row['sourceId'] for row in review['mentions']}), 'exactOriginUseIds': len({use for row in review['mentions'] for use in row['originalUseIds']}), 'csvMappings': len(csv_rows), 'exactOriginalHyperlinks': len(original_links), 'exactOriginalUrls': len({url for _, url in original_links}), **review['summary'], 'runtimeApplied': False, 'databaseAccess': False, 'networkAccess': False}
+if '--frozen' in sys.argv:
+    artifact = json.loads((root / 'content/interpretations/se-26w-v1-resource-mentions-v1.json').read_text(encoding='utf-8'))
+    canonical_digest = lambda value: digest(json.dumps(value, ensure_ascii=False, separators=(',', ':')).encode('utf-8'))
+    pin = '5ec53b8b5b532cf0c7295692a1ebe1d88af157e87eb5fdf8325b71615f98d779'
+    assert canonical_digest(artifact) == pin
+    assert artifact['proposalSha256'] == report['reviewSha256']
+    assert artifact['releaseId'] == review['releaseId']
+    assert artifact['manifestSha256'] == review['manifestSha256']
+    assert artifact['wordSha256'] == review['wordSha256']
+    assert artifact['interpretationId'] == 'se-26w-v1-resource-mentions-v1'
+    for version, field, expected_pin in [
+        ('se-26w-v1-resource-labels-v1', 'label', 'c326c2b849fc4e41eaae4d7a27bdba09e0ccad49c31cde73e119af9be754cee3'),
+        ('se-26w-v1-resource-bindings-v1', 'binding', 'fefefb7f2926d28487fb472aa12b16a051592be0aeea34c48ec7914713eb1069'),
+    ]:
+        base = json.loads((root / ('content/interpretations/' + version + '.json')).read_text(encoding='utf-8'))
+        assert artifact[field + 'InterpretationId'] == version
+        assert artifact[field + 'Sha256'] == expected_pin == canonical_digest(base)
+    approved = {row['candidateId']: row for row in recommended}
+    assert len(artifact['mentions']) == len(approved) == 13
+    assert {row['candidateId'] for row in artifact['mentions']} == set(approved)
+    assert len({row['key'] for row in artifact['mentions']}) == 13
+    frozen_evidence_ids = set()
+    for row in artifact['mentions']:
+        origin = approved[row['candidateId']]
+        assert row['sourceId'] != 'p1679'
+        for field, proposal_field in [('key', 'proposedMentionKey'), ('resourceId', 'resourceId'), ('displayName', 'displayName'), ('sourceId', 'sourceId'), ('exactInstruction', 'exactInstruction'), ('reason', 'reason'), ('evidenceRefs', 'evidenceRefs')]:
+            assert row[field] == origin[proposal_field]
+        assert row['contentItemId'] == origin['context']['id']
+        assert row['sourceMappingHref'] == origin['context']['sourceMappingHref']
+        assert row['scope'] == origin['context']['scope']
+        for field in ('requirementMode', 'choiceGroup'): assert row[field] == origin['proposed'][field]
+        assert [item['itemId'] for item in row['ancestors']] == [item['id'] for item in origin['context']['ancestors']]
+        assert all(re.fullmatch('[a-f0-9]{64}', item['identitySha256']) for item in row['ancestors'])
+        assert [item['useId'] for item in row['origins']] == origin['originalUseIds']
+        for item in row['origins']:
+            raw = uses[item['useId']]['raw']
+            assert item['identitySha256'] == canonical_digest([raw[field] for field in ('id', 'releaseId', 'resourceId', 'contentItemId', 'assignedText', 'sectionLocator', 'requirementMode', 'orderIndex')])
+        frozen_evidence_ids.update(row['evidenceRefs'])
+    assert len(artifact['resources']) == len({row['id'] for row in artifact['resources']}) == 12
+    assert len([row for row in artifact['resources'] if row['action'] == 'derived-resource']) == 10
+    raw_resources = {row['resourceId']: row['raw'] for row in previous['resources']}
+    def raw_resource_hash(raw):
+        return canonical_digest([raw[field] for field in ('id', 'releaseId', 'stableKey', 'title', 'originalUrl', 'sourceName', 'type', 'descriptionMarkdown', 'linkOrigin')])
+    for row in artifact['resources']:
+        origins = [item for item in recommended if item['resourceId'] == row['id']]
+        assert origins
+        raw = raw_resources.get(row['id'])
+        for origin in origins:
+            assert row['stableKey'] == origin['resourceStableKey']
+            assert row['title'] == (raw['title'] if raw else origin['displayName'])
+            assert row['type'] == origin['proposed']['type'] and row['provider'] == origin['proposed']['provider']
+            assert row['action'] == ('reuse-existing-resource' if raw else 'derived-resource')
+            assert row['originalIdentitySha256'] == (raw_resource_hash(raw) if raw else None)
+            parent_key = origin['navigation']['parentResourceKey']
+            assert (row['parent'] is None) == (parent_key is None)
+            if parent_key:
+                parent = raw_resources[prefix + parent_key]
+                assert row['parent'] == {'resourceId': parent['id'], 'identitySha256': raw_resource_hash(parent), 'originalUrl': parent['originalUrl']}
+    assert len(artifact['evidence']) == len(frozen_evidence_ids) == 18
+    assert {row['sourceId'] for row in artifact['evidence']} == frozen_evidence_ids
+    for row in artifact['evidence']:
+        assert row == {field: evidence[row['sourceId']][field] for field in ('sourceId', 'sha256', 'table', 'row', 'cell')}
+    report.update({'status': 'approved-frozen-mentions-word-and-source-verified', 'interpretationId': artifact['interpretationId'], 'canonicalSha256': pin, 'approvedMentions': 13, 'frozenResources': 12, 'frozenDerivedResources': 10, 'frozenWordEvidenceBlocks': 18, 'sourceContextsInFrozenSubset': len({row['sourceId'] for row in artifact['mentions']})})
 output = json.dumps(report, indent=2) + '\n'
-if sys.argv[1:]: (root / 'docs/m6-step17-source-review.json').write_text(output, encoding='utf-8')
+if '--report' in sys.argv:
+    report_name = 'm6-step18-source-review.json' if '--frozen' in sys.argv else 'm6-step17-source-review.json'
+    (root / 'docs' / report_name).write_text(output, encoding='utf-8')
 print(output, end='')

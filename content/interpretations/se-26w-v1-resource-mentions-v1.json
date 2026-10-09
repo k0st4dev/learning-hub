@@ -1,0 +1,747 @@
+{
+  "formatVersion": 1,
+  "interpretationId": "se-26w-v1-resource-mentions-v1",
+  "releaseId": "se-26w-v1",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "proposalSha256": "517b6b73e0104ca0c2ff9e6b961c61ecbafbe3956aacab25c71fdcb0e3ac22e8",
+  "labelInterpretationId": "se-26w-v1-resource-labels-v1",
+  "labelSha256": "c326c2b849fc4e41eaae4d7a27bdba09e0ccad49c31cde73e119af9be754cee3",
+  "bindingInterpretationId": "se-26w-v1-resource-bindings-v1",
+  "bindingSha256": "fefefb7f2926d28487fb472aa12b16a051592be0aeea34c48ec7914713eb1069",
+  "resources": [
+    {
+      "id": "se-26w-v1:named-node-runtime",
+      "stableKey": "named-node-runtime",
+      "title": "Node runtime",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "tool",
+      "provider": "Node.js",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-nvm",
+      "stableKey": "named-nvm",
+      "title": "nvm",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "tool",
+      "provider": "nvm",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-vs-code",
+      "stableKey": "named-vs-code",
+      "title": "VS Code",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "tool",
+      "provider": "VS Code",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-git",
+      "stableKey": "named-git",
+      "title": "Git",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "tool",
+      "provider": "Git",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-jest-getting-started",
+      "stableKey": "named-jest-getting-started",
+      "title": "Jest Getting Started",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "documentation",
+      "provider": "Jest",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-eslint-getting-started",
+      "stableKey": "named-eslint-getting-started",
+      "title": "ESLint getting started",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "documentation",
+      "provider": "ESLint",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-sqlite-docs",
+      "stableKey": "named-sqlite-docs",
+      "title": "SQLite docs",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "documentation",
+      "provider": "SQLite",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:named-react-devtools",
+      "stableKey": "named-react-devtools",
+      "title": "React DevTools",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "tool",
+      "provider": "React",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:res-10",
+      "stableKey": "res-10",
+      "title": "Node.js Docs",
+      "action": "reuse-existing-resource",
+      "originalIdentitySha256": "a1c685d5df006dbfa0349fd9a30a18f826be79aeb651e25abe9405c1e377947e",
+      "type": "documentation",
+      "provider": "Node.js",
+      "parent": {
+        "resourceId": "se-26w-v1:res-10",
+        "identitySha256": "a1c685d5df006dbfa0349fd9a30a18f826be79aeb651e25abe9405c1e377947e",
+        "originalUrl": "https://nodejs.org/docs/latest/api/"
+      }
+    },
+    {
+      "id": "se-26w-v1:named-express-docs",
+      "stableKey": "named-express-docs",
+      "title": "Express docs",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "documentation",
+      "provider": "Express",
+      "parent": null
+    },
+    {
+      "id": "se-26w-v1:res-04",
+      "stableKey": "res-04",
+      "title": "CS50x Problem Sets",
+      "action": "reuse-existing-resource",
+      "originalIdentitySha256": "af6a30f810c85dc774d3034cd3b349992931fd617ac1951060e43e1aebcf5b66",
+      "type": "practice",
+      "provider": "CS50",
+      "parent": {
+        "resourceId": "se-26w-v1:res-04",
+        "identitySha256": "af6a30f810c85dc774d3034cd3b349992931fd617ac1951060e43e1aebcf5b66",
+        "originalUrl": "https://cs50.harvard.edu/x/psets/"
+      }
+    },
+    {
+      "id": "se-26w-v1:named-cs50-practice",
+      "stableKey": "named-cs50-practice",
+      "title": "CS50 Practice",
+      "action": "derived-resource",
+      "originalIdentitySha256": null,
+      "type": "practice",
+      "provider": "CS50",
+      "parent": {
+        "resourceId": "se-26w-v1:res-03",
+        "identitySha256": "d434fa9774c376444fa80a735037a7cce11e468651ac5cf60c3207a768a42e70",
+        "originalUrl": "https://cs50.harvard.edu/x/"
+      }
+    }
+  ],
+  "mentions": [
+    {
+      "candidateId": "candidate:p0274:1",
+      "key": "named-p0274-node-runtime",
+      "resourceId": "se-26w-v1:named-node-runtime",
+      "displayName": "Node runtime",
+      "sourceId": "p0274",
+      "contentItemId": "se-26w-v1:d001-learn",
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+      "requirementMode": "required",
+      "choiceGroup": null,
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution.",
+      "scope": { "module": "f1", "week": "w01", "day": "d001" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "identitySha256": "987025dfdf8f4ab17569adcc594002cbe7f0ea593fd9a50722df11af12fbfe8d"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d001-learn",
+          "identitySha256": "16001602a632da22b5651c679dead24ea5cff1f52dc0b977cac23f9c651d5eeb"
+        },
+        {
+          "itemId": "se-26w-v1:d001",
+          "identitySha256": "0f3ef083ee8e99aeb2fc3856f5ce4f2eeb8d42f554fa899f8f98cd9afc66519c"
+        },
+        {
+          "itemId": "se-26w-v1:w01",
+          "identitySha256": "6334a2f76798606933314ce8d1160688dc2fc7add40a4144a11a733870e362eb"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0274"]
+    },
+    {
+      "candidateId": "candidate:p0274:2",
+      "key": "named-p0274-nvm",
+      "resourceId": "se-26w-v1:named-nvm",
+      "displayName": "nvm",
+      "sourceId": "p0274",
+      "contentItemId": "se-26w-v1:d001-learn",
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+      "requirementMode": "required",
+      "choiceGroup": null,
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution.",
+      "scope": { "module": "f1", "week": "w01", "day": "d001" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "identitySha256": "987025dfdf8f4ab17569adcc594002cbe7f0ea593fd9a50722df11af12fbfe8d"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d001-learn",
+          "identitySha256": "16001602a632da22b5651c679dead24ea5cff1f52dc0b977cac23f9c651d5eeb"
+        },
+        {
+          "itemId": "se-26w-v1:d001",
+          "identitySha256": "0f3ef083ee8e99aeb2fc3856f5ce4f2eeb8d42f554fa899f8f98cd9afc66519c"
+        },
+        {
+          "itemId": "se-26w-v1:w01",
+          "identitySha256": "6334a2f76798606933314ce8d1160688dc2fc7add40a4144a11a733870e362eb"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0274"]
+    },
+    {
+      "candidateId": "candidate:p0274:3",
+      "key": "named-p0274-vs-code",
+      "resourceId": "se-26w-v1:named-vs-code",
+      "displayName": "VS Code",
+      "sourceId": "p0274",
+      "contentItemId": "se-26w-v1:d001-learn",
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+      "requirementMode": "required",
+      "choiceGroup": null,
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution.",
+      "scope": { "module": "f1", "week": "w01", "day": "d001" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "identitySha256": "987025dfdf8f4ab17569adcc594002cbe7f0ea593fd9a50722df11af12fbfe8d"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d001-learn",
+          "identitySha256": "16001602a632da22b5651c679dead24ea5cff1f52dc0b977cac23f9c651d5eeb"
+        },
+        {
+          "itemId": "se-26w-v1:d001",
+          "identitySha256": "0f3ef083ee8e99aeb2fc3856f5ce4f2eeb8d42f554fa899f8f98cd9afc66519c"
+        },
+        {
+          "itemId": "se-26w-v1:w01",
+          "identitySha256": "6334a2f76798606933314ce8d1160688dc2fc7add40a4144a11a733870e362eb"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0274"]
+    },
+    {
+      "candidateId": "candidate:p0274:4",
+      "key": "named-p0274-git",
+      "resourceId": "se-26w-v1:named-git",
+      "displayName": "Git",
+      "sourceId": "p0274",
+      "contentItemId": "se-26w-v1:d001-learn",
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+      "requirementMode": "required",
+      "choiceGroup": null,
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution.",
+      "scope": { "module": "f1", "week": "w01", "day": "d001" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "identitySha256": "987025dfdf8f4ab17569adcc594002cbe7f0ea593fd9a50722df11af12fbfe8d"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d001-learn",
+          "identitySha256": "16001602a632da22b5651c679dead24ea5cff1f52dc0b977cac23f9c651d5eeb"
+        },
+        {
+          "itemId": "se-26w-v1:d001",
+          "identitySha256": "0f3ef083ee8e99aeb2fc3856f5ce4f2eeb8d42f554fa899f8f98cd9afc66519c"
+        },
+        {
+          "itemId": "se-26w-v1:w01",
+          "identitySha256": "6334a2f76798606933314ce8d1160688dc2fc7add40a4144a11a733870e362eb"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0274"]
+    },
+    {
+      "candidateId": "candidate:p0530:5",
+      "key": "named-p0530-jest-getting-started",
+      "resourceId": "se-26w-v1:named-jest-getting-started",
+      "displayName": "Jest Getting Started",
+      "sourceId": "p0530",
+      "contentItemId": "se-26w-v1:d025-learn",
+      "exactInstruction": "TOP Testing Basics (uvod) ili Jest Getting Started; prvo koncept testova.",
+      "sourceMappingHref": "/course/software-engineer/days/d025/lessons/d025-learn#study",
+      "requirementMode": "conditional",
+      "choiceGroup": "choice:p0530",
+      "reason": "Jest is an alternative to TOP Testing Basics, not a second mandatory reading. Keep choice:p0530 shared with the existing TOP assignment.",
+      "scope": { "module": "f1", "week": "w04", "day": "d025" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:25:0",
+          "identitySha256": "d2f2264a89e35d354f4a53f663ba8e8c2a2d178a64840141b90683023e906488"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d025-learn",
+          "identitySha256": "15b9fee7d99c040316cf793b06f3bed9137c7b06f0251cd5760a0be7a4879dc3"
+        },
+        {
+          "itemId": "se-26w-v1:d025",
+          "identitySha256": "5c85ef85c944998eb0f7aa52df9e6fde6fdf04fd61aba8e324ba1d3c878af930"
+        },
+        {
+          "itemId": "se-26w-v1:w04",
+          "identitySha256": "8d5ac433bc3fa8e3116fdddf127b4ccdb34f7403a712697015677ffee0ab8ee8"
+        },
+        {
+          "itemId": "se-26w-v1:f1",
+          "identitySha256": "2fc2080ea581d8b8cdf85844796567aee12299988fa19044dc515e8eec7731ba"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0530"]
+    },
+    {
+      "candidateId": "candidate:p0917:6",
+      "key": "named-p0917-eslint-getting-started",
+      "resourceId": "se-26w-v1:named-eslint-getting-started",
+      "displayName": "ESLint getting started",
+      "sourceId": "p0917",
+      "contentItemId": "se-26w-v1:d061-learn",
+      "exactInstruction": "TOP Linting; current ESLint getting started po potrebi.",
+      "sourceMappingHref": "/course/software-engineer/days/d061/lessons/d061-learn#study",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Only ESLint getting started is as-needed reference; TOP Linting remains assigned. Do not inherit the whole compound instruction’s required label.",
+      "scope": { "module": "f3", "week": "w09", "day": "d061" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:61:0",
+          "identitySha256": "441a2a689dc532cf3fa559da4163bea13ab5918ebc6448bdd4c18ae3f5a43f27"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d061-learn",
+          "identitySha256": "a43ffe45510731bcfd9245a6d0b8cc71863110cd5e8542e48a6e116a9601dde7"
+        },
+        {
+          "itemId": "se-26w-v1:d061",
+          "identitySha256": "49ac2d6297a2e8b780f452e2de38dc27b972f033ef6698256f0a181ae82ebc48"
+        },
+        {
+          "itemId": "se-26w-v1:w09",
+          "identitySha256": "fdd3915efe21405ee91fc177ab1caac0679eabdb9d21c8194ced2f8c08fd5bb1"
+        },
+        {
+          "itemId": "se-26w-v1:f3",
+          "identitySha256": "8c17db80255fbceb4a100bf5c091e5be99c480caa01c3f3757004d2426fa0da1"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p0917"]
+    },
+    {
+      "candidateId": "candidate:p1629:7",
+      "key": "named-p1629-sqlite-docs",
+      "resourceId": "se-26w-v1:named-sqlite-docs",
+      "displayName": "SQLite docs",
+      "sourceId": "p1629",
+      "contentItemId": "se-26w-v1:d127-learn",
+      "exactInstruction": "CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.",
+      "sourceMappingHref": "/course/software-engineer/days/d127/lessons/d127-learn#study",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Only SQLite docs is as-needed reference; CS50 is assigned and the existing PostgreSQL reference remains separate. Do not identify SQLite documentation as an npm sqlite package.",
+      "scope": { "module": "f4", "week": "w19", "day": "d127" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:127:0",
+          "identitySha256": "77581f04c1882ff3386f0d31ecfda312d58c0b76f632a49b40cd58181ce7e403"
+        },
+        {
+          "useId": "se-26w-v1:mention:127:1",
+          "identitySha256": "376da758fecdb3f4765ffdc758e51b49119f377831090d8159e1365e600968f5"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d127-learn",
+          "identitySha256": "24768216ebe1520d7b3164b849c2f405b51e097fa27198d5edb055aeaf64381b"
+        },
+        {
+          "itemId": "se-26w-v1:d127",
+          "identitySha256": "9a7ed2c9a8496797244f8317ce01b163c482ab76cbc7902ff9004a55ae2e289a"
+        },
+        {
+          "itemId": "se-26w-v1:w19",
+          "identitySha256": "6c2a1990718ce4fe8503152dd4dab33d8eea7c2d44290dd0629d89420cb37cd5"
+        },
+        {
+          "itemId": "se-26w-v1:f4",
+          "identitySha256": "004ec8d5dffc2fa23c36b780c15e94ffd551b9399761b9a6ef4001e835e1523f"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p1629"]
+    },
+    {
+      "candidateId": "candidate:p1811:10",
+      "key": "named-p1811-react-devtools",
+      "resourceId": "se-26w-v1:named-react-devtools",
+      "displayName": "React DevTools",
+      "sourceId": "p1811",
+      "contentItemId": "se-26w-v1:d144-learn",
+      "exactInstruction": "React DevTools + FSO debugging guidance.",
+      "sourceMappingHref": "/course/software-engineer/days/d144/lessons/d144-learn#study",
+      "requirementMode": "required",
+      "choiceGroup": null,
+      "reason": "React DevTools is the named tool in this assigned debugging instruction; keep the FSO assignment and exact wording. No extension installation or new URL is proposed.",
+      "scope": { "module": "f5", "week": "w21", "day": "d144" },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:144:0",
+          "identitySha256": "dd8373ffff131cb9723d68bc05506c878d09a372e59116fcc1750903c82f3cde"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:d144-learn",
+          "identitySha256": "8e17790864a1fd17ab62decfd801605ff8a00c8df8dfb809b9019caa0d259d50"
+        },
+        {
+          "itemId": "se-26w-v1:d144",
+          "identitySha256": "4a3d2d3020f0b07e92f7050a852904c4045b8b3092f69acd83acae5b3382dd7d"
+        },
+        {
+          "itemId": "se-26w-v1:w21",
+          "identitySha256": "1f15a4a253f6cac87fa48417fe7d497b5bc8644dc1623f78a42f6199ab5e7295"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ],
+      "evidenceRefs": ["p0025", "p1811"]
+    },
+    {
+      "candidateId": "candidate:p1927:11",
+      "key": "named-p1927-res-10",
+      "resourceId": "se-26w-v1:res-10",
+      "displayName": "Node docs",
+      "sourceId": "p1927",
+      "contentItemId": "se-26w-v1:w23",
+      "exactInstruction": "Full Stack Open Part 3, Node/Express docs as reference",
+      "sourceMappingHref": "/course/software-engineer/weeks/w23",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Node/Express docs are reference in the weekly overview. Reuse Node.js Docs once; Express has no supplied direct URL. Weekly context does not create required daily assignments.",
+      "scope": { "module": "f5", "week": "w23", "day": null },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:205:0",
+          "identitySha256": "6070f336087a69242f8ece08360c76b009fbbb8e8e9c2febf8cdc96911f5a3d8"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w23",
+          "identitySha256": "906aadc5d4494b6667b93bc3d456e40ecf44ef7acb7a234891a29443231b06ee"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ],
+      "evidenceRefs": ["p0109", "p0110", "p0111", "p1927"]
+    },
+    {
+      "candidateId": "candidate:p1927:12",
+      "key": "named-p1927-express-docs",
+      "resourceId": "se-26w-v1:named-express-docs",
+      "displayName": "Express docs",
+      "sourceId": "p1927",
+      "contentItemId": "se-26w-v1:w23",
+      "exactInstruction": "Full Stack Open Part 3, Node/Express docs as reference",
+      "sourceMappingHref": "/course/software-engineer/weeks/w23",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Node/Express docs are reference in the weekly overview. Reuse Node.js Docs once; Express has no supplied direct URL. Weekly context does not create required daily assignments.",
+      "scope": { "module": "f5", "week": "w23", "day": null },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:205:0",
+          "identitySha256": "6070f336087a69242f8ece08360c76b009fbbb8e8e9c2febf8cdc96911f5a3d8"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w23",
+          "identitySha256": "906aadc5d4494b6667b93bc3d456e40ecf44ef7acb7a234891a29443231b06ee"
+        },
+        {
+          "itemId": "se-26w-v1:f5",
+          "identitySha256": "3f47e31ec3c56c253b76ef21c04953c9825926e4cd892ae9d058709bb2d65c19"
+        }
+      ],
+      "evidenceRefs": ["p1927"]
+    },
+    {
+      "candidateId": "candidate:p1173:13",
+      "key": "named-p1173-res-04",
+      "resourceId": "se-26w-v1:res-04",
+      "displayName": "CS50 Psets",
+      "sourceId": "p1173",
+      "contentItemId": "se-26w-v1:w13",
+      "exactInstruction": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+      "sourceMappingHref": "/course/software-engineer/weeks/w13",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Weekly Psets/Practice context is reference. Reuse CS50x Problem Sets; give CS50 Practice its own derived identity and label CS50x navigation as parent-only.",
+      "scope": { "module": "f4", "week": "w13", "day": null },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:195:0",
+          "identitySha256": "7dfb2a778bd84f2e15d40703d58b699123a87a19291597fefa238974d765c7b3"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w13",
+          "identitySha256": "39e42b3cb2558602c2c74a73b1a15eddccca65a28aba47e91c4d6cc138615b15"
+        },
+        {
+          "itemId": "se-26w-v1:f4",
+          "identitySha256": "004ec8d5dffc2fa23c36b780c15e94ffd551b9399761b9a6ef4001e835e1523f"
+        }
+      ],
+      "evidenceRefs": ["p0091", "p0092", "p0093", "p1173"]
+    },
+    {
+      "candidateId": "candidate:p1173:14",
+      "key": "named-p1173-cs50-practice",
+      "resourceId": "se-26w-v1:named-cs50-practice",
+      "displayName": "CS50 Practice",
+      "sourceId": "p1173",
+      "contentItemId": "se-26w-v1:w13",
+      "exactInstruction": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+      "sourceMappingHref": "/course/software-engineer/weeks/w13",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Weekly Psets/Practice context is reference. Reuse CS50x Problem Sets; give CS50 Practice its own derived identity and label CS50x navigation as parent-only.",
+      "scope": { "module": "f4", "week": "w13", "day": null },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:195:0",
+          "identitySha256": "7dfb2a778bd84f2e15d40703d58b699123a87a19291597fefa238974d765c7b3"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w13",
+          "identitySha256": "39e42b3cb2558602c2c74a73b1a15eddccca65a28aba47e91c4d6cc138615b15"
+        },
+        {
+          "itemId": "se-26w-v1:f4",
+          "identitySha256": "004ec8d5dffc2fa23c36b780c15e94ffd551b9399761b9a6ef4001e835e1523f"
+        }
+      ],
+      "evidenceRefs": ["p0088", "p0089", "p0090", "p1173"]
+    },
+    {
+      "candidateId": "candidate:p1250:15",
+      "key": "named-p1250-cs50-practice",
+      "resourceId": "se-26w-v1:named-cs50-practice",
+      "displayName": "CS50 Practice",
+      "sourceId": "p1250",
+      "contentItemId": "se-26w-v1:w14",
+      "exactInstruction": "CS50x Week 2, CS50 Practice",
+      "sourceMappingHref": "/course/software-engineer/weeks/w14",
+      "requirementMode": "reference",
+      "choiceGroup": null,
+      "reason": "Reuse the same derived CS50 Practice identity for this second weekly context; do not create another resource or infer required practice from the overview.",
+      "scope": { "module": "f4", "week": "w14", "day": null },
+      "origins": [
+        {
+          "useId": "se-26w-v1:mention:196:0",
+          "identitySha256": "71b43f14a5c95a79bc75131874888c2db4d1b615047ec27f8e91d5946acd0002"
+        }
+      ],
+      "ancestors": [
+        {
+          "itemId": "se-26w-v1:w14",
+          "identitySha256": "e0823cb4c71a9f928b7bd90e36bd903e2b0e567ec8cbf91b1e5096858430a781"
+        },
+        {
+          "itemId": "se-26w-v1:f4",
+          "identitySha256": "004ec8d5dffc2fa23c36b780c15e94ffd551b9399761b9a6ef4001e835e1523f"
+        }
+      ],
+      "evidenceRefs": ["p0088", "p0089", "p0090", "p1250"]
+    }
+  ],
+  "evidence": [
+    {
+      "sourceId": "p0025",
+      "sha256": "7428ab08e6c10895b4ca6836a0f748b6996ee19c14a6cb1708fd4cdc210c6cea",
+      "table": 2,
+      "row": 3,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0088",
+      "sha256": "6cc4a753bc7477c21983a07fc1debbe42e94d23e69b28266a018b264b92f8424",
+      "table": 5,
+      "row": 4,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0089",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 4,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0090",
+      "sha256": "4d219e6f2b22b5511349f5aa9793847f9de29fbd329702f192cc2a358913ecfd",
+      "table": 5,
+      "row": 4,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0091",
+      "sha256": "ebd0819fb558253c27487882129ad9300d6566d0d8b979adad99d28206e89b34",
+      "table": 5,
+      "row": 5,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0092",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 5,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0093",
+      "sha256": "fa2d3fbad78aab6b6e7bb0dd5b4a22381999d720c9f614246314ad84572070dd",
+      "table": 5,
+      "row": 5,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0109",
+      "sha256": "2294d3ae3e604df3ed0b17327a0ef07d2117f5cdd44329940220b0e28db7de64",
+      "table": 5,
+      "row": 11,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0110",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 11,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0111",
+      "sha256": "cbd1d6f1563efd6bb01a4e0a221acc20d4171a9daf24fcc93a42ff76992f1014",
+      "table": 5,
+      "row": 11,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0274",
+      "sha256": "4188d4792dcaa926e02cf87461a72b834235e92abbbfcdb117cd19633e712a15",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0530",
+      "sha256": "9a65c38db2dc05b71caf4a4b727ea0e30653b07648d593f5ea7be032b2d647ba",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0917",
+      "sha256": "19bb346759bff70454571efd28d42a5f2edff9e318985fb69604de14670d5767",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1173",
+      "sha256": "ffa66e93e97ad434bbf2388ea2e1e0af04083eac0f4ba8b677943fbcce3fa32b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1250",
+      "sha256": "78ceac0a78a1a595777855ccf7bc7bd1f168e51bad29854b7eae29bf126fef16",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1629",
+      "sha256": "f28ff7559b433819468be8c1a3a8bfa935da4c36b9298d4f337fa8bda722016b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1811",
+      "sha256": "6894acfa662a37299932a7d3574d3a4580abb939ad909fafc0df3e82e632af8b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1927",
+      "sha256": "d71f0951deb3195992f8f3c89fcc11be9b807eda2f47b2a9f0c2633c3bf8dbc4",
+      "table": null,
+      "row": null,
+      "cell": null
+    }
+  ]
+}

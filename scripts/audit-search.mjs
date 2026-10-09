@@ -10,7 +10,8 @@ import { openDatabase } from '../src/server/db/connection.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const connections = process.argv[2] === '--connections';
+const mentionsRegression = process.argv[2] === '--mentions-regression';
+const connections = process.argv[2] === '--connections' || mentionsRegression;
 const projectionRegression = process.argv[2] === '--projection-regression';
 const ui = process.argv[2] === '--ui' || projectionRegression || connections;
 assert.ok(process.argv.length === 2 || (ui && process.argv.length === 3));
@@ -272,13 +273,15 @@ try {
   await writeFile(
     path.join(
       root,
-      connections
-        ? 'docs/m6-step16-search-audit.json'
-        : projectionRegression
-          ? 'docs/m6-step15-search-regression.json'
-          : ui
-            ? 'docs/m6-step7-http-audit.json'
-            : 'docs/m6-step6-http-audit.json',
+      mentionsRegression
+        ? 'docs/m6-step18-search-regression.json'
+        : connections
+          ? 'docs/m6-step16-search-audit.json'
+          : projectionRegression
+            ? 'docs/m6-step15-search-regression.json'
+            : ui
+              ? 'docs/m6-step7-http-audit.json'
+              : 'docs/m6-step6-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

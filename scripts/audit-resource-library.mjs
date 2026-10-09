@@ -11,7 +11,8 @@ import { catalogPage } from '../src/server/content/read.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-const connections = process.argv[2] === '--connections';
+const mentionsRegression = process.argv[2] === '--mentions-regression';
+const connections = process.argv[2] === '--connections' || mentionsRegression;
 const projectionRegression = process.argv[2] === '--projection-regression';
 const bindingsRegression =
   process.argv[2] === '--bindings-regression' || projectionRegression;
@@ -627,17 +628,19 @@ try {
   await writeFile(
     path.join(
       root,
-      connections
-        ? 'docs/m6-step16-http-audit.json'
-        : projectionRegression
-          ? 'docs/m6-step15-http-regression.json'
-          : bindingsRegression
-            ? 'docs/m6-step14-http-regression.json'
-            : detailUi
-              ? 'docs/m6-step13-http-audit.json'
-              : ui
-                ? 'docs/m6-step12-http-audit.json'
-                : 'docs/m6-step11-http-audit.json',
+      mentionsRegression
+        ? 'docs/m6-step18-http-regression.json'
+        : connections
+          ? 'docs/m6-step16-http-audit.json'
+          : projectionRegression
+            ? 'docs/m6-step15-http-regression.json'
+            : bindingsRegression
+              ? 'docs/m6-step14-http-regression.json'
+              : detailUi
+                ? 'docs/m6-step13-http-audit.json'
+                : ui
+                  ? 'docs/m6-step12-http-audit.json'
+                  : 'docs/m6-step11-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );
