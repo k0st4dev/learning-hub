@@ -1,0 +1,50 @@
+{
+  "prompts": [
+    {
+      "sourceId": "p0070",
+      "characters": 163,
+      "textSha256": "0eaf4001031b1823e0c49f79694fd4863c5d3dfb60e2973128e7f21ce7d5047d"
+    },
+    {
+      "sourceId": "p0071",
+      "characters": 160,
+      "textSha256": "f92e527d5f80db8e0fbe791177b04424e248556ca2d0f263b7e67246db5db326"
+    },
+    {
+      "sourceId": "p0072",
+      "characters": 169,
+      "textSha256": "bb8c517a5cfde4cf11ae8f6eebc5a270a533fbe9638b7584b555717d9c968164"
+    },
+    {
+      "sourceId": "p0073",
+      "characters": 136,
+      "textSha256": "564e6ceddeefd0fbc71561a85195cdadb73727dcd05fc50e490c1013d7f8845e"
+    },
+    {
+      "sourceId": "p0074",
+      "characters": 145,
+      "textSha256": "e10bcb950e2b100306ac98fda9b9da9683b1cf0fe7ed68d3fe718d822124a957"
+    },
+    {
+      "sourceId": "p0075",
+      "characters": 147,
+      "textSha256": "1464b7e5e1a92a115c5eb80158d45e074b00be57da6780ce2dacba0f369c74fc"
+    },
+    {
+      "sourceId": "p0076",
+      "characters": 111,
+      "textSha256": "fbd9a57ce08a1b3d03bbf899e9a7a1a11fb46f2568573bd62d4245bc03a2d2bf"
+    },
+    {
+      "sourceId": "p0077",
+      "characters": 188,
+      "textSha256": "107318b21106a8f0065cab0ebd1fee69b0968d03e1862d259a89490dd78e5e47"
+    }
+  ],
+  "completePromptCount": 8,
+  "exactProtocolBlocks": 24,
+  "exactWordAndCsv": true,
+  "prefixesAndQuotesPreserved": true,
+  "databaseAccess": false,
+  "networkAccess": false
+}

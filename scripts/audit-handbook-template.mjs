@@ -9,7 +9,11 @@ import { servedDocument } from './served-document.mjs';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
-assert.equal(process.argv.length, 2);
+assert.ok(
+  process.argv.length === 2 ||
+    (process.argv.length === 3 && process.argv[2] === '--prompts'),
+);
+const checkPrompts = process.argv[2] === '--prompts';
 const fixture = JSON.parse(
   await readFile(
     path.join(root, '.tmp/m6-scorecard-review-http-state.json'),
@@ -56,6 +60,7 @@ const route = '/course/software-engineer/guide/appendix-a';
 const source = catalog.blocks.find((block) => block.sourceLocator === 'p2228');
 assert.ok(source);
 let pages = 0;
+let promptsChecked = 0;
 const streams = { segments: 0, boundaries: 0 };
 try {
   for (const account of fixture.accounts) {
@@ -95,7 +100,11 @@ try {
       }),
     });
     assert.equal(auth.status, 200);
-    for (const url of [route, route.replace('appendix-a', 'appendix-b')]) {
+    for (const url of [
+      route,
+      route.replace('appendix-a', 'appendix-b'),
+      ...(checkPrompts ? [route.replace('appendix-a', 'ai-protocol')] : []),
+    ]) {
       const response = await request(url);
       assert.equal(response.status, 200);
       const document = servedDocument(await response.text(), streams);
@@ -129,6 +138,41 @@ try {
           ),
           ['Copy template', 'Select template'],
         );
+      } else if (url.endsWith('/ai-protocol')) {
+        assert.equal(original.blocks.length, 24);
+        assert.equal(document.querySelectorAll('[data-copy-prompt]').length, 8);
+        const ids = [...document.querySelectorAll('[id]')].map((row) => row.id);
+        assert.equal(new Set(ids).size, ids.length);
+        for (let number = 70; number <= 77; number++) {
+          const ref = 'p' + String(number).padStart(4, '0');
+          const block = original.blocks.find(
+            (row) => row.sourceLocator === ref,
+          );
+          const panel = document.querySelector(
+            '[data-copy-prompt="' + ref + '"]',
+          );
+          assert.ok(panel && block);
+          const field = panel.querySelector('textarea');
+          assert.ok(field?.readOnly);
+          assert.equal(field.value, block.exactText);
+          assert.equal(field.wrap, 'soft');
+          assert.equal(field.rows, 4);
+          assert.equal(panel.open, false);
+          assert.ok(panel.querySelector('a[href="#source-' + ref + '"]'));
+          assert.equal(
+            document.querySelector('#source-' + ref + ' > [data-source-text]')
+              ?.textContent,
+            block.exactText,
+          );
+          assert.equal(
+            panel.querySelector('[role="status"]')?.textContent,
+            'Ready to copy.',
+          );
+          assert.ok(
+            panel.textContent.includes('Daily AI restrictions take priority.'),
+          );
+          promptsChecked++;
+        }
       } else assert.equal(document.querySelector('.copyable-text'), null);
       pages++;
     }
@@ -136,6 +180,17 @@ try {
       route.replace('appendix-a', 'unknown-template'),
     );
     assert.equal(unknown.status, 404);
+    if (checkPrompts) {
+      const response = await request('/course/software-engineer/days/d001');
+      assert.equal(response.status, 200);
+      const doc = servedDocument(await response.text(), streams);
+      assert.equal(doc.querySelector('[data-copy-prompt]'), null);
+      const restriction = catalog.blocks.find(
+        (block) => block.sourceLocator === 'p0280',
+      );
+      assert.ok(doc.body.textContent.includes(restriction.exactText));
+      pages++;
+    }
   }
   assert.equal(fingerprint(), before);
   const report = {
@@ -143,6 +198,14 @@ try {
     server: 'development',
     accounts: 2,
     servedPages: pages,
+    ...(checkPrompts
+      ? {
+          promptTemplatesPerAccount: 8,
+          exactPromptControls: promptsChecked,
+          originalProtocolBlocksPerAccount: 24,
+          dailyRestrictionsPreserved: true,
+        }
+      : {}),
     sourceId: source.sourceLocator,
     exactCharacters: source.exactText.length,
     textSha256: createHash('sha256').update(source.exactText).digest('hex'),
@@ -154,7 +217,12 @@ try {
       'Focused served HTML, two-account and original source regression. Clipboard interaction is verified separately in unit tests and browser; no final acceptance claim.',
   };
   await writeFile(
-    path.join(root, 'docs/m6-step20-http-audit.json'),
+    path.join(
+      root,
+      checkPrompts
+        ? 'docs/m6-step21-http-audit.json'
+        : 'docs/m6-step20-http-audit.json',
+    ),
     JSON.stringify(report, null, 2) + '\n',
   );
   console.log(report);

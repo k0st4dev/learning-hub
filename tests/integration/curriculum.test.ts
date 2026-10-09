@@ -1,5 +1,20 @@
 // @vitest-environment jsdom
-import { beforeAll, beforeEach, afterEach, describe, expect, it } from 'vitest';
+import {
+  beforeAll,
+  beforeEach,
+  afterEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import {
+  render,
+  cleanup,
+  fireEvent,
+  act,
+  within,
+} from '@testing-library/react';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -26,7 +41,10 @@ import { courseAvailability } from '../../src/server/content/availability';
 import { register, login } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
 import { snapshot } from '../../src/server/learning/read';
-import { appendixATemplate } from '../../src/server/content/handbook-template';
+import {
+  appendixATemplate,
+  aiPromptTemplates,
+} from '../../src/server/content/handbook-template';
 import {
   courseNavigation,
   courseOutline,
@@ -47,6 +65,7 @@ beforeEach(async () => {
   store = openDatabase(path.join(directory, 'learning.sqlite'));
 });
 afterEach(async () => {
+  cleanup();
   store.native.close();
   if (
     path.dirname(directory) !== path.join(root, '.tmp') ||
@@ -56,6 +75,167 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('exposes and copies all eight whole original prompts only on the AI guide without changing either account', async () => {
+    importCurriculum(store, plan.source);
+    const accounts = [];
+    for (const email of [
+      'prompts-first@example.test',
+      'prompts-second@example.test',
+    ]) {
+      const credentials = {
+        email,
+        password: 'Local original prompt template test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      accounts.push({ token, before: snapshot(store, token) });
+    }
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const before = JSON.stringify(catalog);
+    const page = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/ai-protocol',
+    )!;
+    const prompts = aiPromptTemplates(page)!;
+    expect(prompts.map((prompt) => prompt.sourceId)).toEqual([
+      'p0070',
+      'p0071',
+      'p0072',
+      'p0073',
+      'p0074',
+      'p0075',
+      'p0076',
+      'p0077',
+    ]);
+    const html = renderToStaticMarkup(
+      createElement(CurriculumPreview, { catalog, page }),
+    );
+    const host = document.createElement('div');
+    host.innerHTML = html;
+    expect(host.querySelectorAll('[data-source-id]')).toHaveLength(24);
+    expect(host.querySelectorAll('[data-copy-prompt]')).toHaveLength(8);
+    const ids = [...host.querySelectorAll('[id]')].map((row) => row.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const block of page.blocks)
+      expect(
+        host.querySelector(
+          '[data-source-id="' + block.sourceLocator + '"] [data-source-text]',
+        )!.textContent,
+      ).toBe(block.exactText);
+    for (const prompt of prompts) {
+      const original = plan.source.source_blocks.find(
+        (block) => block.source_id === prompt.sourceId,
+      )!;
+      expect(prompt.text).toBe(original.text);
+      const panel = host.querySelector(
+        '[data-copy-prompt="' + prompt.sourceId + '"]',
+      )!;
+      expect(
+        (panel.querySelector('textarea') as HTMLTextAreaElement).value,
+      ).toBe(original.text);
+      expect(panel.querySelector('summary')!.textContent).toContain(
+        prompt.title,
+      );
+      expect(panel.querySelector('a')!.getAttribute('href')).toBe(
+        '#' + prompt.anchor,
+      );
+      expect(
+        host.querySelector('#' + prompt.anchor + ' [data-source-text]')!
+          .textContent,
+      ).toBe(original.text);
+      expect(
+        panel.parentElement!.querySelector('[data-source-text]')!.textContent,
+      ).toBe(original.text);
+      expect((panel as HTMLDetailsElement).open).toBe(false);
+    }
+    for (const invalid of [
+      {
+        ...page,
+        blocks: page.blocks.filter((block) => block.sourceLocator !== 'p0073'),
+      },
+      {
+        ...page,
+        blocks: [
+          ...page.blocks,
+          page.blocks.find((block) => block.sourceLocator === 'p0073')!,
+        ],
+      },
+    ]) {
+      expect(aiPromptTemplates(invalid)).toBeNull();
+      const fallback = document.createElement('div');
+      fallback.innerHTML = renderToStaticMarkup(
+        createElement(CurriculumPreview, { catalog, page: invalid }),
+      );
+      expect(fallback.querySelector('[data-copy-prompt]')).toBeNull();
+      expect(fallback.textContent).toContain(
+        'All available original protocol content remains below.',
+      );
+      expect(fallback.querySelector('[data-source-id="p0054"]')).not.toBeNull();
+    }
+    for (const route of [
+      '/course/software-engineer/guide/appendix-a',
+      '/course/software-engineer/days/d001',
+    ]) {
+      const otherPage = catalogPage(catalog, route)!;
+      expect(aiPromptTemplates(otherPage)).toEqual([]);
+      const other = document.createElement('div');
+      other.innerHTML = renderToStaticMarkup(
+        createElement(CurriculumPreview, { catalog, page: otherPage }),
+      );
+      expect(other.querySelector('[data-copy-prompt]')).toBeNull();
+    }
+    const previousClipboard = Object.getOwnPropertyDescriptor(
+      navigator,
+      'clipboard',
+    );
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+    try {
+      const view = render(createElement(CurriculumPreview, { catalog, page }));
+      for (const prompt of prompts) {
+        const panel = view.container.querySelector(
+          '[data-copy-prompt="' + prompt.sourceId + '"]',
+        ) as HTMLDetailsElement;
+        panel.open = true;
+        const group = within(panel);
+        await act(async () => {
+          fireEvent.click(group.getByRole('button', { name: 'Copy template' }));
+        });
+        expect(group.getByRole('status').textContent).toBe('Template copied.');
+        fireEvent.click(group.getByRole('button', { name: 'Select template' }));
+        const field = group.getByRole('textbox') as HTMLTextAreaElement;
+        expect(document.activeElement).toBe(field);
+        expect(field.selectionEnd).toBe(prompt.text.length);
+        expect(field.value).toBe(prompt.text);
+      }
+      expect(writeText.mock.calls).toEqual(
+        prompts.map((prompt) => [prompt.text]),
+      );
+    } finally {
+      if (previousClipboard)
+        Object.defineProperty(navigator, 'clipboard', previousClipboard);
+      else Reflect.deleteProperty(navigator, 'clipboard');
+    }
+    expect(JSON.stringify(catalog)).toBe(before);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(
+      aiPromptTemplates(
+        catalogPage(readCatalog(store, plan.releaseId)!, page.item.route)!,
+      ),
+    ).toEqual(prompts);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+  });
   it('copies the exact mapped Appendix A block without changing original DOM, either account or release', async () => {
     importCurriculum(store, plan.source);
     const states = [];

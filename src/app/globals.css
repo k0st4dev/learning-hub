@@ -113,6 +113,15 @@ mark {
   white-space: pre;
   overflow-wrap: normal;
 }
+.copyable-text textarea[wrap='soft'] {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.prompt-copy summary {
+  cursor: pointer;
+  padding: 10px 0;
+  min-height: 44px;
+}
 .source-paragraph p {
   margin-bottom: 8px;
 }

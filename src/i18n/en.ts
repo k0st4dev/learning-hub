@@ -1,5 +1,12 @@
 export const en = {
   handbook: {
+    promptCopy: 'Copy original prompt',
+    promptLabel: 'Original prompt · Plain text · Read-only',
+    promptSource: 'Read the original prompt',
+    promptRules:
+      'Daily AI restrictions take priority. Check the original protocol for when a prompt is allowed and when a 20/30-minute attempt is required. Copying adds no course credit.',
+    promptsUnavailable:
+      'Prompt copying is unavailable. All available original protocol content remains below.',
     title: 'Problem file template',
     original:
       'Original Markdown template from Appendix A. Copy it into your local problem file; copying adds no course credit.',

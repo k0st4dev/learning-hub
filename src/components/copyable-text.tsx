@@ -7,10 +7,12 @@ export function CopyableText({
   id,
   label,
   text,
+  format = 'markdown',
 }: {
   id: string;
   label: string;
   text: string;
+  format?: 'markdown' | 'plain-text';
 }) {
   const field = useRef<HTMLTextAreaElement>(null);
   const pending = useRef(false);
@@ -35,7 +37,7 @@ export function CopyableText({
   }
 
   return (
-    <div className="copyable-text stack">
+    <div className="copyable-text stack" role="group" aria-label={label}>
       <div className="field">
         <label htmlFor={id}>{label}</label>
         <p id={id + '-help'} className="muted">
@@ -46,8 +48,8 @@ export function CopyableText({
           id={id}
           value={text}
           readOnly
-          wrap="off"
-          rows={16}
+          wrap={format === 'plain-text' ? 'soft' : 'off'}
+          rows={format === 'plain-text' ? 4 : 16}
           lang="sr-Latn"
           spellCheck={false}
           aria-describedby={id + '-help'}

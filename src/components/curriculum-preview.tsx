@@ -9,7 +9,11 @@ import { en } from '@/i18n/en';
 import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
-import { appendixATemplate } from '@/server/content/handbook-template';
+import {
+  appendixATemplate,
+  aiPromptTemplates,
+  type SourcePrompt,
+} from '@/server/content/handbook-template';
 import { CopyableText } from './copyable-text';
 import {
   curriculumItemLabel,
@@ -20,9 +24,11 @@ const base = '/course/software-engineer';
 function SourceParagraph({
   block,
   anchors,
+  prompt,
 }: {
   block: CatalogPage['blocks'][number];
   anchors: readonly string[];
+  prompt?: SourcePrompt;
 }) {
   const links = z.array(sourceLinkSchema).parse(JSON.parse(block.linksJson));
   return (
@@ -38,6 +44,24 @@ function SourceParagraph({
       <p data-source-text lang="sr-Latn" className="source">
         {block.exactText}
       </p>
+      {prompt && (
+        <details className="prompt-copy" data-copy-prompt={prompt.sourceId}>
+          <summary>
+            {en.handbook.promptCopy} ·{' '}
+            <span lang="sr-Latn">{prompt.title}</span>
+          </summary>
+          <div className="stack">
+            <p>{en.handbook.promptRules}</p>
+            <a href={'#' + prompt.anchor}>{en.handbook.promptSource}</a>
+            <CopyableText
+              id={'prompt-' + prompt.sourceId}
+              label={prompt.title + ' · ' + en.handbook.promptLabel}
+              text={prompt.text}
+              format="plain-text"
+            />
+          </div>
+        </details>
+      )}
       {links.map((link, i) => (
         <p key={i}>
           <a
@@ -60,16 +84,25 @@ function SourceParagraph({
 export function SourceBlocks({
   blocks,
   anchors = [],
+  prompts = [],
 }: {
   blocks: CatalogPage['blocks'];
   anchors?: readonly string[];
+  prompts?: readonly SourcePrompt[];
 }) {
   const parts: React.ReactNode[] = [];
   for (let index = 0; index < blocks.length;) {
     const block = blocks[index]!;
     if (block.tableNumber === null) {
       parts.push(
-        <SourceParagraph key={block.id} block={block} anchors={anchors} />,
+        <SourceParagraph
+          key={block.id}
+          block={block}
+          anchors={anchors}
+          prompt={prompts.find(
+            (prompt) => prompt.sourceId === block.sourceLocator,
+          )}
+        />,
       );
       index++;
       continue;
@@ -149,13 +182,14 @@ export function CurriculumPreview({
 }) {
   const overview = page.item.stableKey === 'overview';
   const template = appendixATemplate(page);
-  const sourceBlocks = template
-    ? page.blocks.map((block) =>
-        block.sourceLocator === template.sourceId
-          ? { ...block, anchor: template.anchor }
-          : block,
-      )
-    : page.blocks;
+  const prompts = aiPromptTemplates(page);
+  const sourceBlocks = page.blocks.map((block) => {
+    const copy =
+      block.sourceLocator === template?.sourceId
+        ? template
+        : prompts?.find((prompt) => prompt.sourceId === block.sourceLocator);
+    return copy ? { ...block, anchor: copy.anchor } : block;
+  });
   const workspace = dayWorkspace(catalog, page.item.id);
   const navigationModel = courseNavigation(catalog);
   const roots = navigationModel.items
@@ -220,6 +254,11 @@ export function CurriculumPreview({
           )}
           {progressView}
           {learnerTool}
+          {prompts === null && (
+            <p className="notice" role="status">
+              {en.handbook.promptsUnavailable}
+            </p>
+          )}
           {template ? (
             <section
               className="card mb-8 stack"
@@ -339,7 +378,11 @@ export function CurriculumPreview({
               <SourceBlocks blocks={page.blocks} anchors={anchors} />
             </section>
           ) : (
-            <SourceBlocks blocks={sourceBlocks} anchors={anchors} />
+            <SourceBlocks
+              blocks={sourceBlocks}
+              anchors={anchors}
+              prompts={prompts ?? []}
+            />
           )}
           {studyEditor}
           {exerciseEditor ??

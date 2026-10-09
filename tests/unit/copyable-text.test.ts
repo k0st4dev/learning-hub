@@ -7,6 +7,7 @@ import {
   fireEvent,
   render,
   screen,
+  within,
 } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { CopyableText } from '../../src/components/copyable-text';
@@ -29,6 +30,67 @@ afterEach(() => {
 });
 
 describe('copyable source text', () => {
+  it('keeps independent pending, failure and copy states for multiple plain-text prompts', async () => {
+    let rejectFirst!: (error: Error) => void;
+    const writeText = vi
+      .fn()
+      .mockImplementationOnce(
+        () =>
+          new Promise<void>((_, reject) => {
+            rejectFirst = reject;
+          }),
+      )
+      .mockResolvedValue(undefined);
+    clipboard({ writeText });
+    const firstText = 'Socratic: “Učim [tema].”\n';
+    const secondText =
+      'Reviewer: “Ne prepisuj kod; <script>escaped()</script>.”';
+    render(
+      createElement(
+        'div',
+        null,
+        createElement(CopyableText, {
+          id: 'first',
+          label: 'First prompt',
+          text: firstText,
+          format: 'plain-text',
+        }),
+        createElement(CopyableText, {
+          id: 'second',
+          label: 'Second prompt',
+          text: secondText,
+          format: 'plain-text',
+        }),
+      ),
+    );
+    const first = within(screen.getByRole('group', { name: 'First prompt' }));
+    const second = within(screen.getByRole('group', { name: 'Second prompt' }));
+    const field = second.getByRole('textbox') as HTMLTextAreaElement;
+    expect(field.wrap).toBe('soft');
+    expect(field.rows).toBe(4);
+    expect(field.value).toBe(secondText);
+    expect(document.querySelector('script')).toBeNull();
+    fireEvent.click(first.getByRole('button', { name: 'Copy template' }));
+    await act(async () => {
+      fireEvent.click(second.getByRole('button', { name: 'Copy template' }));
+    });
+    expect(first.getByRole('status').textContent).toBe('Copying…');
+    expect(second.getByRole('status').textContent).toBe('Template copied.');
+    expect(writeText.mock.calls).toEqual([[firstText], [secondText]]);
+    await act(async () => {
+      rejectFirst(new Error('Permission denied'));
+    });
+    expect(first.getByRole('status').textContent).toContain(
+      'Automatic copy failed.',
+    );
+    expect(second.getByRole('status').textContent).toBe('Template copied.');
+    fireEvent.click(first.getByRole('button', { name: 'Select template' }));
+    expect(document.activeElement).toBe(first.getByRole('textbox'));
+    expect(
+      (first.getByRole('textbox') as HTMLTextAreaElement).selectionEnd,
+    ).toBe(firstText.length);
+    expect(second.getByRole('status').textContent).toBe('Template copied.');
+  });
   it('keeps exact selectable read-only text and escaped server fallback before JavaScript', () => {
     const html = renderToString(createElement(CopyableText, props));
     expect(html).not.toContain('<script>unsafe()');

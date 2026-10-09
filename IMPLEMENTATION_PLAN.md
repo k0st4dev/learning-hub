@@ -1,6 +1,6 @@
 # Programming learning platform — proposed implementation plan
 
-Status: agreed by the user on 2026-09-29. M0-M5 implemented and verified in the available local development/service scope. M6 steps 1-18 learner tools, eighteen public parent corrections and the frozen approved named-mention contract/owned candidate are verified. Thirteen mentions are approved; two ambiguous pg/sqlite entries remain deferred. Public activation of new mentions awaits step 19. Handbook tools and final MVP acceptance remain open. See PROJECT_STATUS.md and docs/M6-STEP18-VERIFICATION.md for the exact next task and release limits.
+Status: agreed by the user on 2026-09-29. M0–M5 implemented and verified in the available local development/service scope. M6 steps 1–21 learner tools, eighteen public parent corrections, thirteen approved named mentions and the Appendix A/eight prompt copy tools are verified. Public resources now total 79; two ambiguous pg/sqlite entries remain deferred. Remaining handbook navigation/checklists/workflows and final MVP acceptance remain open. See PROJECT_STATUS.md and docs/M6-STEP21-VERIFICATION.md for the exact next task and release limits.
 
 Execution preference updated by the user on 2026-10-06: prioritize desktop use. Preserve the existing responsive UI and basic mobile regression, but do not repeat extended mobile/viewport sessions at each increment. Desktop, keyboard, data integrity and required learning behavior remain primary gates. Keep approval after each focused step.
 
