@@ -74,6 +74,7 @@ export function searchSnippet(
 }
 export type SearchBreadcrumb = { title: string; href: string };
 export type SearchResult = {
+  resourceOrigin?: 'added-product-interpretation';
   id: string;
   kind: (typeof searchKinds)[number];
   title: string;
@@ -122,6 +123,7 @@ export const searchResponseSchema = z.object({
     .array(
       z.object({
         id: z.string(),
+        resourceOrigin: z.literal('added-product-interpretation').optional(),
         kind: z.enum(searchKinds),
         title: z.string(),
         href: localHref,

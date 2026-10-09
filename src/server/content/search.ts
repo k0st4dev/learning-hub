@@ -10,6 +10,7 @@ import {
 import type { Store } from '../db/connection';
 import { ownedEnrollment } from '../learning/read';
 import { AppError } from '../errors';
+import { isDerivedResourceKey } from './resource-mentions';
 import {
   ensureSearchIndex,
   searchIndexTable,
@@ -29,7 +30,7 @@ export function searchCurriculum(
   token: string | undefined,
   input: unknown,
   expectedStudentId?: string,
-  projection: ResourceProjection = 'reviewed-bindings',
+  projection: ResourceProjection = 'reviewed-mentions',
 ): SearchResponse {
   const enrollment = ownedEnrollment(store, token);
   if (!enrollment)
@@ -155,6 +156,14 @@ export function searchCurriculum(
           breadcrumbs: JSON.parse(
             row.breadcrumbs,
           ) as SearchResult['breadcrumbs'],
+          ...(projection === 'reviewed-mentions' &&
+          row.kind === 'resource' &&
+          isDerivedResourceKey(
+            enrollment.releaseId,
+            row.href.slice('/resources/'.length),
+          )
+            ? { resourceOrigin: 'added-product-interpretation' as const }
+            : {}),
         })),
       };
     })

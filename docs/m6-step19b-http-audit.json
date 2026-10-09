@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-09T07:48:31.788Z",
+  "server": "development",
+  "accounts": 2,
+  "resourcesPerAccount": 79,
+  "originalResources": 69,
+  "originalUses": 290,
+  "derivedResources": 10,
+  "derivedMentions": 13,
+  "detailPages": 158,
+  "libraryPages": 8,
+  "originalAssignments": 580,
+  "originalOrigins": 580,
+  "namedDetailEdges": 26,
+  "namedContextEdges": 26,
+  "sourceMappings": 386,
+  "searchTargets": 24,
+  "streams": {
+    "segments": 2300,
+    "boundaries": 206
+  },
+  "allDurableLearnerPrivateAndContentRecordsUnchanged": true,
+  "ownershipFiltersErrorsAndSameFileReopen": "passed",
+  "scope": "Real HTTP and served source/derived views only. No browser interaction, external availability, production performance or final acceptance claim."
+}

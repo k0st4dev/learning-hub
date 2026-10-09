@@ -228,7 +228,7 @@ describe('owned complete curriculum search', () => {
   it('ranks exact/prefix titles before title tokens and bodies with stable source ordering and pagination', () => {
     // Synthetic derived rows isolate all four ranking tiers without editing the published curriculum.
     const insert = store.native.prepare(
-      'INSERT INTO temp.curriculum_search_bindings VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO temp.curriculum_search_mentions VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     );
     const rows = [
       ['z-exact', 'rankingneedle', 9, 'rankingneedle', ''],
@@ -240,7 +240,7 @@ describe('owned complete curriculum search', () => {
     ] as const;
     const originals = store.native
       .prepare(
-        'SELECT * FROM temp.curriculum_search_bindings WHERE release_id=? AND kind=? ORDER BY id LIMIT ?',
+        'SELECT * FROM temp.curriculum_search_mentions WHERE release_id=? AND kind=? ORDER BY id LIMIT ?',
       )
       .all(plan.releaseId, 'guide', rows.length) as Record<
       string,
@@ -250,7 +250,7 @@ describe('owned complete curriculum search', () => {
     for (const row of originals)
       store.native
         .prepare(
-          'DELETE FROM temp.curriculum_search_bindings WHERE release_id=? AND id=?',
+          'DELETE FROM temp.curriculum_search_mentions WHERE release_id=? AND id=?',
         )
         .run(plan.releaseId, row.id!);
     for (const [id, title, order, normalized, body] of rows)
@@ -264,6 +264,7 @@ describe('owned complete curriculum search', () => {
         normalized + '\n' + body,
         '/course/software-engineer',
         order,
+        '[]',
         '[]',
         '[]',
         '[]',
@@ -285,7 +286,7 @@ describe('owned complete curriculum search', () => {
     } finally {
       store.native
         .prepare(
-          "DELETE FROM temp.curriculum_search_bindings WHERE id IN ('z-exact','b-prefix','a-title','c-body','d-body','e-body')",
+          "DELETE FROM temp.curriculum_search_mentions WHERE id IN ('z-exact','b-prefix','a-title','c-body','d-body','e-body')",
         )
         .run();
       for (const row of originals) insert.run(...Object.values(row));
@@ -342,7 +343,7 @@ describe('owned complete curriculum search', () => {
       expect(
         connection.native
           .prepare(
-            "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_bindings'",
+            "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_mentions'",
           )
           .get(),
       ).toBeUndefined();
@@ -484,7 +485,7 @@ describe('owned complete curriculum search', () => {
     expect(
       store.native
         .prepare(
-          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_bindings'",
+          "SELECT name FROM sqlite_temp_master WHERE name='curriculum_search_mentions'",
         )
         .get(),
     ).toBeUndefined();

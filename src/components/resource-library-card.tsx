@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ResourceConnection } from './resource-connection';
+import { ResourceNamedMention } from './resource-named-mention';
 import { isHistoricalBindingCaveat } from '@/domain/resource-binding-view';
 import type { ResourceLibraryView } from '@/domain/resource-library-view';
 import {
@@ -36,10 +37,33 @@ export function ResourceLibraryCard({
         <strong>{resourceTypeLabels[resource.effective.type]}</strong> ·{' '}
         {resource.effective.provider ?? 'Provider not specified in manual'}
       </p>
-      {!detail && (
+      {resource.recordOrigin === 'added-product-interpretation' && (
+        <p>
+          Added resource entry and title, based on the original named reference.
+        </p>
+      )}
+      {!detail && resource.descriptionMarkdown && (
         <p className="source" lang="sr-Latn">
           {resource.descriptionMarkdown}
         </p>
+      )}
+      {resource.parent && resource.parent.href !== resource.href && (
+        <div className="stack">
+          <p>
+            The manual supplies a parent URL; no direct section link is
+            supplied.
+          </p>
+          <Link prefetch={false} href={resource.parent.href}>
+            Parent resource: {resource.parent.title}
+          </Link>
+          <a
+            href={resource.parent.originalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Open parent {resource.parent.title} (new tab)
+          </a>
+        </div>
       )}
       {resource.originalUrl ? (
         <a
@@ -118,10 +142,17 @@ export function ResourceLibraryCard({
       )}
       <details>
         <summary>Original metadata and added labels</summary>
-        <p>
-          Imported source name: {resource.sourceName}. Imported type label:{' '}
-          {resource.type}. Link origin: {resource.linkOrigin}.
-        </p>
+        {resource.recordOrigin === 'added-product-interpretation' ? (
+          <p>
+            This is an added resource interpretation. Original instructions and
+            associations are shown in Named references below.
+          </p>
+        ) : (
+          <p>
+            Imported source name: {resource.sourceName}. Imported type label:{' '}
+            {resource.type}. Link origin: {resource.linkOrigin}.
+          </p>
+        )}
         <p>
           {resource.interpretation.origin === 'added-product-interpretation'
             ? 'Type, provider and assignment labels are added product interpretations; original wording is preserved.'
@@ -153,6 +184,20 @@ export function ResourceLibraryCard({
           </blockquote>
         ))}
       </details>
+      {!!resource.derivedMentions?.length && (
+        <section className="stack" aria-label="Named references">
+          <h4>Named references ({resource.derivedMentions.length})</h4>
+          {resource.derivedMentions.map((mention) => (
+            <ResourceNamedMention
+              key={mention.key}
+              mention={mention}
+              matching={
+                !detail && !!resource.matchingMentionKeys?.includes(mention.key)
+              }
+            />
+          ))}
+        </section>
+      )}
       <details>
         <summary>
           Current assignments and source evidence ({resource.uses.length})
@@ -217,7 +262,7 @@ export function ResourceLibraryCard({
             </li>
           ))}
         </ul>
-        {!resource.uses.length && (
+        {!resource.uses.length && !resource.derivedMentions?.length && (
           <p>No assigned lesson context in this release.</p>
         )}
       </details>

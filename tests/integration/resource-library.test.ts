@@ -6,6 +6,13 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { FullCurriculumPage } from '../../src/components/full-curriculum-page';
 import { ResourceCards } from '../../src/components/resource-cards';
 import { ResourceDetailView } from '../../src/components/resource-detail-view';
+import {
+  readResourceLibrary as publicLibrary,
+  readResourceDetail as publicDetail,
+} from '../../src/server/content/public-resources';
+import { resourceMentionPresentation } from '../../src/server/content/resource-mentions';
+import { resourceLibraryViewSchema } from '../../src/domain/resource-library-view';
+import { courseAvailability } from '../../src/server/content/availability';
 import { resourceDetailViewSchema } from '../../src/domain/resource-library-view';
 import * as contentRead from '../../src/server/content/read';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
@@ -2083,6 +2090,224 @@ describe('owned resource library read model', () => {
       },
     ];
     for (const mutate of mutations) {
+      const copy = structuredClone(data);
+      mutate(copy);
+      expect(resourceDetailViewSchema.safeParse(copy).success).toBe(false);
+    }
+  });
+});
+
+describe('active named-resource presentation', () => {
+  it('serves all 79 validated resource identities, preserves 69/290 originals and marks Search provenance', () => {
+    const before = fingerprint();
+    const resources = [1, 2, 3, 4].flatMap((page) => {
+      const data = publicLibrary(store, token, { page });
+      expect(resourceLibraryViewSchema.safeParse(data).success).toBe(true);
+      expect(data.inventory).toEqual({
+        originalResources: 69,
+        derivedResources: 10,
+        originalUses: 290,
+        derivedMentions: 13,
+      });
+      return data.results;
+    });
+    expect(resources).toHaveLength(79);
+    expect(new Set(resources.map((row) => row.id)).size).toBe(79);
+    expect(resources.flatMap((row) => row.uses)).toHaveLength(290);
+    expect(resources.flatMap((row) => row.originalUses)).toHaveLength(290);
+    expect(resources.flatMap((row) => row.derivedMentions)).toHaveLength(13);
+    for (const resource of resources) {
+      const data = publicDetail(store, token, resource.stableKey);
+      expect(courseAvailability(store, token, resource.href)).toBeNull();
+      expect(resourceDetailViewSchema.safeParse(data).success).toBe(true);
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(ResourceDetailView, {
+            data,
+            releaseId: data.releaseId,
+          }),
+        ),
+        'text/html',
+      );
+      for (const mention of resource.derivedMentions) {
+        const panel = doc.querySelector(
+          '[data-resource-mention="' + mention.key + '"]',
+        )!;
+        expect(panel.textContent).toContain(mention.exactInstruction);
+        expect(panel.querySelector('a')!.getAttribute('href')).toBe(
+          mention.sourceMappingHref,
+        );
+        for (const proof of mention.evidence)
+          expect(panel.textContent).toContain(proof.exactText);
+      }
+      if (resource.recordOrigin === 'added-product-interpretation') {
+        expect(doc.body.textContent).not.toContain('Imported type label');
+        expect(doc.body.textContent).toContain(
+          'No direct link supplied in the manual',
+        );
+        expect(resource.originalUrl).toBeNull();
+        expect(resource.uses).toEqual([]);
+        expect(resource.originalUses).toEqual([]);
+        const first = resource.derivedMentions[0]!;
+        const search = searchCurriculum(store, token, {
+          q: resource.title,
+          kind: ['resource'],
+          week: [first.scope.week!],
+        });
+        expect(
+          search.results.find((row) => row.id === resource.id),
+        ).toMatchObject({
+          href: resource.href,
+          resourceOrigin: 'added-product-interpretation',
+        });
+      }
+    }
+    const practice = publicDetail(store, token, 'named-cs50-practice').resource;
+    expect(practice.derivedMentions).toHaveLength(2);
+    expect(practice.parent!.href).toBe('/resources/res-03');
+    expect(practice.originalUrl).toBeNull();
+    expect(practice.relatedDays).toEqual([]);
+    for (const path of [
+      '/resources/named-unknown',
+      '/resources/named-git/extra',
+      '/resources/named-pg-library-docs',
+    ])
+      expect(courseAvailability(store, token, path)).toBe('missing');
+    expect(
+      publicLibrary(store, token, {
+        day: ['d025'],
+        requirement: ['conditional'],
+      })
+        .results.map((row) => row.stableKey)
+        .sort(),
+    ).toEqual(['named-jest-getting-started', 'res-01']);
+    expect(
+      publicLibrary(store, token, {
+        day: ['d155'],
+        type: ['documentation'],
+        q: 'Express',
+      }).results.some((row) => row.stableKey === 'named-express-docs'),
+    ).toBe(false);
+    expect(fingerprint()).toBe(before);
+  });
+  it('renders all thirteen mentions in eight actual contexts, retaining exact original cards and parent links', () => {
+    const before = fingerprint();
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const named = resourceMentionPresentation(catalog);
+    const contexts = [
+      ...new Set(named.mentions.map((row) => row.contentItemId)),
+    ];
+    expect(contexts).toHaveLength(8);
+    const keys: string[] = [];
+    for (const id of contexts) {
+      const uses = catalog.uses.filter((row) => row.contentItemId === id);
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(createElement(ResourceCards, { catalog, uses })),
+        'text/html',
+      );
+      for (const use of uses)
+        expect(
+          doc.querySelector(
+            '[data-learning-resource-use="' + use.id + '"] p.source',
+          )!.textContent,
+        ).toBe(use.assignedText);
+      for (const mention of named.mentions.filter(
+        (row) => row.contentItemId === id,
+      )) {
+        const article = doc.querySelector(
+          '[data-learning-resource-mention="' + mention.key + '"]',
+        )!;
+        expect(article.textContent).toContain(mention.exactInstruction);
+        expect(article.querySelector('h3 a')!.getAttribute('href')).toBe(
+          '/resources/' +
+            named.resources.find((row) => row.id === mention.resourceId)!
+              .stableKey,
+        );
+        expect(
+          article
+            .querySelector('[data-resource-mention] a')!
+            .getAttribute('href'),
+        ).toBe(mention.sourceMappingHref);
+        keys.push(mention.key);
+      }
+      for (const anchor of doc.querySelectorAll('a[target="_blank"]')) {
+        expect(
+          catalog.resources.some(
+            (row) => row.originalUrl === anchor.getAttribute('href'),
+          ),
+        ).toBe(true);
+        expect(anchor.getAttribute('rel')).toBe('noopener noreferrer');
+      }
+    }
+    expect(new Set(keys).size).toBe(13);
+    expect(fingerprint()).toBe(before);
+  });
+  it('keeps original daily content and retry while named-source validation fails, then recovers', () => {
+    const before = fingerprint();
+    const catalog = readCatalog(store, 'se-26w-v1')!;
+    const broken = structuredClone(catalog);
+    broken.blocks.find((row) => row.sourceLocator === 'p0274')!.exactText +=
+      ' drift';
+    const uses = catalog.uses.filter(
+      (row) => row.contentItemId === 'se-26w-v1:d001-learn',
+    );
+    const doc = new DOMParser().parseFromString(
+      renderToStaticMarkup(
+        createElement(ResourceCards, {
+          catalog: broken,
+          uses,
+          retryHref: '/course/software-engineer/days/d001',
+        }),
+      ),
+      'text/html',
+    );
+    expect(doc.querySelector('[role=alert]')!.textContent).toContain(
+      'Original instructions and links',
+    );
+    expect(
+      doc.querySelector('a[href="/course/software-engineer/days/d001"]'),
+    ).not.toBeNull();
+    expect(doc.querySelector('[data-learning-resource-mention]')).toBeNull();
+    for (const use of uses)
+      expect(doc.body.textContent).toContain(use.assignedText);
+    const spy = vi.spyOn(contentRead, 'readCatalog').mockReturnValue(broken);
+    try {
+      expect(() => publicLibrary(store, token, {})).toThrowError(
+        expect.objectContaining({ status: 503 }),
+      );
+      expect(() =>
+        courseAvailability(store, token, '/resources/named-git'),
+      ).toThrowError(expect.objectContaining({ status: 503 }));
+    } finally {
+      spy.mockRestore();
+    }
+    expect(publicLibrary(store, token, {}).total).toBe(79);
+    expect(fingerprint()).toBe(before);
+  });
+  it('rejects forged derived identities, direct URLs, duplicate mentions and unsafe origin navigation', () => {
+    const data = publicDetail(store, token, 'named-cs50-practice');
+    const cases = [
+      (copy: typeof data) => {
+        copy.resource.originalUrl = 'https://example.test/guessed';
+      },
+      (copy: typeof data) => {
+        copy.resource.derivedMentions[0]!.resourceId = 'foreign';
+      },
+      (copy: typeof data) => {
+        copy.resource.derivedMentions.push(copy.resource.derivedMentions[0]!);
+      },
+      (copy: typeof data) => {
+        copy.resource.derivedMentions[0]!.originReferences[0]!.href =
+          'javascript:alert(1)';
+      },
+      (copy: typeof data) => {
+        copy.resource.parent!.originalUrl = 'javascript:alert(1)';
+      },
+      (copy: typeof data) => {
+        copy.resource.matchingMentionKeys.push('foreign');
+      },
+    ];
+    for (const mutate of cases) {
       const copy = structuredClone(data);
       mutate(copy);
       expect(resourceDetailViewSchema.safeParse(copy).success).toBe(false);

@@ -518,6 +518,13 @@ export function CurriculumSearch({
                           />
                         </Link>
                       </h3>
+                      {row.resourceOrigin ===
+                        'added-product-interpretation' && (
+                        <p>
+                          Added resource entry and title; the snippet preserves
+                          the original instruction.
+                        </p>
+                      )}
                       <nav
                         aria-label={'Location for result ' + rank}
                         className="search-breadcrumbs"

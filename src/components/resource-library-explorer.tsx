@@ -260,6 +260,14 @@ export function ResourceLibraryExplorer({
         connections preserve the original resource records and assignment
         wording.
       </p>
+      {state.data?.inventory && (
+        <p>
+          {state.data.inventory.originalResources} original resources ·{' '}
+          {state.data.inventory.derivedResources} added resource entries ·{' '}
+          {state.data.inventory.derivedMentions} named references. Original
+          assignments and named references are kept separate.
+        </p>
+      )}
       <form
         action="/resources"
         method="get"
@@ -275,7 +283,7 @@ export function ResourceLibraryExplorer({
           );
         }}
       >
-        <label htmlFor="resource-query">Search original resources</label>
+        <label htmlFor="resource-query">Search resources</label>
         <div className="search-query-row">
           <input
             id="resource-query"
@@ -526,7 +534,7 @@ export function ResourceLibraryExplorer({
         {state.data && state.data.total > 0 && (
           <>
             <p className="muted">
-              Sorted by original title. Added labels are explained under each
+              Sorted by title. Added entries and labels are explained under each
               resource; exact original assignments remain accessible.
             </p>
             <ol className="search-result-list">

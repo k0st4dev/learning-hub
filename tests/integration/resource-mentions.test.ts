@@ -513,7 +513,7 @@ describe('frozen approved named-resource candidate', () => {
     }
     expect(fingerprint()).toBe(before);
   });
-  it('preserves public library/detail/Search while candidate reads, no-op reseed and file reopen retain the same results', () => {
+  it('preserves original library/detail and active Search while projection reads, reseed and reopen retain results', () => {
     const before = fingerprint();
     const library = readResourceLibrary(store, token, {});
     const search = searchCurriculum(store, token, {
@@ -527,7 +527,7 @@ describe('frozen approved named-resource candidate', () => {
     ).toThrowError(expect.objectContaining({ status: 404 }));
     expect(
       search.results.some((row) => row.id.endsWith(':named-express-docs')),
-    ).toBe(false);
+    ).toBe(true);
     importCurriculum(store, plan.source);
     expect(readResourceMentionProjection(store, other)).toEqual(projection);
     expect(readResourceLibrary(store, other, {})).toEqual(library);

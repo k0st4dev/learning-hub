@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resourceQueryInput } from '@/domain/resource-library';
-import { readResourceLibrary } from '@/server/content/resource-library';
+import { readResourceLibrary } from '@/server/content/public-resources';
 import { getStore } from '@/server/db/current';
 import { sessionCookieName } from '@/server/auth/service';
 import { endpoint, guardRequest } from '@/server/http';

@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import {
+  resourceMentionViewSchema,
+  resourceParentViewSchema,
+} from './resource-mention-view';
+import {
   resourceBindingViewSchema,
   resourceEvidenceSchema,
 } from './resource-binding-view';
@@ -74,6 +78,14 @@ export const resourceLibraryViewSchema = z.object({
   query: resourceQuerySchema,
   pageSize: z.literal(25),
   total: z.number().int().nonnegative(),
+  inventory: z
+    .object({
+      originalResources: z.number().int().nonnegative(),
+      derivedResources: z.number().int().nonnegative(),
+      originalUses: z.number().int().nonnegative(),
+      derivedMentions: z.number().int().nonnegative(),
+    })
+    .optional(),
   options: z.object({
     source: z.array(option),
     module: z.array(option),
@@ -115,6 +127,12 @@ export const resourceLibraryViewSchema = z.object({
               dayNumber: z.number(),
             }),
           ),
+          recordOrigin: z
+            .enum(['imported-resource', 'added-product-interpretation'])
+            .optional(),
+          parent: resourceParentViewSchema.nullable().optional(),
+          derivedMentions: z.array(resourceMentionViewSchema).optional(),
+          matchingMentionKeys: z.array(z.string()).optional(),
         })
         .refine(
           (resource) =>
@@ -136,7 +154,21 @@ export const resourceLibraryViewSchema = z.object({
               resource.originalUses.length &&
             resource.matchingUseIds.every((id) =>
               resource.uses.some((use) => use.id === id),
-            ),
+            ) &&
+            (resource.derivedMentions ?? []).every(
+              (row) => row.resourceId === resource.id,
+            ) &&
+            new Set((resource.derivedMentions ?? []).map((row) => row.key))
+              .size === (resource.derivedMentions ?? []).length &&
+            (resource.matchingMentionKeys ?? []).every((key) =>
+              (resource.derivedMentions ?? []).some((row) => row.key === key),
+            ) &&
+            (resource.recordOrigin !== 'added-product-interpretation' ||
+              (resource.uses.length === 0 &&
+                resource.originalUses.length === 0 &&
+                resource.originalUrl === null &&
+                resource.resolvedUrl === null &&
+                (resource.derivedMentions ?? []).length > 0)),
           'Resource assignment grouping disagrees',
         ),
     )

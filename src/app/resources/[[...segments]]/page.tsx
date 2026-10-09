@@ -13,7 +13,11 @@ import {
 import {
   readResourceLibrary,
   readResourceDetail,
-} from '@/server/content/resource-library';
+} from '@/server/content/public-resources';
+import {
+  isDerivedResourceKey,
+  resourceMentionPresentation,
+} from '@/server/content/resource-mentions';
 import { getStore } from '@/server/db/current';
 import { AppError } from '@/server/errors';
 export default async function Resources({
@@ -39,12 +43,23 @@ export default async function Resources({
     route + (queryParams.size ? '?' + queryParams : ''),
   );
   const input = resourceQueryInput(queryParams);
+  const derived =
+    segments.length === 1 &&
+    isDerivedResourceKey(catalog.release.id, segments[0]!);
+  const named = derived ? resourceMentionPresentation(catalog) : null;
+  const namedDefinition = named?.resources.find(
+    (row) => row.stableKey === segments[0],
+  );
   let initialData: ReturnType<typeof readResourceLibrary> | null = null;
   let detailData: ReturnType<typeof readResourceDetail> | null = null;
   let initialError: { status: number; message: string } | undefined;
   if (segments.length) {
     if (
-      !catalog.resources.some((row) => '/resources/' + row.stableKey === route)
+      segments.length !== 1 ||
+      (!derived &&
+        !catalog.resources.some(
+          (row) => '/resources/' + row.stableKey === route,
+        ))
     )
       notFound();
     try {
@@ -78,65 +93,119 @@ export default async function Resources({
       showFixtureNotice={false}
     >
       {!segments.length && <SearchEntry />}
-      <FullCurriculumPage
-        catalog={catalog}
-        route={route}
-        learnerTool={
-          !segments.length ? (
-            <>
-              {initialError?.status === 404 ? (
-                <div className="notice stack">
-                  <p>Start the course to filter your enrolled resources.</p>
-                  <Link href="/course/software-engineer">Start the course</Link>
-                </div>
-              ) : (
-                <ResourceLibraryExplorer
-                  key={student.id}
-                  studentId={student.id}
-                  releaseId={catalog.release.id}
-                  initialInput={input}
-                  initialData={initialData}
-                  initialError={initialError}
-                />
-              )}
-              <h2 id="original-resource-manual" tabIndex={-1}>
-                Original resource manual
-              </h2>
-            </>
-          ) : detailData ? (
+      {derived && namedDefinition ? (
+        <>
+          <Link href="/resources">Resources</Link>
+          <h1>{namedDefinition.title}</h1>
+          <p>
+            This resource entry and title are added interpretations. The
+            original named instructions are preserved below.
+          </p>
+          {detailData ? (
             <ResourceDetailView
               data={detailData}
               releaseId={catalog.release.id}
             />
           ) : (
-            <section
-              className="section notice stack"
-              aria-labelledby="resource-detail-labels"
-            >
-              <h2 id="resource-detail-labels">
-                Resource labels and source evidence
-              </h2>
+            <section className="notice stack">
               {initialError?.status === 404 ? (
                 <>
                   <p>
-                    Start the course to see labels for your enrolled resources.
-                    Original instructions remain below.
+                    Start the course to browse your enrolled resource labels and
+                    evidence.
                   </p>
                   <Link href="/course/software-engineer">Start the course</Link>
                 </>
               ) : (
                 <>
                   <p role="alert">
-                    Resource labels are unavailable. Original instructions
-                    remain below; added labels are not shown.
+                    Named resource labels are unavailable. Original instructions
+                    remain below.
                   </p>
-                  <a href={route}>Retry resource labels</a>
+                  <a href={route}>Retry named resources</a>
                 </>
               )}
+              <h2>Original named instructions</h2>
+              {named!.mentions
+                .filter((row) => row.resourceId === namedDefinition.id)
+                .map((row) => (
+                  <div key={row.key}>
+                    <Link href={row.sourceMappingHref}>
+                      Original source context
+                    </Link>
+                    <p className="source" lang="sr-Latn">
+                      {row.exactInstruction}
+                    </p>
+                  </div>
+                ))}
             </section>
-          )
-        }
-      />
+          )}
+        </>
+      ) : (
+        <FullCurriculumPage
+          catalog={catalog}
+          route={route}
+          learnerTool={
+            !segments.length ? (
+              <>
+                {initialError?.status === 404 ? (
+                  <div className="notice stack">
+                    <p>Start the course to filter your enrolled resources.</p>
+                    <Link href="/course/software-engineer">
+                      Start the course
+                    </Link>
+                  </div>
+                ) : (
+                  <ResourceLibraryExplorer
+                    key={student.id}
+                    studentId={student.id}
+                    releaseId={catalog.release.id}
+                    initialInput={input}
+                    initialData={initialData}
+                    initialError={initialError}
+                  />
+                )}
+                <h2 id="original-resource-manual" tabIndex={-1}>
+                  Original resource manual
+                </h2>
+              </>
+            ) : detailData ? (
+              <ResourceDetailView
+                data={detailData}
+                releaseId={catalog.release.id}
+              />
+            ) : (
+              <section
+                className="section notice stack"
+                aria-labelledby="resource-detail-labels"
+              >
+                <h2 id="resource-detail-labels">
+                  Resource labels and source evidence
+                </h2>
+                {initialError?.status === 404 ? (
+                  <>
+                    <p>
+                      Start the course to see labels for your enrolled
+                      resources. Original instructions remain below.
+                    </p>
+                    <Link href="/course/software-engineer">
+                      Start the course
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <p role="alert">
+                      Resource labels are unavailable. Original instructions
+                      remain below; added labels are not shown.
+                    </p>
+                    <a href={route}>Retry resource labels</a>
+                  </>
+                )}
+              </section>
+            )
+          }
+        />
+      )}
     </StudentShell>
   );
 }

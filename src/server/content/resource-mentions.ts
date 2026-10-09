@@ -25,6 +25,14 @@ import { courseNavigation } from './navigation.ts';
 
 export const resourceMentionSha256 =
   '5ec53b8b5b532cf0c7295692a1ebe1d88af157e87eb5fdf8325b71615f98d779';
+export function isDerivedResourceKey(releaseId: string, key: string) {
+  return (
+    releaseId === resourceLabelRelease &&
+    frozen.resources.some(
+      (row) => row.action === 'derived-resource' && row.stableKey === key,
+    )
+  );
+}
 function unavailable(): never {
   throw new AppError(
     503,

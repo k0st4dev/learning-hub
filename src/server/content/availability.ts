@@ -4,6 +4,11 @@ import { currentUser } from '../auth/service';
 import { latestRelease, ownedEnrollment, coursePath } from '../learning/read';
 import * as s from '../db/schema';
 import { AppError } from '../errors';
+import {
+  isDerivedResourceKey,
+  resourceMentionPresentation,
+} from './resource-mentions';
+import { readCatalog } from './read';
 
 export type CourseIssue = 'missing' | 'setup' | 'unpublished' | 'unavailable';
 export function isCourseRoute(path: string) {
@@ -69,7 +74,17 @@ export function courseAvailability(
           ),
         )
         .get();
-  return exists ? null : 'missing';
+  if (exists) return null;
+  if (
+    path.startsWith('/resources/') &&
+    isDerivedResourceKey(release.id, path.slice('/resources/'.length))
+  ) {
+    const catalog = readCatalog(store, release.id);
+    if (!catalog) return 'unavailable';
+    resourceMentionPresentation(catalog);
+    return null;
+  }
+  return 'missing';
 }
 export function availabilityFailure(error: unknown): CourseIssue {
   return error instanceof AppError && error.code === 'SETUP_REQUIRED'

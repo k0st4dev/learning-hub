@@ -13,7 +13,7 @@ import { catalogScopeOptions } from './scope-options.ts';
 import { AppError } from '../errors.ts';
 
 const compare = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
-// Internal owned candidate only; public routes and Search remain on reviewed bindings.
+// Owned release projection, retaining source records separately from added mentions.
 function ownedProjection(
   store: Store,
   token: string | undefined,
@@ -136,6 +136,7 @@ export function readResourceMentionLibrary(
       const text = normalizeSearch(
         [
           resource.title,
+          resource.originalResource?.sourceName ?? '',
           resource.originalResource?.descriptionMarkdown ?? '',
           resource.originalResource?.originalUrl ?? '',
           ...resource.uses.map((use) => use.assignedText),
@@ -164,6 +165,17 @@ export function readResourceMentionLibrary(
       results: results.slice((query.page - 1) * 25, query.page * 25),
       options: data.options,
       metadataMentionInterpretation: data.metadataMentionInterpretation,
+      metadataBindingInterpretation: data.metadataBindingInterpretation,
+      inventory: {
+        originalResources: data.resources.filter(
+          (row) => row.origin === 'imported-resource',
+        ).length,
+        derivedResources: data.resources.filter(
+          (row) => row.origin === 'added-product-interpretation',
+        ).length,
+        originalUses: data.originalUses.length,
+        derivedMentions: data.derivedMentions.length,
+      },
     };
   })();
 }

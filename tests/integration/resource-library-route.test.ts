@@ -23,7 +23,7 @@ import { resourceProviderKey } from '../../src/domain/resource-library';
 import {
   readResourceLibrary,
   type ResourceLibrary,
-} from '../../src/server/content/resource-library';
+} from '../../src/server/content/public-resources';
 import * as contentRead from '../../src/server/content/read';
 import { resourceLibraryViewSchema } from '../../src/domain/resource-library-view';
 
@@ -161,11 +161,11 @@ describe('protected resource library route with real SQLite', () => {
   it('returns the complete paginated original inventory with effective labels and source evidence', async () => {
     const before = fingerprint();
     const all: ResourceLibrary['results'] = [];
-    for (const page of [1, 2, 3]) {
+    for (const page of [1, 2, 3, 4]) {
       const result = await read('page=' + page);
       expect(result).toEqual(readResourceLibrary(store, token, { page }));
       expect(resourceLibraryViewSchema.safeParse(result).success).toBe(true);
-      expect(result.results).toHaveLength(page === 3 ? 19 : 25);
+      expect(result.results).toHaveLength(page === 4 ? 4 : 25);
       expect(result.metadataInterpretation.origin).toBe(
         'added-product-interpretation',
       );
@@ -175,9 +175,22 @@ describe('protected resource library route with real SQLite', () => {
       });
       all.push(...result.results);
     }
-    expect(all).toHaveLength(69);
-    expect(new Set(all.map((row) => row.id)).size).toBe(69);
-    expect(all.filter((row) => row.originalUrl === null)).toHaveLength(57);
+    expect(all).toHaveLength(79);
+    expect(new Set(all.map((row) => row.id)).size).toBe(79);
+    expect(all.filter((row) => row.originalUrl === null)).toHaveLength(67);
+    expect(
+      all.filter((row) => row.recordOrigin === 'imported-resource'),
+    ).toHaveLength(69);
+    expect(
+      all.filter((row) => row.recordOrigin === 'added-product-interpretation'),
+    ).toHaveLength(10);
+    expect(all.flatMap((row) => row.derivedMentions)).toHaveLength(13);
+    expect((await read()).inventory).toEqual({
+      originalResources: 69,
+      derivedResources: 10,
+      originalUses: 290,
+      derivedMentions: 13,
+    });
     for (const original of plan.resources)
       expect(all.find((row) => row.id === original.id)).toMatchObject(original);
     const uses = all.flatMap((row) => row.uses);
@@ -207,10 +220,13 @@ describe('protected resource library route with real SQLite', () => {
         'day=d113&requirement=required&requirement=optional',
         ['res-02', 'res-03'],
       ],
-      ['day=d025&requirement=conditional', ['res-01']],
+      [
+        'day=d025&requirement=conditional',
+        ['named-jest-getting-started', 'res-01'],
+      ],
       ['day=d025&requirement=required', []],
       ['day=d127&requirement=required', ['res-03']],
-      ['day=d127&requirement=reference', ['res-12']],
+      ['day=d127&requirement=reference', ['named-sqlite-docs', 'res-12']],
       ['day=d146&requirement=conditional', ['res-05', 'res-09']],
       ['day=d182&requirement=required', []],
       ['day=d001&week=w26', []],
@@ -381,7 +397,7 @@ describe('protected resource library route with real SQLite', () => {
     } finally {
       spy.mockRestore();
     }
-    expect((await read()).total).toBe(69);
+    expect((await read()).total).toBe(79);
     expect(fingerprint()).toBe(before);
   });
   it('survives database restart and reports failure without losing existing progress', async () => {

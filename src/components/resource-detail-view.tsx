@@ -24,7 +24,8 @@ export function ResourceDetailView({
         manual. Assignment labels depend on the exact lesson and add no course
         credit. Open the assignments below to see each label and its source
         evidence. Reviewed connections are shown separately; the original
-        imported context list remains below.
+        imported contexts remain available on original resource pages. Named
+        references are added interpretations with full original instructions.
       </p>
       <ResourceLibraryCard resource={detail.resource} detail />
     </section>

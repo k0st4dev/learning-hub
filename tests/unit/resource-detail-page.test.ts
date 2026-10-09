@@ -11,6 +11,7 @@ const mocks = vi.hoisted(() => ({
   page: vi.fn(),
   detail: vi.fn(),
   library: vi.fn(),
+  named: vi.fn(),
   store: {},
   missing: vi.fn(() => {
     throw new Error('missing page');
@@ -20,10 +21,19 @@ const mocks = vi.hoisted(() => ({
   }),
 }));
 vi.mock('../../src/server/content/page', () => ({ publishedPage: mocks.page }));
-vi.mock('../../src/server/content/resource-library', () => ({
+vi.mock('../../src/server/content/public-resources', () => ({
   readResourceDetail: mocks.detail,
   readResourceLibrary: mocks.library,
 }));
+vi.mock(
+  '../../src/server/content/resource-mentions',
+  async (importOriginal) => ({
+    ...(await importOriginal<
+      typeof import('../../src/server/content/resource-mentions')
+    >()),
+    resourceMentionPresentation: mocks.named,
+  }),
+);
 vi.mock('../../src/server/db/current', () => ({ getStore: () => mocks.store }));
 vi.mock('next/navigation', () => ({
   notFound: mocks.missing,
@@ -116,6 +126,99 @@ beforeEach(() => {
   mocks.detail.mockReturnValue({ releaseId: 'se-26w-v1', resource });
 });
 describe('resource detail page wiring and recovery', () => {
+  it('renders approved derived pages and recovery with exact escaped instructions and added provenance', async () => {
+    const derived = {
+      ...resource,
+      title: 'Jest Getting Started',
+      href: '/resources/named-jest-getting-started',
+      recordOrigin: 'added-product-interpretation' as const,
+      descriptionMarkdown: '',
+      derivedMentions: [
+        {
+          key: 'named-p0530-jest',
+          resourceId: resource.id,
+          displayName: 'Jest Getting Started',
+          origin: 'added-product-interpretation' as const,
+          sourceId: 'p0530',
+          exactInstruction: 'Original <script>instruction</script>',
+          href: '/course/software-engineer/days/d025/lessons/d025-learn',
+          sourceMappingHref:
+            '/course/software-engineer/days/d025/lessons/d025-learn#study',
+          title: 'Original lesson',
+          dayNumber: 25,
+          requirementMode: 'conditional' as const,
+          choiceGroup: 'choice:p0530',
+          reason: 'One source alternative',
+          scope: { module: 'f1', week: 'w04', day: 'd025' },
+          evidence: resource.interpretation.evidence,
+          originReferences: [
+            {
+              useId: 'original-use',
+              title: 'Original association',
+              href: '/resources/res-01',
+            },
+          ],
+        },
+      ],
+      matchingMentionKeys: ['named-p0530-jest'],
+    };
+    mocks.named.mockReturnValue({
+      resources: [
+        {
+          id: resource.id,
+          stableKey: 'named-jest-getting-started',
+          title: derived.title,
+        },
+      ],
+      mentions: derived.derivedMentions,
+    });
+    mocks.detail.mockReturnValue({ releaseId: 'se-26w-v1', resource: derived });
+    const doc = new DOMParser().parseFromString(
+      renderToStaticMarkup(await page(['named-jest-getting-started'])),
+      'text/html',
+    );
+    expect(doc.querySelectorAll('h1')).toHaveLength(1);
+    expect(doc.querySelector('h1')!.textContent).toBe('Jest Getting Started');
+    expect(doc.body.textContent).toContain('Added resource entry and title');
+    expect(doc.body.textContent).toContain(
+      'Original <script>instruction</script>',
+    );
+    expect(doc.querySelector('script')).toBeNull();
+    expect(doc.body.textContent).not.toContain('Imported type label');
+    expect(doc.body.textContent).not.toContain('Original detail retained');
+    expect(
+      doc.querySelector('[data-resource-mention] a')!.getAttribute('href'),
+    ).toContain('#study');
+    expect(doc.body.textContent).toContain('Choose one alternative');
+    for (const status of [404, 503]) {
+      mocks.detail.mockImplementation(() => {
+        throw new AppError(
+          status,
+          status === 404 ? 'ENROLLMENT_REQUIRED' : 'CONTENT_UNAVAILABLE',
+          'Internal diagnostic',
+        );
+      });
+      const recovery = new DOMParser().parseFromString(
+        renderToStaticMarkup(await page(['named-jest-getting-started'])),
+        'text/html',
+      );
+      expect(recovery.body.textContent).toContain(
+        'Original <script>instruction</script>',
+      );
+      expect(recovery.body.textContent).not.toContain('Internal diagnostic');
+      expect(
+        recovery.querySelector(
+          'a[href="' +
+            (status === 404
+              ? '/course/software-engineer'
+              : '/resources/named-jest-getting-started') +
+            '"]',
+        ),
+      ).not.toBeNull();
+      expect(!!recovery.querySelector('[role=alert]')).toBe(status === 503);
+    }
+    await expect(page(['named-invented'])).rejects.toThrow('missing page');
+  });
   it('uses a single owned detail read and renders semantic labels, unknown links and escaped source evidence', async () => {
     const document = new DOMParser().parseFromString(
       renderToStaticMarkup(await page()),

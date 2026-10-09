@@ -174,7 +174,7 @@ function mount(input: unknown = {}, extra: Partial<ResourceLibraryView> = {}) {
 }
 const field = () =>
   screen.getByRole('searchbox', {
-    name: 'Search original resources',
+    name: 'Search resources',
   }) as HTMLInputElement;
 beforeEach(() => {
   vi.useFakeTimers();
