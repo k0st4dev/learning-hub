@@ -25,6 +25,8 @@ import { dayWorkspace } from '../../src/server/content/day-workspace';
 import { courseAvailability } from '../../src/server/content/availability';
 import { register, login } from '../../src/server/auth/service';
 import { startCourse } from '../../src/server/learning/mutate';
+import { snapshot } from '../../src/server/learning/read';
+import { appendixATemplate } from '../../src/server/content/handbook-template';
 import {
   courseNavigation,
   courseOutline,
@@ -54,6 +56,87 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('copies the exact mapped Appendix A block without changing original DOM, either account or release', async () => {
+    importCurriculum(store, plan.source);
+    const states = [];
+    for (const email of [
+      'template-first@example.test',
+      'template-second@example.test',
+    ]) {
+      const credentials = {
+        email,
+        password: 'Local handbook template test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      states.push({ token, before: snapshot(store, token) });
+    }
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const beforeCatalog = JSON.stringify(catalog);
+    const route = '/course/software-engineer/guide/appendix-a';
+    const page = catalogPage(catalog, route)!;
+    const original = plan.source.source_blocks.find(
+      (block) => block.source_id === 'p2228',
+    )!;
+    const template = appendixATemplate(page)!;
+    expect(template.text).toBe(original.text);
+    expect(template.text.endsWith('\n')).toBe(true);
+    const host = document.createElement('div');
+    host.innerHTML = renderToStaticMarkup(
+      createElement(CurriculumPreview, { catalog, page }),
+    );
+    const field = host.querySelector('textarea')!;
+    expect(field.value).toBe(original.text);
+    const source = host.querySelector('[data-source-id="p2228"]')!;
+    expect(source.querySelector('[data-source-text]')!.textContent).toBe(
+      original.text,
+    );
+    expect(source.id).toBe(template.anchor);
+    expect(
+      host.querySelector('a[href="#' + template.anchor + '"]'),
+    ).not.toBeNull();
+    expect(host.querySelectorAll('h1')).toHaveLength(1);
+    expect(host.querySelectorAll('[data-source-id]')).toHaveLength(
+      page.blocks.length,
+    );
+    expect(appendixATemplate({ ...page, blocks: [] })).toBeNull();
+    expect(
+      appendixATemplate({ ...page, blocks: [...page.blocks, page.blocks[1]!] }),
+    ).toBeNull();
+    expect(
+      appendixATemplate(
+        catalogPage(catalog, '/course/software-engineer/guide/appendix-b')!,
+      ),
+    ).toBeNull();
+    const missing = document.createElement('div');
+    missing.innerHTML = renderToStaticMarkup(
+      createElement(CurriculumPreview, {
+        catalog,
+        page: { ...page, blocks: page.blocks.slice(0, 1) },
+      }),
+    );
+    expect(missing.querySelector('textarea')).toBeNull();
+    expect(missing.textContent).toContain(
+      'Original source content remains below.',
+    );
+    expect(missing.querySelector('[data-source-id="p2227"]')).not.toBeNull();
+    expect(JSON.stringify(catalog)).toBe(beforeCatalog);
+    for (const account of states)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    expect(
+      appendixATemplate(
+        catalogPage(readCatalog(store, plan.releaseId)!, route)!,
+      ),
+    ).toEqual(template);
+    for (const account of states)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+  });
   it('distinguishes setup, unpublished pinned releases and missing routes after authentication', async () => {
     const credentials = {
       email: 'route-states@example.test',

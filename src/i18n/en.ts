@@ -1,4 +1,24 @@
 export const en = {
+  handbook: {
+    title: 'Problem file template',
+    original:
+      'Original Markdown template from Appendix A. Copy it into your local problem file; copying adds no course credit.',
+    source: 'Read the original template',
+    label: 'Original problem file template · Markdown · Read-only',
+    manualCopy:
+      'You can always select this text and copy it with Ctrl+C or Command+C.',
+    copy: 'Copy template',
+    copying: 'Copying…',
+    pending: 'Copying…',
+    copied: 'Template copied.',
+    failed:
+      'Automatic copy failed. Choose Select template, then press Ctrl+C or Command+C.',
+    select: 'Select template',
+    selected: 'Template selected. Press Ctrl+C or Command+C to copy.',
+    ready: 'Ready to copy.',
+    unavailable:
+      'The copyable template is unavailable. Original source content remains below.',
+  },
   mobile: { menu: 'Menu', title: 'Student navigation', close: 'Close menu' },
   routeState: {
     loading: 'Loading your local workspace…',

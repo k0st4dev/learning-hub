@@ -9,6 +9,8 @@ import { en } from '@/i18n/en';
 import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
+import { appendixATemplate } from '@/server/content/handbook-template';
+import { CopyableText } from './copyable-text';
 import {
   curriculumItemLabel,
   CurriculumNavigation,
@@ -146,6 +148,14 @@ export function CurriculumPreview({
   exerciseWorkAvailable?: boolean;
 }) {
   const overview = page.item.stableKey === 'overview';
+  const template = appendixATemplate(page);
+  const sourceBlocks = template
+    ? page.blocks.map((block) =>
+        block.sourceLocator === template.sourceId
+          ? { ...block, anchor: template.anchor }
+          : block,
+      )
+    : page.blocks;
   const workspace = dayWorkspace(catalog, page.item.id);
   const navigationModel = courseNavigation(catalog);
   const roots = navigationModel.items
@@ -210,6 +220,26 @@ export function CurriculumPreview({
           )}
           {progressView}
           {learnerTool}
+          {template ? (
+            <section
+              className="card mb-8 stack"
+              aria-labelledby="problem-template-title"
+            >
+              <h2 id="problem-template-title">{en.handbook.title}</h2>
+              <p>{en.handbook.original}</p>
+              <a href={'#' + template.anchor}>{en.handbook.source}</a>
+              <CopyableText
+                key={page.item.id + ':' + template.sourceId}
+                id="problem-file-template"
+                label={en.handbook.label}
+                text={template.text}
+              />
+            </section>
+          ) : page.item.stableKey === 'guide-appendix-a' ? (
+            <p className="notice" role="status">
+              {en.handbook.unavailable}
+            </p>
+          ) : null}
           {anchors.length > 0 && (
             <nav className="actions mb-8" aria-label="Lesson sections">
               <Link href={page.item.kind === 'lesson' ? '#study' : '#tasks'}>
@@ -309,7 +339,7 @@ export function CurriculumPreview({
               <SourceBlocks blocks={page.blocks} anchors={anchors} />
             </section>
           ) : (
-            <SourceBlocks blocks={page.blocks} anchors={anchors} />
+            <SourceBlocks blocks={sourceBlocks} anchors={anchors} />
           )}
           {studyEditor}
           {exerciseEditor ??

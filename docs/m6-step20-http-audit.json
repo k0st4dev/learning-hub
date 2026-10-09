@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-09T08:01:38.942Z",
+  "server": "development",
+  "accounts": 2,
+  "servedPages": 4,
+  "sourceId": "p2228",
+  "exactCharacters": 266,
+  "textSha256": "b5bf82812a071217e0f98f5205f4361ef08dfb7ca1abaf5d7790f199d0756601",
+  "originalTextAndSelectableFallback": "passed",
+  "sourceAnchorAndUnknownRoute": "passed",
+  "allDurableLearnerPrivateAndContentRecordsUnchanged": true,
+  "streams": {
+    "segments": 220,
+    "boundaries": 4
+  },
+  "scope": "Focused served HTML, two-account and original source regression. Clipboard interaction is verified separately in unit tests and browser; no final acceptance claim."
+}

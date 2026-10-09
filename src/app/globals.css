@@ -106,6 +106,13 @@ mark {
 .source-paragraph {
   overflow-wrap: anywhere;
 }
+.copyable-text textarea {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  line-height: 1.6;
+  overflow: auto;
+  white-space: pre;
+  overflow-wrap: normal;
+}
 .source-paragraph p {
   margin-bottom: 8px;
 }
