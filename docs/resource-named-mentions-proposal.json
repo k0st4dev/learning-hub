@@ -1,0 +1,1327 @@
+{
+  "formatVersion": 1,
+  "status": "proposal-only-not-runtime",
+  "date": "2026-10-09",
+  "proposalId": "se-26w-v1-resource-named-mentions-proposal-v1",
+  "releaseId": "se-26w-v1",
+  "manifestSha256": "064d4412b280d54c7bf2fb229e7ec643eb3dc8ab85f9311bf9f9a5749c5cb265",
+  "wordSha256": "5e5884f8f919b24d4924c6393ece6d36256f288529499c4e9e5e3d0921377513",
+  "previousProposalSha256": "5458c6cdf5a96033af232e4ba6dcc7457be66b84f8dc569d1ff25fa380e43bcc",
+  "recommendation": "Approve thirteen clear contextual mentions separately; defer the two ambiguous pg/sqlite mentions without changing their original instruction.",
+  "summary": {
+    "originalResources": 69,
+    "originalUses": 290,
+    "originalSourceMentions": 208,
+    "originalMappings": 2329,
+    "candidates": 15,
+    "distinctCandidateResourceIdentities": 14,
+    "reusedExistingResources": 2,
+    "proposedNewDerivedResources": 12,
+    "recommendedMentions": 13,
+    "deferredMentions": 2,
+    "recommendedNewDerivedResources": 10,
+    "originalRequiredUnits": 364
+  },
+  "boundaries": {
+    "runtimeApplied": false,
+    "newExternalUrls": 0,
+    "newRuntimeDependencies": 0,
+    "addedCompletionUnits": 0,
+    "importedRecordsChanged": false,
+    "studentRecordsReadOrWritten": false,
+    "privateSearchAdded": false
+  },
+  "mentions": [
+    {
+      "candidateId": "candidate:p0274:1",
+      "proposedMentionKey": "named-p0274-node-runtime",
+      "displayName": "Node runtime",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-node-runtime",
+      "resourceId": "se-26w-v1:named-node-runtime",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-node-runtime",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0274",
+      "context": {
+        "id": "se-26w-v1:d001-learn",
+        "stableKey": "d001-learn",
+        "title": "Okruženje + baseline bez pomoći",
+        "route": "/course/software-engineer/days/d001/lessons/d001-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f1", "week": "w01", "day": "d001" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d001-learn",
+            "parentId": "se-26w-v1:d001",
+            "kind": "lesson",
+            "stableKey": "d001-learn",
+            "route": "/course/software-engineer/days/d001/lessons/d001-learn"
+          },
+          {
+            "id": "se-26w-v1:d001",
+            "parentId": "se-26w-v1:w01",
+            "kind": "day",
+            "stableKey": "d001",
+            "route": "/course/software-engineer/days/d001"
+          },
+          {
+            "id": "se-26w-v1:w01",
+            "parentId": "se-26w-v1:f1",
+            "kind": "week",
+            "stableKey": "w01",
+            "route": "/course/software-engineer/weeks/w01"
+          },
+          {
+            "id": "se-26w-v1:f1",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f1",
+            "route": "/course/software-engineer/modules/f1"
+          }
+        ]
+      },
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "originalUseIds": ["se-26w-v1:mention:1:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "resourceId": "se-26w-v1:res-01",
+          "assignedText": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "tool",
+        "provider": "Node.js",
+        "requirementMode": "required",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0274"],
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution."
+    },
+    {
+      "candidateId": "candidate:p0274:2",
+      "proposedMentionKey": "named-p0274-nvm",
+      "displayName": "nvm",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-nvm",
+      "resourceId": "se-26w-v1:named-nvm",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-nvm",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0274",
+      "context": {
+        "id": "se-26w-v1:d001-learn",
+        "stableKey": "d001-learn",
+        "title": "Okruženje + baseline bez pomoći",
+        "route": "/course/software-engineer/days/d001/lessons/d001-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f1", "week": "w01", "day": "d001" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d001-learn",
+            "parentId": "se-26w-v1:d001",
+            "kind": "lesson",
+            "stableKey": "d001-learn",
+            "route": "/course/software-engineer/days/d001/lessons/d001-learn"
+          },
+          {
+            "id": "se-26w-v1:d001",
+            "parentId": "se-26w-v1:w01",
+            "kind": "day",
+            "stableKey": "d001",
+            "route": "/course/software-engineer/days/d001"
+          },
+          {
+            "id": "se-26w-v1:w01",
+            "parentId": "se-26w-v1:f1",
+            "kind": "week",
+            "stableKey": "w01",
+            "route": "/course/software-engineer/weeks/w01"
+          },
+          {
+            "id": "se-26w-v1:f1",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f1",
+            "route": "/course/software-engineer/modules/f1"
+          }
+        ]
+      },
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "originalUseIds": ["se-26w-v1:mention:1:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "resourceId": "se-26w-v1:res-01",
+          "assignedText": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "tool",
+        "provider": "nvm",
+        "requirementMode": "required",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0274"],
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution."
+    },
+    {
+      "candidateId": "candidate:p0274:3",
+      "proposedMentionKey": "named-p0274-vs-code",
+      "displayName": "VS Code",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-vs-code",
+      "resourceId": "se-26w-v1:named-vs-code",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-vs-code",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0274",
+      "context": {
+        "id": "se-26w-v1:d001-learn",
+        "stableKey": "d001-learn",
+        "title": "Okruženje + baseline bez pomoći",
+        "route": "/course/software-engineer/days/d001/lessons/d001-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f1", "week": "w01", "day": "d001" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d001-learn",
+            "parentId": "se-26w-v1:d001",
+            "kind": "lesson",
+            "stableKey": "d001-learn",
+            "route": "/course/software-engineer/days/d001/lessons/d001-learn"
+          },
+          {
+            "id": "se-26w-v1:d001",
+            "parentId": "se-26w-v1:w01",
+            "kind": "day",
+            "stableKey": "d001",
+            "route": "/course/software-engineer/days/d001"
+          },
+          {
+            "id": "se-26w-v1:w01",
+            "parentId": "se-26w-v1:f1",
+            "kind": "week",
+            "stableKey": "w01",
+            "route": "/course/software-engineer/weeks/w01"
+          },
+          {
+            "id": "se-26w-v1:f1",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f1",
+            "route": "/course/software-engineer/modules/f1"
+          }
+        ]
+      },
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "originalUseIds": ["se-26w-v1:mention:1:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "resourceId": "se-26w-v1:res-01",
+          "assignedText": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "tool",
+        "provider": "VS Code",
+        "requirementMode": "required",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0274"],
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution."
+    },
+    {
+      "candidateId": "candidate:p0274:4",
+      "proposedMentionKey": "named-p0274-git",
+      "displayName": "Git",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-git",
+      "resourceId": "se-26w-v1:named-git",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-git",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0274",
+      "context": {
+        "id": "se-26w-v1:d001-learn",
+        "stableKey": "d001-learn",
+        "title": "Okruženje + baseline bez pomoći",
+        "route": "/course/software-engineer/days/d001/lessons/d001-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d001/lessons/d001-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f1", "week": "w01", "day": "d001" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d001-learn",
+            "parentId": "se-26w-v1:d001",
+            "kind": "lesson",
+            "stableKey": "d001-learn",
+            "route": "/course/software-engineer/days/d001/lessons/d001-learn"
+          },
+          {
+            "id": "se-26w-v1:d001",
+            "parentId": "se-26w-v1:w01",
+            "kind": "day",
+            "stableKey": "d001",
+            "route": "/course/software-engineer/days/d001"
+          },
+          {
+            "id": "se-26w-v1:w01",
+            "parentId": "se-26w-v1:f1",
+            "kind": "week",
+            "stableKey": "w01",
+            "route": "/course/software-engineer/weeks/w01"
+          },
+          {
+            "id": "se-26w-v1:f1",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f1",
+            "route": "/course/software-engineer/modules/f1"
+          }
+        ]
+      },
+      "exactInstruction": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "originalUseIds": ["se-26w-v1:mention:1:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:1:0",
+          "resourceId": "se-26w-v1:res-01",
+          "assignedText": "Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "tool",
+        "provider": "Git",
+        "requirementMode": "required",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0274"],
+      "reason": "Named setup tools share the complete Day 1 assignment. Required describes the named setup, not extra course credit or an application dependency. Keep nvm as the source name without selecting a platform-specific distribution."
+    },
+    {
+      "candidateId": "candidate:p0530:5",
+      "proposedMentionKey": "named-p0530-jest-getting-started",
+      "displayName": "Jest Getting Started",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-jest-getting-started",
+      "resourceId": "se-26w-v1:named-jest-getting-started",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-jest-getting-started",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0530",
+      "context": {
+        "id": "se-26w-v1:d025-learn",
+        "stableKey": "d025-learn",
+        "title": "Testing mindset",
+        "route": "/course/software-engineer/days/d025/lessons/d025-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d025/lessons/d025-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f1", "week": "w04", "day": "d025" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d025-learn",
+            "parentId": "se-26w-v1:d025",
+            "kind": "lesson",
+            "stableKey": "d025-learn",
+            "route": "/course/software-engineer/days/d025/lessons/d025-learn"
+          },
+          {
+            "id": "se-26w-v1:d025",
+            "parentId": "se-26w-v1:w04",
+            "kind": "day",
+            "stableKey": "d025",
+            "route": "/course/software-engineer/days/d025"
+          },
+          {
+            "id": "se-26w-v1:w04",
+            "parentId": "se-26w-v1:f1",
+            "kind": "week",
+            "stableKey": "w04",
+            "route": "/course/software-engineer/weeks/w04"
+          },
+          {
+            "id": "se-26w-v1:f1",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f1",
+            "route": "/course/software-engineer/modules/f1"
+          }
+        ]
+      },
+      "exactInstruction": "TOP Testing Basics (uvod) ili Jest Getting Started; prvo koncept testova.",
+      "originalUseIds": ["se-26w-v1:mention:25:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:25:0",
+          "resourceId": "se-26w-v1:res-02",
+          "assignedText": "TOP Testing Basics (uvod) ili Jest Getting Started; prvo koncept testova.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "conditional"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": "Jest",
+        "requirementMode": "conditional",
+        "choiceGroup": "choice:p0530",
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0530"],
+      "reason": "Jest is an alternative to TOP Testing Basics, not a second mandatory reading. Keep choice:p0530 shared with the existing TOP assignment."
+    },
+    {
+      "candidateId": "candidate:p0917:6",
+      "proposedMentionKey": "named-p0917-eslint-getting-started",
+      "displayName": "ESLint getting started",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-eslint-getting-started",
+      "resourceId": "se-26w-v1:named-eslint-getting-started",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-eslint-getting-started",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p0917",
+      "context": {
+        "id": "se-26w-v1:d061-learn",
+        "stableKey": "d061-learn",
+        "title": "Linting i code quality",
+        "route": "/course/software-engineer/days/d061/lessons/d061-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d061/lessons/d061-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f3", "week": "w09", "day": "d061" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d061-learn",
+            "parentId": "se-26w-v1:d061",
+            "kind": "lesson",
+            "stableKey": "d061-learn",
+            "route": "/course/software-engineer/days/d061/lessons/d061-learn"
+          },
+          {
+            "id": "se-26w-v1:d061",
+            "parentId": "se-26w-v1:w09",
+            "kind": "day",
+            "stableKey": "d061",
+            "route": "/course/software-engineer/days/d061"
+          },
+          {
+            "id": "se-26w-v1:w09",
+            "parentId": "se-26w-v1:f3",
+            "kind": "week",
+            "stableKey": "w09",
+            "route": "/course/software-engineer/weeks/w09"
+          },
+          {
+            "id": "se-26w-v1:f3",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f3",
+            "route": "/course/software-engineer/modules/f3"
+          }
+        ]
+      },
+      "exactInstruction": "TOP Linting; current ESLint getting started po potrebi.",
+      "originalUseIds": ["se-26w-v1:mention:61:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:61:0",
+          "resourceId": "se-26w-v1:res-02",
+          "assignedText": "TOP Linting; current ESLint getting started po potrebi.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": "ESLint",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p0917"],
+      "reason": "Only ESLint getting started is as-needed reference; TOP Linting remains assigned. Do not inherit the whole compound instruction’s required label."
+    },
+    {
+      "candidateId": "candidate:p1629:7",
+      "proposedMentionKey": "named-p1629-sqlite-docs",
+      "displayName": "SQLite docs",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-sqlite-docs",
+      "resourceId": "se-26w-v1:named-sqlite-docs",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-sqlite-docs",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1629",
+      "context": {
+        "id": "se-26w-v1:d127-learn",
+        "stableKey": "d127-learn",
+        "title": "Relational model + SELECT",
+        "route": "/course/software-engineer/days/d127/lessons/d127-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d127/lessons/d127-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f4", "week": "w19", "day": "d127" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d127-learn",
+            "parentId": "se-26w-v1:d127",
+            "kind": "lesson",
+            "stableKey": "d127-learn",
+            "route": "/course/software-engineer/days/d127/lessons/d127-learn"
+          },
+          {
+            "id": "se-26w-v1:d127",
+            "parentId": "se-26w-v1:w19",
+            "kind": "day",
+            "stableKey": "d127",
+            "route": "/course/software-engineer/days/d127"
+          },
+          {
+            "id": "se-26w-v1:w19",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w19",
+            "route": "/course/software-engineer/weeks/w19"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.",
+      "originalUseIds": ["se-26w-v1:mention:127:0", "se-26w-v1:mention:127:1"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:127:0",
+          "resourceId": "se-26w-v1:res-03",
+          "assignedText": "CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        },
+        {
+          "useId": "se-26w-v1:mention:127:1",
+          "resourceId": "se-26w-v1:res-12",
+          "assignedText": "CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": "SQLite",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p1629"],
+      "reason": "Only SQLite docs is as-needed reference; CS50 is assigned and the existing PostgreSQL reference remains separate. Do not identify SQLite documentation as an npm sqlite package."
+    },
+    {
+      "candidateId": "candidate:p1679:8",
+      "proposedMentionKey": "named-p1679-pg-library-docs",
+      "displayName": "pg library docs",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-pg-library-docs",
+      "resourceId": "se-26w-v1:named-pg-library-docs",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-pg-library-docs",
+      "reviewDecision": "defer-ambiguous-package-mentions",
+      "sourceId": "p1679",
+      "context": {
+        "id": "se-26w-v1:d132-learn",
+        "stableKey": "d132-learn",
+        "title": "Node + SQL mini integration",
+        "route": "/course/software-engineer/days/d132/lessons/d132-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d132/lessons/d132-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f4", "week": "w19", "day": "d132" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d132-learn",
+            "parentId": "se-26w-v1:d132",
+            "kind": "lesson",
+            "stableKey": "d132-learn",
+            "route": "/course/software-engineer/days/d132/lessons/d132-learn"
+          },
+          {
+            "id": "se-26w-v1:d132",
+            "parentId": "se-26w-v1:w19",
+            "kind": "day",
+            "stableKey": "d132",
+            "route": "/course/software-engineer/days/d132"
+          },
+          {
+            "id": "se-26w-v1:w19",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w19",
+            "route": "/course/software-engineer/weeks/w19"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "Node pg/sqlite library docs; fokus na konceptu parameterized queries.",
+      "originalUseIds": ["se-26w-v1:mention:132:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:132:0",
+          "resourceId": "se-26w-v1:unresolved-p1679",
+          "assignedText": "Node pg/sqlite library docs; fokus na konceptu parameterized queries.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": null,
+        "requirementMode": "conditional",
+        "choiceGroup": "choice:p1679",
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p1679"],
+      "reason": "The original requires reading about parameterized queries but does not identify a concrete pg/sqlite package or unambiguously prescribe both libraries. Conditional display labels are tentative added interpretation; retain the original required compound instruction and defer activation of these two mentions."
+    },
+    {
+      "candidateId": "candidate:p1679:9",
+      "proposedMentionKey": "named-p1679-sqlite-library-docs",
+      "displayName": "sqlite library docs",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-sqlite-library-docs",
+      "resourceId": "se-26w-v1:named-sqlite-library-docs",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-sqlite-library-docs",
+      "reviewDecision": "defer-ambiguous-package-mentions",
+      "sourceId": "p1679",
+      "context": {
+        "id": "se-26w-v1:d132-learn",
+        "stableKey": "d132-learn",
+        "title": "Node + SQL mini integration",
+        "route": "/course/software-engineer/days/d132/lessons/d132-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d132/lessons/d132-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f4", "week": "w19", "day": "d132" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d132-learn",
+            "parentId": "se-26w-v1:d132",
+            "kind": "lesson",
+            "stableKey": "d132-learn",
+            "route": "/course/software-engineer/days/d132/lessons/d132-learn"
+          },
+          {
+            "id": "se-26w-v1:d132",
+            "parentId": "se-26w-v1:w19",
+            "kind": "day",
+            "stableKey": "d132",
+            "route": "/course/software-engineer/days/d132"
+          },
+          {
+            "id": "se-26w-v1:w19",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w19",
+            "route": "/course/software-engineer/weeks/w19"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "Node pg/sqlite library docs; fokus na konceptu parameterized queries.",
+      "originalUseIds": ["se-26w-v1:mention:132:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:132:0",
+          "resourceId": "se-26w-v1:unresolved-p1679",
+          "assignedText": "Node pg/sqlite library docs; fokus na konceptu parameterized queries.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": null,
+        "requirementMode": "conditional",
+        "choiceGroup": "choice:p1679",
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p1679"],
+      "reason": "The original requires reading about parameterized queries but does not identify a concrete pg/sqlite package or unambiguously prescribe both libraries. Conditional display labels are tentative added interpretation; retain the original required compound instruction and defer activation of these two mentions."
+    },
+    {
+      "candidateId": "candidate:p1811:10",
+      "proposedMentionKey": "named-p1811-react-devtools",
+      "displayName": "React DevTools",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-react-devtools",
+      "resourceId": "se-26w-v1:named-react-devtools",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-react-devtools",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1811",
+      "context": {
+        "id": "se-26w-v1:d144-learn",
+        "stableKey": "d144-learn",
+        "title": "React debugging",
+        "route": "/course/software-engineer/days/d144/lessons/d144-learn",
+        "sourceMappingHref": "/course/software-engineer/days/d144/lessons/d144-learn#study",
+        "kind": "lesson",
+        "scope": { "module": "f5", "week": "w21", "day": "d144" },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:d144-learn",
+            "parentId": "se-26w-v1:d144",
+            "kind": "lesson",
+            "stableKey": "d144-learn",
+            "route": "/course/software-engineer/days/d144/lessons/d144-learn"
+          },
+          {
+            "id": "se-26w-v1:d144",
+            "parentId": "se-26w-v1:w21",
+            "kind": "day",
+            "stableKey": "d144",
+            "route": "/course/software-engineer/days/d144"
+          },
+          {
+            "id": "se-26w-v1:w21",
+            "parentId": "se-26w-v1:f5",
+            "kind": "week",
+            "stableKey": "w21",
+            "route": "/course/software-engineer/weeks/w21"
+          },
+          {
+            "id": "se-26w-v1:f5",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f5",
+            "route": "/course/software-engineer/modules/f5"
+          }
+        ]
+      },
+      "exactInstruction": "React DevTools + FSO debugging guidance.",
+      "originalUseIds": ["se-26w-v1:mention:144:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:144:0",
+          "resourceId": "se-26w-v1:res-05",
+          "assignedText": "React DevTools + FSO debugging guidance.",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "required"
+        }
+      ],
+      "proposed": {
+        "type": "tool",
+        "provider": "React",
+        "requirementMode": "required",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0025", "p1811"],
+      "reason": "React DevTools is the named tool in this assigned debugging instruction; keep the FSO assignment and exact wording. No extension installation or new URL is proposed."
+    },
+    {
+      "candidateId": "candidate:p1927:11",
+      "proposedMentionKey": "named-p1927-res-10",
+      "displayName": "Node docs",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "res-10",
+      "resourceId": "se-26w-v1:res-10",
+      "resourceAction": "reuse-existing-resource",
+      "proposedDetailHref": "/resources/res-10",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1927",
+      "context": {
+        "id": "se-26w-v1:w23",
+        "stableKey": "w23",
+        "title": "FSO Part 3: Node, Express, REST API",
+        "route": "/course/software-engineer/weeks/w23",
+        "sourceMappingHref": "/course/software-engineer/weeks/w23",
+        "kind": "week",
+        "scope": { "module": "f5", "week": "w23", "day": null },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:w23",
+            "parentId": "se-26w-v1:f5",
+            "kind": "week",
+            "stableKey": "w23",
+            "route": "/course/software-engineer/weeks/w23"
+          },
+          {
+            "id": "se-26w-v1:f5",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f5",
+            "route": "/course/software-engineer/modules/f5"
+          }
+        ]
+      },
+      "exactInstruction": "Full Stack Open Part 3, Node/Express docs as reference",
+      "originalUseIds": ["se-26w-v1:mention:205:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:205:0",
+          "resourceId": "se-26w-v1:res-05",
+          "assignedText": "Full Stack Open Part 3, Node/Express docs as reference",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": "Node.js",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": "res-10"
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "existing-source-parent-only",
+        "parentResourceKey": "res-10",
+        "parentHref": "/resources/res-10",
+        "parentOriginalUrl": "https://nodejs.org/docs/latest/api/",
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0109", "p0110", "p0111", "p1927"],
+      "reason": "Node/Express docs are reference in the weekly overview. Reuse Node.js Docs once; Express has no supplied direct URL. Weekly context does not create required daily assignments."
+    },
+    {
+      "candidateId": "candidate:p1927:12",
+      "proposedMentionKey": "named-p1927-express-docs",
+      "displayName": "Express docs",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-express-docs",
+      "resourceId": "se-26w-v1:named-express-docs",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-express-docs",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1927",
+      "context": {
+        "id": "se-26w-v1:w23",
+        "stableKey": "w23",
+        "title": "FSO Part 3: Node, Express, REST API",
+        "route": "/course/software-engineer/weeks/w23",
+        "sourceMappingHref": "/course/software-engineer/weeks/w23",
+        "kind": "week",
+        "scope": { "module": "f5", "week": "w23", "day": null },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:w23",
+            "parentId": "se-26w-v1:f5",
+            "kind": "week",
+            "stableKey": "w23",
+            "route": "/course/software-engineer/weeks/w23"
+          },
+          {
+            "id": "se-26w-v1:f5",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f5",
+            "route": "/course/software-engineer/modules/f5"
+          }
+        ]
+      },
+      "exactInstruction": "Full Stack Open Part 3, Node/Express docs as reference",
+      "originalUseIds": ["se-26w-v1:mention:205:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:205:0",
+          "resourceId": "se-26w-v1:res-05",
+          "assignedText": "Full Stack Open Part 3, Node/Express docs as reference",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "documentation",
+        "provider": "Express",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": null
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "no-direct-link-supplied",
+        "parentResourceKey": null,
+        "parentHref": null,
+        "parentOriginalUrl": null,
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p1927"],
+      "reason": "Node/Express docs are reference in the weekly overview. Reuse Node.js Docs once; Express has no supplied direct URL. Weekly context does not create required daily assignments."
+    },
+    {
+      "candidateId": "candidate:p1173:13",
+      "proposedMentionKey": "named-p1173-res-04",
+      "displayName": "CS50 Psets",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "res-04",
+      "resourceId": "se-26w-v1:res-04",
+      "resourceAction": "reuse-existing-resource",
+      "proposedDetailHref": "/resources/res-04",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1173",
+      "context": {
+        "id": "se-26w-v1:w13",
+        "stableKey": "w13",
+        "title": "CS50 Week 0–1: computational thinking + C",
+        "route": "/course/software-engineer/weeks/w13",
+        "sourceMappingHref": "/course/software-engineer/weeks/w13",
+        "kind": "week",
+        "scope": { "module": "f4", "week": "w13", "day": null },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:w13",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w13",
+            "route": "/course/software-engineer/weeks/w13"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+      "originalUseIds": ["se-26w-v1:mention:195:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:195:0",
+          "resourceId": "se-26w-v1:res-03",
+          "assignedText": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "practice",
+        "provider": "CS50",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": "res-04"
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "existing-source-parent-only",
+        "parentResourceKey": "res-04",
+        "parentHref": "/resources/res-04",
+        "parentOriginalUrl": "https://cs50.harvard.edu/x/psets/",
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0091", "p0092", "p0093", "p1173"],
+      "reason": "Weekly Psets/Practice context is reference. Reuse CS50x Problem Sets; give CS50 Practice its own derived identity and label CS50x navigation as parent-only."
+    },
+    {
+      "candidateId": "candidate:p1173:14",
+      "proposedMentionKey": "named-p1173-cs50-practice",
+      "displayName": "CS50 Practice",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-cs50-practice",
+      "resourceId": "se-26w-v1:named-cs50-practice",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-cs50-practice",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1173",
+      "context": {
+        "id": "se-26w-v1:w13",
+        "stableKey": "w13",
+        "title": "CS50 Week 0–1: computational thinking + C",
+        "route": "/course/software-engineer/weeks/w13",
+        "sourceMappingHref": "/course/software-engineer/weeks/w13",
+        "kind": "week",
+        "scope": { "module": "f4", "week": "w13", "day": null },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:w13",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w13",
+            "route": "/course/software-engineer/weeks/w13"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+      "originalUseIds": ["se-26w-v1:mention:195:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:195:0",
+          "resourceId": "se-26w-v1:res-03",
+          "assignedText": "CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "practice",
+        "provider": "CS50",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": "res-03"
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "existing-source-parent-only",
+        "parentResourceKey": "res-03",
+        "parentHref": "/resources/res-03",
+        "parentOriginalUrl": "https://cs50.harvard.edu/x/",
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0088", "p0089", "p0090", "p1173"],
+      "reason": "Weekly Psets/Practice context is reference. Reuse CS50x Problem Sets; give CS50 Practice its own derived identity and label CS50x navigation as parent-only."
+    },
+    {
+      "candidateId": "candidate:p1250:15",
+      "proposedMentionKey": "named-p1250-cs50-practice",
+      "displayName": "CS50 Practice",
+      "nameOrigin": "added-display-label-grounded-in-source",
+      "resourceStableKey": "named-cs50-practice",
+      "resourceId": "se-26w-v1:named-cs50-practice",
+      "resourceAction": "propose-derived-resource",
+      "proposedDetailHref": "/resources/named-cs50-practice",
+      "reviewDecision": "recommended-for-separate-approval",
+      "sourceId": "p1250",
+      "context": {
+        "id": "se-26w-v1:w14",
+        "stableKey": "w14",
+        "title": "CS50 Week 2: arrays, strings, debugging",
+        "route": "/course/software-engineer/weeks/w14",
+        "sourceMappingHref": "/course/software-engineer/weeks/w14",
+        "kind": "week",
+        "scope": { "module": "f4", "week": "w14", "day": null },
+        "ancestors": [
+          {
+            "id": "se-26w-v1:w14",
+            "parentId": "se-26w-v1:f4",
+            "kind": "week",
+            "stableKey": "w14",
+            "route": "/course/software-engineer/weeks/w14"
+          },
+          {
+            "id": "se-26w-v1:f4",
+            "parentId": null,
+            "kind": "module",
+            "stableKey": "f4",
+            "route": "/course/software-engineer/modules/f4"
+          }
+        ]
+      },
+      "exactInstruction": "CS50x Week 2, CS50 Practice",
+      "originalUseIds": ["se-26w-v1:mention:196:0"],
+      "originalAssignments": [
+        {
+          "useId": "se-26w-v1:mention:196:0",
+          "resourceId": "se-26w-v1:res-03",
+          "assignedText": "CS50x Week 2, CS50 Practice",
+          "rawRequirementMode": "reference",
+          "currentReviewedMode": "reference"
+        }
+      ],
+      "proposed": {
+        "type": "practice",
+        "provider": "CS50",
+        "requirementMode": "reference",
+        "choiceGroup": null,
+        "parentResourceKey": "res-03"
+      },
+      "originalUrl": null,
+      "sourceDirectLinkSupplied": false,
+      "navigation": {
+        "kind": "existing-source-parent-only",
+        "parentResourceKey": "res-03",
+        "parentHref": "/resources/res-03",
+        "parentOriginalUrl": "https://cs50.harvard.edu/x/",
+        "exactSectionUrl": null
+      },
+      "evidenceRefs": ["p0088", "p0089", "p0090", "p1250"],
+      "reason": "Reuse the same derived CS50 Practice identity for this second weekly context; do not create another resource or infer required practice from the overview."
+    }
+  ],
+  "evidence": [
+    {
+      "sourceId": "p0025",
+      "exactText": "Čitaj tačno navedeni resurs.",
+      "sha256": "7428ab08e6c10895b4ca6836a0f748b6996ee19c14a6cb1708fd4cdc210c6cea",
+      "table": 2,
+      "row": 3,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0088",
+      "exactText": "CS50x 2026",
+      "sha256": "6cc4a753bc7477c21983a07fc1debbe42e94d23e69b28266a018b264b92f8424",
+      "table": 5,
+      "row": 4,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0089",
+      "exactText": "Otvori",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 4,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0090",
+      "exactText": "Nedelje 13–19. Computational thinking, C, arrays, algorithms, memory, data structures, Python, SQL.",
+      "sha256": "4d219e6f2b22b5511349f5aa9793847f9de29fbd329702f192cc2a358913ecfd",
+      "table": 5,
+      "row": 4,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0091",
+      "exactText": "CS50x Problem Sets",
+      "sha256": "ebd0819fb558253c27487882129ad9300d6566d0d8b979adad99d28206e89b34",
+      "table": 5,
+      "row": 5,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0092",
+      "exactText": "Otvori",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 5,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0093",
+      "exactText": "Koristi uz odgovarajuću CS50 nedelju; obavezno poštuj njihovu aktuelnu academic-honesty/AI politiku.",
+      "sha256": "fa2d3fbad78aab6b6e7bb0dd5b4a22381999d720c9f614246314ad84572070dd",
+      "table": 5,
+      "row": 5,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0109",
+      "exactText": "Node.js Docs",
+      "sha256": "2294d3ae3e604df3ed0b17327a0ef07d2117f5cdd44329940220b0e28db7de64",
+      "table": 5,
+      "row": 11,
+      "cell": 1
+    },
+    {
+      "sourceId": "p0110",
+      "exactText": "Otvori",
+      "sha256": "3f5b216a6f87578e2116cd6ce7dbe8313d2f47c699fbbe76306a0550de1c6875",
+      "table": 5,
+      "row": 11,
+      "cell": 2
+    },
+    {
+      "sourceId": "p0111",
+      "exactText": "Reference za Node API, ne kurs.",
+      "sha256": "cbd1d6f1563efd6bb01a4e0a221acc20d4171a9daf24fcc93a42ff76992f1014",
+      "table": 5,
+      "row": 11,
+      "cell": 3
+    },
+    {
+      "sourceId": "p0274",
+      "exactText": "Uči / pročitaj: Node preko nvm (install --lts), VS Code, terminal, Git; TOP Foundations: Problem Solving (samo pročitati, ne gledati rešenja).",
+      "sha256": "4188d4792dcaa926e02cf87461a72b834235e92abbbfcdb117cd19633e712a15",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0530",
+      "exactText": "Uči / pročitaj: TOP Testing Basics (uvod) ili Jest Getting Started; prvo koncept testova.",
+      "sha256": "9a65c38db2dc05b71caf4a4b727ea0e30653b07648d593f5ea7be032b2d647ba",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p0917",
+      "exactText": "Uči / pročitaj: TOP Linting; current ESLint getting started po potrebi.",
+      "sha256": "19bb346759bff70454571efd28d42a5f2edff9e318985fb69604de14670d5767",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1173",
+      "exactText": "Primarni resursi: CS50x Week 0, CS50x Week 1, CS50 Psets/Practice",
+      "sha256": "ffa66e93e97ad434bbf2388ea2e1e0af04083eac0f4ba8b677943fbcce3fa32b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1250",
+      "exactText": "Primarni resursi: CS50x Week 2, CS50 Practice",
+      "sha256": "78ceac0a78a1a595777855ccf7bc7bd1f168e51bad29854b7eae29bf126fef16",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1629",
+      "exactText": "Uči / pročitaj: CS50x Week 7 lecture/notes; PostgreSQL/SQLite docs po potrebi.",
+      "sha256": "f28ff7559b433819468be8c1a3a8bfa935da4c36b9298d4f337fa8bda722016b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1679",
+      "exactText": "Uči / pročitaj: Node pg/sqlite library docs; fokus na konceptu parameterized queries.",
+      "sha256": "73e386ca6bfe63be4e2bd2211518be21c0612c96fc9ab57d989b30fcd7e17200",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1811",
+      "exactText": "Uči / pročitaj: React DevTools + FSO debugging guidance.",
+      "sha256": "6894acfa662a37299932a7d3574d3a4580abb939ad909fafc0df3e82e632af8b",
+      "table": null,
+      "row": null,
+      "cell": null
+    },
+    {
+      "sourceId": "p1927",
+      "exactText": "Primarni resursi: Full Stack Open Part 3, Node/Express docs as reference",
+      "sha256": "d71f0951deb3195992f8f3c89fcc11be9b807eda2f47b2a9f0c2633c3bf8dbc4",
+      "table": null,
+      "row": null,
+      "cell": null
+    }
+  ]
+}
