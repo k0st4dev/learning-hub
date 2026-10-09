@@ -9,6 +9,8 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NoteEditor } from '../../src/components/note-editor';
+import { DailyHandbookHelp } from '../../src/components/daily-handbook-help';
+import { installHistoryProtection } from '../../src/lib/history-protection';
 import { type NoteState, type NoteSubmission } from '../../src/domain/notes';
 import { RequestError, writeApi } from '../../src/lib/client-api';
 import { allowLearningLeave } from '../../src/lib/learning-leave';
@@ -37,6 +39,7 @@ const itemId = 'se-26w-v1:d001';
 let saved: NoteState;
 let confirm: ReturnType<typeof vi.spyOn>;
 let read: ReturnType<typeof vi.fn>;
+let disposeHistory: (() => void) | undefined;
 function mount(initial = saved) {
   return render(
     createElement(NoteEditor, { studentId: 'owner', initial, kind: 'day' }),
@@ -78,11 +81,83 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  disposeHistory?.();
+  disposeHistory = undefined;
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
 describe('private note editor', () => {
+  it.each([true, false])(
+    'protects a real note while a handbook shortcut awaits a save: acknowledged=%s',
+    async (acknowledged) => {
+      const navigate = vi.fn();
+      disposeHistory = installHistoryProtection(navigate);
+      let acknowledge!: () => void;
+      api.mockImplementationOnce(
+        (_url, _method, input) =>
+          new Promise((resolve, reject) => {
+            acknowledge = () => {
+              if (acknowledged) resolve(commit(input as NoteSubmission));
+              else reject(new RequestError('Offline', 503));
+            };
+          }),
+      );
+      let help!: ReturnType<typeof render>;
+      await act(async () => {
+        mount();
+        help = render(
+          createElement(DailyHandbookHelp, {
+            unavailable: false,
+            links: [
+              {
+                key: 'guide-ai-protocol',
+                href: '/course/software-engineer/guide/ai-protocol',
+                title: 'AI protokol: maksimalna brzina bez gubitka mozga',
+              },
+            ],
+          }),
+        );
+      });
+      const link = help.container.querySelector('a')!;
+      edit('My unconfirmed daily note');
+      await act(async () => {
+        fireEvent.click(link);
+      });
+      expect(api).toHaveBeenCalledOnce();
+      expect(api.mock.calls[0]![2]).toMatchObject({
+        itemId,
+        expectedStudentId: 'owner',
+        expectedRevision: 0,
+        body: 'My unconfirmed daily note',
+      });
+      expect(navigate).not.toHaveBeenCalled();
+      expect(field().value).toBe('My unconfirmed daily note');
+      await act(async () => {
+        acknowledge();
+      });
+      if (acknowledged) {
+        expect(saved.body).toBe('My unconfirmed daily note');
+        expect(navigate).toHaveBeenCalledWith(link.href);
+        expect(
+          screen.queryByRole('dialog', { name: 'Leave with an unsaved note?' }),
+        ).toBeNull();
+      } else {
+        expect(
+          screen.getByRole('dialog', { name: 'Leave with an unsaved note?' }),
+        ).toBeTruthy();
+        expect(navigate).not.toHaveBeenCalled();
+        await act(async () => {
+          fireEvent.click(screen.getByText('Stay and keep my draft'));
+        });
+        expect(navigate).not.toHaveBeenCalled();
+        expect(saved.body).toBe('');
+      }
+      expect(field().value).toBe('My unconfirmed daily note');
+      expect(confirm).not.toHaveBeenCalled();
+      expect(api).toHaveBeenCalledOnce();
+    },
+  );
   it('refreshes a cached Back/Forward server snapshot from the owned no-store read before displaying Saved', async () => {
     const cached = {
       ...saved,

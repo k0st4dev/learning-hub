@@ -12,6 +12,8 @@ import {
   waitFor,
 } from '@testing-library/react';
 import { ExerciseEditor } from '../../src/components/exercise-editor';
+import { DailyHandbookHelp } from '../../src/components/daily-handbook-help';
+import { installHistoryProtection } from '../../src/lib/history-protection';
 import { RequestError, writeApi } from '../../src/lib/client-api';
 import {
   studyContext,
@@ -27,6 +29,7 @@ vi.mock('../../src/lib/client-api', async (original) => ({
   writeApi: vi.fn(),
 }));
 const api = vi.mocked(writeApi);
+let disposeHistory: (() => void) | undefined;
 const itemId = 'se-26w-v1:d017-practice';
 const empty: ExerciseSubmission = {
   tasks: [],
@@ -143,9 +146,56 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  disposeHistory?.();
+  disposeHistory = undefined;
   vi.restoreAllMocks();
 });
 describe('full-course exercise editing', () => {
+  it('retains real exercise evidence when a handbook shortcut is canceled and allows clean navigation after an acknowledged save', async () => {
+    const navigate = vi.fn();
+    disposeHistory = installHistoryProtection(navigate);
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    mount();
+    const help = render(
+      createElement(DailyHandbookHelp, {
+        unavailable: false,
+        links: [
+          {
+            key: 'guide-appendix-e',
+            href: '/course/software-engineer/guide/appendix-e',
+            title: 'Appendix E — šta radiš kada zapneš',
+          },
+        ],
+      }),
+    );
+    const link = help.container.querySelector('a')!;
+    const nativeNavigation = vi.fn((event: Event) => event.preventDefault());
+    link.addEventListener('click', nativeNavigation);
+    fireEvent.change(evidence(), {
+      target: { value: 'Unsaved implementation notes' },
+    });
+    fireEvent.click(link);
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(nativeNavigation).not.toHaveBeenCalled();
+    expect(navigate).not.toHaveBeenCalled();
+    expect(evidence().value).toBe('Unsaved implementation notes');
+    expect(api).not.toHaveBeenCalled();
+    fireEvent.click(button('Save draft'));
+    await screen.findByText('Saved on this computer.');
+    expect(api).toHaveBeenCalledOnce();
+    expect(api.mock.calls[0]![2]).toMatchObject({
+      expectedStudentId: 'owner',
+      expectedRevision: 0,
+      kind: 'exercise',
+      completed: false,
+      submission: { evidence: 'Unsaved implementation notes' },
+    });
+    fireEvent.click(link);
+    expect(nativeNavigation).toHaveBeenCalledOnce();
+    expect(confirm).toHaveBeenCalledOnce();
+    expect(api).toHaveBeenCalledOnce();
+    expect(evidence().value).toBe('Unsaved implementation notes');
+  });
   it('immediately saves a task with its owner and anchor; remount restores confirmed checks', async () => {
     const view = mount(empty, false, undefined, true);
     fireEvent.click(screen.getByLabelText('1. Done'));
