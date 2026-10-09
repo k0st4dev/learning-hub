@@ -32,6 +32,100 @@ afterEach(() => {
 });
 
 describe('temporary advisory review', () => {
+  it('reviews one optional concept and clears marks on every label edit without saving or claiming mastery', () => {
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
+    const storageSpies = (
+      ['getItem', 'setItem', 'removeItem', 'clear'] as const
+    ).map((method) => vi.spyOn(Storage.prototype, method));
+    const view = render(
+      createElement(TemporaryChecklist, { ...props, conceptReview: true }),
+    );
+    const field = view.getByRole('textbox', {
+      name: 'Current concept (optional)',
+    }) as HTMLInputElement;
+    expect(field.value).toBe('');
+    expect(field.required).toBe(false);
+    expect(field.maxLength).toBe(120);
+    expect(field.autocomplete).toBe('off');
+    fireEvent.change(field, {
+      target: { value: 'Closures <script>example</script>' },
+    });
+    for (const box of view.getAllByRole('checkbox')) fireEvent.click(box);
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 2 / 2',
+    );
+    expect(view.container.querySelector('script')).toBeNull();
+    view.rerender(
+      createElement(TemporaryChecklist, { ...props, conceptReview: true }),
+    );
+    expect(field.value).toBe('Closures <script>example</script>');
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 2 / 2',
+    );
+    fireEvent.change(field, { target: { value: 'Promises' } });
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 2',
+    );
+    fireEvent.click(view.getAllByRole('checkbox')[0]!);
+    fireEvent.click(view.getByRole('button', { name: 'Clear this review' }));
+    expect(field.value).toBe('Promises');
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 2',
+    );
+    fireEvent.click(view.getAllByRole('checkbox')[0]!);
+    fireEvent.change(field, { target: { value: '' } });
+    expect(view.getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 2',
+    );
+    for (const spy of [fetchSpy, ...storageSpies])
+      expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('isolates temporary concept labels as well as marks across accounts and browser page lifecycle', () => {
+    const view = render(
+      createElement(TemporaryChecklist, { ...props, conceptReview: true }),
+    );
+    const mark = () => {
+      fireEvent.change(view.getByRole('textbox'), {
+        target: { value: 'Closures' },
+      });
+      fireEvent.click(view.getAllByRole('checkbox')[0]!);
+    };
+    const empty = () => {
+      expect((view.getByRole('textbox') as HTMLInputElement).value).toBe('');
+      expect(view.getByRole('status').textContent).toBe(
+        'Marks for this review: 0 / 2',
+      );
+    };
+    for (const identity of ['student-b/release/c', 'student-b/new-release/c']) {
+      mark();
+      view.rerender(
+        createElement(TemporaryChecklist, {
+          ...props,
+          conceptReview: true,
+          identity,
+        }),
+      );
+      empty();
+    }
+    for (const event of ['pagehide', 'pageshow']) {
+      mark();
+      act(() => {
+        window.dispatchEvent(new Event(event));
+      });
+      empty();
+    }
+    mark();
+    view.unmount();
+    const fresh = render(
+      createElement(TemporaryChecklist, { ...props, conceptReview: true }),
+    );
+    expect((fresh.getByRole('textbox') as HTMLInputElement).value).toBe('');
+    expect(fresh.getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 2',
+    );
+  });
+
   it('renders exact escaped labels, unchecked controls and a temporary-state notice before hydration', () => {
     const host = new DOMParser().parseFromString(
       renderToStaticMarkup(createElement(TemporaryChecklist, props)),

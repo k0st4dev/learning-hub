@@ -1,6 +1,12 @@
 export const en = {
   handbook: {
     gitReview: 'Temporary Git review',
+    conceptReview: 'Temporary concept review',
+    conceptReviewHelp:
+      'Review one concept at a time. These self-checks do not certify mastery or grant AI permission. Daily AI restrictions take priority. Unmarked checks do not block learning.',
+    conceptLabel: 'Current concept (optional)',
+    conceptLabelHelp:
+      'Added review label, up to 120 characters. Every edit clears the marks. The label is temporary and creates no saved concept history. Clear this review keeps the current label.',
     temporaryNotice:
       'Temporary review. Marks reset when you leave or reload. This does not save course progress.',
     gitReviewHelp:

@@ -39,7 +39,10 @@ import { CourseOutline } from '../../src/components/course-outline';
 import { dayWorkspace } from '../../src/server/content/day-workspace';
 import { courseAvailability } from '../../src/server/content/availability';
 import { register, login, requireStudent } from '../../src/server/auth/service';
-import { gitReviewItems } from '../../src/server/content/handbook-checklist';
+import {
+  gitReviewItems,
+  conceptReviewItems,
+} from '../../src/server/content/handbook-checklist';
 import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
 import { handbookNavigation } from '../../src/server/content/handbook-navigation';
@@ -80,6 +83,149 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('offers seven exact concept self-checks with temporary labels and no learner or source mutation', async () => {
+    importCurriculum(store, plan.source);
+    const accounts = [];
+    for (const email of ['concept-a@example.test', 'concept-b@example.test']) {
+      const credentials = {
+        email,
+        password: 'Local concept self-review test password',
+      };
+      await register(store, {
+        ...credentials,
+        confirmation: credentials.password,
+      });
+      const { token } = await login(store, credentials);
+      startCourse(store, token);
+      accounts.push({
+        token,
+        studentId: requireStudent(store, token).id,
+        before: snapshot(store, token),
+      });
+    }
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const original = JSON.stringify(catalog);
+    const page = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-c',
+    )!;
+    const items = conceptReviewItems(page)!;
+    expect(page.blocks).toHaveLength(8);
+    expect(items.map((item) => item.id)).toEqual([
+      'p2236',
+      'p2237',
+      'p2238',
+      'p2239',
+      'p2240',
+      'p2241',
+      'p2242',
+    ]);
+    expect(items.map((item) => item.text)).toEqual(
+      items.map(
+        (item) =>
+          plan.source.source_blocks.find(
+            (block) => block.source_id === item.id,
+          )!.text,
+      ),
+    );
+    const element = (studentId: string) =>
+      createElement(CurriculumPreview, { catalog, page, studentId });
+    const view = render(element(accounts[0]!.studentId));
+    const region = () =>
+      within(view.getByRole('region', { name: 'Temporary concept review' }));
+    expect(region().getAllByRole('checkbox')).toHaveLength(7);
+    for (const [index, item] of items.entries())
+      expect(
+        region().getAllByRole('checkbox')[index]!.closest('label')!.textContent,
+      ).toBe(item.text);
+    expect(
+      region().getByText(/do not certify mastery or grant AI permission/),
+    ).toBeTruthy();
+    const label = () => region().getByRole('textbox') as HTMLInputElement;
+    fireEvent.change(label(), { target: { value: 'Closures' } });
+    for (const box of region().getAllByRole('checkbox')) fireEvent.click(box);
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 7 / 7',
+    );
+    for (const block of page.blocks)
+      expect(
+        view.container.querySelector(
+          '[data-source-id="' + block.sourceLocator + '"] [data-source-text]',
+        )!.textContent,
+      ).toBe(block.exactText);
+    fireEvent.change(label(), { target: { value: 'Promises' } });
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 7',
+    );
+    fireEvent.click(region().getAllByRole('checkbox')[0]!);
+    view.rerender(element(accounts[1]!.studentId));
+    expect(label().value).toBe('');
+    expect(region().getByRole('status').textContent).toBe(
+      'Marks for this review: 0 / 7',
+    );
+    for (const blocks of [
+      page.blocks.filter((block) => block.sourceLocator !== 'p2238'),
+      [...page.blocks, page.blocks[1]!],
+      page.blocks.map((block) =>
+        block.sourceLocator === 'p2239' ? { ...block, exactText: '' } : block,
+      ),
+    ]) {
+      const invalid = { ...page, blocks };
+      expect(conceptReviewItems(invalid)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: invalid,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', { name: 'Temporary concept review' }),
+      ).toBeNull();
+      expect(
+        view.getByText(
+          'The review tool is unavailable. All available original guidance remains below.',
+        ),
+      ).toBeTruthy();
+      expect(
+        view.container.querySelector(
+          '[data-source-id="p2235"] [data-source-text]',
+        )!.textContent,
+      ).toBe(page.blocks[0]!.exactText);
+    }
+    for (const slug of [
+      'appendix-a',
+      'appendix-b',
+      'appendix-e',
+      'ai-protocol',
+    ]) {
+      const other = catalogPage(
+        catalog,
+        '/course/software-engineer/guide/' + slug,
+      )!;
+      expect(conceptReviewItems(other)).toBeNull();
+      view.rerender(
+        createElement(CurriculumPreview, {
+          catalog,
+          page: other,
+          studentId: accounts[0]!.studentId,
+        }),
+      );
+      expect(
+        view.queryByRole('region', { name: 'Temporary concept review' }),
+      ).toBeNull();
+      expect(
+        view.queryByRole('textbox', { name: 'Current concept (optional)' }),
+      ).toBeNull();
+    }
+    expect(JSON.stringify(catalog)).toBe(original);
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+    store.native.close();
+    store = openDatabase(path.join(directory, 'learning.sqlite'));
+    for (const account of accounts)
+      expect(snapshot(store, account.token)).toEqual(account.before);
+  });
   it('offers four exact temporary Git checks without writing either learner or published content', async () => {
     importCurriculum(store, plan.source);
     const accounts = [];

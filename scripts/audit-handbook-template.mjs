@@ -12,9 +12,15 @@ assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
 assert.ok(
   process.argv.length === 2 ||
     (process.argv.length === 3 &&
-      ['--prompts', '--navigation', '--git-review'].includes(process.argv[2])),
+      [
+        '--prompts',
+        '--navigation',
+        '--git-review',
+        '--concept-review',
+      ].includes(process.argv[2])),
 );
-const checkGit = process.argv[2] === '--git-review';
+const checkConcept = process.argv[2] === '--concept-review';
+const checkGit = checkConcept || process.argv[2] === '--git-review';
 const checkNavigation = checkGit || process.argv[2] === '--navigation';
 const checkPrompts = checkNavigation || process.argv[2] === '--prompts';
 const fixture = JSON.parse(
@@ -67,6 +73,7 @@ let promptsChecked = 0;
 let guideSectionsChecked = 0;
 let guideBlocksChecked = 0;
 let gitChecksChecked = 0;
+let conceptChecksChecked = 0;
 const continueTargets = [];
 const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
@@ -270,7 +277,74 @@ try {
             decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
           );
           assert.equal(target?.getAttribute('data-source-id'), 'p2229');
-        } else assert.equal(tool, null);
+        } else if (!url.endsWith('/appendix-c')) assert.equal(tool, null);
+      }
+      if (checkConcept && url.endsWith('/appendix-c')) {
+        const tool = document.querySelector('.temporary-review');
+        assert.ok(tool);
+        assert.equal(document.querySelectorAll('.temporary-review').length, 1);
+        assert.equal(
+          tool.querySelector('h2')?.textContent,
+          'Temporary concept review',
+        );
+        assert.equal(original.blocks.length, 8);
+        assert.equal(tool.querySelectorAll('input[type="checkbox"]').length, 7);
+        assert.equal(
+          tool.querySelector('form, [data-learning-unit], [data-study-anchor]'),
+          null,
+        );
+        assert.ok(
+          tool.textContent.includes(
+            'Temporary review. Marks reset when you leave or reload. This does not save course progress.',
+          ),
+        );
+        assert.ok(
+          tool.textContent.includes(
+            'These self-checks do not certify mastery or grant AI permission. Daily AI restrictions take priority.',
+          ),
+        );
+        assert.equal(
+          tool.querySelector('[role="status"]')?.textContent,
+          'Marks for this review: 0 / 7',
+        );
+        const field = tool.querySelector('input[type="text"]');
+        assert.ok(field);
+        assert.equal(field.value, '');
+        assert.equal(field.required, false);
+        assert.equal(field.maxLength, 120);
+        assert.equal(field.autocomplete, 'off');
+        assert.equal(
+          field.labels[0]?.textContent,
+          'Current concept (optional)',
+        );
+        for (const id of field.getAttribute('aria-describedby').split(' '))
+          assert.ok(document.getElementById(id));
+        assert.ok(tool.textContent.includes('Every edit clears the marks.'));
+        assert.equal(
+          tool.querySelector('button')?.textContent,
+          'Clear this review',
+        );
+        assert.equal(tool.querySelector('button')?.type, 'button');
+        for (let number = 2236; number <= 2242; number++) {
+          const ref = 'p' + number;
+          const box = tool.querySelector('[data-review-source="' + ref + '"]');
+          assert.ok(box);
+          assert.equal(box.type, 'checkbox');
+          assert.equal(box.checked, false);
+          assert.equal(box.required, false);
+          assert.equal(box.labels.length, 1);
+          assert.equal(
+            box.labels[0].querySelector('span')?.textContent,
+            original.blocks.find((block) => block.sourceLocator === ref)
+              ?.exactText,
+          );
+          conceptChecksChecked++;
+        }
+        const sourceLink = tool.querySelector('a');
+        const target = document.getElementById(
+          decodeURIComponent(sourceLink.getAttribute('href').slice(1)),
+        );
+        assert.equal(target?.getAttribute('data-source-id'), 'p2235');
       }
       if (url === route) {
         const field = document.querySelector('#problem-file-template');
@@ -362,6 +436,15 @@ try {
     date: new Date().toISOString(),
     server: 'development',
     accounts: 2,
+    ...(checkConcept
+      ? {
+          conceptChecksPerAccount: 7,
+          exactConceptChecks: conceptChecksChecked,
+          conceptOriginalBlocksPerAccount: 8,
+          optionalTemporaryConceptLabel: 'passed',
+          noMasteryOrAiPermissionClaim: true,
+        }
+      : {}),
     ...(checkGit
       ? {
           gitChecksPerAccount: 4,
@@ -402,13 +485,15 @@ try {
   await writeFile(
     path.join(
       root,
-      checkGit
-        ? 'docs/m6-step24-http-audit.json'
-        : checkNavigation
-          ? 'docs/m6-step22-http-audit.json'
-          : checkPrompts
-            ? 'docs/m6-step21-http-audit.json'
-            : 'docs/m6-step20-http-audit.json',
+      checkConcept
+        ? 'docs/m6-step25-http-audit.json'
+        : checkGit
+          ? 'docs/m6-step24-http-audit.json'
+          : checkNavigation
+            ? 'docs/m6-step22-http-audit.json'
+            : checkPrompts
+              ? 'docs/m6-step21-http-audit.json'
+              : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

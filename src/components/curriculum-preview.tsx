@@ -10,7 +10,10 @@ import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
 import { handbookNavigation } from '@/server/content/handbook-navigation';
-import { gitReviewItems } from '@/server/content/handbook-checklist';
+import {
+  gitReviewItems,
+  conceptReviewItems,
+} from '@/server/content/handbook-checklist';
 import { TemporaryChecklist } from './temporary-checklist';
 import {
   appendixATemplate,
@@ -204,7 +207,22 @@ export function CurriculumPreview({
   const template = appendixATemplate(page);
   const prompts = aiPromptTemplates(page);
   const handbook = handbookNavigation(page);
-  const gitItems = gitReviewItems(page);
+  const review =
+    page.item.stableKey === 'guide-appendix-b'
+      ? {
+          items: gitReviewItems(page),
+          title: en.handbook.gitReview,
+          help: en.handbook.gitReviewHelp,
+          conceptReview: false,
+        }
+      : page.item.stableKey === 'guide-appendix-c'
+        ? {
+            items: conceptReviewItems(page),
+            title: en.handbook.conceptReview,
+            help: en.handbook.conceptReviewHelp,
+            conceptReview: true,
+          }
+        : null;
   const sourceBlocks = (handbook?.blocks ?? page.blocks).map((block) => {
     const copy =
       block.sourceLocator === template?.sourceId
@@ -308,18 +326,19 @@ export function CurriculumPreview({
               )}
             </nav>
           )}
-          {page.item.stableKey === 'guide-appendix-b' &&
+          {review &&
             studentId &&
-            (gitItems && handbook?.sections[0] ? (
+            (review.items && handbook?.sections[0] ? (
               <TemporaryChecklist
                 identity={JSON.stringify([
                   studentId,
                   catalog.release.id,
                   page.item.id,
                 ])}
-                title={en.handbook.gitReview}
-                help={en.handbook.gitReviewHelp}
-                items={gitItems}
+                title={review.title}
+                help={review.help}
+                items={review.items}
+                conceptReview={review.conceptReview}
                 sourceHref={
                   '#' + encodeURIComponent(handbook.sections[0].anchor)
                 }

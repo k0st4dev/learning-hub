@@ -10,6 +10,7 @@ type Props = {
   help: string;
   items: readonly { id: string; text: string }[];
   sourceHref: string;
+  conceptReview?: boolean;
 };
 
 export function TemporaryChecklist(props: Props) {
@@ -17,11 +18,21 @@ export function TemporaryChecklist(props: Props) {
   return <Review key={JSON.stringify([props.identity, pathname])} {...props} />;
 }
 
-function Review({ title, help, items, sourceHref }: Props) {
+function Review({
+  title,
+  help,
+  items,
+  sourceHref,
+  conceptReview = false,
+}: Props) {
   const id = useId();
   const [marked, setMarked] = useState<string[]>([]);
+  const [concept, setConcept] = useState('');
   useEffect(() => {
-    const reset = () => setMarked([]);
+    const reset = () => {
+      setMarked([]);
+      setConcept('');
+    };
     window.addEventListener('pagehide', reset);
     window.addEventListener('pageshow', reset);
     return () => {
@@ -37,6 +48,24 @@ function Review({ title, help, items, sourceHref }: Props) {
       <h2 id={id + '-title'}>{title}</h2>
       <p id={id + '-notice'}>{en.handbook.temporaryNotice}</p>
       <p id={id + '-help'}>{help}</p>
+      {conceptReview && (
+        <div className="stack">
+          <label htmlFor={id + '-concept'}>{en.handbook.conceptLabel}</label>
+          <input
+            id={id + '-concept'}
+            type="text"
+            maxLength={120}
+            autoComplete="off"
+            aria-describedby={id + '-concept-help ' + id + '-notice'}
+            value={concept}
+            onChange={(event) => {
+              setConcept(event.target.value);
+              setMarked([]);
+            }}
+          />
+          <p id={id + '-concept-help'}>{en.handbook.conceptLabelHelp}</p>
+        </div>
+      )}
       <fieldset
         className="exercise-fields"
         aria-describedby={id + '-notice ' + id + '-help'}
