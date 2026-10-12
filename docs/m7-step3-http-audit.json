@@ -1,0 +1,11 @@
+{
+  "accounts": 2,
+  "oldOwnerSessionsRejected": 2,
+  "empty204AndCookiesCleared": true,
+  "restartFreshLogin": true,
+  "oldPasswordRejected": true,
+  "newPasswordAccepted": true,
+  "otherAccountPreserved": true,
+  "settingsNotesProgressContinuePreserved": true,
+  "unchangedDurableTables": 17
+}

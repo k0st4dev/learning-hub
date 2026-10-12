@@ -77,3 +77,7 @@ Owned settings API/service, account-scoped revisions and receipts, reviewed migr
 ## M7 step 2 completed in automated/service scope — 2026-10-12
 
 Settings editor/page/navigation and saved account themes implemented; 554 tests/46 files pass, six actual HTTP pages preserve 25 durable tables. Native browser checks remain blocked by tool initialization. See docs/M7-STEP2-VERIFICATION.md. Next separately approved step: password-change service/API with current-password validation and atomic session revocation.
+
+## M7 step 3 completed — 2026-10-12
+
+Password-change service/API, independent persistent throttling, atomic all-owner-session revocation and related stale-login race repair verified. Full 568 tests/47 files pass. Actual two-account HTTP server-restart verification preserves settings, private notes, learning/Continue and seventeen durable tables. See docs/M7-STEP3-VERIFICATION.md. Next separately approved step: Settings password form; recovery and final auth/integration acceptance follow later.

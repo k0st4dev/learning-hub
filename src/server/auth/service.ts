@@ -119,12 +119,23 @@ export async function login(store: Store, input: unknown, now = Date.now()) {
     );
   }
   repo.checkLogin(canonical, now);
-  if (passwordNeedsRehash(user.passwordHash))
-    repo.updateHash(user.id, await hashPassword(data.password), now);
+  const refreshedHash = passwordNeedsRehash(user.passwordHash)
+    ? await hashPassword(data.password)
+    : null;
   const token = randomBytes(32).toString('base64url');
   const expiresAt = now + sessionAbsoluteMs;
   store.native
     .transaction(() => {
+      // Password verification runs outside SQLite; reject a credential changed
+      // during that await before issuing a session or replacing its hash.
+      if (repo.findById(user.id)?.passwordHash !== user.passwordHash)
+        throw new AppError(
+          401,
+          'INVALID_CREDENTIALS',
+          'Email or password is incorrect.',
+        );
+      repo.checkLogin(canonical, now);
+      if (refreshedHash) repo.updateHash(user.id, refreshedHash, now);
       repo.clearAccountFailures(canonical);
       repo.insertSession({
         id: randomUUID(),
@@ -137,6 +148,66 @@ export async function login(store: Store, input: unknown, now = Date.now()) {
     })
     .immediate();
   return { token, expiresAt, redirect: safeReturnPath(data.returnTo) };
+}
+export const changePasswordSchema = z.strictObject({
+  currentPassword: z
+    .string()
+    .min(1)
+    .max(512)
+    .refine(
+      (value) => Buffer.byteLength(value, 'utf8') <= 512,
+      'Use at most 512 UTF-8 bytes.',
+    ),
+  newPassword: passwordSchema,
+  expectedStudentId: z.string().min(1).max(160),
+});
+export async function changePassword(
+  store: Store,
+  token: string | undefined,
+  input: unknown,
+  now?: number,
+) {
+  const timestamp = () => now ?? Date.now();
+  const student = requireStudent(store, token, timestamp());
+  const data = changePasswordSchema.parse(input);
+  if (data.expectedStudentId !== student.id)
+    throw new AppError(
+      403,
+      'ACCOUNT_CHANGED',
+      'The signed-in account changed. Sign in to the original account before changing its password.',
+    );
+  const repo = authRepository(store);
+  repo.checkPasswordChange(student.id, timestamp());
+  const user = repo.findById(student.id);
+  if (!user)
+    throw new AppError(401, 'AUTH_REQUIRED', 'Sign in again to continue.');
+  if (!(await verifyPassword(user.passwordHash, data.currentPassword))) {
+    repo.failPasswordChange(student.id, timestamp());
+    throw new AppError(
+      400,
+      'CURRENT_PASSWORD_INCORRECT',
+      'Current password is incorrect.',
+      { fieldErrors: { currentPassword: 'Current password is incorrect.' } },
+    );
+  }
+  const passwordHash = await hashPassword(data.newPassword);
+  store.native
+    .transaction(() => {
+      const commitTime = timestamp();
+      // Session and credential may have changed while Argon2 was running.
+      requireStudent(store, token, commitTime);
+      repo.checkPasswordChange(student.id, commitTime);
+      if (repo.findById(student.id)?.passwordHash !== user.passwordHash)
+        throw new AppError(
+          409,
+          'PASSWORD_CHANGED',
+          'The password changed during this request. Sign in again before trying another change.',
+        );
+      repo.updateHash(student.id, passwordHash, commitTime);
+      repo.revokeUserSessions(student.id, commitTime);
+      repo.clearPasswordFailures(student.id);
+    })
+    .immediate();
 }
 export function currentUser(
   store: Store,

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import type { Store } from '../db/connection.ts';
 import { appUser, session, authThrottle } from '../db/schema.ts';
 import { AppError } from '../errors.ts';
@@ -50,6 +50,8 @@ export function authRepository(store: Store) {
       .run();
   };
   return {
+    findById: (id: string) =>
+      db.select().from(appUser).where(eq(appUser.id, id)).get(),
     findByEmail: (email: string) =>
       db.select().from(appUser).where(eq(appUser.emailCanonical, email)).get(),
     insertUser: (values: typeof appUser.$inferInsert) =>
@@ -66,6 +68,28 @@ export function authRepository(store: Store) {
       db
         .delete(authThrottle)
         .where(eq(authThrottle.keyHash, digest(`login:email:${email}`)))
+        .run(),
+    checkPasswordChange: (userId: string, now: number) => {
+      assertAllowed(`password:user:${userId}`, now);
+      assertAllowed('password:installation:127.0.0.1', now);
+    },
+    failPasswordChange: (userId: string, now: number) =>
+      store.native
+        .transaction(() => {
+          increment(`password:user:${userId}`, 5, 900000, now);
+          increment('password:installation:127.0.0.1', 10, 900000, now);
+        })
+        .immediate(),
+    clearPasswordFailures: (userId: string) =>
+      db
+        .delete(authThrottle)
+        .where(eq(authThrottle.keyHash, digest(`password:user:${userId}`)))
+        .run(),
+    revokeUserSessions: (userId: string, now: number) =>
+      db
+        .update(session)
+        .set({ revokedAt: now })
+        .where(and(eq(session.userId, userId), isNull(session.revokedAt)))
         .run(),
     checkLogin: (email: string, now: number) => {
       assertAllowed(`login:email:${email}`, now);
