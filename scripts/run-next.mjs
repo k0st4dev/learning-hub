@@ -3,8 +3,10 @@ import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import { environment, root } from './environment.mjs';
+import { acquireOperationLock } from '../src/server/db/operation-lock.ts';
 
 const require = createRequire(import.meta.url);
+let lease;
 try {
   const mode = process.argv[2];
   if (!['dev', 'build', 'start'].includes(mode) || process.argv.length !== 3) {
@@ -14,6 +16,7 @@ try {
   }
   const config = environment();
   if (mode !== 'build') {
+    lease = await acquireOperationLock(config.dataDir, root, 'server', true);
     await new Promise((resolve, reject) => {
       const probe = createServer();
       probe.once('error', () =>
@@ -43,16 +46,18 @@ try {
   });
   for (const signal of ['SIGINT', 'SIGTERM'])
     process.on(signal, () => child.kill(signal));
-  child.once('error', () => {
-    console.error(
-      'Could not start Next.js. Run npm ci with the documented Node version.',
-    );
-    process.exitCode = 1;
-  });
-  child.once('exit', (code) => {
-    process.exitCode = code ?? 1;
+  process.exitCode = await new Promise((resolve) => {
+    child.once('error', () => {
+      console.error(
+        'Could not start Next.js. Run npm ci with the documented Node version.',
+      );
+      resolve(1);
+    });
+    child.once('exit', (code) => resolve(code ?? 1));
   });
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'Startup failed.');
   process.exitCode = 1;
+} finally {
+  await lease?.release();
 }

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-12",
+  "platform": "Windows x64",
+  "nativeInteractiveTTY": true,
+  "secretEntryProducedNoOutput": true,
+  "ctrlCCanceled": true,
+  "cancellationPreservedOldPassword": true,
+  "cancellationReleasedOperationAndSetupLocks": true,
+  "resetConfirmed": true,
+  "recoveryRefusedActiveApplicationPort": true,
+  "serverRefusedActiveRecoveryLease": true,
+  "nonInteractiveInvocationRefused": true,
+  "commandLineArgumentsRefused": true,
+  "scope": "Only synthetic preview account; no passwords, hashes or tokens in this report.",
+  "recoveryRefusedActiveServerLease": true,
+  "productionServerLeaseReleasedOnNormalStop": true,
+  "productionHTTPAfterResetVerified": true
+}

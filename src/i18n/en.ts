@@ -153,7 +153,7 @@ export const en = {
     networkError:
       'The application could not confirm your request. Check that it is running and try again.',
     recovery:
-      'Local password recovery is being added in the operations milestone. Do not delete the database to reset an account.',
+      'Forgot your password? The trusted device owner can stop the application and run npm run password:reset from its source folder. Follow the interactive prompts. Keep the existing data directory; no email reset is available.',
   },
   daily: {
     handbookHelp: 'Handbook help (optional)',

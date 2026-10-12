@@ -11,3 +11,9 @@ playwright-report/
 *.tsbuildinfo
 *.log
 backups/
+.local-operation.lock
+.setup.lock
+learning.sqlite
+learning.sqlite-wal
+learning.sqlite-shm
+csrf-secret

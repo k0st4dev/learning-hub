@@ -1,0 +1,12 @@
+{
+  "accounts": 2,
+  "revokedOwnerSessions": 2,
+  "oldPasswordRejected": true,
+  "recoveredPasswordAcceptedAfterRestart": true,
+  "peerAccountPreserved": true,
+  "confirmedDay1LessonNoteAndContinuePreserved": true,
+  "unchangedDurableTables": 17,
+  "integrity": "ok",
+  "foreignKeys": "ok",
+  "nativeTerminalEvidence": "recorded separately"
+}
