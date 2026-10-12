@@ -73,3 +73,7 @@ Start each implementation task from PROJECT_STATUS.md: objective, specification 
 ## M7 step 1 completed — 2026-10-12
 
 Owned settings API/service, account-scoped revisions and receipts, reviewed migration 0002, verified existing-data preservation and two-user HTTP restart persistence are complete. Full 546 tests pass. See docs/M7-STEP1-VERIFICATION.md. Next separately approved step: settings editor/page/navigation, with theme application in its UI scope. Password lifecycle, recovery and final acceptance remain later work.
+
+## M7 step 2 completed in automated/service scope — 2026-10-12
+
+Settings editor/page/navigation and saved account themes implemented; 554 tests/46 files pass, six actual HTTP pages preserve 25 durable tables. Native browser checks remain blocked by tool initialization. See docs/M7-STEP2-VERIFICATION.md. Next separately approved step: password-change service/API with current-password validation and atomic session revocation.

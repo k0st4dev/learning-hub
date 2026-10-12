@@ -3,6 +3,10 @@ import Link from 'next/link';
 import { en } from '@/i18n/en';
 import { HistoryProtection } from '@/components/history-protection';
 import './globals.css';
+import { cookies } from 'next/headers';
+import { currentUser, sessionCookieName } from '@/server/auth/service';
+import { getStore } from '@/server/db/current';
+import { AppError } from '@/server/errors';
 
 export const metadata: Metadata = {
   title: en.appName,
@@ -10,11 +14,20 @@ export const metadata: Metadata = {
 };
 export const dynamic = 'force-dynamic';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  let theme = 'system';
+  const token = (await cookies()).get(sessionCookieName)?.value;
+  if (token) {
+    try {
+      theme = currentUser(getStore(), token)?.theme ?? 'system';
+    } catch (cause) {
+      if (!(cause instanceof AppError)) throw cause;
+    }
+  }
   return (
-    <html lang="en">
+    <html lang="en" data-theme={theme}>
       <body>
         <HistoryProtection />
         <a className="skip-link" href="#main">

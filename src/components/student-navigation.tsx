@@ -28,6 +28,7 @@ export function StudentNavigation({
           { href: '/search', label: 'Search' },
         ]
       : []),
+    { href: '/settings', label: 'Settings' },
   ];
   useEffect(() => {
     dialog.current?.close();

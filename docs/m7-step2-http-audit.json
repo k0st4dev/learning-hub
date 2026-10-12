@@ -1,0 +1,11 @@
+{
+  "accounts": 2,
+  "pages": 6,
+  "ownedFields": true,
+  "readOnlyEmail": true,
+  "navigationBothMenus": true,
+  "serverRenderedLightAndDark": true,
+  "anonymousLoginRedirect": true,
+  "unchangedDurableTables": 25,
+  "nativeBrowser": "pending: tool initialization failure"
+}

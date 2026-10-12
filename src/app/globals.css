@@ -143,7 +143,7 @@ mark {
   --border: #cbd5e1;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     color-scheme: dark;
     --background: #0b1220;
     --surface: #111827;
@@ -152,6 +152,22 @@ mark {
     --primary: #93c5fd;
     --border: #475569;
   }
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --background: #0b1220;
+  --surface: #111827;
+  --text: #f1f5f9;
+  --muted: #cbd5e1;
+  --primary: #93c5fd;
+  --border: #475569;
+}
+.settings-fields {
+  min-inline-size: 0;
+}
+.settings-fields input,
+.settings-fields select {
+  width: 100%;
 }
 * {
   box-sizing: border-box;
@@ -656,10 +672,14 @@ progress {
   }
 }
 @media (prefers-color-scheme: dark) {
-  .error-summary,
-  .field-error {
+  :root:not([data-theme='light']) .error-summary,
+  :root:not([data-theme='light']) .field-error {
     color: #fca5a5;
   }
+}
+:root[data-theme='dark'] .error-summary,
+:root[data-theme='dark'] .field-error {
+  color: #fca5a5;
 }
 @media (max-width: 639px) {
   .header-inner,
