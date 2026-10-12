@@ -93,3 +93,7 @@ Interactive trusted-owner local recovery CLI, shared stopped-server guard, schem
 ## M7 step 6 integration verified — 2026-10-12
 
 Account/settings/password/recovery implementation and automated/local-service checks verified: 625 tests/53 files, types/lint/build/source/licences and six-account production cookie persistence/private ownership audit pass. Secret cleanup, signed-in auth-page routing and throttle retry-delay presentation repaired. See docs/M7-INTEGRATION-VERIFICATION.md. Native-browser/manual/OS/reboot and final A01–A26 gates remain open. Next separately approved scope: M8 step 1 online SQLite backup with release/source manifests, integrity verification and README commands; this independent operations work can proceed while retaining browser closeout requirements.
+
+## M8 step 1 verified — 2026-10-12
+
+Online backup CLI, standalone snapshot/source-release metadata, maintenance fencing, integrity/migration/source checks and operator README complete. Full 636 tests/54 files, types/lint/build/source/licences pass. Actual running-server CLI audit preserves all 27 tables and secret, with two-account fresh login/private-note/Continue verification in an isolated snapshot copy. Evidence: docs/M8-STEP1-VERIFICATION.md. A23 remains pending stopped-server restore. Exact next only after separate approval: M8 step 2 validated stopped-server restore, target confirmation/safety backup, restored-session revocation, fresh secret and rollback/preservation rehearsal. Existing native browser/final gates remain open.
