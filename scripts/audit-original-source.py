@@ -1,9 +1,16 @@
 from pathlib import Path
+import argparse
 import csv, json, hashlib, zipfile, xml.etree.ElementTree as ET
 from collections import Counter
 from html.parser import HTMLParser
 
 root = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser()
+parser.add_argument('--report', default='docs/m2-source-audit.json')
+args = parser.parse_args()
+report_path = (root / args.report).resolve()
+if not report_path.is_relative_to((root / 'docs').resolve()):
+    raise SystemExit('Audit report must stay within repository docs')
 p = root / 'content/se-26w-v1/source'
 j = json.loads((p/'curriculum-source.json').read_text(encoding='utf-8'))
 ns = {'w':'http://schemas.openxmlformats.org/wordprocessingml/2006/main'}
@@ -51,6 +58,7 @@ h=Parse(); h.feed((p/'curriculum-audit.html').read_text(encoding='utf-8'))
 visible=' '.join(h.text)
 checks['audit_contains_all_day_study_text'] = all(d['study_instruction'] in visible for d in j['days'])
 report={'checks':checks,'counts':{'modules':len(j['modules']),'weeks':len(j['weeks']),'days':len(j['days']),'tasks':sum(len(d['tasks']) for d in j['days']),'source_blocks':len(blocks),'mapping_rows':len(mapping),'resource_mentions':len(j['resource_mentions']),'hyperlink_occurrences':len(links),'unique_urls':len(set(url for _,url in links))},'task_modes':dict(Counter(t['requirement_mode'] for d in j['days'] for t in d['tasks'])),'assessment_kinds':dict(Counter(d['assessment_kind'] for d in j['days']))}
-(root/'docs/m2-source-audit.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+report_path.parent.mkdir(parents=True, exist_ok=True)
+report_path.write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
 print(json.dumps(report,ensure_ascii=False,indent=2))
 if not all(checks.values()): raise SystemExit('Source audit failed')

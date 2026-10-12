@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { writeAuditReport } from './audit-report.mjs';
 import path from 'node:path';
 import { environment, root } from './environment.mjs';
 import { openDatabase } from '../src/server/db/connection.ts';
@@ -798,7 +799,7 @@ try {
     scope:
       'Focused served HTML, two-account and original source regression. Clipboard interaction is verified separately in unit tests and browser; no final acceptance claim.',
   };
-  await writeFile(
+  await writeAuditReport(
     path.join(
       root,
       checkGuidance

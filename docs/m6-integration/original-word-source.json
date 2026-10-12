@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "docx_sha256": true,
+    "all_body_text_exact": true,
+    "table_count": true,
+    "header_footer_text": true,
+    "all_hyperlink_labels_targets_exact": true,
+    "table_coordinates_exact": true,
+    "all_substantive_blocks_mapped": true,
+    "csv_mapping_exact_body_text": true,
+    "csv_mapping_destinations_exact": true,
+    "daily_sequence": true,
+    "daily_source_fields_exact_with_separate_labels": true,
+    "daily_ai_policies_preserved": true,
+    "daily_csv_fields_exact": true,
+    "audit_contains_all_day_study_text": true
+  },
+  "counts": {
+    "modules": 6,
+    "weeks": 26,
+    "days": 182,
+    "tasks": 548,
+    "source_blocks": 2365,
+    "mapping_rows": 2329,
+    "resource_mentions": 208,
+    "hyperlink_occurrences": 19,
+    "unique_urls": 12
+  },
+  "task_modes": {
+    "required": 515,
+    "alternative": 16,
+    "mixed": 2,
+    "conditional": 13,
+    "optional": 2
+  },
+  "assessment_kinds": {
+    "practice": 156,
+    "weekly_checkpoint": 25,
+    "final_exam": 1
+  }
+}

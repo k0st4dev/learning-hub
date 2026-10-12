@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-12T06:59:59.891Z",
+  "server": "development",
+  "curriculumRoutes": 594,
+  "servedPages": 603,
+  "mappedParagraphs": 2329,
+  "originalHyperlinks": 19,
+  "originalDistinctUrls": 12,
+  "privateFixtureAccounts": 4,
+  "privateReads": 16,
+  "foreignReadsRejected": 8,
+  "durableNotes": 4,
+  "durableScorecards": 2,
+  "distinctPrivateRecords": "passed",
+  "freshLoginAndSameFileReopen": "passed",
+  "continueTargets": [
+    "/course/software-engineer/preparation",
+    "/course/software-engineer/preparation"
+  ],
+  "allDurableLearnerPrivateAndContentRecordsUnchanged": true,
+  "streams": {
+    "segments": 33073,
+    "boundaries": 603
+  },
+  "scope": "Read-only full served curriculum and existing synthetic notes/scorecards after an operator server restart. API equality and ownership; no browser hydration, OS reboot, production runtime or final MVP claim."
+}

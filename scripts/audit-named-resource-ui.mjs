@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { writeAuditReport } from './audit-report.mjs';
 import path from 'node:path';
 import { environment, root } from './environment.mjs';
 import { openDatabase } from '../src/server/db/connection.ts';
@@ -411,7 +412,7 @@ try {
     scope:
       'Real HTTP and served source/derived views only. No browser interaction, external availability, production performance or final acceptance claim.',
   };
-  await writeFile(
+  await writeAuditReport(
     path.join(root, 'docs/m6-step19b-http-audit.json'),
     JSON.stringify(report, null, 2) + '\n',
   );

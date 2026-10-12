@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { writeAuditReport } from './audit-report.mjs';
 import path from 'node:path';
 import os from 'node:os';
 import { performance } from 'node:perf_hooks';
@@ -285,7 +286,7 @@ try {
       (ui ? '/search forms' : '') +
       ' only. Development timings are observations, not production A19/performance or browser UI acceptance.',
   };
-  await writeFile(
+  await writeAuditReport(
     path.join(
       root,
       mentionsSearchRegression
