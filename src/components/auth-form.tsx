@@ -9,11 +9,13 @@ export function AuthForm({
   email = '',
   returnTo = '/dashboard',
   registered = false,
+  passwordChanged = false,
 }: {
   mode: 'register' | 'login';
   email?: string;
   returnTo?: string;
   registered?: boolean;
+  passwordChanged?: boolean;
 }) {
   const router = useRouter();
   const [show, setShow] = useState(false);
@@ -100,6 +102,12 @@ export function AuthForm({
       {registered && (
         <p role="status" className="notice">
           {en.auth.registered}
+        </p>
+      )}
+      {passwordChanged && (
+        <p role="status" className="notice">
+          Password changed. All previous sessions were signed out. Sign in with
+          your new password.
         </p>
       )}
       {error && (

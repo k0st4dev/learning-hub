@@ -5,6 +5,7 @@ import { readSettings } from '@/server/account/settings';
 import { AppError } from '@/server/errors';
 import { StudentShell } from '@/components/student-shell';
 import { SettingsEditor } from '@/components/settings-editor';
+import { PasswordChangeForm } from '@/components/password-change-form';
 export default async function SettingsPage() {
   const { student, token } = await pageStudent('/settings');
   let initial;
@@ -28,6 +29,11 @@ export default async function SettingsPage() {
           <Link href="/settings">Retry settings</Link>
         </div>
       )}
+      <PasswordChangeForm
+        key={'password:' + student.id}
+        studentId={student.id}
+        email={student.email}
+      />
       <section className="section">
         <h2>Saved on this computer</h2>
         <p>

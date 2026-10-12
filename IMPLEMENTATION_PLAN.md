@@ -81,3 +81,7 @@ Settings editor/page/navigation and saved account themes implemented; 554 tests/
 ## M7 step 3 completed — 2026-10-12
 
 Password-change service/API, independent persistent throttling, atomic all-owner-session revocation and related stale-login race repair verified. Full 568 tests/47 files pass. Actual two-account HTTP server-restart verification preserves settings, private notes, learning/Continue and seventeen durable tables. See docs/M7-STEP3-VERIFICATION.md. Next separately approved step: Settings password form; recovery and final auth/integration acceptance follow later.
+
+## M7 step 4 completed in automated/local-service scope — 2026-10-12
+
+Settings password form, shared size validation, safe secret cleanup, profile-draft protection, explicit pending/error/uncertain-result handling and login-required notice verified. Full 585 tests/48 files pass; final mounted form 17 tests and two-account served-page/restart checks pass. See docs/M7-STEP4-VERIFICATION.md. Native browser checks remain open. Next separately approved step: interactive local password recovery CLI and documentation with non-echoed prompts, session revocation, policy, preservation and rollback verification.

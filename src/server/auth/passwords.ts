@@ -5,6 +5,7 @@ import { randomBytes } from 'node:crypto';
 import { argon2id, hash, verify, needsRehash } from 'argon2';
 import { z } from 'zod';
 import { AppError } from '../errors.ts';
+import { validPasswordSize } from '../../domain/password-policy.ts';
 
 const common = new Set(
   gunzipSync(
@@ -17,13 +18,7 @@ const common = new Set(
 );
 export const passwordSchema = z
   .string()
-  .refine(
-    (value) =>
-      [...value].length >= 15 &&
-      [...value].length <= 128 &&
-      Buffer.byteLength(value, 'utf8') <= 512,
-    'Use 15–128 characters, at most 512 UTF-8 bytes.',
-  )
+  .refine(validPasswordSize, 'Use 15–128 characters, at most 512 UTF-8 bytes.')
   .refine(
     (value) => !common.has(value.toLowerCase()),
     'This password is too common. Choose a different password.',

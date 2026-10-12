@@ -14,6 +14,7 @@ export default async function Login({
         mode="login"
         email={typeof params.email === 'string' ? params.email : ''}
         registered={params.registered === '1'}
+        passwordChanged={params.passwordChanged === '1'}
         returnTo={safeReturnPath(
           typeof params.returnTo === 'string' ? params.returnTo : undefined,
         )}

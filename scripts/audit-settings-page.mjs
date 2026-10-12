@@ -9,6 +9,8 @@ import { openDatabase } from '../src/server/db/connection.ts';
 // Existing synthetic accounts only. This audit reads settings and pages.
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
+const mode = process.argv[2] ?? 'step2';
+assert.ok(['step2', 'step4'].includes(mode) && process.argv.length <= 3);
 const { accounts } = JSON.parse(
   await readFile(path.join(root, '.tmp/m7-settings-http-state.json'), 'utf8'),
 );
@@ -78,7 +80,9 @@ try {
     for (const route of ['/settings', '/dashboard', '/resources']) {
       const response = await call(route);
       assert.equal(response.status, 200);
-      const doc = servedDocument(await response.text());
+      const html = await response.text();
+      assert.ok(!html.includes(account.password));
+      const doc = servedDocument(html);
       assert.equal(
         doc.documentElement.getAttribute('data-theme'),
         account.saved.theme,
@@ -107,13 +111,62 @@ try {
         );
         assert.ok(doc.body.textContent.includes('Saved on this computer'));
         assert.ok(doc.body.textContent.includes('Sign out'));
+        if (mode === 'step4') {
+          for (const [name, autocomplete] of [
+            ['currentPassword', 'current-password'],
+            ['newPassword', 'new-password'],
+          ]) {
+            const field = doc.querySelector('#change-' + name);
+            assert.ok(field);
+            assert.equal(field.value, '');
+            assert.equal(field.type, 'password');
+            assert.equal(field.autocomplete, autocomplete);
+            assert.equal(
+              doc.querySelector('label[for="change-' + name + '"]')
+                ?.textContent,
+              name === 'currentPassword' ? 'Current password' : 'New password',
+            );
+          }
+          assert.equal(
+            doc.querySelector('input[name="username"][autocomplete="username"]')
+              .value,
+            account.email,
+          );
+          assert.ok(doc.body.textContent.includes('Show passwords'));
+          assert.ok(
+            doc.body.textContent.includes(
+              'Changing your password signs out all sessions',
+            ),
+          );
+        }
       }
       pages++;
     }
   }
+  if (mode === 'step4') {
+    const response = await client()(
+      '/login?passwordChanged=1&returnTo=%2Fsettings',
+    );
+    assert.equal(response.status, 200);
+    const doc = servedDocument(await response.text());
+    assert.ok(
+      doc
+        .querySelector('[role="status"]')
+        ?.textContent.includes(
+          'Password changed. All previous sessions were signed out.',
+        ),
+    );
+    assert.equal(doc.querySelector('input[name="password"]').value, '');
+    pages++;
+  }
   assert.equal(fingerprint(), before);
   await writeFile(
-    path.join(root, 'docs/m7-step2-http-audit.json'),
+    path.join(
+      root,
+      mode === 'step4'
+        ? 'docs/m7-step4-http-audit.json'
+        : 'docs/m7-step2-http-audit.json',
+    ),
     JSON.stringify(
       {
         accounts: accounts.length,
@@ -124,6 +177,13 @@ try {
         serverRenderedLightAndDark: true,
         anonymousLoginRedirect: true,
         unchangedDurableTables: tables.length,
+        ...(mode === 'step4'
+          ? {
+              passwordFormEmptyAndAccessibleLabels: true,
+              passwordManagerAttributes: true,
+              loginPasswordChangedNotice: true,
+            }
+          : {}),
         nativeBrowser: 'pending: tool initialization failure',
       },
       null,
