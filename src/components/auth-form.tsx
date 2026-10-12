@@ -1,5 +1,5 @@
 'use client';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { en } from '@/i18n/en';
@@ -22,12 +22,34 @@ export function AuthForm({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<RequestError | null>(null);
   const summary = useRef<HTMLDivElement>(null);
+  const form = useRef<HTMLFormElement>(null);
+  const locked = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    const element = form.current;
+    const clear = () => {
+      for (const field of element?.querySelectorAll<HTMLInputElement>(
+        'input[name="password"], input[name="confirmation"]',
+      ) ?? [])
+        field.value = '';
+    };
+    window.addEventListener('pagehide', clear);
+    return () => {
+      mounted.current = false;
+      clear();
+      window.removeEventListener('pagehide', clear);
+    };
+  }, []);
   const registering = mode === 'register';
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (locked.current) return;
+    locked.current = true;
+    const element = event.currentTarget;
     setPending(true);
     setError(null);
-    const fields = new FormData(event.currentTarget);
+    const fields = new FormData(element);
     const body = Object.fromEntries(fields);
     try {
       if (registering) {
@@ -36,6 +58,7 @@ export function AuthForm({
           'POST',
           body,
         );
+        if (!mounted.current) return;
         router.push(
           `/login?registered=1&email=${encodeURIComponent(result.data.email)}`,
         );
@@ -45,10 +68,12 @@ export function AuthForm({
           'POST',
           { ...body, returnTo },
         );
+        if (!mounted.current) return;
         router.push(result.data.redirect);
         router.refresh();
       }
     } catch (cause) {
+      if (!mounted.current) return;
       setError(
         cause instanceof RequestError
           ? cause
@@ -56,7 +81,15 @@ export function AuthForm({
       );
       requestAnimationFrame(() => summary.current?.focus());
     } finally {
-      setPending(false);
+      for (const input of element.querySelectorAll<HTMLInputElement>(
+        'input[name="password"], input[name="confirmation"]',
+      ))
+        input.value = '';
+      locked.current = false;
+      if (mounted.current) {
+        setShow(false);
+        setPending(false);
+      }
     }
   }
   const field = (
@@ -98,7 +131,13 @@ export function AuthForm({
     </div>
   );
   return (
-    <form method="post" onSubmit={submit} className="stack" aria-busy={pending}>
+    <form
+      ref={form}
+      method="post"
+      onSubmit={submit}
+      className="stack"
+      aria-busy={pending}
+    >
       {registered && (
         <p role="status" className="notice">
           {en.auth.registered}
@@ -114,6 +153,12 @@ export function AuthForm({
         <div ref={summary} tabIndex={-1} role="alert" className="error-summary">
           <strong>{en.auth.errorTitle}</strong>
           <p>{error.message}</p>
+          {error.retryAfter && (
+            <p>
+              Wait about {error.retryAfter} seconds from this attempt before
+              trying again.
+            </p>
+          )}
           {Object.entries(error.fieldErrors).length > 0 && (
             <ul>
               {Object.entries(error.fieldErrors).map(([key, message]) => (
@@ -125,23 +170,28 @@ export function AuthForm({
           )}
         </div>
       )}
-      {field('email', 'email')}
-      {registering && field('displayName', 'text', false)}
-      {field('password', show ? 'text' : 'password')}
-      {registering && (
-        <p id="password-help" className="muted">
-          {en.auth.passwordHelp}
-        </p>
-      )}
-      {registering && field('confirmation', show ? 'text' : 'password')}
-      <label className="check-row">
-        <input
-          type="checkbox"
-          checked={show}
-          onChange={(e) => setShow(e.target.checked)}
-        />
-        {en.auth.showPassword}
-      </label>
+      <fieldset className="stack settings-fields" disabled={pending}>
+        <legend className="sr-only">
+          {registering ? en.register : en.login}
+        </legend>
+        {field('email', 'email')}
+        {registering && field('displayName', 'text', false)}
+        {field('password', show ? 'text' : 'password')}
+        {registering && (
+          <p id="password-help" className="muted">
+            {en.auth.passwordHelp}
+          </p>
+        )}
+        {registering && field('confirmation', show ? 'text' : 'password')}
+        <label className="check-row">
+          <input
+            type="checkbox"
+            checked={show}
+            onChange={(e) => setShow(e.target.checked)}
+          />
+          {en.auth.showPassword}
+        </label>
+      </fieldset>
       <button className="button primary" disabled={pending}>
         {pending ? en.auth.working : registering ? en.register : en.login}
       </button>

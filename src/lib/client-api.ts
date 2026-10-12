@@ -3,16 +3,24 @@ export class RequestError extends Error {
   status: number;
   fieldErrors: Record<string, string>;
   currentState: unknown;
+  retryAfter?: number;
   constructor(
     message: string,
     status: number,
     fieldErrors: Record<string, string> = {},
     currentState?: unknown,
+    retryAfter?: number,
   ) {
     super(message);
     this.status = status;
     this.fieldErrors = fieldErrors;
     this.currentState = currentState;
+    if (
+      typeof retryAfter === 'number' &&
+      Number.isSafeInteger(retryAfter) &&
+      retryAfter > 0
+    )
+      this.retryAfter = retryAfter;
   }
 }
 export async function writeApi<T>(
@@ -43,6 +51,7 @@ export async function writeApi<T>(
       response.status,
       result.error?.fieldErrors,
       result.error?.currentState,
+      result.error?.retryAfter,
     );
   return result as T;
 }

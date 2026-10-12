@@ -89,3 +89,7 @@ Settings password form, shared size validation, safe secret cleanup, profile-dra
 ## M7 step 5 completed — 2026-10-12
 
 Interactive trusted-owner local recovery CLI, shared stopped-server guard, schema/integrity checks, atomic hash/revocation/account-throttle cleanup and documentation verified. Full 603 tests/50 files and actual Windows hidden-input/cancel/reset plus production HTTP restart preservation pass. See docs/M7-STEP5-VERIFICATION.md. Exact next after separate approval: M7 authentication integration audit; native-browser/manual/other-OS and final MVP gates remain open.
+
+## M7 step 6 integration verified — 2026-10-12
+
+Account/settings/password/recovery implementation and automated/local-service checks verified: 625 tests/53 files, types/lint/build/source/licences and six-account production cookie persistence/private ownership audit pass. Secret cleanup, signed-in auth-page routing and throttle retry-delay presentation repaired. See docs/M7-INTEGRATION-VERIFICATION.md. Native-browser/manual/OS/reboot and final A01–A26 gates remain open. Next separately approved scope: M8 step 1 online SQLite backup with release/source manifests, integrity verification and README commands; this independent operations work can proceed while retaining browser closeout requirements.

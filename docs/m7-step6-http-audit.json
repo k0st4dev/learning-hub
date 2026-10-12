@@ -1,0 +1,23 @@
+{
+  "accounts": 6,
+  "prepare": {
+    "pages": 21,
+    "privateReads": 28,
+    "foreignReads": 10,
+    "expiredReads": 8,
+    "signedInRedirects": 12,
+    "sessionRotation": true,
+    "logoutRevocation": true,
+    "sessionBoundCsrf": true
+  },
+  "afterRestart": {
+    "pages": 22,
+    "privateReads": 10,
+    "persistentCookiesWorkWithoutLogin": true,
+    "privateNotesLearningAndContinuePreserved": true
+  },
+  "unchangedDurableTables": 25,
+  "integrity": "ok",
+  "foreignKeys": "ok",
+  "nativeBrowser": "pending: tool initialization failure"
+}

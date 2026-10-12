@@ -1,11 +1,13 @@
 import { AuthForm } from '@/components/auth-form';
 import { en } from '@/i18n/en';
 import { safeReturnPath } from '@/server/auth/service';
+import { redirectSignedInStudent } from '@/server/auth/page';
 export default async function Login({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  await redirectSignedInStudent();
   const params = await searchParams;
   return (
     <div className="page-shell narrow">
