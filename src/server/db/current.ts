@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { readConfig } from '../config.ts';
 import { openDatabase, type Store } from './connection.ts';
 import { AppError } from '../errors.ts';
+import { latestMigrationId } from './migrations.ts';
 
 const globalStore = globalThis as typeof globalThis & {
   learningStore?: { filename: string; store: Store };
@@ -23,15 +24,21 @@ export function getStore() {
     try {
       const ready = store.native
         .prepare('SELECT id FROM _app_migration WHERE id = ?')
-        .get('0001');
-      if (!ready) throw new Error('Missing schema');
+        .get(latestMigrationId);
+      if (!ready)
+        throw new AppError(
+          503,
+          'SETUP_REQUIRED',
+          'Run setup to update this existing database. Preserve its data directory.',
+        );
     } catch (error) {
       store.native.close();
       throw error;
     }
     globalStore.learningStore = { filename, store };
     return store;
-  } catch {
+  } catch (error) {
+    if (error instanceof AppError) throw error;
     throw new AppError(
       503,
       'DATABASE_UNAVAILABLE',

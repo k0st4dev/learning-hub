@@ -69,3 +69,7 @@ No missing handoff file or unresolved curriculum contradiction was found that pr
 ## Focused session protocol
 
 Start each implementation task from PROJECT_STATUS.md: objective, specification section references, relevant files, constraints, and precise completion checks. Read other source sections only when needed. End each task with checks run, results, architectural decisions, unresolved issues and the exact next task. Report milestone functionality, verification, blockers and next step briefly. After plan agreement, routine implementation choices need no renewed approval. Flag material changes to curriculum, security, architecture, cost or scope before implementing them.
+
+## M7 step 1 completed — 2026-10-12
+
+Owned settings API/service, account-scoped revisions and receipts, reviewed migration 0002, verified existing-data preservation and two-user HTTP restart persistence are complete. Full 546 tests pass. See docs/M7-STEP1-VERIFICATION.md. Next separately approved step: settings editor/page/navigation, with theme application in its UI scope. Password lifecycle, recovery and final acceptance remain later work.

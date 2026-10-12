@@ -4,6 +4,7 @@ import path from 'node:path';
 import { createHash, randomBytes } from 'node:crypto';
 import { openDatabase } from './connection.ts';
 import { readConfig } from '../config.ts';
+import { reviewedMigrations } from './migrations.ts';
 
 export async function migrate(dataDir: string, repositoryRoot: string) {
   await mkdir(dataDir, { recursive: true });
@@ -19,33 +20,49 @@ export async function migrate(dataDir: string, repositoryRoot: string) {
     const filename = path.join(dataDir, 'learning.sqlite');
     const existed = existsSync(filename);
     store = openDatabase(filename, true);
-    const ddl = await readFile(
-      path.join(repositoryRoot, 'drizzle/0001_reference.sql'),
-      'utf8',
+    const migrations = await Promise.all(
+      reviewedMigrations.map(async (entry) => {
+        const ddl = await readFile(
+          path.join(repositoryRoot, 'drizzle', entry.file),
+          'utf8',
+        );
+        return {
+          ...entry,
+          ddl,
+          checksum: createHash('sha256').update(ddl).digest('hex'),
+        };
+      }),
     );
-    const hash = createHash('sha256').update(ddl).digest('hex');
     const hasHistory = store.native
       .prepare(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='_app_migration'",
       )
       .get();
-    const prior = hasHistory
+    const history = hasHistory
       ? (store.native
-          .prepare('SELECT checksum FROM _app_migration WHERE id = ?')
-          .get('0001') as { checksum: string } | undefined)
-      : undefined;
-    if (prior && prior.checksum !== hash)
-      throw new Error(
-        'Applied migration checksum changed. Restore the committed migration; do not reset student data.',
-      );
+          .prepare('SELECT id,checksum FROM _app_migration ORDER BY id')
+          .all() as { id: string; checksum: string }[])
+      : [];
+    for (const [index, prior] of history.entries()) {
+      const expected = migrations[index];
+      if (!expected || prior.id !== expected.id)
+        throw new Error(
+          'Migration history is newer or out of order. Preserve this database and use its compatible application version.',
+        );
+      if (prior.checksum !== expected.checksum)
+        throw new Error(
+          'Applied migration checksum changed. Restore the committed migration; do not reset student data.',
+        );
+    }
+    const pending = migrations.slice(history.length);
     let backup: string | null = null;
-    if (!prior) {
+    if (pending.length) {
       if (existed) {
         await mkdir(path.join(dataDir, 'backups'), { recursive: true });
         backup = path.join(
           dataDir,
           'backups',
-          `before-0001-${Date.now()}.sqlite`,
+          `before-${pending[0]!.id}-${Date.now()}-${randomBytes(4).toString('hex')}.sqlite`,
         );
         await store.native.backup(backup);
         const verification = openDatabase(backup);
@@ -66,10 +83,16 @@ export async function migrate(dataDir: string, repositoryRoot: string) {
           store!.native.exec(
             'CREATE TABLE IF NOT EXISTS _app_migration (id TEXT PRIMARY KEY NOT NULL, checksum TEXT NOT NULL, applied_at INTEGER NOT NULL)',
           );
-          store!.native.exec(ddl);
-          store!.native
-            .prepare('INSERT INTO _app_migration VALUES (?, ?, ?)')
-            .run('0001', hash, Date.now());
+          for (const migration of pending) {
+            store!.native.exec(migration.ddl);
+            store!.native
+              .prepare('INSERT INTO _app_migration VALUES (?, ?, ?)')
+              .run(migration.id, migration.checksum, Date.now());
+          }
+          if ((store!.native.pragma('foreign_key_check') as unknown[]).length)
+            throw new Error(
+              'Migration foreign key check failed. Changes were rolled back; preserve your data.',
+            );
         })
         .immediate();
     }
@@ -90,7 +113,12 @@ export async function migrate(dataDir: string, repositoryRoot: string) {
       throw new Error(
         'Database integrity check failed. Preserve the database and restore from a verified backup.',
       );
-    return { applied: !prior, backup, filename };
+    return {
+      applied: pending.length > 0,
+      appliedIds: pending.map((entry) => entry.id),
+      backup,
+      filename,
+    };
   } finally {
     store?.native.close();
     await lock.close();

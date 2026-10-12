@@ -1,0 +1,17 @@
+{
+  "migration": {
+    "applied": ["0002"],
+    "backupCreated": true,
+    "existingTablesPreserved": 25,
+    "integrity": "ok",
+    "secretPreserved": true
+  },
+  "http": {
+    "accounts": 2,
+    "freshLoginAfterServerRestart": true,
+    "settingsAndConfirmationsPersisted": true,
+    "foreignAccountsRejected": true,
+    "staleWritesRejected": true,
+    "readOnlyEmail": true
+  }
+}

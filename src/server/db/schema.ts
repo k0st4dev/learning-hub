@@ -24,10 +24,15 @@ export const appUser = sqliteTable(
     theme: text('theme').notNull().default(sql.raw("'system'")),
     createdAt: integer('created_at').notNull(),
     updatedAt: integer('updated_at').notNull(),
+    settingsRevision: integer('settings_revision').notNull().default(0),
   },
   (table) => [
     unique('app_user_email_canonical_unique').on(table.emailCanonical),
     check('app_user_check_0', sql.raw("theme IN ('light','dark','system')")),
+    check(
+      'app_user_settings_revision_check',
+      sql.raw('settings_revision >= 0'),
+    ),
   ],
 );
 
@@ -730,5 +735,28 @@ export const mutationReceipt = sqliteTable(
       foreignColumns: [enrollment.id],
     }).onDelete('cascade'),
     check('mutation_receipt_check_0', sql.raw('json_valid(response_json)')),
+  ],
+);
+
+export const settingsReceipt = sqliteTable(
+  'settings_receipt',
+  {
+    userId: text('user_id').notNull(),
+    mutationId: text('mutation_id').notNull(),
+    requestHash: text('request_hash').notNull(),
+    responseJson: text('response_json').notNull(),
+    createdAt: integer('created_at').notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.mutationId] }),
+    index('settings_receipt_user_id_created_at_index').on(
+      table.userId,
+      table.createdAt,
+    ),
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [appUser.id],
+    }).onDelete('cascade'),
+    check('settings_receipt_json_check', sql.raw('json_valid(response_json)')),
   ],
 );

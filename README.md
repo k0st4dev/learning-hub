@@ -4,6 +4,8 @@ A local programming-learning application built incrementally from the supplied 2
 
 M6 step 1 adds private note read/save services and a protected local API with independent revisions, exact-request retries and a 20,000-character limit. Confirmed notes persist in SQLite across development-server restart; note writes leave learning progress, history and resume unchanged. Day, study and exercise pages now each have a separate private note editor. Notes save after an 800 ms pause, blur or intentional navigation. Failed saves keep editable text, exact retries and explicit conflict resolution; leaving unconfirmed text requires a choice. Cached history views refresh the owned saved note. See [backend contract](docs/M6-STEP1-VERIFICATION.md) and [editor verification and browser closeout](docs/M6-STEP2-VERIFICATION.md).
 
+M7 step 1 adds the owned profile/settings API and safe additive database upgrade. Existing installations should stop the app, keep the same data directory, run `npm run setup`, then restart. The settings editor/navigation and theme presentation are the next increment. See [verification and API contract](docs/M7-STEP1-VERIFICATION.md).
+
 ## Requirements and cost
 
 - Node.js **24.21.0** with npm **11.19.0**; patch-compatible versions in those lines are accepted. The exact tested runtime is in `.node-version` and `.nvmrc`.
