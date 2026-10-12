@@ -9,6 +9,7 @@ import { servedDocument } from './served-document.mjs';
 import { handbookNavigation } from '../src/server/content/handbook-navigation.ts';
 import { dailyHandbookLinks } from '../src/server/content/daily-handbook.ts';
 import { dayWorkspace } from '../src/server/content/day-workspace.ts';
+import { handbookGuidance } from '../src/server/content/handbook-guidance.ts';
 
 const config = environment();
 assert.equal(config.dataDir, path.join(root, '.tmp/m2-preview'));
@@ -22,9 +23,11 @@ assert.ok(
         '--concept-review',
         '--stuck-workflow',
         '--daily-help',
+        '--guidance',
       ].includes(process.argv[2])),
 );
-const checkDailyHelp = process.argv[2] === '--daily-help';
+const checkGuidance = process.argv[2] === '--guidance';
+const checkDailyHelp = checkGuidance || process.argv[2] === '--daily-help';
 const checkStuck = checkDailyHelp || process.argv[2] === '--stuck-workflow';
 const checkConcept = checkStuck || process.argv[2] === '--concept-review';
 const checkGit = checkConcept || process.argv[2] === '--git-review';
@@ -84,6 +87,9 @@ let conceptChecksChecked = 0;
 let stuckChecksChecked = 0;
 let dailyHelpViewsChecked = 0;
 let dailyHelpLinksChecked = 0;
+let guidanceViewsChecked = 0;
+let relatedGuidanceLinksChecked = 0;
+let branchLinksChecked = 0;
 const continueTargets = [];
 const redirects = { http307: 0, streamedRefresh: 0 };
 const streams = { segments: 0, boundaries: 0 };
@@ -172,6 +178,101 @@ try {
           null,
         );
       const original = catalogPage(catalog, url);
+      if (checkGuidance) {
+        const model = handbookGuidance(catalog, original);
+        const panel = document.querySelector('[data-handbook-guidance]');
+        if (model) {
+          assert.ok(panel);
+          assert.equal(
+            panel.getAttribute('data-handbook-guidance'),
+            model.kind,
+          );
+          assert.equal(panel.closest('details'), null);
+          assert.equal(panel.querySelector('input, form, button'), null);
+          assert.equal(model.unavailable, false);
+          const links = [...panel.querySelectorAll('a')];
+          if (model.kind === 'branches') {
+            assert.deepEqual(
+              model.branches.map((branch) => branch.sourceId),
+              ['p2351', 'p2352', 'p2353', 'p2354'],
+            );
+            assert.equal(links.length, 4);
+            assert.ok(
+              panel.textContent.includes(
+                'original date is not an access restriction',
+              ),
+            );
+            assert.ok(
+              panel.textContent.includes('does not save a branch choice'),
+            );
+            for (const [index, link] of links.entries()) {
+              const branch = model.branches[index];
+              assert.equal(
+                link.getAttribute('href'),
+                '#' + encodeURIComponent(branch.anchor),
+              );
+              assert.equal(link.lang, 'sr-Latn');
+              assert.equal(link.textContent, branch.label);
+              const target = document.getElementById(branch.anchor);
+              assert.equal(
+                target?.getAttribute('data-source-id'),
+                branch.sourceId,
+              );
+              assert.equal(target?.getAttribute('tabindex'), '-1');
+              assert.equal(
+                target?.querySelector('[data-source-text]')?.textContent,
+                branch.label,
+              );
+              assert.equal(
+                target
+                  ?.querySelector('[data-source-text]')
+                  ?.hasAttribute('role'),
+                false,
+              );
+              assert.equal(target?.closest('details'), null);
+              branchLinksChecked++;
+            }
+            const loop = catalog.blocks.find(
+              (block) => block.sourceLocator === 'p2355',
+            );
+            assert.equal(
+              document.querySelector(
+                '[data-source-id="p2355"] [data-source-text]',
+              )?.textContent,
+              loop.exactText,
+            );
+          } else {
+            assert.equal(links.length, 2);
+            assert.deepEqual(
+              model.links.map(
+                (link) => catalogPage(catalog, link.href)?.item.stableKey,
+              ),
+              model.kind === 'ai'
+                ? ['guide-appendix-c', 'guide-ai-protocol']
+                : ['guide-appendix-f', 'guide-ai-protocol'],
+            );
+            assert.ok(
+              panel.textContent.includes(
+                'Daily and external assignment AI restrictions take priority',
+              ),
+            );
+            assert.ok(
+              panel.textContent.includes(
+                'does not assess mastery or unlock AI',
+              ),
+            );
+            for (const [index, link] of links.entries()) {
+              assert.equal(link.getAttribute('href'), model.links[index].href);
+              assert.equal(link.textContent, model.links[index].title);
+              assert.equal(link.lang, 'sr-Latn');
+              relatedGuidanceLinksChecked++;
+            }
+          }
+          if (model.kind !== 'concept')
+            assert.equal(document.querySelector('.temporary-review'), null);
+          guidanceViewsChecked++;
+        } else assert.equal(panel, null);
+      }
       for (const block of original.blocks)
         assert.equal(
           document.querySelector(
@@ -622,6 +723,16 @@ try {
     date: new Date().toISOString(),
     server: 'development',
     accounts: 2,
+    ...(checkGuidance
+      ? {
+          guidanceViews: guidanceViewsChecked,
+          exactRelatedGuidanceLinks: relatedGuidanceLinksChecked,
+          exactOriginalBranchLinksAndTargets: branchLinksChecked,
+          dailyAndExternalAiPriority: 'passed',
+          noPermissionSwitchOrSavedBranchSelection: true,
+          originalSharedLoopAndDateRetained: 'passed',
+        }
+      : {}),
     ...(checkDailyHelp
       ? {
           dailyHelpViews: dailyHelpViewsChecked,
@@ -690,19 +801,21 @@ try {
   await writeFile(
     path.join(
       root,
-      checkDailyHelp
-        ? 'docs/m6-step27a-http-audit.json'
-        : checkStuck
-          ? 'docs/m6-step26-http-audit.json'
-          : checkConcept
-            ? 'docs/m6-step25-http-audit.json'
-            : checkGit
-              ? 'docs/m6-step24-http-audit.json'
-              : checkNavigation
-                ? 'docs/m6-step22-http-audit.json'
-                : checkPrompts
-                  ? 'docs/m6-step21-http-audit.json'
-                  : 'docs/m6-step20-http-audit.json',
+      checkGuidance
+        ? 'docs/m6-step27b-http-audit.json'
+        : checkDailyHelp
+          ? 'docs/m6-step27a-http-audit.json'
+          : checkStuck
+            ? 'docs/m6-step26-http-audit.json'
+            : checkConcept
+              ? 'docs/m6-step25-http-audit.json'
+              : checkGit
+                ? 'docs/m6-step24-http-audit.json'
+                : checkNavigation
+                  ? 'docs/m6-step22-http-audit.json'
+                  : checkPrompts
+                    ? 'docs/m6-step21-http-audit.json'
+                    : 'docs/m6-step20-http-audit.json',
     ),
     JSON.stringify(report, null, 2) + '\n',
   );

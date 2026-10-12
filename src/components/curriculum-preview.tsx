@@ -16,6 +16,8 @@ import { courseNavigation, courseOutline } from '@/server/content/navigation';
 import { CourseOutline } from './course-outline';
 import { studyAnchors } from '@/domain/study-anchors';
 import { handbookNavigation } from '@/server/content/handbook-navigation';
+import { handbookGuidance } from '@/server/content/handbook-guidance';
+import { HandbookGuidance } from './handbook-guidance';
 import {
   gitReviewItems,
   conceptReviewItems,
@@ -216,6 +218,11 @@ export function CurriculumPreview({
   const template = appendixATemplate(page);
   const prompts = aiPromptTemplates(page);
   const handbook = handbookNavigation(page);
+  const guidance = handbookGuidance(catalog, page);
+  const readingSections = [
+    ...(handbook?.sections ?? []),
+    ...(guidance?.branches ?? []),
+  ];
   const review =
     page.item.stableKey === 'guide-appendix-b'
       ? {
@@ -242,7 +249,11 @@ export function CurriculumPreview({
               stuckWorkflow: true,
             }
           : null;
-  const sourceBlocks = (handbook?.blocks ?? page.blocks).map((block) => {
+  const sourceBlocks = (
+    guidance?.blocks ??
+    handbook?.blocks ??
+    page.blocks
+  ).map((block) => {
     const copy =
       block.sourceLocator === template?.sourceId
         ? template
@@ -357,9 +368,10 @@ export function CurriculumPreview({
           )}
           {handbook && (
             <HandbookFragmentFocus
-              anchors={handbook.sections.map((section) => section.anchor)}
+              anchors={readingSections.map((section) => section.anchor)}
             />
           )}
+          {guidance && <HandbookGuidance {...guidance} />}
           {review &&
             studentId &&
             (review.items && handbook?.sections[0] ? (
@@ -522,7 +534,7 @@ export function CurriculumPreview({
             <SourceBlocks
               blocks={sourceBlocks}
               anchors={anchors}
-              sections={handbook?.sections}
+              sections={readingSections}
               prompts={prompts ?? []}
             />
           )}

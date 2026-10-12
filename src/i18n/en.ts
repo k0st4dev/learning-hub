@@ -1,5 +1,13 @@
 export const en = {
   handbook: {
+    relatedGuidance: 'Related handbook guidance',
+    branches: 'Postcourse directions (optional)',
+    aiGuidanceNotice:
+      'Added navigation to original guidance. Read the original conditions in Appendix F. Temporary concept self-checks do not establish mastery or grant AI permission. Daily and external assignment AI restrictions take priority; the application does not assess mastery or unlock AI.',
+    branchNotice:
+      'Added navigation to four original directions below. These links are available at any point; the original date is not an access restriction. Following a link does not save a branch choice, create a course or add required work. The original shared learning loop remains below.',
+    guidanceUnavailable:
+      'Some related guidance links are unavailable. All available original source content remains below.',
     gitReview: 'Temporary Git review',
     stuckReview: 'Temporary troubleshooting review',
     stuckReviewHelp:

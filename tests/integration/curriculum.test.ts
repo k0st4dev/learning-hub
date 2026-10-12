@@ -49,6 +49,7 @@ import {
 import { startCourse, mutateLearning } from '../../src/server/learning/mutate';
 import { snapshot, continuePath } from '../../src/server/learning/read';
 import { handbookNavigation } from '../../src/server/content/handbook-navigation';
+import { handbookGuidance } from '../../src/server/content/handbook-guidance';
 import {
   appendixATemplate,
   aiPromptTemplates,
@@ -86,6 +87,261 @@ afterEach(async () => {
   await rm(directory, { recursive: true, force: true });
 });
 describe('complete immutable curriculum', () => {
+  it('focuses each actual G source paragraph after streamed fragment mounting without creating study anchors', () => {
+    importCurriculum(store, plan.source);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const page = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-g',
+    )!;
+    const model = handbookGuidance(catalog, page)!;
+    const originalUrl = window.location.href;
+    const scroll = vi.fn();
+    const descriptor = Object.getOwnPropertyDescriptor(
+      HTMLElement.prototype,
+      'scrollIntoView',
+    );
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scroll,
+    });
+    try {
+      for (const branch of model.branches) {
+        window.history.replaceState(
+          null,
+          '',
+          page.item.route + '#' + branch.anchor,
+        );
+        const view = render(
+          createElement(CurriculumPreview, { catalog, page }),
+        );
+        const target = view.container.querySelector(
+          '[id="' + branch.anchor + '"]',
+        )!;
+        expect(document.activeElement).toBe(target);
+        expect(target.getAttribute('data-source-id')).toBe(branch.sourceId);
+        expect(target.getAttribute('data-study-anchor')).toBeNull();
+        expect(scroll).toHaveBeenLastCalledWith({ block: 'start' });
+        view.unmount();
+      }
+      expect(scroll).toHaveBeenCalledTimes(4);
+    } finally {
+      window.history.replaceState(null, '', originalUrl);
+      if (descriptor)
+        Object.defineProperty(
+          HTMLElement.prototype,
+          'scrollIntoView',
+          descriptor,
+        );
+      else Reflect.deleteProperty(HTMLElement.prototype, 'scrollIntoView');
+    }
+  });
+  it('presents source-exact F/C guidance and four G branch targets without permission or saved-choice controls', () => {
+    importCurriculum(store, plan.source);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const before = JSON.stringify(catalog);
+    for (const slug of ['appendix-f', 'appendix-c', 'appendix-g']) {
+      const page = catalogPage(
+        catalog,
+        '/course/software-engineer/guide/' + slug,
+      )!;
+      const model = handbookGuidance(catalog, page)!;
+      expect(model.unavailable).toBe(false);
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(CurriculumPreview, { catalog, page }),
+        ),
+        'text/html',
+      );
+      const panel = doc.querySelector('[data-handbook-guidance]')!;
+      expect(panel.getAttribute('data-handbook-guidance')).toBe(model.kind);
+      expect(panel.closest('details')).toBeNull();
+      expect(panel.querySelector('input, button, form')).toBeNull();
+      expect(
+        doc.querySelector('[data-study-anchor], [data-learning-unit]'),
+      ).toBeNull();
+      for (const block of page.blocks) {
+        const source = plan.source.source_blocks.find(
+          (entry) => entry.source_id === block.sourceLocator,
+        )!;
+        const element = doc.querySelector(
+          '[data-source-id="' + block.sourceLocator + '"]',
+        )!;
+        expect(element.querySelector('[data-source-text]')!.textContent).toBe(
+          source.text,
+        );
+        expect(element.closest('details')).toBeNull();
+      }
+      if (slug === 'appendix-g') {
+        expect(page.blocks).toHaveLength(6);
+        expect(model.branches.map((branch) => branch.sourceId)).toEqual([
+          'p2351',
+          'p2352',
+          'p2353',
+          'p2354',
+        ]);
+        const links = [...panel.querySelectorAll('a')];
+        expect(links).toHaveLength(4);
+        for (const [index, branch] of model.branches.entries()) {
+          const link = links[index]!;
+          expect(link.textContent).toBe(branch.label);
+          expect(link.getAttribute('lang')).toBe('sr-Latn');
+          expect(link.getAttribute('href')).toBe(
+            '#' + encodeURIComponent(branch.anchor),
+          );
+          const target = doc.getElementById(branch.anchor)!;
+          expect(target.getAttribute('tabindex')).toBe('-1');
+          expect(target.getAttribute('data-source-id')).toBe(branch.sourceId);
+          expect(target.querySelector('[data-source-text]')!.textContent).toBe(
+            branch.label,
+          );
+          expect(
+            target.querySelector('[data-source-text]')!.hasAttribute('role'),
+          ).toBe(false);
+        }
+        expect(panel.textContent).toContain(
+          'original date is not an access restriction',
+        );
+        expect(doc.querySelector('[data-source-id="p2355"]')).not.toBeNull();
+        expect(doc.querySelector('h1')!.textContent).toContain('28.02.2027');
+      } else {
+        if (slug === 'appendix-f') {
+          expect(page.blocks).toHaveLength(7);
+          expect(doc.querySelector('.temporary-review')).toBeNull();
+          expect(
+            doc.querySelector('[data-source-id="p2343"]')!.textContent,
+          ).toContain(
+            'najmanje dva samostalna zadatka i jedan projekatski kontekst',
+          );
+        }
+        expect(
+          model.links.map(
+            (link) => catalogPage(catalog, link.href)!.item.stableKey,
+          ),
+        ).toEqual(
+          slug === 'appendix-f'
+            ? ['guide-appendix-c', 'guide-ai-protocol']
+            : ['guide-appendix-f', 'guide-ai-protocol'],
+        );
+        expect(
+          [...panel.querySelectorAll('a')].map((link) => ({
+            href: link.getAttribute('href'),
+            title: link.textContent,
+          })),
+        ).toEqual(model.links);
+        expect(panel.textContent).toContain(
+          'Daily and external assignment AI restrictions take priority',
+        );
+        expect(panel.textContent).toContain(
+          'does not assess mastery or unlock AI',
+        );
+      }
+      const ids = [...doc.querySelectorAll('[id]')].map((node) => node.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+    expect(JSON.stringify(catalog)).toBe(before);
+  });
+  it('omits invalid related guidance and missing branch links without changing available originals', () => {
+    importCurriculum(store, plan.source);
+    const catalog = readCatalog(store, plan.releaseId)!;
+    const f = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-f',
+    )!;
+    const g = catalogPage(
+      catalog,
+      '/course/software-engineer/guide/appendix-g',
+    )!;
+    const concept = catalog.items.find(
+      (item) => item.stableKey === 'guide-appendix-c',
+    )!;
+    for (const items of [
+      catalog.items.filter((item) => item.id !== concept.id),
+      [...catalog.items, { ...concept, id: 'duplicate-concept' }],
+      catalog.items.map((item) =>
+        item.id === concept.id ? { ...item, releaseId: 'foreign' } : item,
+      ),
+      catalog.items.map((item) =>
+        item.id === concept.id
+          ? { ...item, route: 'https://example.test' }
+          : item,
+      ),
+    ]) {
+      const changed = { ...catalog, items };
+      const model = handbookGuidance(changed, f)!;
+      expect(model.unavailable).toBe(true);
+      expect(model.links.map((link) => link.href)).toEqual([
+        '/course/software-engineer/guide/ai-protocol',
+      ]);
+      const doc = new DOMParser().parseFromString(
+        renderToStaticMarkup(
+          createElement(CurriculumPreview, { catalog: changed, page: f }),
+        ),
+        'text/html',
+      );
+      expect(
+        doc.querySelector('[data-handbook-guidance]')!.textContent,
+      ).toContain('Some related guidance links are unavailable');
+      expect(
+        doc.querySelector('[data-source-id="p2343"] [data-source-text]')!
+          .textContent,
+      ).toBe(f.blocks[1]!.exactText);
+    }
+    const first = g.blocks.find((block) => block.sourceLocator === 'p2351')!;
+    for (const blocks of [
+      g.blocks.filter((block) => block !== first),
+      [...g.blocks, first],
+      g.blocks.map((block) =>
+        block === first ? { ...block, exactText: ' ' } : block,
+      ),
+      g.blocks.map((block) =>
+        block === first ? { ...block, tableNumber: 99 } : block,
+      ),
+    ]) {
+      const model = handbookGuidance(catalog, { ...g, blocks })!;
+      expect(model.unavailable).toBe(true);
+      expect(model.branches.map((branch) => branch.sourceId)).toEqual([
+        'p2352',
+        'p2353',
+        'p2354',
+      ]);
+      expect(
+        model.blocks.find((block) => block.sourceLocator === 'p2355')!
+          .exactText,
+      ).toBe(g.blocks.at(-1)!.exactText);
+    }
+    const collision = handbookGuidance(catalog, {
+      ...g,
+      blocks: g.blocks.map((block) =>
+        block.sourceLocator === 'p2355'
+          ? { ...block, anchor: 'handbook-branch-p2351' }
+          : block,
+      ),
+    })!;
+    expect(collision.branches[0]!.anchor).toBe('handbook-branch-p2351-2');
+    const existing = handbookGuidance(catalog, {
+      ...g,
+      blocks: g.blocks.map((block) =>
+        block === first ? { ...block, anchor: 'original-branch' } : block,
+      ),
+    })!;
+    expect(existing.branches[0]!.anchor).toBe('original-branch');
+    expect(
+      handbookGuidance(catalog, { ...g, item: { ...g.item, kind: 'lesson' } }),
+    ).toBeNull();
+    expect(
+      handbookGuidance(catalog, {
+        ...g,
+        item: { ...g.item, releaseId: 'foreign' },
+      }),
+    ).toBeNull();
+    expect(
+      handbookGuidance(
+        catalog,
+        catalogPage(catalog, '/course/software-engineer/days/d001')!,
+      ),
+    ).toBeNull();
+  });
   it('uses five unique original guide titles from the published release and safely omits unavailable shortcuts', () => {
     importCurriculum(store, plan.source);
     const catalog = readCatalog(store, plan.releaseId)!;
@@ -758,6 +1014,15 @@ describe('complete immutable curriculum', () => {
         host.querySelector('[data-learning-unit], [data-study-anchor]'),
       ).toBeNull();
       expect(host.querySelectorAll('h1')).toHaveLength(1);
+      const guidance = handbookGuidance(catalog, page);
+      const panel = host.querySelector('[data-handbook-guidance]');
+      if (guidance) {
+        expect(panel).not.toBeNull();
+        for (const branch of guidance.branches)
+          expect(
+            host.getElementById(branch.anchor)?.getAttribute('data-source-id'),
+          ).toBe(branch.sourceId);
+      } else expect(panel).toBeNull();
     }
     const ai = catalogPage(
       catalog,
