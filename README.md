@@ -85,7 +85,9 @@ npm test
 npm run test:integration
 npm run build
 npm run licenses:check
-npm run curriculum:verify-source
+npm run content:validate
+npm run content:audit
+npm run db:diagnose
 ```
 
 Browser tests use a production build, isolated test browser, port 3100, both themes and five viewport sizes:
@@ -156,6 +158,32 @@ The restore procedure:
 - Atomically swaps the database and secret, with automatic rollback on any failure.
 
 See [restore verification](docs/M8-STEP2-VERIFICATION.md).
+
+### Run database diagnostics
+
+To verify database integrity, foreign keys, schema migrations, immutable curriculum release hashes, and student progress referential consistency:
+
+```sh
+npm run db:diagnose
+```
+
+Optional machine-readable JSON output:
+
+```sh
+npm run db:diagnose -- --json
+```
+
+`APP_DATA_DIR` selects the target installation (defaults to `./data`). The diagnostic command:
+
+- Checks storage accessibility and rejects symlinks.
+- Executes SQLite `integrity_check` and `foreign_key_check`.
+- Verifies that `_app_migration` matches reviewed application migrations.
+- Verifies that installed curriculum releases match the immutable source archive.
+- Verifies progress and learner data consistency (§525): detects any dangling or invalid references across `enrollment`, `user_progress`, `exercise_progress`, `task_progress`, `preparation_progress`, `note`, and `scorecard`.
+- If issues are detected, outputs detailed table and row identifiers with remediation guidance (stop mutations, restore from verified backup, or reconciliation plan per §525–526).
+- Exits with code 0 on healthy databases, and code 1 if any issues are detected.
+
+See [diagnostics verification](docs/M8-STEP3-VERIFICATION.md).
 
 The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
 

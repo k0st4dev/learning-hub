@@ -11,6 +11,9 @@
   "scripts": {
     "curriculum:import": "node scripts/import-curriculum.mjs",
     "curriculum:verify-source": "node scripts/verify-source.mjs",
+    "content:import": "node scripts/import-curriculum.mjs",
+    "content:validate": "node scripts/verify-source.mjs",
+    "content:audit": "python3 scripts/audit-original-source.py",
     "setup": "node scripts/setup.mjs",
     "setup:demo": "node scripts/demo.mjs setup",
     "dev:demo": "node scripts/demo.mjs dev",
@@ -28,8 +31,10 @@
     "test:install-browser": "node scripts/install-browser.mjs",
     "doctor": "node scripts/doctor.mjs",
     "password:reset": "node scripts/recover-password.mjs",
+    "auth:reset-password": "node scripts/recover-password.mjs",
     "backup": "node scripts/backup.mjs",
     "restore": "node scripts/restore.mjs",
+    "db:diagnose": "node scripts/diagnose.mjs",
     "licenses:generate": "node scripts/licenses.mjs",
     "licenses:check": "node scripts/licenses.mjs --check"
   },
