@@ -565,6 +565,15 @@ textarea {
   margin-top: 20px;
   background: var(--border);
   border-radius: 8px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .workspace-skeleton div:first-child {
   width: 60%;

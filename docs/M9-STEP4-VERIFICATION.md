@@ -24,6 +24,7 @@ Scope: Automated verification of 320px responsive reflow baseline without page h
 ## 2. Test Execution Results
 
 ### Playwright E2E Suite (Complete Regression: 95 Tests)
+
 ```
 Running 95 tests using 1 worker
 
@@ -38,6 +39,7 @@ Running 95 tests using 1 worker
 ```
 
 ### Static Analysis, Linting & Unit Tests
+
 - **Typecheck**: `npm run typecheck` (`tsc --noEmit`) -> 0 errors.
 - **Lint**: `npm run lint -- --max-warnings=0` -> 0 errors, 0 warnings.
 - **Format Check**: `npm run format:check` -> all files cleanly formatted.
@@ -48,11 +50,11 @@ Running 95 tests using 1 worker
 
 ## 3. Compliance Matrix
 
-| Requirement | Implementation & Test Check | Status |
-|-------------|-----------------------------|--------|
-| §201 320px Reflow | 0 page horizontal scroll (`scrollWidth <= innerWidth`) across 12 routes | Verified |
-| §206 Table Overflow | Tables contained within `.table-scroll` (`overflow-x: auto`) | Verified |
-| §206 Keyboard Scrolling | Scrollable container has `tabindex="0"`, `role="region"`, `aria-label` | Verified |
-| §206 Table Headers | Top row rendered as `th` with `scope="col"`; row headers with `scope="row"` | Verified |
-| §201 Grid Stacking | `.search-kind-grid` and `.search-scope-grid` stack to 1 column at <=767px | Verified |
-| WCAG 2.2 AA Audits | 0 Axe-core violations across 320px table and search views | Verified |
+| Requirement             | Implementation & Test Check                                                 | Status   |
+| ----------------------- | --------------------------------------------------------------------------- | -------- |
+| §201 320px Reflow       | 0 page horizontal scroll (`scrollWidth <= innerWidth`) across 12 routes     | Verified |
+| §206 Table Overflow     | Tables contained within `.table-scroll` (`overflow-x: auto`)                | Verified |
+| §206 Keyboard Scrolling | Scrollable container has `tabindex="0"`, `role="region"`, `aria-label`      | Verified |
+| §206 Table Headers      | Top row rendered as `th` with `scope="col"`; row headers with `scope="row"` | Verified |
+| §201 Grid Stacking      | `.search-kind-grid` and `.search-scope-grid` stack to 1 column at <=767px   | Verified |
+| WCAG 2.2 AA Audits      | 0 Axe-core violations across 320px table and search views                   | Verified |
