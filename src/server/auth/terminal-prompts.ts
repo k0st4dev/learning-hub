@@ -10,10 +10,11 @@ type TerminalOutput = Writable & { isTTY?: boolean };
 export function terminalPrompts(
   input: TerminalInput = process.stdin,
   output: TerminalOutput = process.stdout,
+  operation = 'Password recovery',
 ) {
   if (!input.isTTY || !output.isTTY || typeof input.setRawMode !== 'function')
     throw new TerminalPromptError(
-      'Password recovery requires an interactive terminal. Piped input, redirected output and password arguments are not supported.',
+      `${operation} requires an interactive terminal. Piped input, redirected output and password arguments are not supported.`,
     );
   let hidden = false;
   const muted = new Writable({

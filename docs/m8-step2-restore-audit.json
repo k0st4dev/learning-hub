@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-13T07:05:39.411Z",
+  "status": "passed",
+  "bundleRestored": "/home/kst/Documents/learningHub/learning-hub/.tmp/restore-rehearsal-McFXQD/source/backups/backup-2026-10-13T07-05-37-588Z-784d6e3a-5381-4827-897f-e0a1366b2f7e",
+  "safetyBackupCreated": "/home/kst/Documents/learningHub/learning-hub/.tmp/restore-rehearsal-McFXQD/target/backups/backup-2026-10-13T07-05-38-342Z-dedb7605-30aa-477f-a580-7dd792f3c049",
+  "targetFile": "/home/kst/Documents/learningHub/learning-hub/.tmp/restore-rehearsal-McFXQD/target/learning.sqlite",
+  "sessionsRevoked": 2,
+  "integrityCheck": "ok",
+  "foreignKeyCheck": "ok",
+  "tableCount": 26,
+  "usersRehearsed": ["alpha@example.test", "beta@example.test"],
+  "notesVerified": [
+    "Alpha čć note: rehearsal persistence verified.",
+    "Beta note: distinct student records."
+  ],
+  "continuePathsVerified": [
+    "/course/software-engineer/days/d001/exercises/d001-practice#tasks",
+    "/course/software-engineer/days/d001/lessons/d001-learn#study"
+  ]
+}

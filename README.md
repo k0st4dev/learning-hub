@@ -132,7 +132,30 @@ Success requires opening the snapshot, passing SQLite integrity/foreign-key chec
 
 Backups contain private data and are not encrypted by SQLite. The command requests private directory/file modes (`0700`/`0600` on systems that support them); on Windows, permissions inherit from the chosen data directory, so choose storage accessible only to trusted device users. Copy finished bundles to separate protected storage for protection against disk failure. Keep them outside public assets, build directories and Git. Symlinked backup destinations are refused.
 
-The installation's CSRF secret, environment files and lock files are deliberately excluded. **Restore is not implemented in this increment:** the upcoming stopped-server procedure must verify the bundle, make a safety backup, revoke restored sessions and create a fresh CSRF secret. Do not replace a running database or reuse copied session tokens. This increment verifies fresh login/private records/Continue from an isolated snapshot copy; A23 still requires the later restore rehearsal. See [backup evidence and limits](docs/M8-STEP1-VERIFICATION.md).
+The installation's CSRF secret, environment files and lock files are deliberately excluded: the stopped-server restore procedure revokes restored sessions and creates a fresh secret. Do not replace a running database or reuse copied session tokens manually. See [backup evidence and limits](docs/M8-STEP1-VERIFICATION.md).
+
+### Restore a verified backup
+
+From the repository root, with the application **stopped**:
+
+```sh
+npm run restore -- --file <backup-directory-or-database-path>
+```
+
+`APP_DATA_DIR` selects the target installation (defaults to `./data`). The server must be completely stopped before running restore: the command verifies that no process holds the local operation lease and that the configured local port is free.
+
+The restore procedure:
+
+- Verifies the backup bundle structure, manifest, and database checksums.
+- Verifies database integrity, foreign keys, and matching migration history.
+- Verifies that the installed curriculum release matches the immutable source repository.
+- Prompts for interactive confirmation on a real TTY (`Type RESTORE to confirm replacement of target database:`).
+- Creates an automatic safety backup of the existing target installation before modifying data (or preserves a raw copy if the existing database was damaged).
+- Revokes all active sessions in the restored database (`DELETE FROM session`).
+- Generates a fresh `csrf-secret` file with private permissions (`0600`).
+- Atomically swaps the database and secret, with automatic rollback on any failure.
+
+See [restore verification](docs/M8-STEP2-VERIFICATION.md).
 
 The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
 

@@ -29,6 +29,7 @@
     "doctor": "node scripts/doctor.mjs",
     "password:reset": "node scripts/recover-password.mjs",
     "backup": "node scripts/backup.mjs",
+    "restore": "node scripts/restore.mjs",
     "licenses:generate": "node scripts/licenses.mjs",
     "licenses:check": "node scripts/licenses.mjs --check"
   },

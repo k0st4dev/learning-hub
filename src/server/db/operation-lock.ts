@@ -8,7 +8,7 @@ import { AppError } from '../errors.ts';
 export async function acquireOperationLock(
   dataDir: string,
   root: string,
-  operation: 'server' | 'password-recovery',
+  operation: 'server' | 'password-recovery' | 'restore',
   create = false,
 ) {
   if (create) await mkdir(dataDir, { recursive: true, mode: 0o700 });
