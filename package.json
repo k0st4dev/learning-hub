@@ -35,6 +35,7 @@
     "backup": "node scripts/backup.mjs",
     "restore": "node scripts/restore.mjs",
     "db:diagnose": "node scripts/diagnose.mjs",
+    "curriculum:upgrade": "node scripts/upgrade-curriculum.mjs",
     "licenses:generate": "node scripts/licenses.mjs",
     "licenses:check": "node scripts/licenses.mjs --check"
   },

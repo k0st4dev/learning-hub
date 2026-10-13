@@ -112,7 +112,7 @@ The production foundation browser suite has not passed on the current restricted
 
 `src/app` contains App Router pages; `src/server` contains configuration/request-boundary code; `scripts` contains cross-platform Node commands; `tests` contains unit, integration and browser checks. `src/i18n/en.ts` holds interface copy. Native database/auth imports stay out of browser components.
 
-`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and published releases cannot change silently. Verified online backup and local password recovery are available below. Stopped-server restore and enrollment upgrades remain later milestones. Preserve the installation's database, WAL/SHM files and secret; use the backup command instead of copying an open database.
+`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and published releases cannot change silently. Verified online backup, stopped-server restore, database diagnostics, curriculum upgrades, and local password recovery are operational below. Preserve the installation's database, WAL/SHM files and secret; use the backup command instead of copying an open database.
 
 ### Create a verified backup
 
@@ -184,6 +184,42 @@ npm run db:diagnose -- --json
 - Exits with code 0 on healthy databases, and code 1 if any issues are detected.
 
 See [diagnostics verification](docs/M8-STEP3-VERIFICATION.md).
+
+### Upgrade curriculum enrollment
+
+To transition student enrollments from an older curriculum release to a newer release:
+
+```sh
+npm run curriculum:upgrade -- --dry-run
+```
+
+Execute the upgrade (takes an automatic pre-upgrade verified backup first):
+
+```sh
+npm run curriculum:upgrade
+```
+
+Optional arguments:
+
+- `--dry-run`: Evaluates prospective changes, verifies release compatibility, and reports plan without taking backups or modifying database rows (§231).
+- `--target-release <id>`: Specifies target published release ID (defaults to latest published release).
+- `--user <email>`: Restricts upgrade to a specific student enrollment.
+- `--map <path>`: Optional JSON file defining explicit stableKey mappings or overrides (§232).
+- `--json`: Outputs machine-readable execution or dry-run report.
+
+`APP_DATA_DIR` selects the target installation (defaults to `./data`). The upgrade procedure:
+
+- Verifies that source and target curriculum releases exist and are published.
+- Evaluates unit equivalence strictly by `stableKey` (never by title, index, or paragraph) (§232).
+- Equivalent and unchanged completed lessons and exercises transfer to the target release (§233).
+- Materially changed exercises require a fresh reattempt and do not transfer completion (§233).
+- Student notes transfer to target release content items matching `stableKey`.
+- If the current resume item was removed in the target release, safely falls back via the resume resolver (§233).
+- Emits a `release_migrated` audit record in `activity_event`.
+- In real runs, creates an automatic pre-upgrade verified backup before applying database updates (§268).
+- Existing students remain pinned to their enrolled release until an explicit upgrade is performed (A24).
+
+See [curriculum upgrade verification](docs/M8-STEP4-VERIFICATION.md).
 
 The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
 
