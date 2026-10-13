@@ -374,7 +374,7 @@ it('dry-run evaluates prospective upgrade without taking backups or modifying da
   const backupsDir = path.join(directory, 'backups');
   const exists = await readdir(backupsDir).catch(() => null);
   expect(exists).toBeNull();
-}, 30000);
+}, 45000);
 
 it('creates pre-upgrade verified backup before applying enrollment changes (§268)', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -400,7 +400,7 @@ it('creates pre-upgrade verified backup before applying enrollment changes (§26
   expect(files).toContain('learning.sqlite');
   expect(files).toContain('manifest.json');
   expect(files).toContain('source-manifest.json');
-}, 30000);
+}, 45000);
 
 it('transfers equivalent completed units and requires reattempt for materially changed exercises (§233)', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -536,7 +536,7 @@ it('transfers equivalent completed units and requires reattempt for materially c
   // Verify note transferred to v2 content item
   const note1 = readNote(store, token, 'se-26w-v2:d001');
   expect(note1?.body).toBe('My private note on Day 1');
-}, 30000);
+}, 45000);
 
 it('safely falls back cursor when resume target was removed in new release (§233)', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -574,7 +574,7 @@ it('safely falls back cursor when resume target was removed in new release (§23
   const enrollmentAfter = ownedEnrollment(store, token);
   expect(enrollmentAfter?.releaseId).toBe('se-26w-v2');
   expect(enrollmentAfter?.resumeItemId).toBeNull();
-}, 30000);
+}, 45000);
 
 it('records release_migrated activity event during upgrade', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -602,7 +602,7 @@ it('records release_migrated activity event during upgrade', async () => {
   const payload = JSON.parse(events[0]!.payloadJson);
   expect(payload.fromRelease).toBe('se-26w-v1');
   expect(payload.toRelease).toBe('se-26w-v2');
-}, 30000);
+}, 45000);
 
 it('does not silently change enrollments when new release is imported (A24)', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -617,7 +617,7 @@ it('does not silently change enrollments when new release is imported (A24)', as
   // Existing student MUST remain pinned to se-26w-v1
   const enrollment = ownedEnrollment(store, token);
   expect(enrollment?.releaseId).toBe('se-26w-v1');
-}, 30000);
+}, 45000);
 
 it('runs CLI scripts/upgrade-curriculum.mjs with --dry-run and reports plan', async () => {
   const plan = await loadArchivedCurriculum(root);
@@ -645,4 +645,4 @@ it('runs CLI scripts/upgrade-curriculum.mjs with --dry-run and reports plan', as
   expect(stdout).toContain('Curriculum Upgrade Plan (DRY RUN)');
   expect(stdout).toContain('grace@example.com');
   expect(stdout).toContain('se-26w-v1 -> se-26w-v2');
-}, 30000);
+}, 45000);

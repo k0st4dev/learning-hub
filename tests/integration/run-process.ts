@@ -5,7 +5,11 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 // File-backed output keeps diagnostics available without depending on OS pipe permissions.
-export async function runProcess(args: string[], env = process.env) {
+export async function runProcess(
+  args: string[],
+  env = process.env,
+  timeoutMs = 12000,
+) {
   const directory = await mkdtemp(
     path.join(tmpdir(), 'learning-platform-process-'),
   );
@@ -23,7 +27,7 @@ export async function runProcess(args: string[], env = process.env) {
       const timer = setTimeout(() => {
         child.kill();
         reject(new Error('Subprocess timed out'));
-      }, 12000);
+      }, timeoutMs);
       child.once('error', (error) => {
         clearTimeout(timer);
         reject(error);
