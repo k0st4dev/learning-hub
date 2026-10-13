@@ -4,16 +4,27 @@
   overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+.table-scroll:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
 }
 .table-scroll table {
   width: 100%;
   border-collapse: collapse;
 }
+.table-scroll th,
 .table-scroll td {
   vertical-align: top;
   padding: 12px;
   border: 1px solid var(--border);
   min-width: 140px;
+}
+.table-scroll th {
+  text-align: left;
+  font-weight: 600;
+  background-color: var(--surface);
 }
 .table-scroll caption {
   text-align: left;

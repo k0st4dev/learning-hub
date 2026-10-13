@@ -24,6 +24,7 @@ Scope: Automated verification of skip links (`#main`), sequential keyboard navig
 ## 2. Test Execution Results
 
 ### Playwright E2E Suite (Full Coverage)
+
 ```
 Running 89 tests using 1 worker
 
@@ -37,6 +38,7 @@ Running 89 tests using 1 worker
 ```
 
 ### Static Analysis, Linting & Unit Tests
+
 - **Typecheck**: `npm run typecheck` (`tsc --noEmit`) -> 0 errors.
 - **Lint**: `npm run lint -- --max-warnings=0` -> 0 errors, 0 warnings.
 - **Format Check**: `npm run format:check` -> all files cleanly formatted.
@@ -47,12 +49,12 @@ Running 89 tests using 1 worker
 
 ## 3. Compliance Matrix
 
-| Requirement | Implementation & Test Check | Status |
-|-------------|-----------------------------|--------|
-| §204 Skip Link | Visible on focus, first Tab stop, transfers focus to `#main` | Verified |
-| §204 Tab Order | Logical sequential order matching visual DOM layout | Verified |
-| §205 Focus Indicators | `2px solid var(--primary)` outline, `4px` offset | Verified |
-| §207 Dialog Focus Trap | Tab/Shift+Tab trapped within `.note-leave-dialog`, Escape dismisses | Verified |
+| Requirement                          | Implementation & Test Check                                                | Status   |
+| ------------------------------------ | -------------------------------------------------------------------------- | -------- |
+| §204 Skip Link                       | Visible on focus, first Tab stop, transfers focus to `#main`               | Verified |
+| §204 Tab Order                       | Logical sequential order matching visual DOM layout                        | Verified |
+| §205 Focus Indicators                | `2px solid var(--primary)` outline, `4px` offset                           | Verified |
+| §207 Dialog Focus Trap               | Tab/Shift+Tab trapped within `.note-leave-dialog`, Escape dismisses        | Verified |
 | §207 Drawer Focus Trap & Restoration | `.mobile-drawer` traps focus, Escape closes, focus restored to Menu button | Verified |
-| §205, §207 Live Regions | `role="status"` for updates, `role="alert"` for form errors | Verified |
-| WCAG 2.2 AA Audits | 0 Axe-core violations across tested viewports & flows | Verified |
+| §205, §207 Live Regions              | `role="status"` for updates, `role="alert"` for form errors                | Verified |
+| WCAG 2.2 AA Audits                   | 0 Axe-core violations across tested viewports & flows                      | Verified |

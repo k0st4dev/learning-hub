@@ -158,34 +158,42 @@ export function SourceBlocks({
             {en.curriculum.sourceTable} {table}
           </caption>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row} data-source-row={row}>
-                {[
-                  ...new Set(
-                    group
-                      .filter((b) => b.rowNumber === row)
-                      .map((b) => b.cellNumber!),
-                  ),
-                ]
-                  .sort((a, b) => a - b)
-                  .map((cell) => (
-                    <td key={cell} data-source-cell={cell}>
-                      {group
-                        .filter(
-                          (b) => b.rowNumber === row && b.cellNumber === cell,
-                        )
-                        .map((b) => (
-                          <SourceParagraph
-                            key={b.id}
-                            block={b}
-                            anchors={anchors}
-                            sections={sections}
-                          />
-                        ))}
-                    </td>
-                  ))}
-              </tr>
-            ))}
+            {rows.map((row, rowIndex) => {
+              const isHeader = rowIndex === 0;
+              const CellTag = isHeader ? 'th' : 'td';
+              return (
+                <tr key={row} data-source-row={row}>
+                  {[
+                    ...new Set(
+                      group
+                        .filter((b) => b.rowNumber === row)
+                        .map((b) => b.cellNumber!),
+                    ),
+                  ]
+                    .sort((a, b) => a - b)
+                    .map((cell) => (
+                      <CellTag
+                        key={cell}
+                        data-source-cell={cell}
+                        scope={isHeader ? 'col' : undefined}
+                      >
+                        {group
+                          .filter(
+                            (b) => b.rowNumber === row && b.cellNumber === cell,
+                          )
+                          .map((b) => (
+                            <SourceParagraph
+                              key={b.id}
+                              block={b}
+                              anchors={anchors}
+                              sections={sections}
+                            />
+                          ))}
+                      </CellTag>
+                    ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>,

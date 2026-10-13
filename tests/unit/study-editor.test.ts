@@ -203,7 +203,7 @@ describe('explicit full-course study actions', () => {
       screen.getByRole('button', { name: 'Mark study complete' }),
     );
     const alert = await screen.findByRole('alert');
-    expect(document.activeElement).toBe(alert);
+    await waitFor(() => expect(document.activeElement).toBe(alert));
     fireEvent.click(
       screen.getByRole('button', { name: 'Use latest confirmed progress' }),
     );
