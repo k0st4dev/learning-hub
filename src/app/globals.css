@@ -187,6 +187,7 @@ body {
 }
 a {
   color: var(--primary);
+  text-decoration: underline;
   text-underline-offset: 4px;
 }
 :focus-visible {

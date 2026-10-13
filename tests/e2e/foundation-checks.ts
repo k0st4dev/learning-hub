@@ -76,3 +76,42 @@ export async function verifyBoundaries(page: Page, baseURL: string) {
     403,
   );
 }
+
+export async function verifyAuthPage(
+  page: Page,
+  baseURL: string,
+  route: '/login' | '/register',
+  viewport: { width: number; height: number },
+  colorScheme: 'light' | 'dark',
+) {
+  await page.setViewportSize(viewport);
+  await page.emulateMedia({ colorScheme });
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const response = await page.goto(`${baseURL}${route}`);
+  assert.equal(response?.status(), 200);
+  assert.equal(await page.locator('form').isVisible(), true);
+  await page.keyboard.press('Tab');
+  assert.equal(
+    await page
+      .getByRole('link', { name: 'Skip to content' })
+      .evaluate((el) => el === document.activeElement),
+    true,
+  );
+  assert.equal(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+    true,
+    `Horizontal overflow on ${route} at ${viewport.width}px`,
+  );
+  assert.deepEqual(
+    (
+      await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+        .analyze()
+    ).violations,
+    [],
+  );
+  assert.deepEqual(errors, []);
+}

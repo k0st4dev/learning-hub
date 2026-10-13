@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import {
   verifyFoundation,
+  verifyAuthPage,
   verifyBoundaries,
   viewports,
 } from './foundation-checks';
@@ -12,6 +13,18 @@ for (const colorScheme of ['light', 'dark'] as const) {
       baseURL,
     }) => {
       await verifyFoundation(page, baseURL!, viewport, colorScheme);
+    });
+    test(`login page ${viewport.width}px ${colorScheme}`, async ({
+      page,
+      baseURL,
+    }) => {
+      await verifyAuthPage(page, baseURL!, '/login', viewport, colorScheme);
+    });
+    test(`register page ${viewport.width}px ${colorScheme}`, async ({
+      page,
+      baseURL,
+    }) => {
+      await verifyAuthPage(page, baseURL!, '/register', viewport, colorScheme);
     });
   }
 }
