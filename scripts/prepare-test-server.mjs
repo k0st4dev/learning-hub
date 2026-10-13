@@ -18,6 +18,16 @@ if (fs.existsSync(lockFile)) {
   } catch {}
 }
 
+const dbFile = path.join(root, 'data', 'learning.sqlite');
+if (fs.existsSync(dbFile)) {
+  try {
+    const Database = (await import('better-sqlite3')).default;
+    const db = new Database(dbFile);
+    db.prepare('DELETE FROM auth_throttle;').run();
+    db.close();
+  } catch {}
+}
+
 const child = spawn(
   process.execPath,
   [path.join(root, 'scripts/run-next.mjs'), 'start'],
