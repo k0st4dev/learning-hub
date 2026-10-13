@@ -1,0 +1,175 @@
+{
+  "checkedAt": "2026-10-13T13:57:35.493Z",
+  "status": "passed",
+  "performanceBudgets": {
+    "routeNavigation": {
+      "transitions": [
+        {
+          "from": "/dashboard",
+          "to": "/course/software-engineer",
+          "durationMs": 781
+        },
+        {
+          "from": "/course/software-engineer",
+          "to": "/course/software-engineer/days/d001/lessons/d001-learn",
+          "durationMs": 854
+        }
+      ],
+      "budgetMs": 2500,
+      "passed": true
+    },
+    "searchQuery": {
+      "queries": [
+        {
+          "term": "JavaScript",
+          "durationMs": 169
+        },
+        {
+          "term": "Git",
+          "durationMs": 121
+        },
+        {
+          "term": "vežbe",
+          "durationMs": 72
+        },
+        {
+          "term": "vezbe",
+          "durationMs": 65
+        },
+        {
+          "term": "HTTP",
+          "durationMs": 66
+        }
+      ],
+      "averageMs": 99,
+      "budgetMs": 200,
+      "passed": true
+    },
+    "resourceQuery": {
+      "queries": [
+        {
+          "term": "MDN",
+          "durationMs": 170
+        },
+        {
+          "term": "TypeScript",
+          "durationMs": 148
+        },
+        {
+          "term": "CS50",
+          "durationMs": 170
+        }
+      ],
+      "averageMs": 163,
+      "budgetMs": 200,
+      "passed": true
+    },
+    "noteSave": {
+      "durationMs": 205,
+      "budgetMs": 500,
+      "passed": true
+    },
+    "scorecardSave": {
+      "durationMs": 241,
+      "budgetMs": 500,
+      "passed": true
+    }
+  },
+  "accessibilityMatrix": {
+    "routesAudited": [
+      "/",
+      "/login",
+      "/dashboard",
+      "/course/software-engineer",
+      "/course/software-engineer/days/d001/lessons/d001-learn",
+      "/resources",
+      "/search",
+      "/progress/scorecard",
+      "/settings"
+    ],
+    "viewportsAudited": [
+      {
+        "width": 1440,
+        "height": 900,
+        "name": "desktop-widescreen"
+      },
+      {
+        "width": 1024,
+        "height": 768,
+        "name": "desktop-standard"
+      },
+      {
+        "width": 768,
+        "height": 1024,
+        "name": "tablet-portrait"
+      },
+      {
+        "width": 360,
+        "height": 800,
+        "name": "mobile-standard"
+      },
+      {
+        "width": 320,
+        "height": 800,
+        "name": "reflow-narrowest"
+      }
+    ],
+    "colorSchemesAudited": ["light", "dark"],
+    "totalAxeAudits": 12,
+    "axeViolations": 0,
+    "horizontalOverflowViolations": 0,
+    "consoleErrors": 0
+  },
+  "specificationsVerified": [
+    {
+      "section": "§201",
+      "description": "Responsive Layout & 320px Reflow Baseline (WCAG 1.4.10)",
+      "status": "verified"
+    },
+    {
+      "section": "§202",
+      "description": "Visual Design System & Semantic Typography Hierarchy",
+      "status": "verified"
+    },
+    {
+      "section": "§203",
+      "description": "High-contrast Dark/Light System & WCAG AA Contrast Ratios",
+      "status": "verified"
+    },
+    {
+      "section": "§204",
+      "description": "Keyboard Tab Navigation Order & #main Skip Links",
+      "status": "verified"
+    },
+    {
+      "section": "§205",
+      "description": "High-visibility Focus Indicators (2px solid outline)",
+      "status": "verified"
+    },
+    {
+      "section": "§206",
+      "description": "Curriculum Table Usability, .table-scroll & Semantic Headers",
+      "status": "verified"
+    },
+    {
+      "section": "§207",
+      "description": "Focus Traps (Leave Dialog, Drawer) & ARIA Live Regions",
+      "status": "verified"
+    },
+    {
+      "section": "§208",
+      "description": "Accessible Error Boundaries & Draft Preservation on 503",
+      "status": "verified"
+    },
+    {
+      "section": "§209",
+      "description": "Reduced-motion Loading Skeletons & Contextual Empty States",
+      "status": "verified"
+    },
+    {
+      "section": "§210",
+      "description": "Integrated Performance Budgets, Latency & Axe Compliance",
+      "status": "verified"
+    }
+  ]
+}
