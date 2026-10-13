@@ -9,11 +9,10 @@ function parseColor(color: string): [number, number, number] {
   if (trimmed.startsWith('#')) {
     const hex = trimmed.slice(1);
     if (hex.length === 3) {
-      return [
-        parseInt(hex[0] + hex[0], 16),
-        parseInt(hex[1] + hex[1], 16),
-        parseInt(hex[2] + hex[2], 16),
-      ];
+      const r = hex.charAt(0);
+      const g = hex.charAt(1);
+      const b = hex.charAt(2);
+      return [parseInt(r + r, 16), parseInt(g + g, 16), parseInt(b + b, 16)];
     }
     if (hex.length === 6) {
       return [
@@ -24,17 +23,21 @@ function parseColor(color: string): [number, number, number] {
     }
   }
   const match = trimmed.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-  if (match) {
+  if (match && match[1] && match[2] && match[3]) {
     return [Number(match[1]), Number(match[2]), Number(match[3])];
   }
   throw new Error(`Invalid color format: ${color}`);
 }
 
+function channelLuminance(val: number): number {
+  const c = val / 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
 function relativeLuminance([r, g, b]: [number, number, number]): number {
-  const [sR, sG, sB] = [r, g, b].map((val) => {
-    const c = val / 255;
-    return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  });
+  const sR = channelLuminance(r);
+  const sG = channelLuminance(g);
+  const sB = channelLuminance(b);
   return 0.2126 * sR + 0.7152 * sG + 0.0722 * sB;
 }
 
@@ -62,7 +65,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'system');
 
     const darkBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(darkBg).toBe('rgb(11, 18, 32)');
 
@@ -72,7 +77,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     expect(darkTextColor).toBe('rgb(241, 245, 249)');
 
     const darkHeaderBg = await page.evaluate(() =>
-      window.getComputedStyle(document.querySelector('.site-header')!).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.querySelector('.site-header')!)
+        .getPropertyValue('background-color'),
     );
     expect(darkHeaderBg).toBe('rgb(17, 24, 39)');
 
@@ -87,7 +94,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'system');
 
     const lightBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(lightBg).toBe('rgb(248, 250, 252)');
 
@@ -97,7 +106,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     expect(lightTextColor).toBe('rgb(15, 23, 42)');
 
     const lightHeaderBg = await page.evaluate(() =>
-      window.getComputedStyle(document.querySelector('.site-header')!).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.querySelector('.site-header')!)
+        .getPropertyValue('background-color'),
     );
     expect(lightHeaderBg).toBe('rgb(255, 255, 255)');
 
@@ -120,7 +131,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     await page.getByRole('button', { name: 'Sign in' }).click();
 
     await page.waitForURL(/\/dashboard/);
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dashboard');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Dashboard',
+    );
 
     // Enroll if start button visible
     const startButton = page.getByRole('button', { name: 'Start course' });
@@ -131,15 +144,23 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
 
     // Navigate to settings
     await page.goto('/settings');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Settings',
+    );
     const profileSection = page.getByRole('region', { name: 'Your profile' });
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
 
     // Switch to dark theme
     await profileSection.getByLabel('Theme').selectOption('dark');
-    await expect(profileSection.getByRole('status')).toHaveText('Unsaved changes');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Unsaved changes',
+    );
     await profileSection.getByRole('button', { name: 'Save settings' }).click();
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
 
     // Verify dark theme on html attribute
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -147,18 +168,26 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     // Verify dark colors apply even when OS prefers light
     await page.emulateMedia({ colorScheme: 'light' });
     const bgInLightOS = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(bgInLightOS).toBe('rgb(11, 18, 32)');
 
     // Reload page to verify server persistence from database
     await page.reload();
-    const reloadedProfileSection = page.getByRole('region', { name: 'Your profile' });
-    await expect(reloadedProfileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    const reloadedProfileSection = page.getByRole('region', {
+      name: 'Your profile',
+    });
+    await expect(reloadedProfileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     const reloadedBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(reloadedBg).toBe('rgb(11, 18, 32)');
 
@@ -208,7 +237,9 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     const darkTokens = await page.evaluate(() => {
       const style = window.getComputedStyle(document.documentElement);
       const bodyStyle = window.getComputedStyle(document.body);
-      const button = document.querySelector('.button.primary') as HTMLElement | null;
+      const button = document.querySelector(
+        '.button.primary',
+      ) as HTMLElement | null;
       const buttonStyle = button ? window.getComputedStyle(button) : null;
       return {
         bg: bodyStyle.getPropertyValue('background-color'),
@@ -226,24 +257,34 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     expect(darkTextContrast).toBeGreaterThanOrEqual(4.5);
 
     // Dark muted text contrast on dark surface (WCAG AA requirement >= 4.5:1)
-    const darkMutedContrast = contrastRatio(darkTokens.muted, darkTokens.surface);
+    const darkMutedContrast = contrastRatio(
+      darkTokens.muted,
+      darkTokens.surface,
+    );
     expect(darkMutedContrast).toBeGreaterThanOrEqual(4.5);
 
     // Dark primary button contrast (WCAG AA requirement >= 4.5:1)
-    const darkButtonContrast = contrastRatio(darkTokens.buttonText, darkTokens.buttonBg);
+    const darkButtonContrast = contrastRatio(
+      darkTokens.buttonText,
+      darkTokens.buttonBg,
+    );
     expect(darkButtonContrast).toBeGreaterThanOrEqual(4.5);
 
     // 2. Switch to light theme and audit light token contrast ratios
     const profileSection = page.getByRole('region', { name: 'Your profile' });
     await profileSection.getByLabel('Theme').selectOption('light');
     await profileSection.getByRole('button', { name: 'Save settings' }).click();
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
     const lightTokens = await page.evaluate(() => {
       const style = window.getComputedStyle(document.documentElement);
       const bodyStyle = window.getComputedStyle(document.body);
-      const button = document.querySelector('.button.primary') as HTMLElement | null;
+      const button = document.querySelector(
+        '.button.primary',
+      ) as HTMLElement | null;
       const buttonStyle = button ? window.getComputedStyle(button) : null;
       return {
         bg: bodyStyle.getPropertyValue('background-color'),
@@ -261,25 +302,43 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     expect(lightTextContrast).toBeGreaterThanOrEqual(4.5);
 
     // Light muted text contrast on light surface (WCAG AA requirement >= 4.5:1)
-    const lightMutedContrast = contrastRatio(lightTokens.muted, lightTokens.surface);
+    const lightMutedContrast = contrastRatio(
+      lightTokens.muted,
+      lightTokens.surface,
+    );
     expect(lightMutedContrast).toBeGreaterThanOrEqual(4.5);
 
     // Light primary button contrast (WCAG AA requirement >= 4.5:1)
-    const lightButtonContrast = contrastRatio(lightTokens.buttonText, lightTokens.buttonBg);
+    const lightButtonContrast = contrastRatio(
+      lightTokens.buttonText,
+      lightTokens.buttonBg,
+    );
     expect(lightButtonContrast).toBeGreaterThanOrEqual(4.5);
   });
 
   test('User can switch theme to light, persisting across reloads and navigation', async () => {
     await page.goto('/settings');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Settings',
+    );
     const profileSection = page.getByRole('region', { name: 'Your profile' });
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
 
     // Switch to light theme
     await profileSection.getByLabel('Theme').selectOption('light');
-    if (await profileSection.getByRole('button', { name: 'Save settings' }).isEnabled()) {
-      await profileSection.getByRole('button', { name: 'Save settings' }).click();
-      await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    if (
+      await profileSection
+        .getByRole('button', { name: 'Save settings' })
+        .isEnabled()
+    ) {
+      await profileSection
+        .getByRole('button', { name: 'Save settings' })
+        .click();
+      await expect(profileSection.getByRole('status')).toHaveText(
+        'Saved settings confirmed',
+      );
     }
 
     // Verify light theme on html attribute
@@ -288,18 +347,26 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     // Verify light colors apply even when OS prefers dark
     await page.emulateMedia({ colorScheme: 'dark' });
     const bgInDarkOS = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(bgInDarkOS).toBe('rgb(248, 250, 252)');
 
     // Reload page to verify server persistence from database
     await page.reload();
-    const reloadedProfileSection = page.getByRole('region', { name: 'Your profile' });
-    await expect(reloadedProfileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    const reloadedProfileSection = page.getByRole('region', {
+      name: 'Your profile',
+    });
+    await expect(reloadedProfileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
     const reloadedBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(reloadedBg).toBe('rgb(248, 250, 252)');
 
@@ -320,15 +387,23 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
 
   test('User can switch theme back to system, responding dynamically to OS preference', async () => {
     await page.goto('/settings');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+      'Settings',
+    );
     const profileSection = page.getByRole('region', { name: 'Your profile' });
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
 
     // Switch back to system theme
     await profileSection.getByLabel('Theme').selectOption('system');
-    await expect(profileSection.getByRole('status')).toHaveText('Unsaved changes');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Unsaved changes',
+    );
     await profileSection.getByRole('button', { name: 'Save settings' }).click();
-    await expect(profileSection.getByRole('status')).toHaveText('Saved settings confirmed');
+    await expect(profileSection.getByRole('status')).toHaveText(
+      'Saved settings confirmed',
+    );
 
     // Reload to confirm persistence
     await page.reload();
@@ -337,14 +412,18 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
     // Test dark OS preference
     await page.emulateMedia({ colorScheme: 'dark' });
     let currentBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(currentBg).toBe('rgb(11, 18, 32)');
 
     // Test light OS preference
     await page.emulateMedia({ colorScheme: 'light' });
     currentBg = await page.evaluate(() =>
-      window.getComputedStyle(document.body).getPropertyValue('background-color'),
+      window
+        .getComputedStyle(document.body)
+        .getPropertyValue('background-color'),
     );
     expect(currentBg).toBe('rgb(248, 250, 252)');
   });
