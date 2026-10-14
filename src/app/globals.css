@@ -152,6 +152,12 @@ mark {
   --muted: #475569;
   --primary: #1d4ed8;
   --border: #cbd5e1;
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+  --emerald-600: #059669;
+  --surface-elevated: #f1f5f9;
+  --border-emerald: rgba(16, 185, 129, 0.25);
+  --accent: #10b981;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
@@ -162,6 +168,12 @@ mark {
     --muted: #cbd5e1;
     --primary: #93c5fd;
     --border: #475569;
+    --emerald-500: #10b981;
+    --emerald-400: #34d399;
+    --emerald-600: #059669;
+    --surface-elevated: #162a2d;
+    --border-emerald: rgba(16, 185, 129, 0.25);
+    --accent: #34d399;
   }
 }
 :root[data-theme='dark'] {
@@ -172,6 +184,12 @@ mark {
   --muted: #cbd5e1;
   --primary: #93c5fd;
   --border: #475569;
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+  --emerald-600: #059669;
+  --surface-elevated: #162a2d;
+  --border-emerald: rgba(16, 185, 129, 0.25);
+  --accent: #34d399;
 }
 .settings-fields {
   min-inline-size: 0;
@@ -209,7 +227,6 @@ h1 {
   font-size: clamp(1.875rem, 4vw, 2.75rem);
   line-height: 1.2;
   font-weight: 700;
-  max-width: 22ch;
   letter-spacing: -0.025em;
   margin: 12px 0 24px;
 }
@@ -239,7 +256,7 @@ p {
 }
 .header-inner {
   min-height: 64px;
-  max-width: 1200px;
+  max-width: 1440px;
   padding: 12px 32px;
   margin: auto;
   display: flex;
@@ -261,9 +278,14 @@ p {
   white-space: nowrap;
 }
 .page-shell {
-  max-width: 1120px;
+  max-width: 1440px;
   margin: auto;
   padding: 32px;
+}
+@media (max-width: 640px) {
+  .page-shell {
+    padding: 16px;
+  }
 }
 .preview-notice {
   border-left: 3px solid var(--primary);
@@ -315,9 +337,13 @@ p {
 }
 .card {
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 24px;
   background: var(--surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  border-color: var(--border-emerald);
 }
 .exercise-editor fieldset,
 .temporary-review fieldset {
@@ -361,7 +387,7 @@ p {
   margin-bottom: 0;
 }
 .site-footer {
-  max-width: 1120px;
+  max-width: 1440px;
   margin: 24px auto;
   padding: 0 32px 24px;
   font-size: 14px;
@@ -373,14 +399,26 @@ p {
   align-items: center;
   padding: 8px 18px;
   border: 1px solid var(--primary);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--primary);
   cursor: pointer;
   text-decoration: none;
+  font-weight: 600;
+  transition: all 0.15s ease;
 }
 .button.primary {
   background: var(--primary);
   color: var(--surface);
+}
+.button.emerald {
+  background: var(--emerald-500);
+  color: #042f2e;
+  border-color: var(--emerald-500);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+.button.emerald:hover {
+  background: var(--emerald-400);
+  border-color: var(--emerald-400);
 }
 .button:disabled {
   opacity: 0.6;
