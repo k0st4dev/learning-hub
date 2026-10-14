@@ -10,15 +10,17 @@ export function StudentShell({
   showFixtureNotice?: boolean;
 }) {
   return (
-    <div className="page-shell">
+    <div className="page-shell student-workspace-layout">
       <StudentNavigation name={name} fullCourse={!showFixtureNotice} />
-      {showFixtureNotice && (
-        <aside className="preview-notice mb-8">
-          <strong>{en.preview}</strong>
-          <p>{en.previewDescription}</p>
-        </aside>
-      )}
-      {children}
+      <div className="student-workspace-content">
+        {showFixtureNotice && (
+          <aside className="preview-notice mb-8">
+            <strong>{en.preview}</strong>
+            <p>{en.previewDescription}</p>
+          </aside>
+        )}
+        {children}
+      </div>
     </div>
   );
 }

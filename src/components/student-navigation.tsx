@@ -49,6 +49,16 @@ export function StudentNavigation({
       document.body.style.overflow = previous;
     };
   }, [open]);
+
+  const iconMap: Record<string, string> = {
+    '/dashboard': '⚡',
+    '/course/software-engineer': '📚',
+    '/course/software-engineer/progress': '📈',
+    '/resources': '📖',
+    '/search': '🔍',
+    '/settings': '⚙️',
+  };
+
   const destinations = () =>
     links.map(({ href, label }) => (
       <Link
@@ -56,20 +66,44 @@ export function StudentNavigation({
         href={href}
         prefetch={false}
         aria-current={pathname === href ? 'page' : undefined}
+        className={`sidebar-nav-link ${pathname === href ? 'active' : ''}`}
       >
-        {label}
+        <span className="nav-icon" aria-hidden="true">
+          {iconMap[href] ?? '•'}
+        </span>
+        <span className="nav-label">{label}</span>
       </Link>
     ));
   return (
     <>
       <nav
-        className="actions mb-8 student-desktop-nav"
+        className="student-desktop-nav"
         aria-label="Student"
         ref={desktop}
       >
-        {destinations()}
-        <span className="muted student-name">{name}</span>
-        <Logout />
+        <div className="sidebar-brand">
+          <span className="sidebar-logo" aria-hidden="true">
+            🌿
+          </span>
+          <div>
+            <div className="sidebar-title">LearningHub</div>
+            <div className="sidebar-subtitle">Software Engineer</div>
+          </div>
+        </div>
+        <div className="sidebar-section-label">Glavni meni</div>
+        <div className="sidebar-links-list">{destinations()}</div>
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="sidebar-avatar" aria-hidden="true">
+              {name ? name.slice(0, 2).toUpperCase() : 'ST'}
+            </div>
+            <div className="sidebar-user-info">
+              <span className="student-name">{name}</span>
+              <span className="sidebar-status">● Lokalna baza</span>
+            </div>
+          </div>
+          <Logout />
+        </div>
       </nav>
       <header className="student-mobile-header mb-8">
         <button
