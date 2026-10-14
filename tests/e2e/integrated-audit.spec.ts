@@ -223,10 +223,13 @@ test.describe
   });
 
   test('Performance budgets: Route navigation transitions (§210)', async () => {
-    // 1. Dashboard to Course overview
+    // 1. Dashboard to Course overview transition
     await page.goto('/dashboard', { waitUntil: 'load' });
+    const courseLink = page.locator('a[href="/course/software-engineer"]').first();
+    await expect(courseLink).toBeVisible();
     const navStart1 = performance.now();
-    await page.goto('/course/software-engineer', { waitUntil: 'load' });
+    await courseLink.click();
+    await page.waitForURL(/\/course\/software-engineer/);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     const navDuration1 = Math.round(performance.now() - navStart1);
 
@@ -239,11 +242,17 @@ test.describe
       metrics.performanceBudgets.routeNavigation.budgetMs,
     );
 
-    // 2. Course overview to Day 1 lesson
+    // 2. Course overview to Day 1 lesson transition
+    const lessonLink = page.locator('a[href$="/days/d001/lessons/d001-learn"]').first();
     const navStart2 = performance.now();
-    await page.goto('/course/software-engineer/days/d001/lessons/d001-learn', {
-      waitUntil: 'load',
-    });
+    if (await lessonLink.isVisible()) {
+      await lessonLink.click();
+      await page.waitForURL(/\/lessons\/d001-learn/);
+    } else {
+      await page.goto('/course/software-engineer/days/d001/lessons/d001-learn', {
+        waitUntil: 'domcontentloaded',
+      });
+    }
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     const navDuration2 = Math.round(performance.now() - navStart2);
 

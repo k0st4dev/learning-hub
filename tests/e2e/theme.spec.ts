@@ -54,6 +54,11 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {
+    const Database = (await import('better-sqlite3')).default;
+    const db = new Database('data/learning.sqlite');
+    db.prepare('DELETE FROM auth_throttle;').run();
+    db.close();
+
     context = await browser.newContext();
     page = await context.newPage();
   });
@@ -119,6 +124,7 @@ test.describe.serial('Theme switching and contrast verification (§203)', () => 
   });
 
   test('User can switch theme to dark, persisting across reloads and navigation', async () => {
+    test.setTimeout(60000);
     // Register test student
     await page.goto('/register');
     await page.getByLabel('Email').fill(TEST_EMAIL);

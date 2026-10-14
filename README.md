@@ -42,6 +42,7 @@ Many modern learning platforms trap your code in simulated in-browser widgets, r
 This platform takes the opposite approach:
 
 - 🔒 **Local & Private First**: Your data stays on your machine. Progress, private notes, and reviews live in a local SQLite database (`data/learning.sqlite`). No tracking, no analytics, no external telemetry.
+- ⏱️ **100% Self-Paced (No Deadlines or Starting Dates)**: There are no rigid calendar start dates, cohort deadlines, or ticking countdown clocks. Each day (Day 1, Day 2, Day 3...) represents a focused unit of work rather than a calendar date. Your Day 1 can take a day, three days, or a week—you learn at your own pace without feeling rushed.
 - 💻 **Real Developer Workflow**: You don't code in artificial sandboxes. You write code using your own local tools (VS Code, terminal, Git) and record your actual results, commits, and self-assessments in the app.
 - ⚡ **Fast & Responsive**: High-performance local server with instant sub-200ms search, instant navigation, and seamless state persistence.
 - ♿ **Accessible by Design**: Full WCAG 2.2 AA compliance, high-contrast dark and light themes, sequential keyboard navigation, screen-reader live regions, and responsive reflow down to 320px mobile screens.
@@ -60,7 +61,7 @@ The platform organizes your journey through a structured 26-week curriculum divi
 5. **Phase 5: Modern Full-Stack Web Development (React, Node, Express, SQL & Auth)** (Weeks 20–25, Days 134–175)
 6. **Phase 6: Independent Capstone Project & Final Synthesis** (Week 26, Days 176–182)
 
-Every single day features a balanced two-step loop:
+Every day is a self-contained learning unit (Day 1, Day 2...) featuring a balanced two-step loop:
 
 1. **Study Lesson**: Master core concepts, read original documentation, and review AI guidelines.
 2. **Practice Exercise**: Hands-on coding challenge, complete with specific task checklists, completion criteria, and space to record your code evidence and repository references.

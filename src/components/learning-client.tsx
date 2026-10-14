@@ -321,12 +321,6 @@ export function LearningClient({
   const tasks = state.items
     .filter((i) => i.parentId === exercise.id && i.kind === 'task')
     .sort((a, b) => a.orderIndex - b.orderIndex);
-  const completedAt =
-    selected.kind === 'lesson'
-      ? state.lessonProgress.find((p) => p.lessonId === selected.id)
-          ?.completedAt
-      : state.exerciseProgress.find((p) => p.exerciseId === selected.id)
-          ?.completedAt;
   const sourceSection = (id: string, title: string, text: string) => (
     <section id={id} className="section">
       <h2>{title}</h2>
@@ -349,14 +343,11 @@ export function LearningClient({
       </aside>
       <div>
         <p className="muted">
-          {en.learning.sourceDate}: {day.sourceDate} · {en.learning.minutes}:{' '}
+          {en.navigation.day} {day.dayNumber} · {en.learning.minutes}:{' '}
           {day.estimatedMinutes}
         </p>
         <p>
           {selected.complete ? en.learning.completed : en.learning.incomplete}
-          {completedAt
-            ? ` · ${new Date(completedAt).toISOString().slice(0, 10)}`
-            : ''}
         </p>
         <button
           className="button"

@@ -38,6 +38,42 @@ import {
   curriculumItemTitle,
 } from './curriculum-navigation';
 const base = '/course/software-engineer';
+
+export function cleanPacingDates(text: string): string {
+  // 1. Remove week calendar date range: e.g. "31.08.2026 – 06.09.2026  |  FAZA 1" -> "FAZA 1"
+  let cleaned = text.replace(
+    /^\d{2}\.\d{2}\.\d{4}\s*[–—-]\s*\d{2}\.\d{2}\.\d{4}\s*\|\s*/,
+    '',
+  );
+  // 2. Remove day calendar date prefix: e.g. "31.08.2026 — Okruženje" -> "Okruženje"
+  cleaned = cleaned.replace(/^\d{2}\.\d{2}\.\d{4}\s*[—–-]\s*/, '');
+  // 3. Remove preparation date range: e.g. "Priprema pre Dana 1 — 26–30.08.2026" -> "Priprema pre Dana 1"
+  cleaned = cleaned.replace(
+    /^(Priprema pre Dana 1)\s*[—–-]\s*\d{2}(?:–\d{2})?\.\d{2}\.\d{4}$/,
+    '$1',
+  );
+  // 4. Clean fixed calendar start references into self-paced learning
+  if (cleaned.includes('Zvanični Dan 1 je ponedeljak, 31.08.2026.')) {
+    cleaned = cleaned.replace(
+      'Zvanični Dan 1 je ponedeljak, 31.08.2026. Ako dokument otvoriš kasnije, zadrži redosled i pomeri datume.',
+      'Započni na svoj prvi dan, zadrži redosled i napreduj sopstvenim tempom bez vremenskog pritiska.',
+    );
+  }
+  // 5. Clean course overview period text
+  if (cleaned.startsWith('Period: 31. avgust 2026. – 28. februar 2027.')) {
+    cleaned = cleaned
+      .replace(
+        'Period: 31. avgust 2026. – 28. februar 2027.',
+        'Tempo: 26 nedelja (182 dana) · Radi sopstvenim tempom bez fiksnih rokova',
+      )
+      .replace(
+        'Pripremni setup: 26–30. avgust 2026.',
+        'Pripremni setup: pre Dana 1',
+      );
+  }
+  return cleaned;
+}
+
 function SourceParagraph({
   block,
   anchors,
@@ -70,7 +106,7 @@ function SourceParagraph({
         role={section?.headingLevel ? 'heading' : undefined}
         aria-level={section?.headingLevel ?? undefined}
       >
-        {block.exactText}
+        {cleanPacingDates(block.exactText)}
       </p>
       {prompt && (
         <details className="prompt-copy" data-copy-prompt={prompt.sourceId}>
@@ -171,6 +207,7 @@ export function SourceBlocks({
                     ),
                   ]
                     .sort((a, b) => a - b)
+                    .filter((cell) => !(table === 7 && cell === 2))
                     .map((cell) => (
                       <CellTag
                         key={cell}

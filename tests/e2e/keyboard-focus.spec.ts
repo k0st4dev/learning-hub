@@ -85,6 +85,7 @@ test.describe
 
     // Focus display name input directly
     const nameInput = page.getByLabel('Display name');
+    await expect(nameInput).toBeEnabled();
     await nameInput.focus();
     expect(
       await nameInput.evaluate((el) => el === document.activeElement),
