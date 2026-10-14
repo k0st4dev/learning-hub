@@ -169,7 +169,7 @@ git commit -m "feat(ui): add top utility bar with Ctrl+K shortcut and sync statu
 - Consumes: Existing student course state, progress summary, and enrollment data
 - Produces: Modern hero "Active Task" card with prominent CTA, and a spacious 3-column metric card grid
 
-- [ ] **Step 1: Modernize Dashboard layout in `src/app/dashboard/page.tsx`**
+- [x] **Step 1: Modernize Dashboard layout in `src/app/dashboard/page.tsx`**
 
 In `src/app/dashboard/page.tsx`:
 - Render prominent Hero Card: "DANAŠNJI FOKUS • DAN X", current day title, short summary, and emerald primary action button "Nastavi sa učenjem →".
@@ -179,18 +179,18 @@ In `src/app/dashboard/page.tsx`:
   3. **Zabeleške & Rad:** count of student notes and exercises saved locally.
 - Keep existing `ProgressOverview` and course links accessible with clean spacing (`gap-6`).
 
-- [ ] **Step 2: Add responsive grid rules in `src/app/globals.css`**
+- [x] **Step 2: Add responsive grid rules in `src/app/globals.css`**
 
 - Desktop (≥1024px): `.dashboard-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }`.
 - Tablet (640px–1023px): `grid-template-columns: repeat(2, 1fr);`.
 - Mobile (<640px): `grid-template-columns: 1fr; gap: 14px;` (ensuring 320px reflow passes without overflow).
 
-- [ ] **Step 3: Run Playwright authenticated & reflow tests**
+- [x] **Step 3: Run Playwright authenticated & reflow tests**
 
 Run: `npx playwright test tests/e2e/authenticated.spec.ts tests/e2e/reflow-tables.spec.ts --reporter=list`
 Expected: PASS (verifying 320px reflow baseline and dashboard interactive elements)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/app/dashboard/page.tsx src/components/progress-overview.tsx src/app/globals.css
@@ -204,17 +204,17 @@ git commit -m "feat(dashboard): modernize hero action card and spacious metrics 
 **Files:**
 - Test: All tests in `tests/e2e/*.spec.ts`
 
-- [ ] **Step 1: Run complete Playwright test suite**
+- [x] **Step 1: Run complete Playwright test suite**
 
 Run: `npx playwright test --reporter=list`
 Expected: PASS (`107 passed` across all 7 test suites: `authenticated.spec.ts`, `foundation.spec.ts`, `integrated-audit.spec.ts`, `keyboard-focus.spec.ts`, `reflow-tables.spec.ts`, `smoke.spec.ts`, `states.spec.ts`, `theme.spec.ts`)
 
-- [ ] **Step 2: Run typecheck and linting**
+- [x] **Step 2: Run typecheck and linting**
 
 Run: `npm run typecheck && npm run lint`
 Expected: 0 errors, 0 warnings
 
-- [ ] **Step 3: Verify git status is clean**
+- [x] **Step 3: Verify git status is clean**
 
 Run: `git status`
 Expected: Working tree clean

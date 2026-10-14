@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-14T07:05:07.660Z",
+  "checkedAt": "2026-10-14T10:41:10.623Z",
   "status": "passed",
   "performanceBudgets": {
     "routeNavigation": {
@@ -7,12 +7,12 @@
         {
           "from": "/dashboard",
           "to": "/course/software-engineer",
-          "durationMs": 523
+          "durationMs": 475
         },
         {
           "from": "/course/software-engineer",
           "to": "/course/software-engineer/days/d001/lessons/d001-learn",
-          "durationMs": 757
+          "durationMs": 775
         }
       ],
       "budgetMs": 2500,
@@ -22,26 +22,26 @@
       "queries": [
         {
           "term": "JavaScript",
-          "durationMs": 218
+          "durationMs": 171
         },
         {
           "term": "Git",
-          "durationMs": 79
+          "durationMs": 67
         },
         {
           "term": "vežbe",
-          "durationMs": 80
+          "durationMs": 62
         },
         {
           "term": "vezbe",
-          "durationMs": 69
+          "durationMs": 62
         },
         {
           "term": "HTTP",
-          "durationMs": 79
+          "durationMs": 70
         }
       ],
-      "averageMs": 105,
+      "averageMs": 86,
       "budgetMs": 200,
       "passed": true
     },
@@ -49,28 +49,28 @@
       "queries": [
         {
           "term": "MDN",
-          "durationMs": 167
+          "durationMs": 154
         },
         {
           "term": "TypeScript",
-          "durationMs": 139
+          "durationMs": 140
         },
         {
           "term": "CS50",
-          "durationMs": 158
+          "durationMs": 190
         }
       ],
-      "averageMs": 155,
+      "averageMs": 161,
       "budgetMs": 200,
       "passed": true
     },
     "noteSave": {
-      "durationMs": 189,
+      "durationMs": 194,
       "budgetMs": 500,
       "passed": true
     },
     "scorecardSave": {
-      "durationMs": 216,
+      "durationMs": 215,
       "budgetMs": 500,
       "passed": true
     }
