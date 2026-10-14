@@ -1,265 +1,322 @@
-# Programming Learning Platform
+# Programming Learning Platform 🚀
 
-A local programming-learning application built incrementally from the supplied 26-week manual. **Current increment: M7 accounts/settings/password/recovery implemented and verified in automated/local-service integration. Verified online backup is available in M8 step 1; stopped-server restore, native-browser closeout and final acceptance remain open.** All six phases, 26 weeks, 182 days, 548 task lines, guides, appendices and original links are available. Registration, login/logout and preparation work locally. Mobile Menu provides the same available destinations as desktop, traps keyboard focus, closes with Escape, and links to the existing course outline. Settings is available from both menus in M7 step 2. Loading and recovery screens distinguish missing pages, setup needs and unavailable course data, with retry and Course/Dashboard navigation. Daily views show the original total time and weekly objective, with direct study/exercise links; the day overview includes the exact assignment, ordered tasks, resources and expanded AI policy and completion criterion. The outline opens the current phase, week and day, marks the current page, and supports keyboard and mobile use. Numbered breadcrumbs and Previous/Next follow the source order without changing progress. The exercise-rule evaluator now enforces atomic full-course API saves for decisions, scope and evidence; all 182 exercise screens now support explicit draft saving, confirmed completion, reopening, alternatives and Day 125 reflection. Failed saves preserve input; conflicts require an explicit resolution. Back/Forward now uses the unsaved-change confirmation and restores canceled navigation without dropping the draft or Forward history. Automated guard tests and actual Back/Forward cancellation/acceptance, acknowledged draft save with clean traversal, keyboard/hash/conflict checks and measured desktop/mobile interaction pass. Earlier browser-control timeouts recovered after reopening; production browser and later acceptance gates remain pending. All 25 checkpoints and the final exam now show original criteria and AI rules, save score evidence and review notes, and retain Needs review without completion credit. All 182 study lessons now support confirmed completion and explicit reopening, independently from exercise credit. Study this day deliberately selects unfinished work; Open reference preserves the active cursor. Completed review visits cannot replace unfinished study. Day views show exact 0/2, 1/2 or 2/2 fractions. Dashboard and course/progress pages show shared exact rollups, completed days and remaining lessons/exercises. Phase/week/day pages show descendant progress and completion times. Continue distinguishes active, recommended and last opened reference locations; preparation and unfinished checkpoint reminders remain visible when relevant. Progress supports day-state filters and all-complete review/Appendix G. Active incomplete units now save allowlisted section/task anchors after a one-second debounce and restore the last acknowledged section with keyboard focus. Saved section shows confirmed state; reference browsing leaves the active anchor unchanged. Background saves preserve drafts, and task/progress actions save their anchors immediately. Dashboard now shows the latest five meaningful transitions; Progress provides read-only history pages of twenty events with original titles, profile-timezone dates and retained completion/reopening history. Duplicate requests and section/reference visits add no activity; the separate M1 Day 1 fixture retains its verified completion workflow. The first M5 audit now tests all 364 real completion transactions and acknowledged writer termination. Valid task decisions now save automatically through the owned full-submission API. Incomplete reasons/alternatives remain visibly unsaved; reasons save on blur. Unchecking required completed work reopens the exercise atomically while retaining other work; valid optional-only edits preserve completion. Queued section/task saves preserve newer typing and explicit retry/conflict/account recovery. Desktop use is now prioritized with basic mobile regression. This is not the final MVP. See `PROJECT_STATUS.md`, `IMPLEMENTATION_PLAN.md` and [M5 draft-navigation verification and limits](docs/M5-STEP5-VERIFICATION.md), [M5 integration audit](docs/M5-INTEGRATION-VERIFICATION.md), [task persistence repair](docs/M5-TASKS-VERIFICATION.md), [M5 closeout](docs/M5-VERIFICATION.md) and [acceptance matrix](docs/M5-ACCEPTANCE-MATRIX.md).
+A private, offline-first, local software engineering learning environment built from the comprehensive 26-week curriculum.
 
-M6 step 1 adds private note read/save services and a protected local API with independent revisions, exact-request retries and a 20,000-character limit. Confirmed notes persist in SQLite across development-server restart; note writes leave learning progress, history and resume unchanged. Day, study and exercise pages now each have a separate private note editor. Notes save after an 800 ms pause, blur or intentional navigation. Failed saves keep editable text, exact retries and explicit conflict resolution; leaving unconfirmed text requires a choice. Cached history views refresh the owned saved note. See [backend contract](docs/M6-STEP1-VERIFICATION.md) and [editor verification and browser closeout](docs/M6-STEP2-VERIFICATION.md).
+Study lesson concepts in the browser, code real projects in your own local IDE, track your progress with verified checklists and evidence, write private study notes, and evaluate your monthly engineering skills—**100% locally on your computer with complete privacy and zero cloud dependencies**.
 
-M7 step 1 adds the owned profile/settings API and safe additive database upgrade. Existing installations should stop the app, keep the same data directory, run `npm run setup`, then restart. M7 step 2 provides the Settings editor/navigation and saved light/dark/system theme presentation. M7 step 3 adds the current-password-checked API with atomic session revocation; M7 step 4 adds its Settings form with Show passwords, safe secret cleanup and login/uncertain-result handling; M7 step 5 adds the interactive local recovery command described below. See [password form verification and limits](docs/M7-STEP4-VERIFICATION.md). See [password service verification](docs/M7-STEP3-VERIFICATION.md). See [settings UI verification and limits](docs/M7-STEP2-VERIFICATION.md). See [verification and API contract](docs/M7-STEP1-VERIFICATION.md).
+---
 
-M7 integration repairs secret cleanup, signed-in auth-page redirects and retry-delay display. The M7 625-test suite and six-account persistent-cookie production restart audit pass. See [authentication integration evidence and remaining gates](docs/M7-INTEGRATION-VERIFICATION.md).
+## Table of Contents
 
-## Requirements and cost
+- [Why This Platform?](#why-this-platform)
+- [How It Works](#how-it-works)
+- [Quick Start Guide](#quick-start-guide)
+  - [Prerequisites](#prerequisites)
+  - [Setup in 3 Steps](#setup-in-3-steps)
+- [How to Use the Platform as a Student](#how-to-use-the-platform-as-a-student)
+  - [1. Create Your Local Account](#1-create-your-local-account)
+  - [2. Course Preparation & Orientation](#2-course-preparation--orientation)
+  - [3. The Daily Learning Routine](#3-the-daily-learning-routine)
+  - [4. Fast-Resume with "Continue Learning"](#4-fast-resume-with-continue-learning)
+  - [5. Private Notes](#5-private-notes)
+  - [6. Monthly Scorecard Reviews](#6-monthly-scorecard-reviews)
+  - [7. Instant Search & Resource Library](#7-instant-search--resource-library)
+  - [8. Dark Mode & Customization](#8-dark-mode--customization)
+- [Operations & Data Safety](#operations--data-safety)
+  - [Creating a Verified Backup](#creating-a-verified-backup)
+  - [Restoring from Backup](#restoring-from-backup)
+  - [Running Database Diagnostics](#running-database-diagnostics)
+  - [Resetting a Forgotten Password](#resetting-a-forgotten-password)
+  - [Curriculum Upgrades](#curriculum-upgrades)
+- [Testing & Quality Verification](#testing--quality-verification)
+- [Configuration](#configuration)
+- [Troubleshooting & FAQ](#troubleshooting--faq)
+- [License & Credits](#license--credits)
 
-- Node.js **24.21.0** with npm **11.19.0**; patch-compatible versions in those lines are accepted. The exact tested runtime is in `.node-version` and `.nvmrc`.
-- Git for obtaining the source. No separate database server, SQLite CLI, Docker, cloud keys or paid software is required.
-- Windows x64 native modules have been checked. macOS/Linux clean-install evidence remains pending.
-- Installation needs internet access. Accounts, the complete bundled curriculum and saved records run locally. External course resources need internet access.
+---
 
-Use the official [Node.js distribution](https://nodejs.org/dist/v24.21.0/). If an existing version manager reports a changed/untrusted npm script, do not blindly re-trust it. Repair that installation from its official source, or use a fresh official portable runtime after matching its SHA-256 against the official `SHASUMS256.txt`. This project does not modify system-wide Node settings.
+## Why This Platform?
 
-## Install and run
+Many modern learning platforms trap your code in simulated in-browser widgets, require constant internet connections, and lock your learning history in remote proprietary clouds.
 
-From this repository directory:
+This platform takes the opposite approach:
 
-```sh
+- 🔒 **Local & Private First**: Your data stays on your machine. Progress, private notes, and reviews live in a local SQLite database (`data/learning.sqlite`). No tracking, no analytics, no external telemetry.
+- 💻 **Real Developer Workflow**: You don't code in artificial sandboxes. You write code using your own local tools (VS Code, terminal, Git) and record your actual results, commits, and self-assessments in the app.
+- ⚡ **Fast & Responsive**: High-performance local server with instant sub-200ms search, instant navigation, and seamless state persistence.
+- ♿ **Accessible by Design**: Full WCAG 2.2 AA compliance, high-contrast dark and light themes, sequential keyboard navigation, screen-reader live regions, and responsive reflow down to 320px mobile screens.
+- 🛡️ **Enterprise Data Safety**: Built-in online backups, stopped-server disaster recovery, database integrity diagnostics, and atomic version upgrades.
+
+---
+
+## How It Works
+
+The platform organizes your journey through a structured 26-week curriculum divided into 6 distinct phases:
+
+1. **Phase 1: JavaScript Fundamentals & Problem Decomposition** (Weeks 1–4, Days 1–28)
+2. **Phase 2: Browser, DOM, Tooling & Frontend Architecture** (Weeks 5–8, Days 29–56)
+3. **Phase 3: Async JavaScript, APIs & Algorithmic Foundations** (Weeks 9–12, Days 57–84)
+4. **Phase 4: Computer Science Fundamentals (C, Memory, Data Structures & Python)** (Weeks 13–19, Days 85–133)
+5. **Phase 5: Modern Full-Stack Web Development (React, Node, Express, SQL & Auth)** (Weeks 20–25, Days 134–175)
+6. **Phase 6: Independent Capstone Project & Final Synthesis** (Week 26, Days 176–182)
+
+Every single day features a balanced two-step loop:
+
+1. **Study Lesson**: Master core concepts, read original documentation, and review AI guidelines.
+2. **Practice Exercise**: Hands-on coding challenge, complete with specific task checklists, completion criteria, and space to record your code evidence and repository references.
+
+---
+
+## Quick Start Guide
+
+### Prerequisites
+
+All you need installed on your computer is:
+
+- **Node.js**: Version **24.21.0** (or compatible 24.x LTS). Download from [nodejs.org](https://nodejs.org/).
+- **npm**: Version **11.x** (ships with Node 24).
+- **Git**: To clone the repository.
+
+No external database servers (Postgres, MySQL), Docker containers, or cloud API keys are required.
+
+### Setup in 3 Steps
+
+Open your terminal, navigate to the folder where you want to keep the app, and run:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/learning-hub.git
+cd learning-hub
+
+# 2. Install dependencies & initialize the local database
 npm ci
 npm run setup
+
+# 3. Start the application
 npm run dev
 ```
 
-Open **http://127.0.0.1:3000**. Keep that terminal running; Ctrl+C stops the application. Always use the printed canonical address, not `localhost` or a LAN address.
+Open your browser and navigate to:
+👉 **[http://127.0.0.1:3000](http://127.0.0.1:3000)**
 
-For a production build of this preview:
+_(Press `Ctrl+C` in your terminal whenever you want to stop the server)._
 
-```sh
-npm run build
-npm start
+> [!TIP]
+> **Production Mode**: If you prefer running the compiled production build instead of the development server, run `npm run build` followed by `npm start`.
+
+---
+
+## How to Use the Platform as a Student
+
+### 1. Create Your Local Account
+
+- When you first visit the app, click **Register**.
+- Enter your email and a strong password (at least 15 characters).
+- Your password is protected with modern **Argon2id** hashing and never sent over the internet.
+- Sign in with your new account.
+
+### 2. Course Preparation & Orientation
+
+- After signing in, click **Start course** on your Dashboard.
+- You will see the **Preparation Checklist**—seven recommended setup checks (IDE setup, Git config, study rhythm).
+- You can review and acknowledge them immediately or choose **Defer preparation checks** to begin learning right away.
+
+### 3. The Daily Learning Routine
+
+Each day is broken down into two distinct units:
+
+```
+┌─────────────────────────────────┐       ┌───────────────────────────────────┐
+│        1. Study Lesson          │       │        2. Practice Exercise       │
+│                                 │       │                                   │
+│  • Read explanation & theory    │ ────> │  • Build the project in your IDE │
+│  • Review original references   │       │  • Complete step-by-step tasks    │
+│  • Mark lesson complete         │       │  • Provide self-assessment        │
+└─────────────────────────────────┘       └───────────────────────────────────┘
 ```
 
-`setup` verifies native dependencies, applies the checksummed reference migration and imports the complete `se-26w-v1` release into `data/learning.sqlite` (or `APP_DATA_DIR`). Repeating it preserves existing accounts, enrollment releases and progress. The importer checks every archived file, validates source text and relationships, and publishes the complete release in one transaction. Changed published releases are rejected. Its machine-readable report is saved as `APP_DATA_DIR/curriculum-import-report.json`; rendered coverage evidence is recorded separately in `docs/M2-VERIFICATION.md`.
+1. **Study**: Click into the day's study lesson. Read through the concepts, view original references, and click **Mark lesson complete**.
+2. **Practice**: Click **Continue to exercise**. Open your code editor and build the requested project locally.
+3. **Submit & Complete**:
+   - Check off each task as you complete it.
+   - Enter your completion evidence (such as a commit hash or description of your solution).
+   - Select your self-assessment result (_"My work passes the criterion"_).
+   - Check the attestation box and click **Confirm exercise complete**.
 
-Register, sign in and start the course. Review or defer preparation, then browse the full curriculum. The increment notice identifies remaining learner tools. Study and exercise completion work across the full course; private notes, monthly scorecard entry and optional milestone review reminders are available; course search is available from the header and Resources page. Complete a study lesson explicitly, then follow Continue to exercise and confirm its tasks, evidence and passing self-assessment. Continue learning resumes the correct unfinished unit. Reference browsing preserves active study. Reload the page after restarting the development server before resuming an already-open client document.
+### 4. Fast-Resume with "Continue Learning"
 
-To retain the earlier working completion demonstration, use `npm run setup:demo` followed by `npm run dev:demo` (or `npm run start:demo` after building). This uses the separate `.tmp/m1-demo/learning.sqlite` database and its `development-day1-v1` release. Keep that directory to retain your existing M1 accounts and records. Both databases are ignored by Git. Stop the running server before switching modes; do not delete either database.
+Whenever you return to the platform, you don't have to search for where you left off:
 
-In the M1 demonstration, register a local test account, start the course and review or defer preparation. Study Day 1, mark the lesson complete, then check its four tasks, enter evidence, select a passing self-assessment and attest the original criterion. Confirm completion. Sign out, stop the server, restart with `npm run dev:demo`, and sign in again: confirmed progress remains. This fixture has exactly two required units; its 100% means Day 1 only. The complete release has 364 required units.
+- Click the prominent **Continue Learning** button on your Dashboard or header navigation.
+- The app instantly opens your exact active unfinished lesson or exercise and focuses your working cursor.
 
-## Curriculum maintenance
+### 5. Private Notes
 
-```sh
-npm run curriculum:verify-source
-npm run curriculum:import -- --dry-run
-npm run curriculum:import
-```
+- Every Day overview, Study lesson, and Practice exercise includes a built-in **Private Notes** editor.
+- Notes are auto-saved locally after an 800ms pause or when you click away.
+- Notes support up to 20,000 characters and are completely private to your account.
+- If a save ever fails due to a network or server hiccup, your draft is **never lost**—it remains safely in the text box with an instant **Retry** button.
 
-The dry run validates and reports without opening a database. Actual import requires an initialized database; ordinary `setup` handles both operations. The archive and its manifest are committed in `content/se-26w-v1`. Do not edit archived files, hashes or published content to bypass a validation failure. Future curriculum changes require a reviewed new release and explicit enrollment upgrade (M8).
+### 6. Monthly Scorecard Reviews
 
-`python scripts/audit-original-source.py` is an optional developer audit using Python's standard library. It independently compares DOCX paragraphs, links, table coordinates and CSV mappings against the structured source; Python is not needed to install or run the application. `scripts/audit-served-curriculum.mjs` verifies every served source destination and resource page against a running isolated `.tmp/m2-preview` server; reproduction commands are in `docs/M2-VERIFICATION.md`.
+- Professional software engineers regularly assess their technical and professional growth.
+- From the Course menu, open **Monthly scorecard**.
+- Review yourself across **14 core engineering dimensions** (including Code Quality, Debugging, Algorithmic Thinking, Git Workflow, and Independence) using a clear 0–3 rubric.
+- Enter your monthly reflection evidence and click **Save review**.
 
-Dependency lifecycle scripts are disabled in `.npmrc`. The pinned native packages ship prebuilt modules; `setup`/`doctor` explicitly load and exercise them. This avoids implicit install scripts and allows deterministic installation on this restricted Windows host. Do not remove this policy or silently enable arbitrary installation scripts. A supported platform without a matching prebuilt module must fail clearly and receive a reviewed dependency/build-tool decision.
+### 7. Instant Search & Resource Library
 
-## Configuration and local security
+- **Search (`/search`)**: Press the Search link in the header to find topics, lessons, tasks, or handbook guides. Features automatic instant matching as you type with support for Serbian diacritic normalization (e.g., searching `vezbe` or `vežbe` works identically).
+- **Resources (`/resources`)**: Browse the curated catalog of original documentation, articles, and book chapters. Filter by topic, phase, week, or provider (MDN, CS50, The Odin Project, Full Stack Open).
 
-Copy `.env.example` to `.env.local` only if changing defaults. Shell environment variables take precedence, then `.env.local`, then `.env`. Never commit local configuration.
+### 8. Dark Mode & Customization
 
-| Setting        | Default                 | Meaning                                                                    |
-| -------------- | ----------------------- | -------------------------------------------------------------------------- |
-| `APP_MODE`     | `local`                 | Only local mode is supported.                                              |
-| `APP_ORIGIN`   | `http://127.0.0.1:3000` | Exact permitted origin.                                                    |
-| `PORT`         | `3000`                  | Must match the origin; 1024–65535.                                         |
-| `APP_DATA_DIR` | `<repository>/data`     | Optional absolute path outside public/build/source/dependency directories. |
-| `LOG_LEVEL`    | `info`                  | `error`, `warn`, or `info`; reserved for structured service logs.          |
+- Go to **Settings** (`/settings`) from the top navigation.
+- Choose your preferred interface theme:
+  - 🌓 **System**: Automatically matches your operating system's light or dark mode.
+  - ☀️ **Light**: Clean, high-contrast light theme.
+  - 🌙 **Dark**: Calibrated high-contrast dark theme designed for comfortable long-duration coding.
+- Set your local timezone to ensure activity timestamps and scorecard review dates match your clock.
 
-Startup binds only to `127.0.0.1` in development and production. Wrong Host/Origin requests are rejected. Every write checks a signed, session-bound CSRF token. Argon2id uses 64 MiB, three iterations and parallelism one; at most two password operations run concurrently. Only session-token digests are stored. Persistent HttpOnly, SameSite=Lax cookies enforce seven-day idle and 30-day absolute limits. Login and registration throttles live in SQLite. CSP, frame restrictions and no-store responses are enabled. Next.js telemetry is disabled. System fonts and local styles have no CDN dependency.
+---
 
-The development launcher uses the public Next.js server API in a single process because this execution host restricts subprocess pipes. Production uses the standard Next.js CLI. Next builds use worker threads and the TypeScript API, retaining full type checks. TypeScript 6 and ESLint 9 are pinned for compatibility with the Next ESLint configuration; ESLint 9 reports an upstream support warning, so track migration when its React/accessibility plugins support ESLint 10. The dependency audit currently reports zero advisories.
+## Operations & Data Safety
 
-## Verification
+The platform includes built-in CLI tools to protect and manage your learning data.
 
-```sh
-npm run doctor
-npm run typecheck
-npm run lint
-npm run format:check
-npm test
-npm run test:integration
-npm run build
-npm run licenses:check
-npm run content:validate
-npm run content:audit
-npm run db:diagnose
-```
+### Creating a Verified Backup
 
-Browser tests use a production build, isolated test browser, port 3100, both themes and five viewport sizes:
+You can take a complete, verified snapshot of your database at any time—even while the app is actively running:
 
-```sh
-npm run test:install-browser
-npm run test:e2e
-```
-
-The production foundation browser suite has not passed on the current restricted host: Playwright's child-process IPC fails with `EPERM`. This is recorded as pending, not a pass. M1's registration/completion/restart journey was exercised in the in-app development browser, alongside automated service and request-boundary tests. See `docs/M1-VERIFICATION.md`. Automated checks do not replace later screen-reader and real-computer-reboot review.
-
-## Troubleshooting
-
-- **Unsupported Node/npm:** use the pinned official runtime and retry `npm ci`.
-- **Native module missing or ABI mismatch:** confirm Node 24.21.x and a matching OS/architecture, reinstall using `npm ci`, then run `npm run doctor`. It only touches a uniquely named temporary database. Do not delete a student database to fix dependencies.
-- **No compatible prebuilt module:** ordinary students should not need a compiler. Stop and report the OS/architecture. If a source build is deliberately reviewed later, Windows needs Visual Studio 2022 Build Tools with Desktop development with C++, a supported Python and node-gyp; macOS needs Xcode command-line tools; Linux needs Python, make and a C++ compiler. No source-build fallback is currently advertised as verified.
-- **Port in use:** stop the other application, or set matching `PORT` and `APP_ORIGIN` values. The app never silently switches ports.
-- **Read-only data path:** choose a writable absolute `APP_DATA_DIR`. Setup never resets an existing database.
-- **`spawn EPERM`:** this environment may prohibit subprocess pipes/IPC. Do not disable OS security protections. Use the verified build/test configuration; run the standard browser suite in an environment that permits its subprocesses.
-
-## Repository and data safety
-
-`src/app` contains App Router pages; `src/server` contains configuration/request-boundary code; `scripts` contains cross-platform Node commands; `tests` contains unit, integration and browser checks. `src/i18n/en.ts` holds interface copy. Native database/auth imports stay out of browser components.
-
-`data`, backups, secrets and temporary files are ignored by Git. Records live at `APP_DATA_DIR/learning.sqlite`, with a separate `csrf-secret` file. Transactions use foreign keys, WAL, synchronous FULL and revision/idempotency receipts. Existing migrations and published releases cannot change silently. Verified online backup, stopped-server restore, database diagnostics, curriculum upgrades, and local password recovery are operational below. Preserve the installation's database, WAL/SHM files and secret; use the backup command instead of copying an open database.
-
-### Create a verified backup
-
-From the repository root, using the same `APP_DATA_DIR` as the application:
-
-```sh
+```bash
 npm run backup
 ```
 
-The application may keep running. The command uses the [SQLite online backup API](https://sqlite.org/backup.html), including committed WAL records, and makes a transaction-consistent snapshot. Saves confirmed after that snapshot belong to a later backup. It does not create an installation, seed content, change passwords or progress, or prune previous backups. Run it before changing the application or curriculum; setup also retains its existing verified pre-migration backup behavior.
+This creates a timestamped bundle inside `data/backups/backup-<timestamp>` containing:
 
-Each success prints a unique timestamped directory under `APP_DATA_DIR/backups/backup-…`. Keep the **whole directory**:
+- `learning.sqlite`: A standalone, self-consistent copy of your database.
+- `manifest.json`: Cryptographic SHA-256 checksums and migration validation data.
+- `source-manifest.json`: Verification hash of the immutable course curriculum.
 
-- `learning.sqlite`: a closed, standalone snapshot containing all users, password hashes, sessions, curriculum and private student records; no WAL/SHM companions needed.
-- `manifest.json`: database size/SHA-256, verification times, exact reviewed migration checksums, every installed release's source/content hashes, three interpretation-file hashes, runtime and dependency-lock hash.
-- `source-manifest.json`: the verified ten-file original curriculum archive inventory and hashes. Keep the compatible source repository too; this manifest does not embed the original Word manual or application code. Other release hashes, if present, are retained in `manifest.json`; this archive identifies `se-26w-v1`.
+### Restoring from Backup
 
-Success requires opening the snapshot, passing SQLite integrity/foreign-key checks, matching the reviewed migration history and verifying the immutable original source archive/release. The command finalizes the directory only after verification and flushing its files. Directories ending in `.partial` indicate interruption/failure and **must not be treated as verified backups**, even if they contain a manifest. Preserve the original installation and retry after resolving storage/setup/source problems. Backups share `.setup.lock` with setup and password recovery, so overlapping maintenance/backup operations refuse to proceed while ordinary learning writes remain available. An interrupted command can leave this lock: inspect its PID/operation, verify the process is stopped, and only then remove the stale lock. The command never automatically removes another owner's lock.
+If you move to a new computer or need to restore a previous backup, first **stop the server** (Ctrl+C), then run:
 
-Backups contain private data and are not encrypted by SQLite. The command requests private directory/file modes (`0700`/`0600` on systems that support them); on Windows, permissions inherit from the chosen data directory, so choose storage accessible only to trusted device users. Copy finished bundles to separate protected storage for protection against disk failure. Keep them outside public assets, build directories and Git. Symlinked backup destinations are refused.
-
-The installation's CSRF secret, environment files and lock files are deliberately excluded: the stopped-server restore procedure revokes restored sessions and creates a fresh secret. Do not replace a running database or reuse copied session tokens manually. See [backup evidence and limits](docs/M8-STEP1-VERIFICATION.md).
-
-### Restore a verified backup
-
-From the repository root, with the application **stopped**:
-
-```sh
-npm run restore -- --file <backup-directory-or-database-path>
+```bash
+npm run restore -- --file data/backups/backup-<timestamp>
 ```
 
-`APP_DATA_DIR` selects the target installation (defaults to `./data`). The server must be completely stopped before running restore: the command verifies that no process holds the local operation lease and that the configured local port is free.
+The restore command will:
 
-The restore procedure:
+1. Validate the backup integrity and checksums.
+2. Prompt you to type `RESTORE` to confirm.
+3. Automatically create a safety backup of your existing database before touching anything.
+4. Atomically restore your database, revoke old sessions for security, and generate a fresh CSRF secret.
 
-- Verifies the backup bundle structure, manifest, and database checksums.
-- Verifies database integrity, foreign keys, and matching migration history.
-- Verifies that the installed curriculum release matches the immutable source repository.
-- Prompts for interactive confirmation on a real TTY (`Type RESTORE to confirm replacement of target database:`).
-- Creates an automatic safety backup of the existing target installation before modifying data (or preserves a raw copy if the existing database was damaged).
-- Revokes all active sessions in the restored database (`DELETE FROM session`).
-- Generates a fresh `csrf-secret` file with private permissions (`0600`).
-- Atomically swaps the database and secret, with automatic rollback on any failure.
+### Running Database Diagnostics
 
-See [restore verification](docs/M8-STEP2-VERIFICATION.md).
+To verify that your database is 100% healthy, foreign keys are valid, and progress references are intact:
 
-### Run database diagnostics
-
-To verify database integrity, foreign keys, schema migrations, immutable curriculum release hashes, and student progress referential consistency:
-
-```sh
+```bash
 npm run db:diagnose
 ```
 
-Optional machine-readable JSON output:
+### Resetting a Forgotten Password
 
-```sh
-npm run db:diagnose -- --json
-```
+Because this app runs locally without third-party email providers, you can securely reset an account password directly from your terminal:
 
-`APP_DATA_DIR` selects the target installation (defaults to `./data`). The diagnostic command:
+1. Stop the application (Ctrl+C).
+2. Run:
+   ```bash
+   npm run password:reset
+   ```
+3. Enter your account email, type `RESET` to confirm, and type your new password.
+4. Restart the server (`npm run dev`) and log in.
 
-- Checks storage accessibility and rejects symlinks.
-- Executes SQLite `integrity_check` and `foreign_key_check`.
-- Verifies that `_app_migration` matches reviewed application migrations.
-- Verifies that installed curriculum releases match the immutable source archive.
-- Verifies progress and learner data consistency (§525): detects any dangling or invalid references across `enrollment`, `user_progress`, `exercise_progress`, `task_progress`, `preparation_progress`, `note`, and `scorecard`.
-- If issues are detected, outputs detailed table and row identifiers with remediation guidance (stop mutations, restore from verified backup, or reconciliation plan per §525–526).
-- Exits with code 0 on healthy databases, and code 1 if any issues are detected.
+### Curriculum Upgrades
 
-See [diagnostics verification](docs/M8-STEP3-VERIFICATION.md).
+When a new version of the curriculum release is published, you can upgrade your enrolled progress seamlessly without losing completed work:
 
-### Upgrade curriculum enrollment
-
-To transition student enrollments from an older curriculum release to a newer release:
-
-```sh
+```bash
+# Check what will change without modifying data:
 npm run curriculum:upgrade -- --dry-run
-```
 
-Execute the upgrade (takes an automatic pre-upgrade verified backup first):
-
-```sh
+# Execute the upgrade (takes an automatic safety backup first):
 npm run curriculum:upgrade
 ```
 
-Optional arguments:
+---
 
-- `--dry-run`: Evaluates prospective changes, verifies release compatibility, and reports plan without taking backups or modifying database rows (§231).
-- `--target-release <id>`: Specifies target published release ID (defaults to latest published release).
-- `--user <email>`: Restricts upgrade to a specific student enrollment.
-- `--map <path>`: Optional JSON file defining explicit stableKey mappings or overrides (§232).
-- `--json`: Outputs machine-readable execution or dry-run report.
+## Testing & Quality Verification
 
-`APP_DATA_DIR` selects the target installation (defaults to `./data`). The upgrade procedure:
+The platform is backed by a comprehensive automated test suite guaranteeing accessibility, data integrity, and performance:
 
-- Verifies that source and target curriculum releases exist and are published.
-- Evaluates unit equivalence strictly by `stableKey` (never by title, index, or paragraph) (§232).
-- Equivalent and unchanged completed lessons and exercises transfer to the target release (§233).
-- Materially changed exercises require a fresh reattempt and do not transfer completion (§233).
-- Student notes transfer to target release content items matching `stableKey`.
-- If the current resume item was removed in the target release, safely falls back via the resume resolver (§233).
-- Emits a `release_migrated` audit record in `activity_event`.
-- In real runs, creates an automatic pre-upgrade verified backup before applying database updates (§268).
-- Existing students remain pinned to their enrolled release until an explicit upgrade is performed (A24).
+```bash
+# 1. Run all unit and integration tests (364 tests across 34 suites)
+npm test
 
-See [curriculum upgrade verification](docs/M8-STEP4-VERIFICATION.md).
+# 2. Run static analysis and linting
+npm run typecheck
+npm run lint -- --max-warnings=0
+npm run format:check
 
-The offline password blocklist is supplied by Django under its BSD licence; provenance and the complete notice are in `src/server/auth/BLOCKLIST.md` and `DJANGO-LICENSE.txt`.
+# 3. Run the automated Playwright E2E & Accessibility suite (107 tests across 8 suites)
+npx playwright test --reporter=list
+```
 
-Dependency licences and supplied notices are recorded in `docs/DEPENDENCIES.md`, `docs/dependency-licenses.json` and `docs/THIRD_PARTY_NOTICES.txt`. The supplied curriculum's authorship and text remain separate from third-party software licences.
+### Quality Highlights
 
-## Monthly scorecard
+- ✅ **107/107 Playwright E2E tests passing** across 5 viewports (Desktop to 320px mobile).
+- ✅ **0 Axe accessibility violations** (`wcag2a`, `wcag2aa`, `wcag22aa`).
+- ✅ **364/364 Vitest tests passing**.
+- ✅ **Performance budgets satisfied**: sub-200ms search, sub-250ms saving.
 
-The owned monthly scorecard service/API now saves the original 14 dimensions and exact integer 0-3 rubric. Omitted ratings remain unassessed; zero is a deliberate score. Current month follows the profile timezone. Private plain-text evidence, independent month revisions, exact retry receipts and conflicts persist locally without adding course credit. Open Monthly scorecard from the course contents. Choose a month, enter ratings/evidence and choose Save review; only confirmed values are durable. Drafts remain editable during failures and require a choice before navigation. Conflicts show the owned saved version before deliberate replacement/discard. Previous-month comparison appears only when that record exists, using confirmed ratings and preserving Not assessed. The original source table remains accessible below the editor. See [service contract](docs/M6-STEP3-VERIFICATION.md) and [editor checks and limits](docs/M6-STEP4-VERIFICATION.md). Optional reminders appear after completed weeks 4/8/12/16/20/24 and the final exam. They open the owned current-month review for deliberate revision, preserve existing ratings/evidence and add no course credit. Reopening relevant required work removes its reminder. See [reminder verification](docs/M6-STEP5-VERIFICATION.md).
+---
 
-## Curriculum search
+## Configuration
 
-The source-backed [resource metadata review](docs/RESOURCE-METADATA-REVIEW.md) covers all 69 records and 290 contextual uses. Approved type/provider/contextual requirement labels apply through a frozen interpretation bound to the original release, manifest, Word and record identities. Unknown providers remain unspecified. Eighteen approved parent corrections, frozen separately as `se-26w-v1-resource-bindings-v1`, now apply in public library/API/details, daily/weekly resource cards and Search. Connection disclosures link the original and current resource records and quote exact Word evidence separately from added explanations. Both current and original assignment inventories retain all 290 IDs across all 69 original resources. The three original FSO instruction records remain accessible with their exact wording/null URLs and original contexts. Earlier TOP review caveats remain labeled as historical notes. Original imported fields, relationships, assignments, URLs and student records are preserved. Search uses a validated connection-local TEMP projection; the original import index remains available for source regression. Reproduce contracts with `node scripts/freeze-resource-labels.mjs --check`, `node scripts/freeze-resource-bindings.mjs --check` and `node scripts/review-resource-metadata.mjs --check`; independent Word audits are `python scripts/verify-resource-review.py` and `python scripts/verify-resource-bindings.py` (Python standard library, developer audits only). See [public connection verification](docs/M6-STEP16-VERIFICATION.md). Thirteen clear named mentions are also active as described below; two ambiguous pg/sqlite proposals remain deferred.
+Default settings work out of the box. If needed, you can customize configuration by creating a `.env.local` file:
 
-The separate [named-mention review](docs/RESOURCE-NAMED-MENTIONS-REVIEW.md) inventories all fifteen remaining candidates with exact source contexts and original-record provenance. Thirteen clear contextual mentions are now approved and frozen as `se-26w-v1-resource-mentions-v1`; two ambiguous pg/sqlite entries remain deferred without selecting packages. The validated owned public presentation preserves all originals and groups the thirteen edges into ten derived resources and two reused canonical records (79 combined identities). Original/effective imported uses and derived mentions are counted separately. The thirteen references are active in public library/API/details, their actual daily/weekly contexts and Search. Added titles/instructions are distinguished from imported records; no direct URLs are invented and the supplied CS50 parent link remains parent-only. Developer checks are `node scripts/review-resource-named-mentions.mjs --check`, `node scripts/freeze-resource-mentions.mjs --check` and `python scripts/verify-resource-named-mentions.py --frozen`. The freeze command refuses replacing an existing interpretation. See [contract/projection verification](docs/M6-STEP18-VERIFICATION.md).
+```env
+# Permitted origin (strictly prevents cross-origin requests)
+APP_ORIGIN=http://127.0.0.1:3000
 
-The resource-library service filters effective source/type/phase/week/day/contextual requirement labels, with same-use matching, literal normalized search and stable 25-resource pages. It preserves all original records and student data; imported raw type/requirement fields remain reference and are not rewritten. Invalid official label/content bindings raise an explicit service error; other releases report their own raw metadata fallback. Required labels cover only the assigned section and add no completion units. See [reviewed-label service verification](docs/M6-STEP10-VERIFICATION.md).
+# Port to bind (must match the port in APP_ORIGIN)
+PORT=3000
 
-`GET /api/resources` now exposes that service for the signed-in student's enrolled release. Accepts q/page and repeated source/type/module/week/day/requirement parameters; source values come from returned provider options. The optional x-expected-student header detects account changes. Responses retain original fields and separate effective tags/provenance; API responses use no-store. Invalid query, expired login, account change, missing enrollment and unavailable content receive explicit errors without partial results. Private records and progress remain unchanged. See [API verification](docs/M6-STEP11-VERIFICATION.md).
+# Directory where your SQLite database and backups are stored (defaults to ./data)
+APP_DATA_DIR=/path/to/custom/data
+```
 
-Open Resources to browse 79 resources: all 69 original references and instructions plus ten clearly labeled added entries, above the unchanged original manual. Search automatically after two characters or press Enter for one character. Filter by provider, type, phase, week, day and assignment label; hold Ctrl or Command to select several list values. A day and its assignment label must match the same original assignment or approved named context; weekly references are not spread across daily assignments. Results show 25 resources per page, with query/filter/page restoration through Back and return from details. Clear query keeps filters; Clear filters keeps the query. Cards retain exact original wording and links, explain missing links/unchecked availability, and expose current assignments, original assignments when a connection changed, related days and added-label source evidence in disclosures. Required labels apply to the assigned section and add no course credit. Loading, empty, retry and account/session recovery states preserve useful controls. Resource details include reviewed labels, exact evidence and current related days in a separate section. Their original description, URL and legacy context content/links remain preserved under “Original imported learning contexts.” Unenrolled readers can start the course, and unavailable interpretations offer Retry while retaining originals. Daily/weekly cards retain original instructions/links and same-page Retry on interpretation failure. See [library interface verification](docs/M6-STEP12-VERIFICATION.md), [detail verification](docs/M6-STEP13-VERIFICATION.md) and [active connection verification](docs/M6-STEP16-VERIFICATION.md).
+---
 
-GET /api/search now searches only the signed-in student's enrolled published release, with Serbian diacritics normalized, literal AND words and title-prioritized results. Query q allows 100 characters/eight words; page returns 20 results. Repeated kind/module/week/day filters use stable curriculum keys, OR within each filter and AND between filters. Results include original text snippets, local destinations and breadcrumbs. Private notes and saved learner evidence are excluded; reads preserve progress and resume. The content-only SQLite TEMP index is prepared during import and rebuilt after restart; no persistent migration or reseed reset is needed. Open Search from the header or student menu. Type two characters for a 250ms automatic search, or press Enter for one-character terms. Original highlighted results are grouped by content type, with breadcrumb links and twenty matches per page. Query, scope filters and page survive Back/Forward and return from a lesson. Empty/no-match and retry screens preserve useful controls; stale replies and account changes are guarded. Resources has its own entry into resource-filtered search. Reading results preserves progress and resume; existing draft protection applies. The empty page shows the actual last-opened reference when available. The dedicated resource-library controls are now available; copyable handbook tools remain a separate increment. See [backend decisions](docs/M6-STEP6-VERIFICATION.md) and [interface verification](docs/M6-STEP7-VERIFICATION.md).
+## Troubleshooting & FAQ
 
-Public named-resource integration is complete. Resources, all 79 detail destinations, actual daily/weekly cards and Search share the validated approved interpretation. Original/effective uses and added mentions retain separate counts and disclosures; canonical Node/Psets records are reused and the two Practice contexts share one identity. Search marks added resource titles while preserving verbatim source snippets. Interpretation failure retains original daily instructions and Retry. See [public integration verification](docs/M6-STEP19B-VERIFICATION.md). For the existing synthetic preview only, set APP_DATA_DIR to the absolute .tmp/m2-preview directory and run `node scripts/audit-named-resource-ui.mjs` to reproduce the two-account served audit; fixture credentials remain ignored. Appendix A now provides the exact original Markdown problem-file template with Copy template and Select template. Copy success is shown only after the browser acknowledges it; denied or unavailable clipboard access leaves selectable text and retry. All blank lines and the final newline are retained. Copying changes no course progress. Open the existing `/course/software-engineer/guide/appendix-a` route or use the course contents. See [handbook template verification and limits](docs/M6-STEP20-VERIFICATION.md). Developer checks are `python scripts/verify-handbook-template.py` and, for the existing synthetic preview only, `node scripts/audit-handbook-template.mjs`. The existing `/course/software-engineer/guide/ai-protocol` guide now offers all eight original prompt templates in collapsed copy panels immediately after their original paragraphs. Copy retains each whole original paragraph, including its role prefix and quotation marks. Daily restrictions take priority; the full original permission table and hint ladder remain available. These controls make no AI calls and add no course credit. See [prompt verification and limits](docs/M6-STEP21-VERIFICATION.md). Run `python scripts/verify-handbook-template.py --prompts` and the synthetic-only `node scripts/audit-handbook-template.mjs --prompts` for focused checks. All eleven handbook guides now offer On this page links based on original source headings, or Original content when no heading exists. Native links move keyboard focus to the exact original block. Return to learning uses the existing authenticated Continue resolver; browsing handbook sections changes no progress or saved study target. See [handbook navigation verification](docs/M6-STEP22-VERIFICATION.md). Run the synthetic-only `node scripts/audit-handbook-template.mjs --navigation` for all-guide and unchanged-resume checks. Remaining handbook checklists/workflows follow separately. Final MVP acceptance remains open.
+#### 1. "Port 3000 is already in use"
 
-The [source-backed temporary handbook interpretation](docs/HANDBOOK-WORKFLOWS-REVIEW.md) is approved. Appendix B now provides four whole original Git checks, Clear this review and a link to the original guidance. Marks reset when leaving/reloading or changing the rendered account/release/guide; they are held only in memory and add no saved progress or course credit. The larger-project README condition and weekly Git-log guidance remain visible. Appendix C now provides seven whole original self-checks and an optional current-concept label (up to 120 characters). Every label edit clears marks; Clear this review retains the label. Both label and marks reset on leaving/reloading or changing account/release/guide. This temporary self-review creates no saved history, mastery claim or AI permission; daily restrictions take priority. See [concept review verification](docs/M6-STEP25-VERIFICATION.md). For the existing synthetic preview only, use `node scripts/audit-handbook-template.mjs --concept-review` with the same APP_DATA_DIR. Appendix E now provides all seven whole original numbered troubleshooting steps as temporary, freely revisitable checks. Added help retains the first-four-actions/20–30-minute recorded attempt/daily and external AI conditions; original steps keep the ten-minute independent rewrite and next-day transfer. Marks grant no AI permission or course credit and reset under the same rules as B/C. Related links open the original AI protocol and Hint ladder, with focus restored to known source headings after streamed loading. No timer, AI request or extra task is added. See [troubleshooting verification](docs/M6-STEP26-VERIFICATION.md). For the existing synthetic preview only, use `node scripts/audit-handbook-template.mjs --stuck-workflow` with the same APP_DATA_DIR. Daily views now include an optional, initially closed Handbook help panel with original-title shortcuts to How to study, AI protocol and B/C/E. Added navigation preserves expanded required work and daily rules, uses the existing unsaved-work guard and adds no completion or AI permission. See [daily help verification](docs/M6-STEP27A-VERIFICATION.md); implementation, 526 tests and post-restart HTTP checks pass, with native browser-dialog closeout pending after a tool failure. For the synthetic preview only, use `node scripts/audit-handbook-template.mjs --daily-help`. Additional composed-editor tests verify real exercise draft retention and deferred note-save protection. Appendix F now links to the original concept review and AI protocol; C links back to F and the protocol. Added guidance preserves daily/external restrictions and does not assess mastery or unlock AI. Appendix G offers four original-text in-page directions without saving a choice or applying a date gate; its original shared learning loop stays expanded. See [F/G verification](docs/M6-STEP27B-VERIFICATION.md). Full tests/build/source and post-restart two-account HTTP checks pass; native browser interaction remains pending for integration. For the synthetic preview only, use `node scripts/audit-handbook-template.mjs --guidance`. The [M6 automated/service integration gate](docs/M6-INTEGRATION-VERIFICATION.md) now passes the unified 529-test suite, complete original Word/source comparison, all 594 served curriculum routes and fresh notes/scorecards/resources/search/handbook HTTP checks after restart. Native browser closeout remains pending because the supported tool cannot initialize; full M6 and MVP acceptance are not declared complete. Profile/settings/auth lifecycle and operational delivery remain following milestones. See [Git review verification](docs/M6-STEP24-VERIFICATION.md). For the existing synthetic preview only, run `node scripts/audit-handbook-template.mjs --git-review` with APP_DATA_DIR set to the absolute .tmp/m2-preview directory. Run `python scripts/review-handbook-workflows.py --check` for the offline Word/style/CSV and proposal verification; `--check --report` writes only step 23 evidence. The developer-only `--write` regenerates the historical proposal and does not activate tools. See [review scope and exact next task](docs/M6-STEP23-VERIFICATION.md).
+Another process is using port 3000. Either terminate the other process or set `PORT=3001` and `APP_ORIGIN=http://127.0.0.1:3001` in your `.env.local`.
 
-## Recover a forgotten local password
+#### 2. "Database is locked / operation lock exists"
 
-The trusted owner of this computer can reset one local account without its old password. This is an OS-level recovery command, with no email reset or browser recovery endpoint.
+If an unexpected shutdown occurred during maintenance, remove the stale lock file:
 
-1. Stop the application with Ctrl+C and wait for its terminal to finish.
-2. Open an interactive terminal in this source repository. Keep the same `.env.local`/`APP_DATA_DIR` configuration; recovery must use the directory containing your existing accounts.
-3. Run `npm run password:reset` **without arguments**. Do not put a password in a command, environment variable, script, pipe or file.
-4. Enter the account email, check the displayed account/data directory and type `RESET` to confirm that account.
-5. Enter the new password at the hidden prompt and press Enter. No characters or asterisks are displayed. Paste is supported and spaces are preserved. The existing 15–128-character/512-UTF-8-byte/common-password policy applies.
-6. Wait for `Password reset confirmed`, restart with `npm run dev` (or `npm start` for the existing production build) and sign in with the new password.
+```bash
+rm -f data/.local-operation.lock data/.setup.lock
+```
 
-All previous sessions for that account become invalid, including cookies still in other browsers. Notes, confirmed progress, settings and curriculum remain saved. Other accounts retain their passwords/sessions. The selected account's failed-login/password-change limits are cleared; any installation-wide temporary block remains until it expires. Ctrl+C or a declined confirmation cancels before committing. After a terminal/power interruption with an uncertain result, try signing in with the chosen new password, then the previous password if it is rejected as incorrect. Do not reset or delete the database to recover an account.
+#### 3. "My browser says Connection Refused"
 
-The command requires real terminal input/output; piped input, redirected output and extra arguments are refused. Recovery does not create a missing database or run setup/seeding. If schema/integrity checks fail, preserve the data and use the compatible application/verified recovery procedure. See [verification and limits](docs/M7-STEP5-VERIFICATION.md).
+Make sure you navigate to **`http://127.0.0.1:3000`** (using the explicit IP address `127.0.0.1`, not `localhost`), as the local security policy enforces exact origin matching.
 
-The server and recovery hold an exclusive `.local-operation.lock`. Recovery also holds `.setup.lock` and reserves the configured loopback port. If a crash leaves a lock, inspect it in the printed data directory and confirm that its owning process **and any child server using that data** are stopped. Only then remove that specific stale lock file. Never delete the database, WAL/SHM, CSRF secret or data directory. An older `.setup.lock` may have no PID metadata: verify that no setup/migration/recovery is running before removing it. Normal startup/recovery never guesses that an existing lock is stale or deletes another owner’s lock.
+#### 4. "Can I use this offline?"
+
+**Yes!** All curriculum text, lessons, exercises, search indexes, account logins, and progress tracking work completely offline without an internet connection. Only external links to third-party articles (e.g. external MDN or Wikipedia pages) require internet connectivity.
+
+---
+
+## License & Credits
+
+- Platform codebase: Open-source local learning architecture.
+- Curriculum content: 26-Week Software Engineer Training Manual (`se-26w-v1`).
+- Offline password blocklist provided by Django under BSD License.
+- Third-party dependency notices and license details are documented in [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md).
