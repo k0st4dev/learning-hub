@@ -9,6 +9,7 @@
   },
   "packageManager": "npm@11.19.0",
   "scripts": {
+    "ci": "npm ci",
     "curriculum:import": "node scripts/import-curriculum.mjs",
     "curriculum:verify-source": "node scripts/verify-source.mjs",
     "content:import": "node scripts/import-curriculum.mjs",

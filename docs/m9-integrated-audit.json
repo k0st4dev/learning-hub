@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13T13:57:35.493Z",
+  "checkedAt": "2026-10-14T06:20:13.953Z",
   "status": "passed",
   "performanceBudgets": {
     "routeNavigation": {
@@ -7,12 +7,12 @@
         {
           "from": "/dashboard",
           "to": "/course/software-engineer",
-          "durationMs": 781
+          "durationMs": 717
         },
         {
           "from": "/course/software-engineer",
           "to": "/course/software-engineer/days/d001/lessons/d001-learn",
-          "durationMs": 854
+          "durationMs": 798
         }
       ],
       "budgetMs": 2500,
@@ -22,26 +22,26 @@
       "queries": [
         {
           "term": "JavaScript",
-          "durationMs": 169
+          "durationMs": 180
         },
         {
           "term": "Git",
-          "durationMs": 121
+          "durationMs": 87
         },
         {
           "term": "vežbe",
-          "durationMs": 72
+          "durationMs": 63
         },
         {
           "term": "vezbe",
-          "durationMs": 65
+          "durationMs": 63
         },
         {
           "term": "HTTP",
-          "durationMs": 66
+          "durationMs": 63
         }
       ],
-      "averageMs": 99,
+      "averageMs": 91,
       "budgetMs": 200,
       "passed": true
     },
@@ -49,28 +49,28 @@
       "queries": [
         {
           "term": "MDN",
-          "durationMs": 170
+          "durationMs": 165
         },
         {
           "term": "TypeScript",
-          "durationMs": 148
+          "durationMs": 142
         },
         {
           "term": "CS50",
-          "durationMs": 170
+          "durationMs": 147
         }
       ],
-      "averageMs": 163,
+      "averageMs": 151,
       "budgetMs": 200,
       "passed": true
     },
     "noteSave": {
-      "durationMs": 205,
+      "durationMs": 183,
       "budgetMs": 500,
       "passed": true
     },
     "scorecardSave": {
-      "durationMs": 241,
+      "durationMs": 184,
       "budgetMs": 500,
       "passed": true
     }
@@ -114,7 +114,10 @@
         "name": "reflow-narrowest"
       }
     ],
-    "colorSchemesAudited": ["light", "dark"],
+    "colorSchemesAudited": [
+      "light",
+      "dark"
+    ],
     "totalAxeAudits": 12,
     "axeViolations": 0,
     "horizontalOverflowViolations": 0,
