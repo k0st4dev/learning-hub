@@ -18,8 +18,12 @@ export default async function Dashboard() {
       name={student.displayName || student.email}
       showFixtureNotice={fixture}
     >
-      <h1>{en.dashboard}</h1>
-      <p>{student.displayName || student.email}</p>
+      <div className="dashboard-header-block">
+        <h1>{en.dashboard}</h1>
+        <p className="dashboard-student-subtitle">
+          {student.displayName || student.email}
+        </p>
+      </div>
       <LearningClient
         key={`${student.id}:${state?.revision}`}
         view="dashboard"

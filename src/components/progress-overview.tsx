@@ -69,7 +69,13 @@ export function ProgressOverview({
   const finalItem = state.items.find((item) => item.id === finalDay?.itemId);
   return (
     <div className="stack progress-overview">
-      <section className="card stack" aria-labelledby="continue-card-title">
+      <section
+        className="card stack hero-continue-card"
+        aria-labelledby="continue-card-title"
+      >
+        <div className="hero-badge" aria-hidden="true">
+          DANAŠNJI FOKUS
+        </div>
         <h2 id="continue-card-title">
           {resume.reason === 'completed' ? t.reviewCourse : t.continue}
         </h2>
@@ -109,7 +115,7 @@ export function ProgressOverview({
         )}
         {resume.fallback && <p>{t.fallback}</p>}
         {resume.target && resume.outOfSequence && <p>{t.outOfSequence}</p>}
-        <Link className="button primary" href="/continue">
+        <Link className="button primary hero-action-btn" href="/continue">
           {resume.reason === 'completed' ? t.reviewCourse : t.resume}
         </Link>
         {resume.target &&
