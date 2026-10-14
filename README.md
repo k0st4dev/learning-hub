@@ -85,7 +85,7 @@ Open your terminal, navigate to the folder where you want to keep the app, and r
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/learning-hub.git
+git clone https://github.com/k0st4dev/learning-hub.git
 cd learning-hub
 
 # 2. Install dependencies & initialize the local database
